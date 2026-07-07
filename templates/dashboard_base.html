@@ -1,0 +1,830 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - ALUMED{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- PALETA DE CORES HARMONIZADA (ALUMED PREMIUM) --- */
+        :root {
+            /* Base Roxa Escura */
+            --bg: #120924;
+            --panel: rgba(30, 17, 59, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+
+            /* Cores de Destaque */
+            --accent: #FFE600; /* Amarelo Brilhante Oficial */
+            --accent-hover: #FFF066;
+            
+            /* Cores Secundárias */
+            --roxo-neon: #7c3aed;
+            --roxo-mid: #1e113b;
+            --ciano-neon: #00d4ff;
+            --green: #10b981;
+            --danger: #ef4444;
+            --blue: #7c3aed;
+        }
+
+        * { box-sizing: border-box; font-family: "Outfit", "Poppins", sans-serif; }
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at top, #200f3f, #0f061d);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .app { display: flex; min-height: 100vh; position: relative; }
+
+        /* SIDEBAR (ALUMED PREMIUM) */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #180d30, #0f061d);
+            border-right: 1px solid rgba(255, 230, 0, 0.15);
+            padding: 24px;
+            display: flex; flex-direction: column;
+            position: fixed; height: 100vh; z-index: 100;
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 8px 0 30px rgba(0,0,0,0.35);
+        }
+
+        .sidebar-brand {
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 230, 0, 0.15);
+        }
+
+        .sidebar-brand .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f8fafc;
+            font-family: "Outfit", sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .sidebar-brand .brand-row i {
+            color: var(--accent); /* Ícono amarillo brillante */
+            font-size: 1.4rem;
+        }
+
+        .sidebar-premium {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 230, 0, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* Sidebar Profile */
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .sidebar-profile .avatar-circle {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--roxo-mid), var(--roxo-neon));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: white; font-size: 1.1rem;
+            overflow: hidden; border: 2px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+        
+        .sidebar-profile .avatar-circle img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .sidebar-profile-info {
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-profile-name {
+            color: white; font-weight: 700; font-size: 1rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        
+        .sidebar-profile-role {
+            color: var(--muted); font-size: 0.8rem;
+        }
+
+        .sidebar nav {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+
+        .sidebar nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .sidebar nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar nav a {
+            display: flex; align-items: center; gap: 12px;
+            color: #c0cbe0;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            position: relative; /* Para o badge */
+            font-weight: 500;
+        }
+
+        .sidebar nav a:hover {
+            background: rgba(124, 58, 237, 0.15);
+            color: #ffffff;
+            border-color: rgba(255, 230, 0, 0.35);
+        }
+
+        .sidebar nav a.active {
+            background: linear-gradient(135deg, var(--roxo-neon), #4f46e5);
+            color: #ffffff;
+            border: 1px solid var(--accent);
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .sidebar nav a i {
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar nav a:hover i, .sidebar nav a.active i {
+            transform: scale(1.1);
+            color: var(--accent); /* Cambia el icono a amarillo al estar activo o en hover */
+        }
+
+        /* Badge de Notificação (Estilo WhatsApp) */
+        .notification-badge {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            background-color: var(--green); /* Verde WhatsApp */
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            display: none; /* Oculto por padrão */
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .notification-badge.active {
+            display: inline-block;
+        }
+
+        @keyframes popIn {
+            from { transform: translateY(-50%) scale(0); }
+            to { transform: translateY(-50%) scale(1); }
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 32px 40px;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* --- CARDS GERAIS (ALUMED PREMIUM - SOLID WHITE STYLE) --- */
+        .card {
+            background: var(--branco);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
+            color: #475569; /* Slate 600 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+            /* Animação de entrada */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Ajustes de texto para cards claros */
+        .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: #0f172a !important; }
+        .card p, .card span, .card div { color: #475569; }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* MOBILE MENU TOGGLE */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--panel);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 90;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { 
+                transform: translateX(-100%); 
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
+            .sidebar.active { transform: translateX(0); }
+            
+            .main { margin-left: 0; padding: 80px 20px 20px; } /* Padding top para o botão */
+            
+            .mobile-menu-toggle { display: block; }
+            
+            .sidebar-overlay.active { display: block; opacity: 1; }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="app">
+    <!-- MOBILE MENU TOGGLE -->
+    <button class="mobile-menu-toggle" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        {% block sidebar_content %}
+        <div class="sidebar-brand">
+            <div class="brand-row"><i class="fas fa-layer-group"></i> Alumed</div>
+            <div class="sidebar-premium"><i class="fas fa-crown"></i> Premium</div>
+        </div>
+
+        <!-- User Profile in Sidebar -->
+        <div class="sidebar-profile">
+            <div class="avatar-circle">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
+                {% else %}
+                    {{ user.username|first|upper }}
+                {% endif %}
+            </div>
+            <div class="sidebar-profile-info">
+                <span class="sidebar-profile-name">{{ user.username }}</span>
+                <span class="sidebar-profile-role">Ingresante</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="{% url 'student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i> Dashboard
+                {% if has_new_announcements %}
+                    <span class="notification-badge active" title="Nuevos avisos">!</span>
+                {% endif %}
+            </a>
+            <a href="/plan-estudios/" class="{% if request.path == '/plan-estudios/' %}active{% endif %}">
+                <i class="fas fa-book-open"></i> Mis materias
+            </a>
+            <a href="/biblioteca/" class="{% if request.path == '/biblioteca/' %}active{% endif %}">
+                <i class="fas fa-book"></i> Biblioteca
+            </a>
+            <a href="/favoritos/" class="{% if request.path == '/favoritos/' %}active{% endif %}">
+                <i class="fas fa-star"></i> Favoritos
+            </a>
+            <a href="/conecta-fcm/" class="{% if request.path == '/conecta-fcm/' %}active{% endif %}">
+                <i class="fas fa-network-wired" style="color: #a78bfa;"></i> CONECTA FCM
+            </a>
+            <a href="/cartelera/" class="{% if request.path == '/cartelera/' %}active{% endif %}">
+                <i class="fas fa-satellite-dish"></i> Cartelera en Vivo
+            </a>
+            <a href="/facultad/" class="{% if request.path == '/facultad/' %}active{% endif %}">
+                <i class="fas fa-university"></i> Facultad
+            </a>
+            <a href="/foro/" class="{% if request.path|slice:":6" == '/foro/' %}active{% endif %}">
+                <i class="fas fa-comments"></i> Foro/Testimonios
+            </a>
+            <a href="/club/" class="{% if request.path == '/club/' %}active{% endif %}">
+                <i class="fas fa-crown"></i> Club ALUMED
+            </a>
+            <a href="{% url 'courses:flashcards_dashboard' %}" class="{% if request.resolver_match.url_name == 'flashcards_dashboard' %}active{% endif %}">
+                <i class="fas fa-clone"></i> Flashcards
+            </a>
+            <a href="https://wa.me/5511966702776" target="_blank">
+                <i class="fab fa-whatsapp"></i> Soporte
+            </a>
+            <a href="/">
+                <i class="fas fa-arrow-left"></i> Volver al Sitio
+            </a>
+            <a href="{% url 'logout' %}" style="color: #ef4444; margin-top: auto;">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </a>
+        </nav>
+        {% endblock %}
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        {% block main_content %}{% endblock %}
+    </main>
+</div>
+
+<!-- CHATMED FLOATING ICON -->
+<!-- Verifica se o usuário está logado E se NÃO está na página do curso 9 -->
+{% if request.user.is_authenticated and '/courses/9/' not in request.path and '/cursos/9/' not in request.path %}
+<div id="chatmed-floating-icon" class="chatmed-floating-icon">
+    <i class="fas fa-comments"></i>
+    <div class="chatmed-tooltip" id="chatmed-tooltip">
+        <span id="chatmed-tooltip-text">Chatmed</span>
+    </div>
+    <span class="chatmed-badge" id="chatmed-badge" style="display: none;">0</span>
+</div>
+
+<!-- CHATMED POPUP CONTAINER -->
+<div id="chatmed-popup-container" class="chatmed-popup-container">
+    <div class="chatmed-popup-header">
+        <span>Chatmed</span>
+        <button onclick="toggleChatmedPopup()" class="close-chat-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatmed-popup-body">
+        <iframe src="{% url 'chatmed' %}" id="chatmed-iframe" frameborder="0"></iframe>
+    </div>
+</div>
+
+<style>
+    .chatmed-floating-icon {
+        position: fixed;
+        bottom: 90px; /* Acima do WhatsApp se houver, ou ajustável */
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #9d00ff, #4a0075);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        box-shadow: 0 10px 25px rgba(157, 0, 255, 0.4);
+        cursor: pointer;
+        z-index: 999;
+        transition: transform 0.3s, box-shadow 0.3s;
+        /* Impede seleção de texto ao arrastar */
+        user-select: none;
+        touch-action: none; /* Importante para drag no mobile */
+    }
+
+    .chatmed-floating-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 15px 35px rgba(157, 0, 255, 0.6);
+    }
+
+    .chatmed-floating-icon:active {
+        transform: scale(0.95);
+    }
+
+    .chatmed-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 50%;
+        border: 2px solid #0f0518;
+        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: none;
+    }
+
+    .chatmed-tooltip {
+        position: absolute;
+        right: 70px;
+        background: white;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(10px);
+        transition: all 0.3s ease;
+        pointer-events: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .chatmed-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: -6px;
+        transform: translateY(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent transparent white;
+    }
+
+    .chatmed-floating-icon:hover .chatmed-tooltip,
+    .chatmed-floating-icon.has-new-message .chatmed-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    /* POPUP STYLES */
+    .chatmed-popup-container {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 380px;
+        height: 550px;
+        background: #0f0518;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        z-index: 998;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .chatmed-popup-container.active {
+        display: flex;
+    }
+
+    .chatmed-popup-header {
+        background: linear-gradient(135deg, #4a0075, #240b3b);
+        padding: 12px 16px;
+        color: white;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .close-chat-btn {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: color 0.2s;
+    }
+    .close-chat-btn:hover { color: white; }
+
+    .chatmed-popup-body {
+        flex: 1;
+        background: #0f0518;
+    }
+
+    #chatmed-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE POPUP */
+    @media (max-width: 480px) {
+        .chatmed-popup-container {
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            border-radius: 0;
+        }
+        .chatmed-floating-icon {
+            /* Oculta o botão flutuante quando o popup está aberto em tela cheia no mobile */
+            z-index: 997;
+        }
+    }
+</style>
+
+<script>
+    function toggleChatmedPopup() {
+        const popup = document.getElementById('chatmed-popup-container');
+        const icon = document.getElementById('chatmed-floating-icon');
+        const body = document.body;
+
+        if (popup.classList.contains('active')) {
+            popup.classList.remove('active');
+            body.classList.remove('chat-open'); // Remove classe para controle do pomodoro
+        } else {
+            popup.classList.add('active');
+            body.classList.add('chat-open'); // Adiciona classe para controle do pomodoro
+            // Remove notificação visual ao abrir
+            icon.classList.remove('has-new-message');
+            document.getElementById('chatmed-badge').style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const badge = document.getElementById('chatmed-badge');
+        const tooltip = document.getElementById('chatmed-tooltip');
+        const tooltipText = document.getElementById('chatmed-tooltip-text');
+        const icon = document.getElementById('chatmed-floating-icon');
+        let lastCount = 0;
+
+        // --- DRAGGABLE LOGIC ---
+        if (icon) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX, startY, initialLeft, initialTop;
+
+            // Mouse Events
+            icon.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+
+            // Touch Events
+            icon.addEventListener('touchstart', dragStart, {passive: false});
+            document.addEventListener('touchmove', drag, {passive: false});
+            document.addEventListener('touchend', dragEnd);
+
+            function dragStart(e) {
+                if (e.target.closest('.close-chat-btn')) return; // Ignore close button if inside
+
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                startX = clientX;
+                startY = clientY;
+
+                const rect = icon.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+
+                isDragging = true;
+                hasMoved = false;
+
+                // Remove transições durante o arraste para ser instantâneo
+                icon.style.transition = 'none';
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                const deltaX = clientX - startX;
+                const deltaY = clientY - startY;
+
+                // Se moveu mais que 5px, considera como arraste e não clique
+                if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                    hasMoved = true;
+                    e.preventDefault(); // Previne scroll no mobile
+                }
+
+                // Atualiza posição
+                icon.style.left = `${initialLeft + deltaX}px`;
+                icon.style.top = `${initialTop + deltaY}px`;
+                icon.style.right = 'auto'; // Remove right/bottom fixos
+                icon.style.bottom = 'auto';
+            }
+
+            function dragEnd(e) {
+                if (!isDragging) return;
+                isDragging = false;
+
+                // Restaura transição suave (opcional, para hover effects)
+                icon.style.transition = 'transform 0.3s, box-shadow 0.3s';
+            }
+
+            // Click Handler (Manual)
+            icon.addEventListener('click', (e) => {
+                if (hasMoved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                toggleChatmedPopup();
+            });
+        }
+
+        function checkUnreadMessages() {
+            // Não verifica se o popup estiver aberto
+            const popup = document.getElementById('chatmed-popup-container');
+            if (popup && popup.classList.contains('active')) return;
+
+            fetch('/chatmed/check-unread/')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count;
+                    const senderName = data.latest_sender;
+
+                    if (count > 0) {
+                        badge.style.display = 'block';
+                        badge.textContent = count > 99 ? '99+' : count;
+
+                        if (count > lastCount) {
+                            // Nova mensagem chegou
+                            icon.classList.add('has-new-message');
+                            if (senderName) {
+                                tooltipText.textContent = `Nueva mensaje de ${senderName}`;
+                            } else {
+                                tooltipText.textContent = `${count} mensajes nuevos`;
+                            }
+
+                            // Remove a classe de destaque após alguns segundos
+                            setTimeout(() => {
+                                icon.classList.remove('has-new-message');
+                                tooltipText.textContent = 'Chatmed';
+                            }, 5000);
+                        }
+                    } else {
+                        badge.style.display = 'none';
+                        tooltipText.textContent = 'Chatmed';
+                    }
+                    lastCount = count;
+                })
+                .catch(err => console.error('Erro ao verificar mensagens:', err));
+        }
+
+        // Verifica a cada 10 segundos
+        setInterval(checkUnreadMessages, 10000);
+        // Verifica imediatamente ao carregar
+        checkUnreadMessages();
+    });
+</script>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const overlay = document.getElementById('sidebarOverlay');
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Muda ícone
+            const icon = mobileBtn.querySelector('i');
+            if (sidebar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            const icon = mobileBtn.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+
+        mobileBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        // Gestos de Toque (Swipe)
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Mínimo de pixels para considerar swipe
+            const edgeThreshold = 30; // Zona ativa na borda esquerda para abrir
+
+            // Swipe da esquerda para direita (Abrir)
+            if (touchEndX > touchStartX + swipeThreshold) {
+                // Só abre se o toque começou perto da borda esquerda OU se o menu já estiver visível (mas não deveria acontecer swipe right com menu aberto normalmente)
+                if (touchStartX < edgeThreshold && !sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            }
+            
+            // Swipe da direita para esquerda (Fechar)
+            if (touchStartX > touchEndX + swipeThreshold) {
+                if (sidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
+            }
+        }
+
+        // --- CLICK SOUND EFFECT ---
+        // Tenta carregar o áudio. Se falhar, loga o erro.
+        const clickSound = new Audio('{% static "sound/clicando.mp3" %}');
+        clickSound.volume = 0.2; // Volume baixo
+
+        // Pré-carrega o áudio para evitar delay no primeiro clique
+        clickSound.load();
+
+        document.addEventListener('click', (e) => {
+            // Verifica se o clique foi dentro do popup do chat
+            if (e.target.closest('#chatmed-popup-container') || e.target.closest('#chatmed-floating-icon')) {
+                return; // Não toca som se for no chat
+            }
+
+            // Verifica se o elemento clicado é interativo ou está dentro de um
+            const interactiveElement = e.target.closest('a, button, input, select, textarea, .card, .menu-item, .header-icon-btn, .course-card-saas');
+
+            // Verifica se o elemento tem cursor pointer (indicativo de interatividade)
+            const computedStyle = window.getComputedStyle(e.target);
+            const isPointer = computedStyle.cursor === 'pointer';
+
+            if (interactiveElement || isPointer) {
+                // Clona o nó de áudio para permitir reprodução simultânea rápida
+                const soundClone = clickSound.cloneNode();
+                soundClone.volume = 0.2;
+                soundClone.play().catch((error) => {
+                    // Autoplay policy pode bloquear o som se não houver interação prévia do usuário
+                    console.log("Erro ao reproduzir som de clique:", error);
+                });
+            }
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

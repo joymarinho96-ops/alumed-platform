@@ -1,19 +1,19 @@
 :root {
-    --roxo-1: #20002c;
-    --roxo-2: #4a0075;
-    --roxo-claro: #3a0f56;
-    --dourado: #f5c542;
+    --roxo-1: #120924; /* Fondo noche violeta ultra oscuro */
+    --roxo-2: #1e113b; /* Fondo medio translúcido */
+    --roxo-claro: #200f3f; /* Morado claro para gradientes */
+    --dourado: #FFE600; /* Amarillo brillante oficial */
     --dourado-claro: #fff8c9;
     --preto: #0a000f;
     --preto-azulado: #0D0F1A;
-    --cinza-azulado: #1A1D2D;
+    --cinza-azulado: #ffffff; /* Blanco para cards claros */
 }
 
 body {
     margin: 0;
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(180deg, var(--roxo-claro) 0%, var(--preto) 100%);
-    color: #f2f2f2;
+    font-family: "Outfit", "Poppins", sans-serif !important;
+    background: radial-gradient(circle at top, var(--roxo-claro) 0%, var(--preto) 100%);
+    color: #f8fafc;
     min-height: 100vh;
     transition: opacity 0.5s ease-out;
 }
@@ -100,14 +100,15 @@ body.fade-out {
 
 .course-card-panel {
     background: var(--cinza-azulado);
-    border: 1px solid transparent;
-    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
     overflow: hidden;
-    transition: transform 0.4s ease-out, box-shadow 0.4s ease-out, opacity 0.5s ease-out;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.5s ease-out;
     opacity: 0;
     transform: translateY(30px);
     animation: stagger-in 0.5s ease-out forwards;
     animation-delay: var(--delay);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .course-card-panel.visible {
@@ -120,7 +121,7 @@ body.fade-out {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     border: 2px solid transparent;
-    border-radius: 12px;
+    border-radius: 16px;
     background: conic-gradient(from var(--angle), var(--roxo-2), var(--dourado), var(--roxo-2));
     background-origin: border-box;
     background-clip: padding-box, border-box;
@@ -156,12 +157,14 @@ body.fade-out {
 }
 
 .course-card-panel h3 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.45rem;
     margin-top: 0;
     margin-bottom: 20px;
     position: relative;
     cursor: pointer;
+    color: #0f172a;
+    font-weight: 700;
 }
 
 .course-card-panel h3 > span {
@@ -171,37 +174,7 @@ body.fade-out {
 
 .course-card-panel h3:hover > span {
     transform: scale(1.02);
-}
-
-.course-card-panel h3::after,
-.course-card-panel h3::before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0; left: 0;
-    color: white;
-    background: var(--cinza-azulado);
-    overflow: hidden;
-    clip: rect(0, 900px, 0, 0);
-}
-
-.course-card-panel h3:hover::after {
-    text-shadow: -3px 0 #ff00c1;
-    animation: glitch-anim-1 0.3s infinite linear alternate-reverse;
-}
-
-.course-card-panel h3:hover::before {
-    text-shadow: 3px 0 #00fff9;
-    animation: glitch-anim-2 0.3s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-anim-1 {
-    0% { clip: rect(42px, 9999px, 44px, 0); }
-    100% { clip: rect(2px, 9999px, 9px, 0); }
-}
-
-@keyframes glitch-anim-2 {
-    0% { clip: rect(15px, 9999px, 99px, 0); }
-    100% { clip: rect(40px, 9999px, 62px, 0); }
+    color: var(--roxo-neon);
 }
 
 .course-card-panel .course-card-btn {
@@ -209,15 +182,18 @@ body.fade-out {
     padding: 12px 30px;
     font-size: 1rem;
     text-align: center;
-    background-color: var(--dourado);
-    color: var(--preto);
-    border-radius: 5px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #ffffff;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
 }
 
 .course-card-panel .course-card-btn:hover {
-    background-color: #fff;
-    transform: scale(1.05);
+    background: var(--dourado);
+    color: var(--preto);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 230, 0, 0.4);
 }
