@@ -27,8 +27,119 @@ def student_auth_required(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
+import jwt
+import hashlib
+import time
+import logging
+from django.conf import settings
+from django.http import HttpResponseForbidden
+from django.utils.http import url_has_allowed_host_and_scheme
+
+logger = logging.getLogger(__name__)
+
 def auth_gate_view(request):
-    return redirect('https://alumed.wixsite.com/alumed/login')
+    token = request.GET.get('token')
+    next_url = request.GET.get('next', 'student_dashboard')
+
+    # Si no hay token, redirigir al login oficial en Wix
+    if not token:
+        wix_login_url = 'https://alumed.wixsite.com/alumed/login'
+        return redirect(wix_login_url)
+
+    # 1. Validar la firma y expiración del JWT
+    sso_secret = getattr(settings, 'ALUMED_SSO_SECRET', None)
+    if not sso_secret:
+        logger.error("ALUMED_SSO_SECRET no está configurado en settings.py.")
+        return HttpResponseForbidden("Error de configuración del servidor (SSO Secret faltante).")
+
+    try:
+        # decode valida firma, exp e iat automáticamente
+        payload = jwt.decode(
+            token,
+            sso_secret,
+            algorithms=['HS256'],
+            options={"require": ["exp", "iat"]}
+        )
+    except jwt.ExpiredSignatureError:
+        logger.warning("Intento de inicio de sesión con token JWT expirado.")
+        return HttpResponseForbidden("El enlace de inicio de sesión ha expirado (validez de 5 minutos). Por favor, intenta de nuevo desde Wix.")
+    except (jwt.DecodeError, jwt.InvalidSignatureError) as e:
+        logger.warning(f"Error de firma o decodificación del token JWT: {str(e)}")
+        return HttpResponseForbidden("Firma de token inválida o corrupta.")
+    except jwt.InvalidTokenError as e:
+        logger.warning(f"Error general en validación de token JWT: {str(e)}")
+        return HttpResponseForbidden("Token de acceso inválido.")
+
+    # 2. Protección contra Replay Attacks usando caché local
+    token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+    cache_key = f"sso_token:{token_hash}"
+    if cache.get(cache_key):
+        logger.warning("Intento de reutilización de token detectado (Replay Attack).")
+        return HttpResponseForbidden("Este enlace de acceso único ya ha sido utilizado. Por favor, genera uno nuevo desde Wix.")
+
+    # Registrar en caché por el tiempo restante de vida del token
+    now = time.time()
+    remaining_seconds = payload['exp'] - now
+    if remaining_seconds > 0:
+        cache.set(cache_key, True, timeout=int(remaining_seconds))
+
+    # 3. Extraer información del usuario
+    wix_member_id = payload.get('wix_member_id')
+    email = payload.get('email')
+    first_name = payload.get('first_name', '')
+    last_name = payload.get('last_name', '')
+
+    if not email:
+        return HttpResponseForbidden("El token de acceso no contiene una dirección de correo válida.")
+
+    email_clean = email.lower().strip()
+
+    # 4. Buscar o crear el usuario en Django
+    user = User.objects.filter(email__iexact=email_clean).first()
+    
+    if not user:
+        # Wix es la autoridad, si el token es válido creamos el usuario localmente
+        username_base = email_clean.split('@')[0]
+        username = ''.join(c for c in username_base if c.isalnum() or c in ['_', '-'])[:150]
+        
+        # Evitar colisión de nombres
+        original_username = username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{original_username}{counter}"
+            counter += 1
+
+        user = User.objects.create_user(
+            username=username,
+            email=email_clean,
+            first_name=first_name,
+            last_name=last_name
+        )
+        logger.info(f"Usuario {username} ({email_clean}) creado automáticamente vía SSO de Wix.")
+
+    # 5. Asegurar perfil y vincular wix_member_id
+    profile, created = Profile.objects.get_or_create(user=user)
+    if profile.wix_member_id != wix_member_id:
+        profile.wix_member_id = wix_member_id
+        profile.save()
+        logger.info(f"Perfil del usuario {user.username} vinculado con wix_member_id: {wix_member_id}")
+
+    # 6. Iniciar sesión local en Django
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    logger.info(f"Inicio de sesión exitoso vía SSO para {user.username}.")
+
+    # 7. Validar seguridad del redireccionamiento (evitar Open Redirect)
+    is_safe = url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure()
+    )
+
+    if not is_safe:
+        logger.warning(f"Redireccionamiento inseguro bloqueado: '{next_url}'. Redirigiendo a dashboard.")
+        next_url = 'student_dashboard'
+
+    return redirect(next_url)
 
 def login_view(request):
     return redirect('https://alumed.wixsite.com/alumed/login')
