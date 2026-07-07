@@ -1,0 +1,48 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="44" y1="24" x2="586" y2="394" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10192F"/>
+      <stop offset="0.52" stop-color="#181032"/>
+      <stop offset="1" stop-color="#090D18"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(158 106) rotate(36) scale(240 182)">
+      <stop stop-color="#8B5CF6" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(484 302) rotate(180) scale(238 160)">
+      <stop stop-color="#22D3EE" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <rect x="20" y="20" width="600" height="380" rx="24" stroke="rgba(255,255,255,0.08)"/>
+  <rect width="640" height="420" rx="28" fill="url(#glow)"/>
+  <rect width="640" height="420" rx="28" fill="url(#glow2)"/>
+  <g opacity="0.18">
+    <path d="M64 74H576" stroke="#94A3B8" stroke-dasharray="6 10"/>
+    <path d="M64 128H576" stroke="#94A3B8" stroke-dasharray="6 10"/>
+    <path d="M64 182H576" stroke="#94A3B8" stroke-dasharray="6 10"/>
+    <path d="M64 236H576" stroke="#94A3B8" stroke-dasharray="6 10"/>
+    <path d="M64 290H576" stroke="#94A3B8" stroke-dasharray="6 10"/>
+  </g>
+  <g>
+    <rect x="82" y="92" width="202" height="152" rx="24" fill="rgba(15,23,42,0.42)" stroke="rgba(255,255,255,0.12)"/>
+    <rect x="108" y="120" width="150" height="96" rx="18" fill="rgba(139,92,246,0.13)" stroke="rgba(196,181,253,0.3)"/>
+    <circle cx="142" cy="154" r="22" fill="rgba(34,211,238,0.14)" stroke="#67E8F9" stroke-width="2"/>
+    <circle cx="196" cy="148" r="15" fill="rgba(139,92,246,0.22)" stroke="#C4B5FD" stroke-width="2"/>
+    <circle cx="220" cy="184" r="26" fill="rgba(34,211,238,0.12)" stroke="#A5F3FC" stroke-width="2"/>
+    <circle cx="162" cy="194" r="12" fill="rgba(248,250,252,0.2)" stroke="#E2E8F0"/>
+    <path d="M128 190C147.333 176.667 178 176 220 188" stroke="rgba(255,255,255,0.42)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g>
+    <rect x="324" y="104" width="236" height="206" rx="28" fill="rgba(8,15,32,0.58)" stroke="rgba(255,255,255,0.11)"/>
+    <path d="M388 168H496" stroke="#A78BFA" stroke-width="8" stroke-linecap="round"/>
+    <path d="M388 208H520" stroke="#E2E8F0" stroke-opacity="0.72" stroke-width="6" stroke-linecap="round"/>
+    <path d="M388 244H472" stroke="#67E8F9" stroke-width="6" stroke-linecap="round"/>
+    <path d="M388 280H506" stroke="#CBD5E1" stroke-opacity="0.44" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="522" cy="168" r="18" fill="rgba(139,92,246,0.18)" stroke="#C4B5FD" stroke-width="2"/>
+    <path d="M516 168L521 173L530 161" stroke="#F8FAFC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="84" y="334" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="18" letter-spacing="3.2">ALUMED</text>
+  <text x="84" y="366" fill="#C4B5FD" font-family="Outfit, Arial, sans-serif" font-size="42" font-weight="700">Histología</text>
+</svg>

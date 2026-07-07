@@ -1,0 +1,43 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+settings.py
+
+# Ambientes Virtuais
+venv/
+env/
+.env
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Google Cloud Credentials (NUNCA suba isso)
+gcs_credentials.json
+gcs_credentials2.json
+alumed/gcs_credentials.json
+alumed/gcs_credentials2.json
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Temporary scrape / logs / tokens
+*.json
+!requirements.txt
+!wix.config.json
+!wix.config.json.backup
+*.png
+*.html
+tmp-*
+@ + *
+tmp_library_server.py
+apply_cors.py
+check_sites.py

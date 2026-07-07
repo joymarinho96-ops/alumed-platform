@@ -1,0 +1,198 @@
+/* ==========================================
+   SEÇÃO DE CURSOS - LAYOUT DOS CARDS
+========================================== */
+.course-showcase-container {
+    display: flex;
+    flex-direction: row; /* Mudado de column para row */
+    flex-wrap: wrap; /* Permite que os cards quebrem para a próxima linha se necessário */
+    justify-content: center; /* Centraliza os cards horizontalmente */
+    gap: 30px; /* Espaçamento entre os cards */
+    margin-top: 40px;
+    width: 100%;
+}
+
+.course-showcase-item {
+    display: flex;
+    flex-direction: column; /* Garante que o conteúdo dentro do item fique em coluna */
+    align-items: center;
+    width: 350px; /* Largura fixa para os cards */
+    max-width: 100%;
+}
+
+/* Removido o estilo alternado que invertia a ordem */
+.course-showcase-item:nth-child(even) {
+    flex-direction: column;
+}
+
+.course-showcase-item .course-card {
+    width: 100%; /* O card ocupa toda a largura do item */
+    height: 100%; /* Altura total */
+    display: flex;
+    flex-direction: column;
+}
+
+.course-showcase-description {
+    display: none; /* Oculta a descrição externa se houver, já que estamos focando nos cards lado a lado */
+}
+
+/* ==========================================
+   CARD DO CURSO (ESTILO APRIMORADO)
+========================================== */
+.course-card {
+    background: rgba(20, 20, 25, 0.5); /* Fundo semitransparente escuro */
+    border: 1px solid rgba(245, 197, 66, 0.2); /* Borda dourada sutil */
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(12px); /* Efeito de vidro */
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transição suave */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada */
+}
+
+.course-card:hover {
+    transform: translateY(-10px); /* Eleva o card */
+    border-color: rgba(245, 197, 66, 0.6); /* Borda mais visível */
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 197, 66, 0.25); /* Sombra e brilho dourado */
+}
+
+/* ==========================================
+   IMAGEM DO CARD E ETIQUETA
+========================================== */
+.course-card-image-container {
+    position: relative; /* Necessário para posicionar a etiqueta */
+    overflow: hidden; /* Garante que a imagem não saia do container */
+}
+
+.course-card-image {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    filter: none;
+}
+
+.course-card:hover .course-card-image {
+    transform: scale(1.08);
+}
+
+.course-badge {
+    position: absolute;
+    top: 15px;
+    right: -40px; /* Começa fora da tela */
+    background-color: var(--dourado);
+    color: var(--preto);
+    padding: 6px 40px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    transform: rotate(45deg);
+    box-shadow: 0 0 15px rgba(245, 197, 66, 0.5);
+    transition: right 0.4s ease-out; /* Animação de entrada */
+}
+
+.course-card:hover .course-badge {
+    right: -30px; /* Desliza para dentro no hover */
+}
+
+.course-badge.new {
+    background-color: #42f5a7; /* Cor verde-água para "Novo" */
+    box-shadow: 0 0 15px rgba(66, 245, 167, 0.5);
+}
+
+/* ==========================================
+   CONTEÚDO DO CARD
+========================================== */
+.course-card-content {
+    padding: 25px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.course-card-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+/* ==========================================
+   AVALIAÇÃO (ESTRELAS)
+========================================== */
+.course-rating {
+    margin-bottom: 15px;
+    color: #ffc107; /* Cor dourada para as estrelas */
+    font-size: 1.1rem;
+}
+
+.course-rating .fa-star-half-alt {
+    color: #ffc107; /* Garante que a meia estrela tenha a mesma cor */
+}
+
+/* ==========================================
+   PREÇO
+========================================== */
+.course-card-price {
+    margin-bottom: 25px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--dourado);
+    text-shadow: 0 0 8px rgba(245, 197, 66, 0.5);
+}
+
+/* ==========================================
+   BOTÃO 3D COM EFEITO DE PULSO (ROXO)
+========================================== */
+.btn-3d-buy {
+    position: relative;
+    background: var(--roxo-2); /* Roxo Principal (#4a0075) */
+    color: #fff; /* Texto Branco para contraste */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px 0;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    /* Sombra 3D Roxa Escura */
+    box-shadow: 0 6px 0 #2a0045;
+    transition: all 0.15s ease-in-out;
+    margin-top: auto;
+}
+
+.btn-3d-buy:hover {
+    background: #6a00a0; /* Roxo um pouco mais claro no hover */
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #2a0045;
+    /* Efeito de brilho roxo/neon */
+    animation: pulse-glow-purple 1.5s infinite;
+}
+
+.btn-3d-buy:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #2a0045;
+    animation: none;
+}
+
+@keyframes pulse-glow-purple {
+    0% {
+        box-shadow: 0 8px 0 #2a0045, 0 0 5px rgba(138, 43, 226, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 0 #2a0045, 0 0 20px rgba(138, 43, 226, 0.8);
+    }
+    100% {
+        box-shadow: 0 8px 0 #2a0045, 0 0 5px rgba(138, 43, 226, 0.3);
+    }
+}

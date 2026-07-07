@@ -1,0 +1,345 @@
+/* ============================================================
+   COURSE DASHBOARD STYLES - ALUMED (MODERN UI)
+============================================================ */
+
+:root {
+    --roxo-deep: #0a000f;
+    --roxo-bg: #13001f;
+    --roxo-accent: #4a0075;
+    --dourado: #f5c542;
+    --dourado-glow: rgba(245, 197, 66, 0.3);
+    --glass-bg: rgba(20, 0, 30, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-main: #f2f2f2;
+    --text-muted: #a0a0a0;
+}
+
+body {
+    overflow: hidden;
+    background-color: var(--roxo-deep);
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    color: var(--text-main);
+}
+
+/* Layout Principal */
+.course-content-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at top right, #2a0045 0%, var(--roxo-deep) 60%);
+}
+
+/* ============================================================
+   SIDEBAR (MODERN GLASS STYLE)
+============================================================ */
+.course-sidebar {
+    width: 380px; /* Um pouco mais larga para melhor leitura */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    z-index: 10;
+    background: rgba(10, 0, 15, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+}
+
+.sidebar-header {
+    padding: 25px;
+    text-align: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--glass-border);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--dourado);
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    text-shadow: 0 0 15px var(--dourado-glow);
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbar Customizada Fina */
+.sidebar-nav::-webkit-scrollbar,
+.course-modules-container::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar-nav::-webkit-scrollbar-track,
+.course-modules-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb,
+.course-modules-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--dourado);
+}
+
+/* Título da Seção (Dropdown Principal) */
+.sidebar-section-title {
+    padding: 18px 25px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--glass-border);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-section-title:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--dourado);
+}
+
+.sidebar-section-title .transition-icon {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--dourado);
+}
+
+/* Container dos Módulos */
+#course-content-dropdown {
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 0;
+}
+
+.course-modules-container {
+    background: rgba(0,0,0,0.2);
+}
+
+.module-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Item de Módulo */
+.module-item {
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.module-header {
+    padding: 16px 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.module-header:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.module-item.active .module-header {
+    background: linear-gradient(90deg, rgba(245, 197, 66, 0.08), transparent);
+    border-left-color: var(--dourado);
+}
+
+.module-title {
+    font-size: 0.9rem;
+    margin: 0;
+    color: #e0e0e0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.module-item.active .module-title {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.module-toggle-icon {
+    transition: transform 0.4s ease;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.module-item.active .module-toggle-icon {
+    transform: rotate(180deg);
+    color: var(--dourado);
+}
+
+/* Lista de Aulas */
+.lesson-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 5px 10px rgba(0,0,0,0.3);
+}
+
+.lesson-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 25px 14px 35px; /* Indentação maior */
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent; /* Para hover effect */
+}
+
+.lesson-item a:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    padding-left: 40px; /* Pequeno movimento ao passar o mouse */
+}
+
+.lesson-item a.active {
+    background: rgba(245, 197, 66, 0.05);
+    color: var(--dourado);
+    border-left-color: var(--dourado);
+}
+
+.lesson-status-icon {
+    font-size: 0.8rem;
+    width: 15px;
+    text-align: center;
+}
+
+.lesson-item.completed .lesson-status-icon {
+    color: var(--dourado);
+    text-shadow: 0 0 5px var(--dourado-glow);
+}
+
+/* Footer Sidebar */
+.sidebar-footer {
+    padding: 20px 25px;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(5px);
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 8px 0;
+    transition: color 0.3s;
+}
+
+.action-link:hover {
+    color: #fff;
+}
+
+.action-link i {
+    width: 20px;
+    text-align: center;
+}
+
+.logout-link:hover {
+    color: #ff4d4d;
+}
+
+/* ============================================================
+   MAIN CONTENT AREA
+============================================================ */
+.course-main-content {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(74, 0, 117, 0.15) 0%, transparent 60%),
+        linear-gradient(0deg, rgba(0,0,0,0.2) 0%, transparent 100%);
+    background-color: #0e0b16;
+}
+
+/* Toolbar Flutuante */
+.lesson-toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+    z-index: 20;
+    pointer-events: none; /* Permite clicar no vídeo através da toolbar transparente */
+}
+
+.lesson-toolbar > * {
+    pointer-events: auto; /* Reativa cliques nos botões e texto */
+}
+
+.lesson-toolbar h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.5);
+    padding: 5px 15px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.lesson-actions button, .lesson-actions a {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 6px 15px;
+    border-radius: 20px; /* Botões arredondados */
+    font-size: 0.8rem;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.lesson-actions button:hover, .lesson-actions a:hover {
+    background: var(--dourado);
+    color: #000;
+    border-color: var(--dourado);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px var(--dourado-glow);
+}
+
+/* Viewer Container */
+.content-viewer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.content-viewer video, .content-viewer iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: contain;
+    -webkit-mask-image: none;
+    mask-image: none;
+}

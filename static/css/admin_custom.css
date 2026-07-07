@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --roxo-1: #20002c;
+    --roxo-2: #4a0075;
+    --dourado: #f5c542;
+    --preto: #0a000f;
+    --roxo-fundo: #1a0023; /* Novo roxo escuro para o fundo */
+}
+
+/* ================= TIPOGRAFIA ================= */
+body {
+    font-family: 'Share Tech Mono', monospace !important;
+    background-color: var(--roxo-fundo) !important;
+    color: #f2f2f2 !important;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text, .card-title {
+    font-family: 'Orbitron', sans-serif !important;
+    color: var(--dourado) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ================= NAVBAR (TOPO) ================= */
+.main-header.navbar {
+    background: linear-gradient(
+        90deg,
+        rgba(32, 0, 44, 0.95) 0%,
+        rgba(74, 0, 117, 0.95) 100%
+    ) !important;
+    border-bottom: 1px solid rgba(245, 197, 66, 0.3) !important;
+}
+
+.main-header .nav-link {
+    color: var(--dourado) !important;
+}
+
+/* ================= SIDEBAR (LATERAL) ================= */
+.main-sidebar {
+    background-color: #12001a !important; /* Roxo muito escuro, quase preto */
+    border-right: 1px solid rgba(245, 197, 66, 0.2);
+}
+
+.brand-link {
+    border-bottom: 1px solid rgba(245, 197, 66, 0.2) !important;
+    background-color: #0e0014 !important;
+}
+
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: var(--dourado) !important;
+    color: var(--preto) !important;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+}
+
+.nav-sidebar .nav-item .nav-link {
+    color: #e0e0e0 !important;
+}
+
+.nav-sidebar .nav-item .nav-link:hover {
+    color: var(--dourado) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ================= CONTEÚDO PRINCIPAL ================= */
+.content-wrapper {
+    background-color: var(--roxo-fundo) !important;
+    background-image: radial-gradient(circle at top right, #2a0038, var(--roxo-fundo));
+}
+
+.card {
+    background-color: rgba(30, 0, 40, 0.8) !important; /* Fundo semi-transparente roxo */
+    border: 1px solid rgba(245, 197, 66, 0.2) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.card-header {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid rgba(245, 197, 66, 0.1) !important;
+}
+
+/* Tabelas */
+.table {
+    color: #f2f2f2 !important;
+}
+
+.table thead th {
+    color: var(--dourado) !important;
+    border-bottom: 2px solid var(--dourado) !important;
+    font-family: 'Orbitron', sans-serif;
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(245, 197, 66, 0.15) !important;
+}
+
+/* ================= BOTÕES ================= */
+.btn-primary, .btn-success, .btn-info, .btn-secondary {
+    background-color: rgba(74, 0, 117, 0.5) !important;
+    border: 1px solid var(--dourado) !important;
+    color: var(--dourado) !important;
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-secondary:hover {
+    background-color: var(--dourado) !important;
+    color: var(--preto) !important;
+    box-shadow: 0 0 15px rgba(245, 197, 66, 0.5);
+}
+
+.btn-danger {
+    background-color: rgba(255, 68, 68, 0.1) !important;
+    border: 1px solid #ff4444 !important;
+    color: #ff4444 !important;
+}
+
+.btn-danger:hover {
+    background-color: #ff4444 !important;
+    color: white !important;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+}
+
+/* ================= LINKS E FORMULÁRIOS ================= */
+a {
+    color: var(--dourado) !important;
+    transition: 0.3s;
+}
+
+a:hover {
+    text-shadow: 0 0 8px rgba(245, 197, 66, 0.6);
+    text-decoration: none !important;
+}
+
+input, select, textarea {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid #555 !important;
+    color: white !important;
+    font-family: 'Share Tech Mono', monospace !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--dourado) !important;
+    box-shadow: 0 0 8px rgba(245, 197, 66, 0.3) !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Ajuste do rodapé */
+.main-footer {
+    background-color: #12001a !important;
+    border-top: 1px solid rgba(245, 197, 66, 0.2) !important;
+    color: #aaa !important;
+}
+
+/* Ajuste específico para o seletor de arquivos (file input) */
+.custom-file-label {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    color: #fff !important;
+    border: 1px solid #555 !important;
+}
+
+.custom-file-label::after {
+    background-color: var(--dourado) !important;
+    color: var(--preto) !important;
+}

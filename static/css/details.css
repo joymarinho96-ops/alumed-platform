@@ -1,0 +1,59 @@
+/* --- DETAILS PAGE STYLES --- */
+/* Estilos específicos para quando a página de detalhes é acessada diretamente */
+
+body.details-page {
+    background-color: var(--bg-deep);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Container centralizado para a página de detalhes */
+.details-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+/* Ajustes no card quando exibido na página dedicada */
+.details-container .account-modal-card {
+    width: 100%;
+    max-width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: fadeIn 0.5s ease-out;
+    margin: 0 auto;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Esconder o botão de fechar (X) quando acessado diretamente, pois não é um modal */
+.details-page .close-btn {
+    display: none;
+}
+
+/* Esconder o botão "Voltar ao Início" de fora do card na página dedicada, pois agora está dentro */
+.details-page > .details-container > .back-home-btn {
+    display: none;
+}
+
+/* Mostrar o botão "Voltar ao Início" DENTRO do card APENAS na página dedicada */
+.details-page .back-home-link {
+    display: flex !important;
+}
+
+/* Esconder o botão "Voltar ao Início" DENTRO do card quando for MODAL (não tem a classe .details-page no body) */
+.back-home-link {
+    display: none !important;
+}
+
+/* Ajuste para o botão de voltar/fechar no rodapé do card */
+.details-page .account-actions {
+    margin-top: 20px;
+}

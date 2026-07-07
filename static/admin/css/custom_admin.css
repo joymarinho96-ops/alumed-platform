@@ -1,0 +1,169 @@
+/* --- ALUMED ADMIN THEME --- */
+:root {
+    --primary-color: #0b1020;
+    --secondary-color: #1a002e;
+    --accent-color: #f5c542; /* Dourado */
+    --link-color: #9d00ff; /* Roxo Neon */
+    --text-color: #f1f5f9;
+    --header-bg: #0f001a;
+    --module-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --button-bg: #4a0075;
+    --button-hover: #9d00ff;
+}
+
+body {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+#header {
+    background: var(--header-bg);
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+#header a.branding {
+    color: var(--accent-color);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#user-tools {
+    color: var(--text-color);
+}
+
+/* Modules (App List) */
+.module {
+    background: var(--module-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.module caption {
+    background: var(--secondary-color);
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.module table {
+    background: transparent;
+}
+
+.module td, .module th {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.module a {
+    color: var(--link-color);
+}
+
+/* Links */
+a:link, a:visited {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+    background: var(--button-hover);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--accent-color);
+    color: #000;
+}
+
+.button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: #ffe066;
+}
+
+/* Forms */
+.form-row {
+    border-bottom: 1px solid var(--border-color);
+}
+
+label {
+    color: var(--text-color);
+}
+
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], textarea, select, .vTextField {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    background: var(--secondary-color);
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.breadcrumbs a {
+    color: var(--text-color);
+}
+
+/* Changelist */
+#changelist table {
+    background: var(--module-bg);
+    border: 1px solid var(--border-color);
+}
+
+#changelist table thead th {
+    background: var(--secondary-color);
+    color: var(--text-color);
+}
+
+#changelist table tbody tr {
+    background: transparent;
+}
+
+#changelist table tbody tr.row1 {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+#changelist table tbody tr.row2 {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+#changelist table tbody tr:hover {
+    background: rgba(157, 0, 255, 0.1);
+}
+
+/* Dashboard */
+.dashboard .module table th {
+    width: 100%;
+}
+
+.dashboard .module table td a {
+    padding-right: 10px;
+}

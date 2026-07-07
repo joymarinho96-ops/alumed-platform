@@ -1,0 +1,202 @@
+/* --- HOME ANIMATIONS & PROPS --- */
+
+/* Tech Mosaic Wrapper (REMOVIDO) */
+.tech-mosaic-wrapper {
+    display: none !important;
+}
+
+/* Tech Ambient (REMOVIDO PARA DAR LUGAR À REDE NEURAL) */
+.tech-ambient-wrapper {
+    display: none !important;
+}
+
+/* --- TECH NEURAL CANVAS --- */
+#tech-neural-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; /* Atrás do conteúdo */
+    pointer-events: none; /* Deixa o clique passar */
+    opacity: 0.5; /* Opacidade sutil */
+}
+
+.tech-tile {
+    width: 50px; height: 50px;
+    background: rgba(20, 5, 35, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    position: relative;
+}
+
+.tech-tile.active {
+    background: #b042ff;
+    border-color: #ffffff;
+    box-shadow: 0 0 30px #9d00ff, 0 0 60px #9d00ff;
+    z-index: 1;
+    transition: all 0.4s ease-out;
+}
+
+/* Parallax Wrappers */
+.prop-wrapper-right {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+}
+
+.prop-wrapper-left {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+}
+
+/* Floating Animations */
+.tech-floating-prop {
+    width: 100%;
+    opacity: 0;
+    transform: translate(200px, -50px) rotate(20deg);
+    transition: all 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+    filter: drop-shadow(0 0 40px rgba(157, 0, 255, 0.25));
+}
+
+.tech-floating-prop.visible {
+    opacity: 1;
+    transform: translate(-20px, 20px) rotate(0deg);
+    animation: prop-float 8s ease-in-out infinite alternate 1.8s;
+}
+
+@keyframes prop-float {
+    0% { transform: translate(-20px, 20px) rotate(0deg); }
+    100% { transform: translate(-20px, 50px) rotate(3deg); }
+}
+
+.tech-floating-prop-left {
+    width: 100%;
+    opacity: 0;
+    transform: translate(-200px, 100px) rotate(-20deg);
+    transition: all 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+    filter: drop-shadow(0 0 40px rgba(157, 0, 255, 0.2));
+}
+
+.tech-floating-prop-left.visible {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+    animation: prop-float-left 9s ease-in-out infinite alternate 2s;
+}
+
+@keyframes prop-float-left {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(20px, -30px) rotate(-5deg); }
+}
+
+/* --- SPECIFIC POSITIONS (OVERRIDES) --- */
+
+/* Section: Tecnologia */
+#tecnologia .prop-wrapper-right {
+    top: -20px; /* Abaixado de -80px para -20px */
+    right: -120px;
+    width: 500px;
+    max-width: 60%;
+}
+
+#tecnologia .prop-wrapper-left {
+    bottom: -50px;
+    left: -100px;
+    width: 450px;
+    max-width: 50%;
+}
+
+/* Section: Cursos (Livros) */
+#cursos .prop-wrapper-right.book-1 {
+    top: 250px !important; /* Forçando descida */
+    right: -50px !important;
+    width: 300px;
+    z-index: 1;
+}
+
+#cursos .prop-wrapper-left.book-2 {
+    bottom: 50px !important; /* Forçando subida */
+    left: -50px !important;
+    width: 350px;
+    z-index: 1;
+}
+
+#cursos .prop-wrapper-right.book-3 {
+    bottom: 50px !important; /* Posição ajustada */
+    right: 5% !important;
+    width: 250px;
+    opacity: 0.7;
+    z-index: 1;
+    top: auto !important; /* Reset top */
+}
+
+/* Brightness Fix for Books */
+#cursos img.tech-floating-prop,
+#cursos img.tech-floating-prop-left {
+    filter: brightness(1.3) !important;
+}
+
+/* --- COURSES STAGE BACKGROUND (BOX) --- */
+.courses-stage-background {
+    position: absolute !important;
+    bottom: 0 !important; /* Alinha na base */
+    left: 50% !important; /* Centraliza horizontalmente */
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 1600px; /* Limita largura máxima para não estourar em telas gigantes */
+    height: auto !important; /* Altura automática para manter proporção */
+    z-index: 0;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Alinha imagem na base */
+}
+
+.courses-stage-background img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important; /* Garante que a caixa inteira apareça */
+    opacity: 0.9;
+}
+
+/* Gradientes Laterais para Imersão */
+.courses-stage-background::before,
+.courses-stage-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 20%; /* Largura do gradiente */
+    height: 100%;
+    z-index: 1; /* Fica sobre a imagem */
+    pointer-events: none;
+}
+
+.courses-stage-background::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+}
+
+.courses-stage-background::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+}
+
+/* --- COURSE CARD HOVER (MODIFICADO PARA JS TILT) --- */
+.course-card {
+    /* Transição controlada pelo JS para evitar conflitos */
+    /* transition: transform 0.3s ease, border-color 0.3s ease !important; */
+}
+
+.course-card:hover {
+    /* Transform removido para ser controlado pelo JS */
+    /* transform: translateY(-8px) !important; */
+    border-color: rgba(255,255,255,0.2) !important;
+}
+
+/* --- AJUSTE DE POSIÇÃO DO TÍTULO (CURSOS) --- */
+#cursos .section-header {
+    margin-top: -40px !important; /* Sobe o título */
+    margin-bottom: 60px !important; /* Mantém espaço para os cards */
+    position: relative;
+    z-index: 2;
+}

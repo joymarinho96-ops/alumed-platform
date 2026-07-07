@@ -1,0 +1,32 @@
+.photo-reveal {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 0;
+    border: none;
+    box-shadow: none;
+    background: none;
+    overflow: hidden;
+}
+
+.photo-reveal img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: none;
+    box-shadow: none;
+    background: none;
+    outline: none; /* Remove linha de foco ao clicar */
+
+    /* Opacidade:
+       Coloquei em 1 para a imagem ficar nítida.
+       Se quiser ela mais 'apagada', mude para 0.8 ou 0.9. */
+    opacity: 1;
+
+    /* MÁSCARA DE TRANSPARÊNCIA:
+       Isso faz o topo (0%) e o fundo (100%) ficarem transparentes,
+       enquanto o meio da imagem (entre 20% e 80%) fica visível. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}

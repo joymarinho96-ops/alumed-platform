@@ -1,0 +1,65 @@
+#home {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    /* Fundo roxo escuro com degradê + Grid (Linhas Horizontais e Verticais) */
+    background-color: #0a000f;
+    background-image: 
+        linear-gradient(rgba(245, 197, 66, 0.05) 1px, transparent 1px), /* Linhas Horizontais */
+        linear-gradient(90deg, rgba(245, 197, 66, 0.05) 1px, transparent 1px), /* Linhas Verticais */
+        radial-gradient(circle at center, #2a0038 0%, #0a000f 100%); /* Degradê Roxo */
+    background-size: 100% 30px, 30px 100%, 100% 100%; /* Tamanho do quadrado: 30px x 30px */
+}
+
+.home-bg-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    mix-blend-mode: screen;
+}
+
+.home-text-container {
+    z-index: 1;
+    padding: 20px;
+    max-width: 800px;
+    position: relative;
+}
+
+.home-title {
+    font-family: 'Orbitron', sans-serif; /* Garante a fonte do título */
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    /* Removido transform 3D */
+}
+
+.home-desc {
+    font-family: 'Rajdhani', sans-serif; /* Garante a fonte do texto */
+    font-size: 1.4rem;
+    line-height: 1.6;
+    font-weight: 500; /* Garante o peso correto */
+    /* Removido transform 3D */
+}
+
+/* Animação de entrada da home */
+#home .fade-in {
+    opacity: 0;
+    animation: fadeInHome 1.5s forwards;
+    animation-delay: 0.5s;
+}
+
+@keyframes fadeInHome {
+    to {
+        opacity: 1;
+    }
+}

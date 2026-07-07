@@ -1,0 +1,40 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="62" y1="20" x2="584" y2="396" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1626"/>
+      <stop offset="0.5" stop-color="#161426"/>
+      <stop offset="1" stop-color="#0C1018"/>
+    </linearGradient>
+    <radialGradient id="violet" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(184 108) rotate(40) scale(240 170)">
+      <stop stop-color="#8B5CF6" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emerald" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(488 286) rotate(180) scale(224 160)">
+      <stop stop-color="#34D399" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#34D399" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="420" rx="28" fill="url(#violet)"/>
+  <rect width="640" height="420" rx="28" fill="url(#emerald)"/>
+  <g opacity="0.15">
+    <circle cx="176" cy="180" r="88" stroke="#C4B5FD" stroke-dasharray="8 10"/>
+    <circle cx="176" cy="180" r="52" stroke="#A7F3D0" stroke-dasharray="4 10"/>
+  </g>
+  <g>
+    <rect x="86" y="90" width="214" height="224" rx="28" fill="rgba(12,18,30,0.56)" stroke="rgba(255,255,255,0.11)"/>
+    <circle cx="192" cy="200" r="66" fill="rgba(139,92,246,0.12)" stroke="#C4B5FD" stroke-width="3"/>
+    <path d="M210 178C220 190 220 208 210 220C200 232 184 236 172 230C163 226 158 218 157 209C155 194 163 181 175 176C186 171 201 173 210 178Z" fill="rgba(52,211,153,0.16)" stroke="#A7F3D0" stroke-width="2.5"/>
+    <circle cx="171" cy="208" r="6" fill="#F8FAFC"/>
+  </g>
+  <g>
+    <rect x="336" y="112" width="220" height="178" rx="28" fill="rgba(10,16,24,0.6)" stroke="rgba(255,255,255,0.11)"/>
+    <path d="M378 152H516" stroke="#C4B5FD" stroke-width="7" stroke-linecap="round"/>
+    <path d="M378 190H488" stroke="#A7F3D0" stroke-width="6" stroke-linecap="round"/>
+    <path d="M378 226H530" stroke="#E2E8F0" stroke-opacity="0.54" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="504" cy="190" r="18" fill="rgba(52,211,153,0.14)" stroke="#A7F3D0" stroke-width="2"/>
+    <circle cx="470" cy="190" r="9" fill="#ECFDF5"/>
+  </g>
+  <text x="86" y="344" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="18" letter-spacing="3.2">ALUMED</text>
+  <text x="86" y="376" fill="#C4B5FD" font-family="Outfit, Arial, sans-serif" font-size="40" font-weight="700">Embriología</text>
+</svg>
