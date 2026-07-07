@@ -1,4 +1,6 @@
 # Arquitectura de Integración: ALUMED Híbrido (Wix + Django)
+> **RELEASE VERSION:** ALUMED OS Release 1.0 - Core Platform
+> **STATUS:** STABLE
 
 Este documento detalla la arquitectura de integración para el ecosistema **ALUMED**, donde **Wix** actúa como el núcleo operativo/negocio y **Django** funciona como la **Capa de Experiencia (Experience Layer)** encargada de las herramientas avanzadas e interactivas.
 

@@ -1,4 +1,6 @@
 # ALUMED - SYSTEM BLUEPRINT (Plano General del Sistema)
+> **RELEASE VERSION:** ALUMED OS Release 1.0 - Core Platform
+> **STATUS:** STABLE
 
 Este documento es el plano arquitectónico y funcional oficial del ecosistema **ALUMED**. Define las responsabilidades de cada sistema, los flujos del alumno, mapas de páginas, dependencias y reglas de diseño para guiar el desarrollo de cualquier ingeniero de software o agente de Inteligencia Artificial que trabaje en el proyecto.
 

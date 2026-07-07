@@ -1,4 +1,6 @@
 # Contexto del Proyecto ALUMED
+> **RELEASE VERSION:** ALUMED OS Release 1.0 - Core Platform
+> **STATUS:** STABLE
 
 Este documento define la filosofía, arquitectura, identidad visual y reglas de desarrollo del ecosistema ALUMED. Su propósito es servir como la única fuente de verdad y guía de diseño para cualquier desarrollo futuro, garantizando la compatibilidad con la plataforma base (Wix) y manteniendo una experiencia de usuario (UX/UI) cohesiva y premium.
 
