@@ -169,7 +169,7 @@ def wix_webhook_view(request):
             'message': 'Acceso sincronizado correctamente.',
             'user': user.username,
             'enrollments_count': len(enrollments)
-        }, status=201)
+        }, status=200)
 
     except Exception as e:
         logger.error(f"Error procesando el Webhook de Wix: {str(e)}", exc_info=True)

@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .admin-dashboard {
+        padding: 120px 48px 60px;
+        min-height: 100vh;
+        background: var(--bg);
+    }
+
+    .dashboard-header {
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+    }
+
+    .dashboard-header h1 {
+        font-family: 'Inter', sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-header p {
+        color: var(--muted);
+        font-size: 1.1rem;
+    }
+
+    /* STATS CARDS */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-bottom: 50px;
+    }
+
+    .stat-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(157, 0, 255, 0.3);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: rgba(157, 0, 255, 0.1);
+        color: var(--blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .stat-info h3 {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-info p {
+        margin: 5px 0 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    /* SECTIONS */
+    .dashboard-section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-title i {
+        color: var(--accent);
+    }
+
+    /* QUICK ACTIONS */
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .action-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-btn i {
+        font-size: 1.5rem;
+        color: var(--blue);
+    }
+
+    .action-btn:hover {
+        background: var(--blue);
+        border-color: var(--blue);
+        transform: translateY(-3px);
+    }
+
+    /* EMAIL FORM */
+    .email-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: white;
+        font-family: 'Roboto', sans-serif;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--blue);
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        background: var(--blue);
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-submit:hover {
+        background: #b042ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(157, 0, 255, 0.4);
+    }
+
+    /* ALERTS */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+    .alert-success {
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.2);
+        color: #4ade80;
+    }
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    @media (max-width: 768px) {
+        .admin-dashboard {
+            padding: 100px 20px 40px;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-dashboard">
+    <div class="dashboard-header scroll-reveal">
+        <h1>Panel Administrativo</h1>
+        <p>Gestión general de la plataforma ALUMED</p>
+    </div>
+
+    <!-- MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %} scroll-reveal">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card scroll-reveal delay-1">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+                <h3>Total Alumnos</h3>
+                <p>{{ total_students }}</p>
+            </div>
+        </div>
+        <div class="stat-card scroll-reveal delay-2">
+            <div class="stat-icon"><i class="fas fa-book"></i></div>
+            <div class="stat-info">
+                <h3>Cursos Activos</h3>
+                <p>{{ total_courses }}</p>
+            </div>
+        </div>
+        <div class="stat-card scroll-reveal delay-3">
+            <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+            <div class="stat-info">
+                <h3>Nuevos (Mes)</h3>
+                <p>{{ new_signups_month }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MASS EMAIL SECTION -->
+    <div class="dashboard-section scroll-reveal">
+        <h2 class="section-title"><i class="fas fa-envelope-open-text"></i> Comunicación Masiva</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">
+            Envíe un correo electrónico a <strong>todos los alumnos con matrícula activa</strong>.
+            El sistema añadirá automáticamente al final del correo el estado de la cuenta de cada alumno (curso, vencimiento y días restantes).
+        </p>
+
+        <form method="POST" class="email-form">
+            {% csrf_token %}
+            <input type="hidden" name="send_mass_email" value="true">
+
+            <div class="form-group">
+                <label for="subject">Asunto del Correo</label>
+                <input type="text" id="subject" name="subject" class="form-control" placeholder="Ej: Novedades en la plataforma..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="message_body">Mensaje</label>
+                <textarea id="message_body" name="message_body" class="form-control" placeholder="Escriba su mensaje aquí..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Enviar a Todos
+            </button>
+        </form>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="dashboard-section scroll-reveal">
+        <h2 class="section-title"><i class="fas fa-bolt"></i> Acciones Rápidas</h2>
+        <div class="actions-grid">
+            <a href="/admin/courses/course/" class="action-btn" target="_blank">
+                <i class="fas fa-chalkboard"></i>
+                Gestionar Cursos
+            </a>
+            <a href="/admin/auth/user/" class="action-btn" target="_blank">
+                <i class="fas fa-users-cog"></i>
+                Gestionar Usuarios
+            </a>
+            <a href="/admin/courses/enrollment/" class="action-btn" target="_blank">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Ver Matrículas
+            </a>
+            <a href="/admin/" class="action-btn" target="_blank">
+                <i class="fas fa-cogs"></i>
+                Django Admin Completo
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

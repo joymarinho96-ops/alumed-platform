@@ -1,0 +1,141 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block sidebar_content %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main_content %}
+<!-- Tech Grid Background -->
+<div class="courses-tech-grid" style="position: absolute; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; z-index: 1;"></div>
+
+<div style="position: relative; z-index: 5; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+    <!-- Section Header -->
+    <div class="section-header reveal-up" style="margin-bottom: 40px; text-align: center;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(167, 139, 250, 0.12); border-color: rgba(167, 139, 250, 0.4); color: #a78bfa; box-shadow: 0 0 25px rgba(167, 139, 250, 0.15); font-family: 'Orbitron', sans-serif; font-size: 11px; padding: 6px 16px; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-network-wired"></i> CONECTA FCM
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-family: 'Orbitron', sans-serif; font-size: clamp(32px, 4vw, 52px); margin-top: 15px; color: white; font-weight: 800;">
+            Portal <span class="home-hero-highlight" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Académico</span>
+        </h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 600px; margin-left: auto; margin-right: auto; color: #cbd5e1; font-size: 15px; line-height: 1.6;">
+            Accedé a todas las herramientas académicas de la Facultad de Ciencias Médicas en un solo lugar.
+        </p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;" class="reveal-up">
+        
+        <!-- Card 1: Cronograma de TPs -->
+        <a href="/cronograma-tps/" class="conecta-card" style="text-decoration: none;">
+            <div class="conecta-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="conecta-title">Cronograma de TPs</h3>
+            <p class="conecta-description">Fechas de cursadas y trabajos prácticos semanales de las materias oficiales de medicina.</p>
+            <div class="conecta-footer-link">
+                Acceder <i class="fas fa-chevron-right"></i>
+            </div>
+        </a>
+
+        <!-- Card 2: Parciales y Finales -->
+        <a href="/cronograma-finales/" class="conecta-card" style="text-decoration: none;">
+            <div class="conecta-icon-wrapper" style="background: rgba(167, 139, 250, 0.1); color: #a78bfa;">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h3 class="conecta-title">Parciales y Finales</h3>
+            <p class="conecta-description">Fechas de mesas de exámenes finales y parciales con calendario interactivo completo.</p>
+            <div class="conecta-footer-link">
+                Acceder <i class="fas fa-chevron-right"></i>
+            </div>
+        </a>
+
+        <!-- Card 3: Comisiones -->
+        <a href="/comisiones/" class="conecta-card" style="text-decoration: none;">
+            <div class="conecta-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="conecta-title">Distribución de Comisiones</h3>
+            <p class="conecta-description">Buscador y listado de alumnos distribuidos en las respectivas comisiones de cátedra.</p>
+            <div class="conecta-footer-link">
+                Acceder <i class="fas fa-chevron-right"></i>
+            </div>
+        </a>
+
+        <!-- Card 4: Plan de Estudios -->
+        <a href="/plan-estudios/" class="conecta-card" style="text-decoration: none;">
+            <div class="conecta-icon-wrapper" style="background: rgba(245, 197, 66, 0.1); color: #f5c542;">
+                <i class="fas fa-map-signs"></i>
+            </div>
+            <h3 class="conecta-title">Plan de Estudios</h3>
+            <p class="conecta-description">Correlatividades, materias obligatorias y optativas del plan curricular de medicina.</p>
+            <div class="conecta-footer-link">
+                Acceder <i class="fas fa-chevron-right"></i>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<style>
+    .conecta-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 250px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(10px);
+    }
+    .conecta-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(167, 139, 250, 0.3);
+        box-shadow: 0 12px 40px rgba(167, 139, 250, 0.08);
+    }
+    .conecta-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    .conecta-card:hover .conecta-icon-wrapper {
+        transform: scale(1.1);
+    }
+    .conecta-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: white;
+        margin: 0 0 10px 0;
+    }
+    .conecta-description {
+        font-size: 13.5px;
+        color: #94a3b8;
+        line-height: 1.5;
+        margin: 0 0 25px 0;
+        flex-grow: 1;
+    }
+    .conecta-footer-link {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: #a78bfa;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.2s ease;
+    }
+    .conecta-card:hover .conecta-footer-link {
+        transform: translateX(4px);
+    }
+</style>
+{% endblock %}

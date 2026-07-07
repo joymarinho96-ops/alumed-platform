@@ -1,0 +1,363 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block sidebar_content %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main_content %}
+<!-- Tech Grid Background -->
+<div class="courses-tech-grid" style="position: absolute; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; z-index: 1;"></div>
+
+<div style="position: relative; z-index: 5; padding: 40px 20px;">
+    <!-- Section Header -->
+    <div class="section-header reveal-up" style="margin-bottom: 30px; text-align: center;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(245, 197, 66, 0.12); border-color: rgba(245, 197, 66, 0.4); color: #f5c542; box-shadow: 0 0 25px rgba(245, 197, 66, 0.15); font-family: 'Orbitron', sans-serif; font-size: 11px; padding: 6px 16px; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-satellite-dish" style="animation: pulse 2s infinite;"></i> CARTELERA EN VIVO UNLP
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-family: 'Orbitron', sans-serif; font-size: clamp(32px, 4vw, 52px); margin-top: 15px; color: white; font-weight: 800;">Novedades <span class="home-hero-highlight" style="background: linear-gradient(135deg, #f5c542 0%, #ff8c00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Oficiales</span></h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 800px; margin-left: auto; margin-right: auto; color: #cbd5e1; font-size: 15px; line-height: 1.6;">
+            Accedé en tiempo real a las carteleras de la Facultad de Ciencias Médicas. Filtrá por materia, activá alertas en tu celular y no te pierdas nada.
+        </p>
+    </div>
+
+    <!-- Alert Configuration & Preference Settings -->
+    <div style="max-width: 1200px; margin: 0 auto 35px; background: rgba(245, 197, 66, 0.03); border: 1px solid rgba(245, 197, 66, 0.2); border-radius: 20px; padding: 25px 30px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.55); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;" class="reveal-up">
+        <!-- Subscriptions Checkboxes -->
+        <div>
+            <h3 style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #f5c542; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-check-double"></i> Mis Suscripciones
+            </h3>
+            <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Seleccioná qué departamentos o cátedras querés ver en tu feed y recibir en tus dispositivos:</p>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="pref-estudiantiles" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
+                    Asuntos Estudiantiles / Cursadas
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="pref-ensenanza" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
+                    Dirección de Enseñanza / Trámites
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="pref-academica" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
+                    Secretaría Académica
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="pref-catedras" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
+                    Cátedras y Materias (Anato, Histo, Biolo)
+                </label>
+            </div>
+        </div>
+
+        <!-- Devices Alert Setup -->
+        <div>
+            <h3 style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #f5c542; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-mobile-alt"></i> Alertas en tu Dispositivo
+            </h3>
+            <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Configurá tus alertas para recibir avisos automáticos al instante:</p>
+            
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="alert-whatsapp" placeholder="WhatsApp: +54 9 221 1234567" style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(245, 197, 66, 0.25); border-radius: 8px; color: white; font-size: 13px; outline: none;" onfocus="this.style.borderColor='#f5c542';">
+                    <button onclick="saveAlertSettings('whatsapp')" class="pomo-btn pomo-btn-main" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px; background: rgba(245,197,66,0.15); border-color: rgba(245,197,66,0.4); color: #f5c542;">
+                        <i class="fab fa-whatsapp"></i> Activar
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="alert-email" value="{{ user.email }}" readonly style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; color: #94a3b8; font-size: 13px; outline: none;">
+                    <button onclick="saveAlertSettings('email')" class="pomo-btn pomo-btn-option" id="btn-email-alert" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px; border-color: rgba(245,197,66,0.3); background: rgba(245,197,66,0.05); color: #cbd5e1;">
+                        <i class="far fa-envelope"></i> Activar Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Quick Filters Panel -->
+    <div style="max-width: 1200px; margin: 0 auto 30px; padding: 0 10px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center;" class="reveal-up">
+        <!-- Search Input -->
+        <div style="position: relative; width: 100%; max-width: 450px;">
+            <input type="text" id="cartelera-search" placeholder="Buscar por materia o palabra clave..." oninput="filterCartelera()" style="width: 100%; padding: 12px 16px 12px 42px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(245, 197, 66, 0.3); border-radius: 10px; color: white; outline: none; font-size: 14px; transition: all 0.3s;" onfocus="this.style.borderColor='#f5c542'; this.style.boxShadow='0 0 10px rgba(245,197,66,0.2)';" onblur="this.style.borderColor='rgba(245, 197, 66, 0.3)'; this.style.boxShadow='none';">
+            <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(245, 197, 66, 0.6); font-size: 14px;"></i>
+        </div>
+
+        <!-- Quick Subject Filters Tags -->
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="quick-filters">
+            <button onclick="setQuickFilter('Todos')" class="pomo-btn pomo-btn-option active-tag" id="tag-Todos" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Todos</button>
+            <button onclick="setQuickFilter('Anatomía')" class="pomo-btn pomo-btn-option" id="tag-Anatomía" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Anatomía</button>
+            <button onclick="setQuickFilter('Histología')" class="pomo-btn pomo-btn-option" id="tag-Histología" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Histología</button>
+            <button onclick="setQuickFilter('Biología')" class="pomo-btn pomo-btn-option" id="tag-Biología" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Biología</button>
+            <button onclick="setQuickFilter('Trámites')" class="pomo-btn pomo-btn-option" id="tag-Trámites" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Trámites / Cupos</button>
+        </div>
+    </div>
+
+    <!-- Live Notices Feed Grid (Yellow Highlight Theme) -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 10px;">
+        <div id="cartelera-notices-feed" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+            <!-- Loaded dynamically in JavaScript -->
+        </div>
+
+        <!-- No notices fallback -->
+        <div id="cartelera-no-results" style="display: none; text-align: center; padding: 80px 20px; color: #94a3b8;">
+            <i class="fas fa-satellite-dish" style="font-size: 48px; color: #f5c542; margin-bottom: 20px; animation: pulse 2s infinite;"></i>
+            <h4 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 20px; font-weight: 700;">No se encontraron avisos</h4>
+            <p style="font-size: 14.5px; margin-top: 8px; color: #94a3b8;">Modificá tus filtros, búsqueda o suscripciones.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Alert Container -->
+<div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); border: 1px solid #f5c542; box-shadow: 0 0 15px rgba(245, 197, 66, 0.3); border-radius: 8px; padding: 12px 20px; color: white; font-family:'Orbitron', sans-serif; font-size: 13px; display: flex; align-items: center; gap: 8px; transform: translateY(150px); transition: transform 0.3s ease; z-index: 9999;">
+    <i class="fas fa-check-circle" style="color: #f5c542;"></i>
+    <span id="toast-message">Guardado</span>
+</div>
+
+<script>
+    // Injected notices from backend scraper
+    const carteleraNoticesData = [
+        {% for notice in cartelera_notices %}
+        {
+            id: "{{ notice.id }}",
+            title: "{{ notice.title|escapejs }}",
+            date: "{{ notice.date }}",
+            url: "{{ notice.url }}",
+            subtitle: "{{ notice.subtitle|escapejs }}",
+            dept: "{{ notice.dept|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let activeQuickFilter = 'Todos';
+
+    function setQuickFilter(val) {
+        activeQuickFilter = val;
+        
+        // Toggle active tags
+        const tags = document.querySelectorAll('#quick-filters button');
+        tags.forEach(t => {
+            if (t.id === 'tag-' + val) {
+                t.classList.add('active-tag');
+                t.style.background = 'rgba(245, 197, 66, 0.15)';
+                t.style.borderColor = '#f5c542';
+                t.style.color = 'white';
+            } else {
+                t.classList.remove('active-tag');
+                t.style.background = '';
+                t.style.borderColor = '';
+                t.style.color = '';
+            }
+        });
+        
+        filterCartelera();
+    }
+
+    function saveAlertSettings(type) {
+        let msg = "";
+        if (type === 'whatsapp') {
+            const num = document.getElementById('alert-whatsapp').value.trim();
+            if (!num) {
+                alert("Por favor, ingresá un número de WhatsApp válido.");
+                return;
+            }
+            localStorage.setItem('alumed_alert_whatsapp', num);
+            msg = "¡Alertas de WhatsApp activadas con éxito!";
+        } else {
+            localStorage.setItem('alumed_alert_email', 'true');
+            msg = "¡Alertas de Email activadas con éxito!";
+        }
+        
+        // Show toast
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        if (toast && toastMsg) {
+            toastMsg.textContent = msg;
+            toast.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                toast.style.transform = 'translateY(150px)';
+            }, 3000);
+        }
+    }
+
+    function markAsRead(id) {
+        let readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
+        if (!readList.includes(id)) {
+            readList.push(id);
+            localStorage.setItem('alumed_read_notices', JSON.stringify(readList));
+        }
+        renderCarteleraFeed();
+    }
+
+    function filterCartelera() {
+        renderCarteleraFeed();
+    }
+
+    function renderCarteleraFeed() {
+        const feed = document.getElementById('cartelera-notices-feed');
+        if (!feed) return;
+        feed.innerHTML = '';
+
+        const showEstudiantiles = document.getElementById('pref-estudiantiles').checked;
+        const showEnsenanza = document.getElementById('pref-ensenanza').checked;
+        const showAcademica = document.getElementById('pref-academica').checked;
+        const showCatedras = document.getElementById('pref-catedras').checked;
+        const searchQuery = document.getElementById('cartelera-search').value.toLowerCase().trim();
+
+        const readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
+        
+        let filtered = carteleraNoticesData.filter(function(notice) {
+            const deptLower = notice.dept.toLowerCase();
+            const titleLower = notice.title.toLowerCase();
+            const subLower = notice.subtitle.toLowerCase();
+            
+            // Check mappings
+            const isEst = deptLower.includes('estudiant') || titleLower.includes('cupo') || titleLower.includes('relevamiento');
+            const isEns = deptLower.includes('enseñ') || deptLower.includes('ensen') || titleLower.includes('documentac') || titleLower.includes('trámite');
+            const isAcad = deptLower.includes('académ') || deptLower.includes('academ') || titleLower.includes('inscripc');
+            const isCatedra = !isEst && !isEns && !isAcad;
+
+            if (isEst && !showEstudiantiles) return false;
+            if (isEns && !showEnsenanza) return false;
+            if (isAcad && !showAcademica) return false;
+            if (isCatedra && !showCatedras) return false;
+            
+            // Search filter
+            if (searchQuery) {
+                const matchesSearch = titleLower.includes(searchQuery) || 
+                                      subLower.includes(searchQuery) || 
+                                      deptLower.includes(searchQuery);
+                if (!matchesSearch) return false;
+            }
+
+            // Quick Filters (Anatomía, Histología, Biología, Trámites)
+            if (activeQuickFilter !== 'Todos') {
+                if (activeQuickFilter === 'Anatomía') {
+                    if (!titleLower.includes('anato') && !deptLower.includes('anato')) return false;
+                } else if (activeQuickFilter === 'Histología') {
+                    if (!titleLower.includes('histo') && !deptLower.includes('histo')) return false;
+                } else if (activeQuickFilter === 'Biología') {
+                    if (!titleLower.includes('biolo') && !deptLower.includes('biolo')) return false;
+                } else if (activeQuickFilter === 'Trámites') {
+                    if (!isEns && !titleLower.includes('cupo') && !titleLower.includes('relevamiento')) return false;
+                }
+            }
+            
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            document.getElementById('cartelera-no-results').style.display = 'block';
+            feed.style.display = 'none';
+            return;
+        }
+
+        document.getElementById('cartelera-no-results').style.display = 'none';
+        feed.style.display = 'grid';
+
+        filtered.forEach(function(notice) {
+            const isUnread = !readList.includes(notice.id);
+            const card = document.createElement('div');
+            card.className = 'glass-card';
+            
+            // Premium Yellow Glow background on unread cards as requested!
+            card.style.background = isUnread ? 'rgba(245, 197, 66, 0.04)' : 'rgba(255, 255, 255, 0.02)';
+            card.style.border = isUnread ? '1px solid rgba(245, 197, 66, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)';
+            card.style.padding = '24px';
+            card.style.borderRadius = '16px';
+            card.style.display = 'flex';
+            card.style.flexDirection = 'column';
+            card.style.justifyContent = 'space-between';
+            card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            card.style.minHeight = '190px';
+            
+            if (isUnread) {
+                card.style.boxShadow = '0 0 20px rgba(245, 197, 66, 0.08)';
+            }
+
+            // Quick mapping for subject badge
+            let badgeHtml = '';
+            const tLower = notice.title.toLowerCase();
+            const dLower = notice.dept.toLowerCase();
+            if (tLower.includes('anato') || dLower.includes('anato')) {
+                badgeHtml = '<span style="font-size:10px; color:#f5c542; background:rgba(245,197,66,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Anatomía</span>';
+            } else if (tLower.includes('histo') || dLower.includes('histo')) {
+                badgeHtml = '<span style="font-size:10px; color:#a78bfa; background:rgba(167,139,250,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Histología</span>';
+            } else if (tLower.includes('biolo') || dLower.includes('biolo')) {
+                badgeHtml = '<span style="font-size:10px; color:#3b82f6; background:rgba(59,130,246,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Biología</span>';
+            } else if (isEns || tLower.includes('trámite') || tLower.includes('cupo')) {
+                badgeHtml = '<span style="font-size:10px; color:#10b981; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Trámites</span>';
+            }
+
+            const textContent = `
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 11px; color: #f5c542; font-weight: 600; background: rgba(245, 197, 66, 0.08); padding: 3px 10px; border-radius: 99px;">${notice.date}</span>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${badgeHtml}
+                            ${isUnread ? '<span style="font-size: 9px; color: #0B0B0B; font-weight: 800; background: #facc15; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-family: \'Orbitron\', sans-serif; box-shadow: 0 0 10px rgba(250,204,21,0.4);">Nuevo</span>' : ''}
+                        </div>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: white; margin: 0 0 8px 0; line-height: 1.4; font-family: 'Outfit', sans-serif;">${notice.title}</h3>
+                    ${notice.subtitle ? `<p style="font-size: 13px; color: #94a3b8; margin: 0 0 12px 0; line-height: 1.4;">${notice.subtitle}</p>` : ''}
+                </div>
+                <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 11px; color: #94a3b8; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${notice.dept}"><i class="far fa-building" style="margin-right: 4px;"></i> ${notice.dept}</span>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *Nuevo aviso en la Cartelera de Medicina UNLP!*\n\n*' + notice.title + '*\n_' + notice.dept + '_\nFecha: ' + notice.date + '\n\nVer noticia original: ' + notice.url)}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #25d366; font-size: 15px; transition: transform 0.2s;" title="Enviar a WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="${notice.url}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #f5c542; font-size: 12.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                            Ver Noticia <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+            card.innerHTML = textContent;
+            
+            // Hover effects
+            card.onmouseenter = () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.borderColor = 'rgba(245, 197, 66, 0.6)';
+                card.style.boxShadow = '0 10px 30px rgba(245, 197, 66, 0.15)';
+            };
+            card.onmouseleave = () => {
+                card.style.transform = 'none';
+                card.style.borderColor = isUnread ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.06)';
+                card.style.boxShadow = isUnread ? '0 0 20px rgba(245, 197, 66, 0.08)' : 'none';
+            };
+            
+            feed.appendChild(card);
+        });
+    }
+
+    // Load defaults on start
+    window.onload = function() {
+        const savedWa = localStorage.getItem('alumed_alert_whatsapp');
+        if (savedWa) {
+            document.getElementById('alert-whatsapp').value = savedWa;
+        }
+        
+        const savedEmail = localStorage.getItem('alumed_alert_email');
+        if (savedEmail) {
+            const btn = document.getElementById('btn-email-alert');
+            btn.innerHTML = '<i class="fas fa-check"></i> Activo';
+            btn.style.borderColor = '#10b981';
+            btn.style.background = 'rgba(16,185,129,0.1)';
+            btn.style.color = '#10b981';
+        }
+
+        renderCarteleraFeed();
+    };
+</script>
+
+<style>
+    .active-tag {
+        background: rgba(245, 197, 66, 0.15) !important;
+        border-color: #f5c542 !important;
+        color: white !important;
+        font-weight: 700 !important;
+    }
+</style>
+{% endblock %}

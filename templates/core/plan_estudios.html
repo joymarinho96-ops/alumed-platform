@@ -1,0 +1,450 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 120px 0 80px 0; background: radial-gradient(circle at center, rgba(245, 197, 66, 0.28) 0%, rgba(20, 10, 5, 0.95) 75%), #0a0502; min-height: 100vh; position: relative; overflow: hidden;">
+    
+    <!-- Glowing vintage rib cage background overlay (made transparent and placed behind contents) -->
+    <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -40%); width: min(650px, 95vw); height: min(800px, 120vh); background: url('/static/img/rib_cage_vintage.png') no-repeat center center; background-size: contain; opacity: 0.11; pointer-events: none; z-index: 0; filter: blur(0.5px);"></div>
+    
+    <!-- Top-level container -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1;">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;" class="reveal-up">
+            <span class="hero-badge" style="background: rgba(245, 197, 66, 0.1); border-color: rgba(245, 197, 66, 0.35); color: #f5c542; font-size: 12px; margin-bottom: 15px; display: inline-block; font-family:'Orbitron', sans-serif;">
+                <i class="fas fa-graduation-cap"></i> Plan de Cursada
+            </span>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(36px, 5vw, 54px); color: white; margin: 0; line-height: 1.1; font-weight: 900;">
+                Plan de <span class="home-hero-highlight" style="background: linear-gradient(135deg, #f5c542 0%, #ea580c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(245, 197, 66, 0.2);">Estudios</span>
+            </h1>
+            <p style="color: #cbd5e1; font-size: 16px; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 500;">
+                ✨ Una formación científica, clínica y profundamente humana.
+            </p>
+            <p style="color: #94a3b8; font-size: 14px; max-width: 800px; margin: 10px auto 0 auto; line-height: 1.6;">
+                La carrera de Medicina en la Universidad Nacional de La Plata (UNLP) dura seis años, articulando ciencias básicas, clínicas y sociales. El sistema de correlatividades asegura un avance progresivo y coherente en la formación médica.
+            </p>
+        </div>
+
+        <!-- Academic Info Notice Banner -->
+        <div style="background: rgba(245, 197, 66, 0.06); border: 1px solid rgba(245, 197, 66, 0.25); border-left: 4px solid #f5c542; padding: 20px; border-radius: 12px; margin-bottom: 40px; display: flex; gap: 15px; align-items: flex-start;" class="reveal-up">
+            <div style="color: #f5c542; font-size: 20px; margin-top: 2px;"><i class="fas fa-info-circle"></i></div>
+            <div>
+                <h4 style="color: white; margin: 0 0 5px 0; font-family:'Orbitron', sans-serif; font-size: 14px;">INFORMACIÓN IMPORTANTE</h4>
+                <p style="color: #94a3b8; font-size: 13px; margin: 0; line-height: 1.5;">
+                    El plan de estudios está estructurado para garantizar el desarrollo ordenado de competencias. Puedes hacer clic en cada año para expandir o contraer las materias correspondientes y sus correlatividades de final/cursada.
+                </p>
+            </div>
+        </div>
+
+        <!-- Years List Container -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+
+            <!-- Year 1 -->
+            <div class="year-card collapsed" id="year-card-1" class="reveal-up">
+                <div class="year-header" onclick="toggleYear(1)">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="year-number-badge">1</span>
+                        <div>
+                            <h3 class="year-header-title">1º Año – Fundamentos</h3>
+                            <p class="year-header-subtitle">Bases científicas de la medicina</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down year-arrow"></i>
+                </div>
+                <div class="year-body">
+                    <div class="subjects-group">
+                        <h4 class="group-title">Materias Obligatorias</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag">Anatomía</span>
+                            <span class="subject-tag">Biología</span>
+                            <span class="subject-tag">Histología y Embriología</span>
+                            <span class="subject-tag">Ciencias Sociales y Medicina</span>
+                            <span class="subject-tag">Informática Básica</span>
+                        </div>
+                    </div>
+                    <div class="subjects-group" style="margin-top: 20px;">
+                        <h4 class="group-title">Materias Optativas</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag optative">Ciencias Exactas</span>
+                            <span class="subject-tag optative">Seminario en Investigación Científica</span>
+                        </div>
+                    </div>
+                    <div class="correlativities-box">
+                        <i class="fas fa-check-circle" style="color: #10b981; margin-top: 2px;"></i>
+                        <p style="margin: 0;"><strong>Requisitos:</strong> Todas las materias son introductorias, sin requisitos previos de correlatividad.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year 2 -->
+            <div class="year-card collapsed" id="year-card-2" class="reveal-up">
+                <div class="year-header" onclick="toggleYear(2)">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="year-number-badge">2</span>
+                        <div>
+                            <h3 class="year-header-title">2º Año – Fisiología y Procesos Biológicos</h3>
+                            <p class="year-header-subtitle">Funcionamiento del cuerpo humano</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down year-arrow"></i>
+                </div>
+                <div class="year-body">
+                    <div class="subjects-group">
+                        <h4 class="group-title">Materias Obligatorias</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag">Fisiología y Física Biológica</span>
+                            <span class="subject-tag">Bioquímica y Biología Molecular</span>
+                            <span class="subject-tag">Psicología Médica</span>
+                            <span class="subject-tag">Epidemiología</span>
+                        </div>
+                    </div>
+                    <div class="subjects-group" style="margin-top: 20px;">
+                        <h4 class="group-title">Materias Optativas</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag optative">Ecología Humana</span>
+                            <span class="subject-tag optative">Historia de la Medicina</span>
+                        </div>
+                    </div>
+                    <div class="correlativities-box">
+                        <i class="fas fa-link" style="color: #c084fc; margin-top: 2px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <p style="margin: 0;"><strong>Correlatividades:</strong></p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Fisiología:</strong> Cursadas de Anatomía y Biología + final de Histología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Bioquímica:</strong> Cursada y final de Biología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Epidemiología:</strong> Final de Ciencias Sociales y Medicina.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Psicología Médica:</strong> Final de Anatomía.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year 3 -->
+            <div class="year-card collapsed" id="year-card-3" class="reveal-up">
+                <div class="year-header" onclick="toggleYear(3)">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="year-number-badge">3</span>
+                        <div>
+                            <h3 class="year-header-title">3º Año – Puente Clínico</h3>
+                            <p class="year-header-subtitle">Transición hacia la práctica médica</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down year-arrow"></i>
+                </div>
+                <div class="year-body">
+                    <div class="subjects-group">
+                        <h4 class="group-title">Materias Obligatorias</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag">Farmacología Básica</span>
+                            <span class="subject-tag">Microbiología y Parasitología</span>
+                            <span class="subject-tag">Patología</span>
+                            <span class="subject-tag">Semiología</span>
+                            <span class="subject-tag">Salud Comunitaria</span>
+                            <span class="subject-tag">Informática Médica</span>
+                            <span class="subject-tag">Inglés Médico</span>
+                        </div>
+                    </div>
+                    <div class="subjects-group" style="margin-top: 20px;">
+                        <h4 class="group-title">Materias Optativas</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag optative">Genética</span>
+                            <span class="subject-tag optative">Inmunología</span>
+                            <span class="subject-tag optative">Salud Ambiental</span>
+                            <span class="subject-tag optative">Estadística</span>
+                            <span class="subject-tag optative">Neuroanatomía</span>
+                        </div>
+                    </div>
+                    <div class="correlativities-box">
+                        <i class="fas fa-link" style="color: #c084fc; margin-top: 2px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <p style="margin: 0;"><strong>Correlatividades:</strong></p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Farmacología y Microbiología:</strong> Finales de Fisiología y Bioquímica.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Patología:</strong> Finales de Anatomía y Fisiología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Semiología:</strong> Finales de Anatomía, Fisiología y Bioquímica.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Informática Médica:</strong> Final de Informática Básica.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year 4 -->
+            <div class="year-card collapsed" id="year-card-4" class="reveal-up">
+                <div class="year-header" onclick="toggleYear(4)">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="year-number-badge">4</span>
+                        <div>
+                            <h3 class="year-header-title">4º Año – Práctica Clínica Inicial</h3>
+                            <p class="year-header-subtitle">Primeras experiencias clínicas</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down year-arrow"></i>
+                </div>
+                <div class="year-body">
+                    <div class="subjects-group">
+                        <h4 class="group-title">Materias Obligatorias</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag">Cirugía I</span>
+                            <span class="subject-tag">Medicina Interna I</span>
+                            <span class="subject-tag">Farmacología Aplicada</span>
+                            <span class="subject-tag">Infectología</span>
+                            <span class="subject-tag">Dermatología</span>
+                            <span class="subject-tag">Neurología</span>
+                            <span class="subject-tag">Oftalmología</span>
+                            <span class="subject-tag">Ortopedia</span>
+                            <span class="subject-tag">Otorrinolaringología</span>
+                            <span class="subject-tag">Psiquiatría I</span>
+                            <span class="subject-tag">Salud Pública I</span>
+                            <span class="subject-tag">Urología</span>
+                            <span class="subject-tag">Diagnóstico por Imágenes I</span>
+                        </div>
+                    </div>
+                    <div class="subjects-group" style="margin-top: 20px;">
+                        <h4 class="group-title">Materias Optativas</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag optative">Bioquímica Clínica I</span>
+                            <span class="subject-tag optative">Nutrición Clínica</span>
+                            <span class="subject-tag optative">Filosofía Médica</span>
+                        </div>
+                    </div>
+                    <div class="correlativities-box">
+                        <i class="fas fa-link" style="color: #c084fc; margin-top: 2px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <p style="margin: 0;"><strong>Correlatividades:</strong></p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Cirugía I:</strong> Finales de Patología y Semiología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Infectología y Medicina Interna I:</strong> Cursadas de Microbiología y Farmacología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Psiquiatría I:</strong> Cursadas de Psicología Médica y Farmacología Básica.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year 5 -->
+            <div class="year-card collapsed" id="year-card-5" class="reveal-up">
+                <div class="year-header" onclick="toggleYear(5)">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="year-number-badge">5</span>
+                        <div>
+                            <h3 class="year-header-title">5º Año – Integración Clínica</h3>
+                            <p class="year-header-subtitle">Consolidación de conocimientos clínicos</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down year-arrow"></i>
+                </div>
+                <div class="year-body">
+                    <div class="subjects-group">
+                        <h4 class="group-title">Materias Obligatorias</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag">Cirugía II</span>
+                            <span class="subject-tag">Medicina Interna II</span>
+                            <span class="subject-tag">Pediatría</span>
+                            <span class="subject-tag">Ginecología</span>
+                            <span class="subject-tag">Obstetricia</span>
+                            <span class="subject-tag">Psiquiatría II</span>
+                            <span class="subject-tag">Salud Pública II</span>
+                            <span class="subject-tag">Deontología y Medicina Legal</span>
+                            <span class="subject-tag">Diagnóstico por Imágenes II</span>
+                            <span class="subject-tag">Toxicología</span>
+                        </div>
+                    </div>
+                    <div class="subjects-group" style="margin-top: 20px;">
+                        <h4 class="group-title">Materias Optativas</h4>
+                        <div class="tags-container">
+                            <span class="subject-tag optative">Terapia Intensiva</span>
+                            <span class="subject-tag optative">Cirugía de Tórax</span>
+                            <span class="subject-tag optative">Discapacidad Intelectual</span>
+                            <span class="subject-tag optative">Trasplante</span>
+                            <span class="subject-tag optative">Bioética</span>
+                            <span class="subject-tag optative">Bioquímica Clínica II</span>
+                            <span class="subject-tag optative">Calidad de la Atención</span>
+                            <span class="subject-tag optative">Enfermedades Poco Frecuentes</span>
+                        </div>
+                    </div>
+                    <div class="correlativities-box">
+                        <i class="fas fa-link" style="color: #c084fc; margin-top: 2px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <p style="margin: 0;"><strong>Correlatividades:</strong></p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Cirugía II:</strong> Final de Cirugía I.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Ginecología y Obstetricia:</strong> Cursadas de Cirugía I, Farmacología e Infectología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Pediatría:</strong> Cursadas de Farmacología e Infectología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Psiquiatría II:</strong> Cursada de Psiquiatría I + finales de Farmacología, Microbiología y Patología.</p>
+                            <p style="margin: 0; font-size: 13px;">• <strong>Salud Pública II:</strong> Cursada de Salud Pública I.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year 6 PFO Card -->
+            <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(34, 211, 238, 0.15) 100%); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 20px; padding: 40px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);" class="reveal-up">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 24px;">
+                    <span style="font-size: 32px;">👩‍⚕️</span>
+                    <h2 style="font-family: 'Orbitron', sans-serif; font-size: clamp(20px, 3vw, 26px); color: white; margin: 0;">
+                        6º Año – Práctica Final Obligatoria (PFO)
+                    </h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); padding: 20px; border-radius: 12px; backdrop-filter: blur(5px);">
+                        <strong style="color: #c084fc; font-size: 12px; text-transform: uppercase; font-family:'Orbitron', sans-serif; display: block; margin-bottom: 8px;">Duración</strong>
+                        <p style="color: white; margin: 0; font-size: 15px; font-weight: 700;">Anual (1400 horas)</p>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); padding: 20px; border-radius: 12px; backdrop-filter: blur(5px);">
+                        <strong style="color: #c084fc; font-size: 12px; text-transform: uppercase; font-family:'Orbitron', sans-serif; display: block; margin-bottom: 8px;">Modalidad</strong>
+                        <p style="color: white; margin: 0; font-size: 15px; font-weight: 700;">Rotaciones hospitalarias</p>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); padding: 20px; border-radius: 12px; backdrop-filter: blur(5px);">
+                        <strong style="color: #c084fc; font-size: 12px; text-transform: uppercase; font-family:'Orbitron', sans-serif; display: block; margin-bottom: 8px;">Áreas de Rotación</strong>
+                        <p style="color: white; margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4;">Clínica, Cirugía, Pediatría, Ginecología y APS</p>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); padding: 20px; border-radius: 12px; backdrop-filter: blur(5px);">
+                        <strong style="color: #c084fc; font-size: 12px; text-transform: uppercase; font-family:'Orbitron', sans-serif; display: block; margin-bottom: 8px;">Requisito de Ingreso</strong>
+                        <p style="color: white; margin: 0; font-size: 15px; font-weight: 700;">Todos los finales aprobados</p>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 12px; text-align: center; font-size: 15px; color: #cbd5e1; line-height: 1.6; font-style: italic;">
+                    "La PFO integra todos los saberes prácticos y teóricos acumulados, marcando el inicio del ejercicio profesional responsable y con calidad humana."
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Plan de Estudios Custom CSS styles -->
+<style>
+.year-card {
+    background: rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+.year-card:hover {
+    border-color: rgba(168, 85, 247, 0.3);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.08);
+}
+.year-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+.year-number-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #c084fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.year-header-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+}
+.year-header-subtitle {
+    color: #94a3b8;
+    font-size: 13px;
+    margin: 4px 0 0 0;
+}
+.year-arrow {
+    color: #c084fc;
+    font-size: 16px;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.year-card.collapsed .year-arrow {
+    transform: rotate(-90deg);
+}
+.year-body {
+    max-height: 2000px;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.year-card.collapsed .year-body {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    border-top-color: transparent;
+    pointer-events: none;
+}
+.group-title {
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    font-family:'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.subject-tag {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.subject-tag:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+    transform: scale(1.03);
+}
+.subject-tag.optative {
+    border-style: dashed;
+    border-color: rgba(34, 211, 238, 0.4);
+    color: #22d3ee;
+}
+.subject-tag.optative:hover {
+    background: rgba(34, 211, 238, 0.15);
+    border-color: rgba(34, 211, 238, 0.5);
+    color: #22d3ee;
+}
+.correlativities-box {
+    margin-top: 24px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.5;
+}
+</style>
+
+<!-- Accordion Toggle script -->
+<script>
+function toggleYear(yearNum) {
+    const card = document.getElementById(`year-card-${yearNum}`);
+    if (card) {
+        card.classList.toggle('collapsed');
+    }
+}
+</script>
+{% endblock %}

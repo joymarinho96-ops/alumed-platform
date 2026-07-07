@@ -1,0 +1,36 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <div style="font-size: 4rem; color: #ef4444; margin-bottom: 20px; animation: shake 0.5s ease-in-out;">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h2 style="color: #ef4444;">Pago Rechazado</h2>
+        <p>Lo sentimos, no pudimos procesar tu pago.</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+        <p style="color: var(--muted); line-height: 1.6;">
+            Por favor, verifica los datos de tu tarjeta o intenta con otro método de pago.
+        </p>
+    </div>
+
+    <a href="{% url 'home' %}#cursos" class="auth-btn" style="text-decoration: none; display: block; text-align: center; background: #ef4444; color: white; border: none; margin-bottom: 15px;">
+        Intentar de Nuevo
+    </a>
+    
+    <div class="auth-footer">
+        <a href="{% url 'home' %}" style="font-size: 0.85rem; color: var(--muted); font-weight: normal;">
+            <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+    </div>
+    
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+{% endblock %}

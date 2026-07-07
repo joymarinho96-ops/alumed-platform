@@ -1,0 +1,805 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chatmed - ALUMED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #070b16;
+            --panel: rgba(12, 18, 34, 0.94);
+            --panel-2: rgba(18, 26, 47, 0.9);
+            --border: rgba(148, 163, 184, 0.22);
+            --text: #f8fafc;
+            --muted: #b7c3da;
+            --primary: #8b5cf6;
+            --primary-2: #6366f1;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background:
+                radial-gradient(720px 300px at 20% -10%, rgba(139, 92, 246, 0.22), transparent 60%),
+                radial-gradient(650px 300px at 85% 5%, rgba(99, 102, 241, 0.2), transparent 62%),
+                linear-gradient(180deg, #070b16, #0a1223);
+            color: var(--text);
+        }
+
+        .app {
+            height: 100dvh;
+            display: flex;
+        }
+
+        .main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin: 10px;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .users-list {
+            background: linear-gradient(180deg, rgba(17, 24, 42, 0.96), rgba(10, 15, 28, 0.96));
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .users-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .users-title {
+            font-family: "Outfit", sans-serif;
+            font-size: 24px;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        .users-chip {
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #d8b4fe;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .users-tools {
+            padding: 12px 12px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9fb0cc;
+            font-size: 13px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            background: rgba(24, 34, 56, 0.9);
+            color: var(--text);
+            padding: 0 12px 0 32px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: rgba(167, 139, 250, 0.7);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.04);
+            color: #b7c3da;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+            border-color: rgba(167, 139, 250, 0.5);
+            color: #f8fafc;
+        }
+
+        .pending-wrap {
+            margin: 0 10px 10px;
+            background: rgba(10, 15, 28, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pending-head {
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #d8b4fe;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--border);
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .pending-list {
+            max-height: 128px;
+            overflow-y: auto;
+        }
+
+        .pending-item {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #d2dcf0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .pending-item:last-child { border-bottom: none; }
+        .pending-item:hover { background: rgba(139, 92, 246, 0.14); }
+
+        .pending-count {
+            min-width: 20px;
+            text-align: center;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .users-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .user-item:hover {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(167, 139, 250, 0.35);
+        }
+
+        .user-item.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.16));
+            border-color: rgba(167, 139, 250, 0.5);
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .user-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-status {
+            display: block;
+            color: #aab7cf;
+            font-size: 12px;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .verified-badge { color: #60a5fa; font-size: 13px; }
+
+        .user-unread {
+            min-width: 20px;
+            text-align: center;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: rgba(239, 68, 68, 0.95);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: none;
+        }
+
+        .chat-window {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: linear-gradient(180deg, rgba(15, 21, 38, 0.97), rgba(9, 14, 27, 0.98));
+        }
+
+        .chat-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        #back-to-users {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #d4d4d8;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #f8fafc;
+        }
+
+        .chat-presence {
+            font-size: 12px;
+            color: #22c55e;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 78%;
+            padding: 10px 12px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: rgba(148, 163, 184, 0.2);
+            border-bottom-left-radius: 4px;
+            color: #e2e8f0;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            border-bottom-right-radius: 4px;
+            color: #fff;
+        }
+
+        .message-time {
+            display: block;
+            font-size: 11px;
+            opacity: 0.78;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            background: rgba(9, 14, 27, 0.95);
+        }
+
+        .chat-input {
+            flex: 1;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(167, 139, 250, 0.34);
+            background: rgba(24, 34, 56, 0.9);
+            color: var(--text);
+            padding: 0 14px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: rgba(167, 139, 250, 0.75);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16);
+        }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover { transform: translateY(-1px); }
+
+        .empty-chat {
+            margin: auto;
+            color: #aebbd4;
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .empty-chat i {
+            font-size: 34px;
+            color: #8b5cf6;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 860px) {
+            .main {
+                grid-template-columns: 1fr;
+                margin: 0;
+                border-radius: 0;
+                border: none;
+            }
+
+            .users-list {
+                position: absolute;
+                inset: 0;
+                z-index: 2;
+                transform: translateX(0);
+                transition: transform 0.25s ease;
+            }
+
+            .users-list.hidden {
+                transform: translateX(-100%);
+            }
+
+            .chat-window {
+                position: absolute;
+                inset: 0;
+                z-index: 3;
+                transform: translateX(100%);
+                transition: transform 0.25s ease;
+            }
+
+            .chat-window.active {
+                transform: translateX(0);
+            }
+
+            #back-to-users {
+                display: inline-flex;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <main class="main" id="main-container">
+        <div class="users-list" id="usersList">
+            <div class="users-header">
+                <h2 class="users-title">Chatmed</h2>
+                <span class="users-chip" id="usersUnreadChip">0 no leidas</span>
+            </div>
+
+            <div class="users-tools">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input id="userSearch" class="search-input" type="text" placeholder="Buscar conversaciones...">
+                </div>
+                <div class="filter-row">
+                    <button class="filter-btn active" data-filter="all" type="button">Todas</button>
+                    <button class="filter-btn" data-filter="unread" type="button">No leidas</button>
+                </div>
+            </div>
+
+            <div class="pending-wrap" id="pendingWrap" style="display:none;">
+                <div class="pending-head">Notificaciones pendientes</div>
+                <div class="pending-list" id="pendingList"></div>
+            </div>
+
+            <div class="users-scroll" id="usersScroll">
+                {% for u in users_data %}
+                <div
+                    class="user-item"
+                    data-user-id="{{ u.id }}"
+                    data-username="{{ u.username }}"
+                    data-display-name="{{ u.display_name }}"
+                    data-is-staff="{{ u.is_staff|yesno:'true,false' }}"
+                    data-unread="{{ u.unread_count }}"
+                    data-last-msg="{{ u.last_message|default:''|escape }}"
+                    onclick="selectUserFromList(this)">
+                    <div class="user-avatar" id="avatar-{{ u.id }}">
+                        {% if u.photo_url %}
+                            <img src="{{ u.photo_url }}" alt="{{ u.username }}">
+                        {% else %}
+                            {{ u.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">
+                            {{ u.display_name }}
+                            {% if u.is_staff %}
+                                <i class="fas fa-check-circle verified-badge" title="Staff"></i>
+                            {% endif %}
+                        </span>
+                        <span class="user-status">{% if u.last_message %}{{ u.last_message|truncatechars:48 }}{% else %}Sin mensajes aún{% endif %}</span>
+                    </div>
+                    <span class="user-unread" style="{% if u.unread_count %}display:inline-block;{% endif %}">{{ u.unread_count }}</span>
+                </div>
+                {% empty %}
+                <div style="padding:20px; color:var(--muted); text-align:center;">No hay otros alumnos disponibles.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <button id="back-to-users" type="button"><i class="fas fa-arrow-left"></i></button>
+                <div class="user-avatar" id="chatHeaderAvatar">?</div>
+                <div>
+                    <div class="chat-name" id="chatHeaderName">Selecciona una conversación</div>
+                    <div class="chat-presence" id="chatHeaderPresence">• En linea</div>
+                </div>
+            </div>
+            <div class="chat-messages" id="messagesContainer">
+                <div class="empty-chat" id="emptyChatState">
+                    <i class="fas fa-comments"></i>
+                    Elige una conversación para ver mensajes y responder.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="messageInput" placeholder="Escribe un mensaje..." disabled>
+                <button class="send-btn" id="sendBtn" type="button" onclick="sendMessage()" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let currentUserId = null;
+    let pollingInterval = null;
+    let unreadRefreshInterval = null;
+    const initialUserId = {% if initial_user_id %}{{ initial_user_id }}{% else %}null{% endif %};
+    const chatWindow = document.getElementById('chatWindow');
+    const usersList = document.getElementById('usersList');
+    const backButton = document.getElementById('back-to-users');
+    const usersUnreadChip = document.getElementById('usersUnreadChip');
+    const pendingWrap = document.getElementById('pendingWrap');
+    const pendingList = document.getElementById('pendingList');
+    const searchInput = document.getElementById('userSearch');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const emptyState = document.getElementById('emptyChatState');
+
+    let activeFilter = 'all';
+
+    const notificationSound = new Audio('{% static "sound/notificação.mp3" %}');
+
+    function getUserItems() {
+        return Array.from(document.querySelectorAll('.user-item'));
+    }
+
+    function getUserCardById(userId) {
+        return document.querySelector(`.user-item[data-user-id="${userId}"]`);
+    }
+
+    function getUserMeta(card) {
+        return {
+            userId: parseInt(card.dataset.userId, 10),
+            username: card.dataset.username,
+            displayName: card.dataset.displayName,
+            isStaff: card.dataset.isStaff === 'true',
+            unread: parseInt(card.dataset.unread || '0', 10)
+        };
+    }
+
+    function applyUserFilters() {
+        const term = (searchInput.value || '').toLowerCase().trim();
+        getUserItems().forEach(card => {
+            const name = (card.dataset.displayName + ' ' + card.dataset.username).toLowerCase();
+            const unread = parseInt(card.dataset.unread || '0', 10);
+            const matchesSearch = !term || name.includes(term);
+            const matchesFilter = activeFilter === 'all' ? true : unread > 0;
+            card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
+        });
+    }
+
+    function refreshPendingList(fromApiRows = null) {
+        const rows = [];
+        if (Array.isArray(fromApiRows) && fromApiRows.length) {
+            fromApiRows.forEach(row => {
+                const card = getUserCardById(row.sender_id);
+                if (!card) return;
+                const meta = getUserMeta(card);
+                const name = ((row.sender__first_name || '') + ' ' + (row.sender__last_name || '')).trim() || row.sender__username || meta.displayName;
+                rows.push({ sender_id: row.sender_id, name, count: row.count });
+            });
+        } else {
+            getUserItems().forEach(card => {
+                const meta = getUserMeta(card);
+                if (meta.unread > 0) rows.push({ sender_id: meta.userId, name: meta.displayName, count: meta.unread });
+            });
+        }
+
+        pendingList.innerHTML = '';
+        if (!rows.length) {
+            pendingWrap.style.display = 'none';
+            return;
+        }
+
+        pendingWrap.style.display = 'block';
+        rows.sort((a, b) => b.count - a.count).forEach(row => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pending-item';
+            btn.innerHTML = `<span>${row.name}</span><span class="pending-count">${row.count}</span>`;
+            btn.addEventListener('click', () => {
+                const card = getUserCardById(row.sender_id);
+                if (card) selectUserFromList(card);
+            });
+            pendingList.appendChild(btn);
+        });
+    }
+
+    function updateUnreadChip() {
+        const total = getUserItems().reduce((acc, card) => acc + parseInt(card.dataset.unread || '0', 10), 0);
+        usersUnreadChip.textContent = `${total} no leidas`;
+    }
+
+    function setUserUnread(userId, count) {
+        const card = getUserCardById(userId);
+        if (!card) return;
+        card.dataset.unread = count;
+        const badge = card.querySelector('.user-unread');
+        if (!badge) return;
+        if (count > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = count;
+        } else {
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+    }
+
+    function selectUserFromList(card) {
+        const meta = getUserMeta(card);
+        currentUserId = meta.userId;
+
+        getUserItems().forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        const headerName = document.getElementById('chatHeaderName');
+        headerName.innerHTML = meta.displayName + (meta.isStaff ? ' <i class="fas fa-check-circle verified-badge" title="Staff"></i>' : '');
+
+        const headerAvatar = document.getElementById('chatHeaderAvatar');
+        const avatarNode = card.querySelector('.user-avatar').cloneNode(true);
+        headerAvatar.replaceWith(avatarNode);
+        avatarNode.id = 'chatHeaderAvatar';
+
+        usersList.classList.add('hidden');
+        chatWindow.classList.add('active');
+        messageInput.disabled = false;
+        sendBtn.disabled = false;
+        messageInput.focus();
+
+        loadMessages();
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(loadMessages, 3000);
+    }
+
+    function backToUsersList() {
+        chatWindow.classList.remove('active');
+        usersList.classList.remove('hidden');
+        currentUserId = null;
+        messageInput.disabled = true;
+        sendBtn.disabled = true;
+        if (pollingInterval) clearInterval(pollingInterval);
+    }
+
+    backButton.addEventListener('click', backToUsersList);
+
+    let lastMessageCount = 0;
+
+    function loadMessages() {
+        if (!currentUserId) return;
+
+        fetch(`/chatmed/get/${currentUserId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('messagesContainer');
+                const wasScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 2;
+
+                if (data.messages.length > lastMessageCount) {
+                    const lastMsg = data.messages[data.messages.length - 1];
+                    if (!lastMsg.is_me) {
+                        notificationSound.play().catch(() => {});
+                    }
+                }
+                lastMessageCount = data.messages.length;
+
+                if (!data.messages.length) {
+                    container.innerHTML = `<div class="empty-chat"><i class="fas fa-inbox"></i>No hay mensajes todavía en esta conversación.</div>`;
+                } else {
+                    container.innerHTML = data.messages.map(msg => `
+                        <div class="message ${msg.is_me ? 'sent' : 'received'}">
+                            ${msg.content}
+                            <span class="message-time">${msg.timestamp}</span>
+                        </div>
+                    `).join('');
+                }
+
+                if (wasScrolledToBottom || container.scrollTop === 0) {
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                setUserUnread(currentUserId, 0);
+                updateUnreadChip();
+                refreshPendingList();
+                applyUserFilters();
+            });
+    }
+
+    function sendMessage() {
+        const content = messageInput.value.trim();
+        if (!content || !currentUserId) return;
+
+        const formData = new FormData();
+        formData.append('receiver_id', currentUserId);
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        fetch('/chatmed/send/', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    messageInput.value = '';
+                    loadMessages();
+                }
+            });
+    }
+
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    searchInput.addEventListener('input', applyUserFilters);
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            applyUserFilters();
+        });
+    });
+
+    function refreshUnreadState() {
+        fetch('/chatmed/check-unread/')
+            .then(response => response.json())
+            .then(data => {
+                const rows = Array.isArray(data.by_user) ? data.by_user : [];
+                const countByUser = {};
+                rows.forEach(row => { countByUser[row.sender_id] = row.count; });
+
+                getUserItems().forEach(card => {
+                    const uid = parseInt(card.dataset.userId, 10);
+                    setUserUnread(uid, countByUser[uid] || 0);
+                });
+
+                updateUnreadChip();
+                refreshPendingList(rows);
+                applyUserFilters();
+            })
+            .catch(() => {});
+    }
+
+    // Init
+    applyUserFilters();
+    refreshUnreadState();
+    if (initialUserId) {
+        const initialCard = getUserCardById(initialUserId);
+        if (initialCard) {
+            selectUserFromList(initialCard);
+        }
+    }
+    unreadRefreshInterval = setInterval(refreshUnreadState, 8000);
+</script>
+</body>
+</html>

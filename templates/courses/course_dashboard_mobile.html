@@ -1,0 +1,880 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ course.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <!-- Adicionado suporte a YouTube -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/3.0.1/Youtube.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #0f0518;
+            --panel: #1a0b2e;
+            --accent: #f5c542;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: rgba(255,255,255,0.08);
+            --roxo-mid: #4a0075;
+            --roxo-neon: #9d00ff;
+            --green: #4ade80;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; /* Evita scroll no body, scroll será interno */
+            user-select: none; /* Bloqueia seleção de texto globalmente */
+            -webkit-user-select: none;
+        }
+
+        /* --- HEADER --- */
+        .mobile-header {
+            height: 50px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .back-btn { color: var(--text); font-size: 1.2rem; text-decoration: none; }
+        .course-title { font-size: 0.95rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+        .menu-btn { color: var(--text); font-size: 1.2rem; background: none; border: none; }
+
+        /* --- MEDIA WRAPPER (Video/Podcast/PDF) --- */
+        .media-wrapper {
+            width: 100%;
+            position: relative;
+            background: #000;
+            flex-shrink: 0;
+            /* Aspect Ratio 16:9 padrão para vídeo */
+            padding-top: 56.25%;
+            z-index: 10;
+            transition: all 0.3s ease; /* Animação suave */
+        }
+
+        /* Quando for podcast, aumentamos a altura e removemos o padding-top */
+        .media-wrapper.podcast-mode {
+            padding-top: 0;
+            height: 350px; /* Altura fixa confortável para lista */
+            background: #121212;
+        }
+
+        /* Elementos absolutos dentro do wrapper */
+        .video-js, .video-placeholder, .video-loader, .content-overlay {
+            position: absolute !important;
+            top: 0; left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            border: none;
+        }
+
+        .video-js { z-index: 10; }
+
+        .video-placeholder {
+            z-index: 15;
+            background: radial-gradient(circle, #240b3b, #000);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--muted);
+        }
+
+        .video-loader {
+            z-index: 20;
+            background: #000;
+            display: none; align-items: center; justify-content: center;
+            color: var(--accent);
+        }
+
+        .content-overlay {
+            z-index: 12;
+            background: #fff;
+            display: none;
+        }
+
+        .drive-frame-shield {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 180px;
+            height: 58px;
+            z-index: 20;
+            background: transparent;
+        }
+
+        /* PODCAST OVERLAY - Estilo Spotify */
+        .podcast-overlay {
+            z-index: 12;
+            background: #121212; /* Fundo Spotify Dark */
+            display: none;
+            flex-direction: column; /* Para header fixo e lista scrollável */
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .podcast-header-bg {
+            background: linear-gradient(to bottom, var(--roxo-mid), #121212);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0; /* Header não encolhe */
+        }
+
+        .podcast-cover-icon {
+            width: 60px; height: 60px;
+            background: #1db954; /* Spotify Green */
+            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: black;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .podcast-meta h3 { margin: 0; font-size: 1rem; color: white; }
+        .podcast-meta span { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+
+        .podcast-list {
+            padding: 10px;
+            overflow-y: auto; /* Lista scrollável */
+            flex: 1;
+        }
+
+        .podcast-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+
+        .podcast-item:hover { background: rgba(255,255,255,0.1); }
+
+        .podcast-row-top {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .podcast-ep-title {
+            font-weight: 600; font-size: 0.9rem; color: white;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .podcast-ep-number {
+            color: #b3b3b3; font-size: 0.8rem; font-weight: 400;
+        }
+
+        .podcast-player-native {
+            width: 100%;
+            height: 32px;
+            outline: none;
+        }
+
+        /* Estilizando o player nativo (Webkit) */
+        audio::-webkit-media-controls-panel { background-color: #282828; }
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display { color: white; }
+
+        /* Esconde botão de download no Chrome/Edge */
+        audio::-webkit-media-controls-enclosure {
+            overflow: hidden;
+        }
+        audio::-webkit-media-controls-panel {
+            width: calc(100% + 30px); /* Empurra o botão de download para fora */
+        }
+
+        /* VideoJS Customization */
+        .video-js .vjs-big-play-button {
+            background-color: rgba(157, 0, 255, 0.8);
+            border: none; border-radius: 50%;
+            width: 60px; height: 60px;
+            line-height: 60px; font-size: 2.5em;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* --- SPECIAL CONTENT STYLES (NEW) --- */
+        .special-content-overlay {
+            z-index: 12;
+            background: #1a0b2e;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .special-content-icon {
+            font-size: 3rem;
+            color: #FFDE21;
+            margin-bottom: 15px;
+        }
+
+        .special-content-title {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .special-content-btn {
+            background: #FFDE21;
+            color: #1a0b2e;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- TABS --- */
+        .tabs-nav {
+            display: flex;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            flex: 1; padding: 14px 0;
+            background: none; border: none;
+            color: var(--muted); font-weight: 500; font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        /* --- SCROLLABLE CONTENT --- */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            position: relative;
+        }
+        .tab-pane { display: none; padding-bottom: 40px; }
+        .tab-pane.active { display: block; }
+
+        /* --- MODULES & LESSONS --- */
+        .module-header {
+            padding: 16px; background: rgba(255,255,255,0.02);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; border-bottom: 1px solid var(--border);
+        }
+        .module-title { font-weight: 600; font-size: 0.9rem; color: #fff; }
+        .lesson-list { display: none; background: rgba(0,0,0,0.2); }
+        .module-item.open .lesson-list { display: block; }
+
+        .lesson-item {
+            padding: 14px 16px 14px 24px;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+        }
+        .lesson-item.active { background: rgba(157, 0, 255, 0.1); border-left: 3px solid var(--accent); padding-left: 21px; }
+        .lesson-item.completed .lesson-status { color: var(--green); }
+        .lesson-status { color: var(--muted); width: 20px; text-align: center; }
+        .lesson-title { font-size: 0.9rem; color: var(--text); flex: 1; }
+
+        /* --- INFO & ACTIONS --- */
+        .info-container { padding: 20px; }
+        .action-bar { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-action {
+            flex: 1; padding: 12px; border-radius: 8px; border: none;
+            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-complete { background: var(--green); color: #000; }
+        .btn-complete.completed { background: rgba(74, 222, 128, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .btn-like { background: var(--panel); color: var(--text); border: 1px solid var(--border); }
+        .btn-like.active { color: #9d00ff; border-color: #9d00ff; }
+
+        /* --- DESCRIPTION BOX (MOBILE) --- */
+        .lesson-description-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #ddd;
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: pre-wrap;
+            display: none; /* Hidden by default */
+        }
+        .lesson-description-box a {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* --- COMMENTS --- */
+        .comments-container { padding: 16px; }
+        .comment-input-wrapper {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            background: var(--panel); padding: 10px; border-radius: 12px; border: 1px solid var(--border);
+        }
+        .comment-input { flex: 1; background: none; border: none; color: white; outline: none; }
+        .comment-item { margin-bottom: 16px; display: flex; gap: 10px; }
+        .avatar-small {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--roxo-mid);
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;
+        }
+        .comment-body { flex: 1; }
+        .comment-author { font-weight: 600; font-size: 0.85rem; color: var(--accent); }
+        .comment-text { font-size: 0.9rem; color: #ddd; }
+
+        /* --- FULLSCREEN BUTTON --- */
+        .fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle { display: block; }
+
+            .sidebar {
+                display: block !important; /* Força display block para animação */
+                position: fixed;
+                left: -350px; /* Escondido inicialmente */
+                top: 0;
+                height: 100%;
+                width: 85% !important; /* Largura responsiva */
+                max-width: 350px;
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+                z-index: 1000; /* Z-index alto para ficar acima de tudo */
+            }
+            .sidebar.open { left: 0; }
+
+            /* Move button when sidebar is open */
+            .sidebar.open ~ .mobile-menu-toggle {
+                left: 280px; /* Adjust based on sidebar width (approx 85% or max 350px) - using a safe value or dynamic */
+                /* Or keep it fixed and just high z-index */
+            }
+
+            .main { margin-left: 0 !important; padding: 60px 10px 10px 10px !important; }
+
+            .player-header { flex-direction: column; gap: 10px; text-align: center; }
+            .video-actions-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .action-buttons { width: 100%; justify-content: space-between; }
+
+            /* Ensure description box is visible on mobile */
+            .video-description-box {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- HEADER -->
+    <header class="mobile-header">
+        <a href="{% url 'student_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="course-title">{{ course.title }}</div>
+        <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
+    </header>
+
+    <!-- MEDIA WRAPPER (Video/Podcast/PDF) -->
+    <div id="media-wrapper" class="media-wrapper">
+        <!-- Placeholder -->
+        <div id="video-placeholder" class="video-placeholder">
+            <i class="fas fa-play-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
+            <span>Selecciona una clase</span>
+        </div>
+
+        <!-- Loader -->
+        <div id="video-loader" class="video-loader">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem;"></i>
+        </div>
+
+        <!-- Video Player -->
+        <video id="mobile-video-player"
+               class="video-js vjs-default-skin vjs-big-play-centered"
+               controls
+               preload="auto"
+               playsinline
+               webkit-playsinline
+               controlsList="nodownload"
+               oncontextmenu="return false;">
+        </video>
+
+        <!-- Overlays (PDF/HTML/Podcast/Simulacro) -->
+        <div id="pdf-container" class="content-overlay">
+            <iframe src="" style="width:100%; height:100%; border:none;"></iframe>
+            <div id="drive-frame-shield" class="drive-frame-shield" aria-hidden="true"></div>
+        </div>
+        <div id="html-container" class="content-overlay" style="overflow-y: auto; padding: 15px; color: #333;"></div>
+
+        <!-- Simulacro Container -->
+        <div id="simulacro-container" class="content-overlay" style="display: none;">
+            <button id="fullscreen-simulacro-btn" class="fullscreen-btn" style="position: static;">
+                <i class="fas fa-expand"></i> Pantalla Completa
+            </button>
+            <iframe src="" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+
+        <!-- PODCAST CONTAINER (Estilo Spotify) -->
+        <div id="podcast-container" class="podcast-overlay">
+            <div class="podcast-header-bg">
+                <div class="podcast-cover-icon"><i class="fas fa-headphones-alt"></i></div>
+                <div class="podcast-meta">
+                    <h3 id="podcast-lesson-title">Título de la Clase</h3>
+                    <span>Podcast Exclusivo</span>
+                </div>
+            </div>
+            <div id="podcast-episodes-list" class="podcast-list">
+                <!-- Episódios serão inseridos aqui via JS -->
+            </div>
+        </div>
+
+        <!-- SPECIAL CONTENT CONTAINER (NOVO) -->
+        <div id="special-content-container" class="special-content-overlay">
+            <i class="fas fa-star special-content-icon"></i>
+            <h3 class="special-content-title">Contenido Especial Disponible</h3>
+            <a id="special-content-link" href="#" target="_blank" class="special-content-btn">
+                <i class="fas fa-external-link-alt"></i> Acceder al Contenido
+            </a>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('lessons')">Clases</button>
+        <button class="tab-btn" onclick="switchTab('info')">Info</button>
+        <button class="tab-btn" onclick="switchTab('comments')">Comentarios</button>
+    </nav>
+
+    <!-- TAB CONTENT -->
+    <div class="tab-content">
+        <!-- AULAS -->
+        <div id="tab-lessons" class="tab-pane active">
+            {% for item in modules_with_progress %}
+                {% if item.lessons %}
+                <div class="module-item {% if forloop.first %}open{% endif %}">
+                    <div class="module-header" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="module-title">{{ item.module.title }}</span>
+                        <i class="fas fa-chevron-down module-icon"></i>
+                    </div>
+                    <div class="lesson-list">
+                        {% for lesson in item.lessons %}
+                            <div class="lesson-item {% if lesson.id in completed_lessons_ids %}completed{% endif %}"
+                                 onclick="loadLesson(this, '{{ lesson.id }}', '{{ lesson.lesson_type }}', '{{ lesson.title|escapejs }}', '{{ lesson.description|escapejs|default:'' }}')">
+                                <div class="lesson-status">
+                                    {% if lesson.id in completed_lessons_ids %}
+                                        <i class="fas fa-check-circle"></i>
+                                    {% else %}
+                                        <i class="far fa-circle lesson-status-icon"></i>
+                                    {% endif %}
+                                </div>
+                                <span class="lesson-title">{{ lesson.title }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- INFO -->
+        <div id="tab-info" class="tab-pane">
+            <div class="info-container">
+                <h2 id="info-title" class="lesson-info-title">Selecciona una clase</h2>
+
+                <!-- Description Box -->
+                <div id="lesson-description-box" class="lesson-description-box"></div>
+
+                <div class="action-bar">
+                    <button id="btn-complete" class="btn-action btn-complete" disabled>
+                        <i class="fas fa-check"></i> Completar
+                    </button>
+                    <button id="btn-like" class="btn-action btn-like" disabled>
+                        <i class="far fa-thumbs-up"></i> <span id="like-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMENTARIOS -->
+        <div id="tab-comments" class="tab-pane">
+            <div class="comments-container">
+                <div class="comment-input-wrapper">
+                    <input type="text" id="mobile-comment-input" class="comment-input" placeholder="Escribe un comentario...">
+                    <button class="send-btn" onclick="postComment()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div id="mobile-comment-list">
+                    <p style="text-align: center; color: var(--muted); margin-top: 20px;">Cargando comentarios...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const CSRF_TOKEN = '{{ csrf_token }}';
+        let player = null;
+        let currentLessonId = null;
+
+        function configureEmbedIframe(iframe, url, provider) {
+            if (!iframe) return;
+
+            const shield = document.getElementById('drive-frame-shield');
+            iframe.src = '';
+            iframe.allowFullscreen = true;
+            iframe.setAttribute('allow', 'autoplay; fullscreen; encrypted-media; picture-in-picture');
+            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+            iframe.setAttribute('oncontextmenu', 'return false;');
+
+            if (provider === 'google_drive') {
+                iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+                if (shield) shield.style.display = 'block';
+            } else {
+                iframe.removeAttribute('sandbox');
+                if (shield) shield.style.display = 'none';
+            }
+
+            iframe.src = url;
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa Player
+            player = videojs('mobile-video-player', {
+                controls: true,
+                responsive: true,
+                fluid: false, // Desativado pois usamos CSS fixo
+                fill: true,   // Preenche o container pai
+                playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+                techOrder: ['html5', 'youtube'],
+                html5: {
+                    hls: { overrideNative: true },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
+                }
+            });
+
+            // Bloqueio Context Menu
+            player.on('contextmenu', e => e.preventDefault());
+
+            // Fullscreen Logic for Simulacro
+            const fullscreenSimulacroBtn = document.getElementById('fullscreen-simulacro-btn');
+            const simulacroContainer = document.getElementById('simulacro-container');
+
+            if (fullscreenSimulacroBtn && simulacroContainer) {
+                fullscreenSimulacroBtn.addEventListener('click', function() {
+                    if (!document.fullscreenElement) {
+                        if (simulacroContainer.requestFullscreen) {
+                            simulacroContainer.requestFullscreen();
+                        } else if (simulacroContainer.mozRequestFullScreen) { /* Firefox */
+                            simulacroContainer.mozRequestFullScreen();
+                        } else if (simulacroContainer.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                            simulacroContainer.webkitRequestFullscreen();
+                        } else if (simulacroContainer.msRequestFullscreen) { /* IE/Edge */
+                            simulacroContainer.msRequestFullscreen();
+                        }
+                        fullscreenSimulacroBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                        fullscreenSimulacroBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    }
+                });
+
+                document.addEventListener('fullscreenchange', function() {
+                    if (!document.fullscreenElement) {
+                        fullscreenSimulacroBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    }
+                });
+            }
+        });
+
+        // --- TABS ---
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`tab-${name}`).classList.add('active');
+        }
+
+        // --- HELPER: Linkify ---
+        function linkify(text) {
+            if (!text) return '';
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+                return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+            });
+        }
+
+        // --- LOAD LESSON ---
+        function loadLesson(el, id, type, title, description) {
+            currentLessonId = id;
+
+            // UI
+            document.querySelectorAll('.lesson-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('info-title').innerText = title;
+
+            // Description
+            const descBox = document.getElementById('lesson-description-box');
+            if (description && description.trim() !== "") {
+                descBox.innerHTML = linkify(description);
+                descBox.style.display = 'block';
+            } else {
+                descBox.style.display = 'none';
+                descBox.innerHTML = '';
+            }
+
+            // Reset Views
+            const views = ['video-placeholder', 'pdf-container', 'html-container', 'podcast-container', 'simulacro-container', 'special-content-container'];
+            views.forEach(v => {
+                const elem = document.getElementById(v);
+                if(elem) elem.style.display = 'none';
+            });
+            const shield = document.getElementById('drive-frame-shield');
+            if (shield) shield.style.display = 'none';
+            document.getElementById('video-loader').style.display = 'flex';
+
+            // Reset Wrapper Style (Video Mode)
+            const wrapper = document.getElementById('media-wrapper');
+            wrapper.classList.remove('podcast-mode');
+
+            // Pause Player
+            if(player) player.pause();
+
+            // Buttons
+            const isCompleted = el.classList.contains('completed');
+            updateCompleteBtn(isCompleted);
+            document.getElementById('btn-complete').disabled = false;
+            document.getElementById('btn-like').disabled = false;
+
+            // Fetch
+            fetch(`/cursos/get_video_url/${id}/`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('video-loader').style.display = 'none';
+
+                    if (type === 'video' && data.url) {
+                        if (data.player === 'iframe') {
+                            const c = document.getElementById('pdf-container');
+                            c.style.display = 'block';
+                            configureEmbedIframe(c.querySelector('iframe'), data.embed_url || data.url, data.provider);
+                            return;
+                        }
+
+                        // Video Logic
+                        let mime = data.mime_type || 'video/mp4';
+
+                        player.src({ type: mime, src: data.url });
+                        player.load();
+                        const playPromise = player.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(() => console.log('Autoplay prevented'));
+                        }
+
+                    } else if (type === 'pdf' && data.url) {
+                        const c = document.getElementById('pdf-container');
+                        c.style.display = 'block';
+                        configureEmbedIframe(c.querySelector('iframe'), data.url, data.provider);
+                    } else if (type === 'html') {
+                        const c = document.getElementById('html-container');
+                        c.style.display = 'block';
+                        c.innerHTML = data.html_content;
+                    } else if (type === 'podcast') {
+                        // Podcast Logic
+                        wrapper.classList.add('podcast-mode'); // Ajusta altura do wrapper
+                        const c = document.getElementById('podcast-container');
+                        c.style.display = 'flex'; // Flex para layout vertical
+                        document.getElementById('podcast-lesson-title').innerText = title;
+                        renderPodcast(data.podcast_episodes);
+                    } else if (type === 'simulacro') {
+                        // Simulacro Logic
+                        const c = document.getElementById('simulacro-container');
+                        c.style.display = 'block';
+                        if (data.simulacro_url) {
+                            c.querySelector('iframe').src = data.simulacro_url;
+                        } else if (data.url) {
+                            c.querySelector('iframe').src = data.url;
+                        } else {
+                            alert('URL do simulacro não encontrada.');
+                        }
+                    } else if (type === 'special_content') {
+                        // Special Content Logic
+                        const c = document.getElementById('special-content-container');
+                        c.style.display = 'flex';
+                        const link = document.getElementById('special-content-link');
+                        if (data.special_content_url) {
+                            link.href = data.special_content_url;
+                        } else if (data.url) {
+                            link.href = data.url;
+                        } else {
+                            link.href = '#';
+                            alert('URL do conteúdo especial não encontrada.');
+                        }
+                    } else {
+                        document.getElementById('video-placeholder').style.display = 'flex';
+                    }
+                })
+                .catch(e => {
+                    console.error(e);
+                    document.getElementById('video-loader').style.display = 'none';
+                    alert('Error al cargar.');
+                });
+
+            loadComments(id);
+        }
+
+        // --- PODCAST RENDERER ---
+        function renderPodcast(episodes) {
+            const list = document.getElementById('podcast-episodes-list');
+            list.innerHTML = '';
+            if(!episodes || !episodes.length) {
+                list.innerHTML = '<p style="text-align:center;color:var(--muted)">No hay episodios.</p>';
+                return;
+            }
+            episodes.forEach((ep, i) => {
+                list.innerHTML += `
+                    <div class="podcast-item">
+                        <div class="podcast-row-top">
+                            <div class="podcast-ep-title">
+                                <span class="podcast-ep-number">#${i+1}</span>
+                                ${ep.title}
+                            </div>
+                            <span style="font-size:0.8rem; color:#b3b3b3;">${ep.duration || ''}</span>
+                        </div>
+                        <audio controls class="podcast-player-native" controlsList="nodownload" oncontextmenu="return false;">
+                            <source src="${ep.url}" type="audio/mpeg">
+                            Tu navegador no soporta audio.
+                        </audio>
+                    </div>`;
+            });
+        }
+
+        // --- ACTIONS (Complete/Like/Comment) ---
+        function updateCompleteBtn(done) {
+            const btn = document.getElementById('btn-complete');
+            if(done) {
+                btn.classList.add('completed');
+                btn.innerHTML = '<i class="fas fa-check-double"></i> Completada';
+            } else {
+                btn.classList.remove('completed');
+                btn.innerHTML = '<i class="fas fa-check"></i> Completar';
+            }
+        }
+
+        document.getElementById('btn-complete').addEventListener('click', () => {
+            if(!currentLessonId) return;
+            fetch(`/cursos/mark-lesson-complete/${currentLessonId}/`, {
+                method: 'POST', headers: {'X-CSRFToken': CSRF_TOKEN}
+            }).then(r => r.json()).then(d => {
+                if(d.status === 'success') {
+                    updateCompleteBtn(true);
+                    document.querySelector('.lesson-item.active').classList.add('completed');
+                    document.querySelector('.lesson-item.active .lesson-status').innerHTML = '<i class="fas fa-check-circle"></i>';
+                }
+            });
+        });
+
+        document.getElementById('btn-like').addEventListener('click', () => {
+            if(!currentLessonId) return;
+            fetch(`/cursos/lesson/${currentLessonId}/like/`, {
+                method: 'POST', headers: {'X-CSRFToken': CSRF_TOKEN}
+            }).then(r => r.json()).then(d => {
+                document.getElementById('like-count').innerText = d.like_count;
+                const btn = document.getElementById('btn-like');
+                d.liked ? btn.classList.add('active') : btn.classList.remove('active');
+                btn.querySelector('i').className = d.liked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up';
+            });
+        });
+
+        function loadComments(id) {
+            const list = document.getElementById('mobile-comment-list');
+            list.innerHTML = '<p style="text-align:center;color:var(--muted)">Cargando...</p>';
+            fetch(`/cursos/lesson/${id}/comments/`).then(r => r.json()).then(d => {
+                // Update Like
+                document.getElementById('like-count').innerText = d.like_count;
+                const btn = document.getElementById('btn-like');
+                d.user_has_liked ? btn.classList.add('active') : btn.classList.remove('active');
+                btn.querySelector('i').className = d.user_has_liked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up';
+
+                // Render Comments
+                if(!d.comments.length) {
+                    list.innerHTML = '<p style="text-align:center;color:var(--muted)">Sin comentarios.</p>';
+                    return;
+                }
+                let html = '';
+                d.comments.forEach(c => {
+                    html += `
+                        <div class="comment-item">
+                            <div class="avatar-small">${c.author_initial}</div>
+                            <div class="comment-body">
+                                <div class="comment-header">
+                                    <span class="comment-author">${c.author}</span>
+                                    <span class="comment-date">${c.created_at}</span>
+                                </div>
+                                <div class="comment-text">${c.text}</div>
+                            </div>
+                        </div>`;
+                });
+                list.innerHTML = html;
+            });
+        }
+
+        function postComment() {
+            const input = document.getElementById('mobile-comment-input');
+            const text = input.value.trim();
+            if(!text || !currentLessonId) return;
+            fetch(`/cursos/lesson/${currentLessonId}/comments/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': CSRF_TOKEN, 'Content-Type': 'application/json'},
+                body: JSON.stringify({text})
+            }).then(r => r.json()).then(d => {
+                if(d.status === 'success') {
+                    input.value = '';
+                    loadComments(currentLessonId);
+                    switchTab('comments');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 120px 0 80px 0; background: #0B0B0B; min-height: 100vh; position: relative;">
+    
+    <!-- Tech Grid Background -->
+    <div class="courses-tech-grid"></div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;" class="reveal-up">
+            <span class="hero-badge" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 12px; margin-bottom: 15px; display: inline-block; font-family:'Orbitron', sans-serif;">
+                <i class="fas fa-users"></i> Comunidad Alumed
+            </span>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(36px, 5vw, 54px); color: white; margin: 0; line-height: 1.1; font-weight: 900;">
+                Grupos de <span class="home-hero-highlight" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Estudio</span>
+            </h1>
+            <p style="color: #cbd5e1; font-size: 16px; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 500;">
+                Únete a nuestros grupos oficiales para compartir resúmenes, resolver dudas y estudiar en equipo.
+            </p>
+        </div>
+
+        <!-- Groups Grid (4 cards now: 3 WhatsApp + 1 Interactive Forum Card) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; margin-bottom: 50px;" class="reveal-up">
+            
+            <!-- Card 1: WhatsApp Histo -->
+            <div class="group-card whatsapp">
+                <div style="padding: 24px; display: flex; flex-direction: column; height: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <span class="group-status-badge active-wa">WhatsApp Activo</span>
+                        <i class="fab fa-whatsapp" style="font-size: 24px; color: #25d366;"></i>
+                    </div>
+                    <h3 class="group-card-title">INTENSIVO HISTO Y EMBRIO 🔬</h3>
+                    <p class="group-card-desc">
+                        Grupo de debate de Histología y Embriología para la UNLP. Compartimos preparados histológicos virtuales y dudas frecuentes del bolillero.
+                    </p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                        <span style="font-size: 13px; color: #cbd5e1;"><i class="fas fa-users" style="color:#c084fc; margin-right: 5px;"></i> +420 Miembros</span>
+                        <a href="https://api.whatsapp.com/send/?phone=5492215448983&text=Hola!%20Quiero%20unirme%20al%20grupo%20Intensivo%20Histo%20UNLP" target="_blank" class="unirse-btn wa-btn">Unirse</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: WhatsApp Bio -->
+            <div class="group-card whatsapp">
+                <div style="padding: 24px; display: flex; flex-direction: column; height: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <span class="group-status-badge active-wa">WhatsApp Activo</span>
+                        <i class="fab fa-whatsapp" style="font-size: 24px; color: #25d366;"></i>
+                    </div>
+                    <h3 class="group-card-title">BIOLOGÍA CELULAR 🦠</h3>
+                    <p class="group-card-desc">
+                        Tutorías de Biología Celular y Molecular. Apoyo mutuo entre estudiantes, esquemas metabólicos y material de estudio interactivo.
+                    </p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                        <span style="font-size: 13px; color: #cbd5e1;"><i class="fas fa-users" style="color:#c084fc; margin-right: 5px;"></i> +280 Miembros</span>
+                        <a href="https://api.whatsapp.com/send/?phone=5492215448983&text=Hola!%20Quiero%20unirme%20al%20grupo%20Biologia%20UNLP" target="_blank" class="unirse-btn wa-btn">Unirse</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: WhatsApp Anato -->
+            <div class="group-card whatsapp">
+                <div style="padding: 24px; display: flex; flex-direction: column; height: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <span class="group-status-badge active-wa">WhatsApp Activo</span>
+                        <i class="fab fa-whatsapp" style="font-size: 24px; color: #25d366;"></i>
+                    </div>
+                    <h3 class="group-card-title">ANATOMÍA HUMANA 🧠</h3>
+                    <p class="group-card-desc">
+                        Espacio para resolver dudas sobre anatomía descriptiva, esquemas, referencias clínicas e imágenes de disecciones y modelos 3D.
+                    </p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                        <span style="font-size: 13px; color: #cbd5e1;"><i class="fas fa-users" style="color:#c084fc; margin-right: 5px;"></i> +350 Miembros</span>
+                        <a href="https://api.whatsapp.com/send/?phone=5492215448983&text=Hola!%20Quiero%20unirme%20al%20grupo%20Anatomia%20Alumed" target="_blank" class="unirse-btn wa-btn">Unirse</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Interactive Forum Feed Card -->
+            <div class="group-card forum-card">
+                <div style="padding: 24px; display: flex; flex-direction: column; height: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <span class="group-status-badge active-forum">Foro Oficial</span>
+                        <i class="far fa-comments" style="font-size: 24px; color: #c084fc;"></i>
+                    </div>
+                    <h3 class="group-card-title">PREPAREMOS HyE 🔬🛡️</h3>
+                    <p class="group-card-desc">
+                        El punto de encuentro oficial de Histología y Embriología. Comparte tus testimonios de exámenes, preguntas de bolilleros y debate con tus compañeros en un foro moderno y dinámico.
+                    </p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                        <span style="font-size: 13px; color: #cbd5e1;"><i class="fas fa-users" style="color:#c084fc; margin-right: 5px;"></i> +361 Miembros</span>
+                        <a href="{% url 'forum:topic_list' %}" class="unirse-btn forum-btn">Entrar al Foro</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Hilos de Debate Recientes Widget (looks like Wix but modern/neon) -->
+        <div style="margin-top: 60px; padding: 30px; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; backdrop-filter: blur(10px);" class="reveal-up">
+            <h3 style="font-family:'Orbitron', sans-serif; font-size: 22px; color: white; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="far fa-comments" style="color: #c084fc;"></i> Hilos de Debate Recientes
+            </h3>
+            <p style="color: #94a3b8; font-size: 14px; margin: 0 0 25px 0;">Últimas discusiones e información agregada por el equipo docente.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="padding: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; border-left: 4px solid #a855f7;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 700; color: white;">Docente Joyce Marinho</span>
+                        <span style="font-size: 12px; color: #94a3b8;">Hace unos días</span>
+                    </div>
+                    <h4 style="color: #c084fc; margin: 0 0 8px 0; font-size: 16px; font-family:'Orbitron', sans-serif;">📚 Recomendación para el 2do Parcial de Histo</h4>
+                    <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin: 0;">
+                        Recuerden repasar con detenimiento preparados de glándulas endocrinas y sistema urinario. El reconocimiento de túbulos renales (contorneado proximal vs distal) es un clásico de opción múltiple. Estaré subiendo imágenes autoevaluativas al Microscopio Virtual esta tarde.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Custom Styles for Groups Page -->
+<style>
+.group-card {
+    background: rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.group-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(168, 85, 247, 0.08);
+}
+.group-card.whatsapp:hover {
+    border-color: rgba(37, 211, 102, 0.35);
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.08);
+}
+.group-card.forum-card {
+    border-color: rgba(168, 85, 247, 0.25);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(236, 72, 153, 0.06) 100%);
+}
+.group-card.forum-card:hover {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 12px 30px rgba(168, 85, 247, 0.15);
+}
+.group-status-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+}
+.active-wa {
+    background: rgba(37, 211, 102, 0.15);
+    border: 1px solid rgba(37, 211, 102, 0.4);
+    color: #25d366;
+}
+.active-forum {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+}
+.group-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    color: white;
+    margin: 0 0 12px 0;
+    font-weight: 800;
+}
+.group-card-desc {
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    flex-grow: 1;
+}
+.unirse-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    text-align: center;
+}
+.wa-btn {
+    background: #25d366;
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+.wa-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(37, 211, 102, 0.35);
+}
+.forum-btn {
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+}
+.forum-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(168, 85, 247, 0.35);
+}
+</style>
+{% endblock %}

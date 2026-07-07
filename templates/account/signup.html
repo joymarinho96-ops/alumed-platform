@@ -1,0 +1,78 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2 style="font-family: 'Orbitron', sans-serif;">Registrarse</h2>
+        <p>Unite gratis a la comunidad ALUMED</p>
+    </div>
+
+    {% if form.errors %}
+        <div class="error-messages" style="margin-bottom: 15px;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p class="error-message" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; text-align: left;">
+                        <strong>{{ field.label }}:</strong> {{ error }}
+                    </p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p class="error-message" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; text-align: left;">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form class="signup auth-form" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                <label for="{{ field.id_for_label }}" style="color: #cbd5e1; font-size: 13.5px; font-weight: 500; display: block; margin-bottom: 6px;">{{ field.label }}</label>
+                <div class="field-wrapper">
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                    <p class="help" style="font-size: 11px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">{{ field.help_text|safe }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        
+        <button type="submit" class="auth-btn" style="margin-top: 15px;">{% trans "Crear Cuenta Gratis" %}</button>
+    </form>
+
+    <div class="auth-footer" style="margin-top: 25px; text-align: center; font-size: 13.5px; color: #94a3b8;">
+        <p>¿Ya tienes una cuenta? <a href="{% url 'account_login' %}{% if next %}?next={{ next }}{% endif %}" style="color: #a78bfa; font-weight: 600; text-decoration: none;">Inicia sesión</a></p>
+    </div>
+
+    <style>
+        /* Estilo para inputs generados dinámicamente por Django */
+        .field-wrapper input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(24, 34, 56, 0.88);
+            border: 1px solid rgba(139, 92, 246, 0.34);
+            border-radius: 10px;
+            color: #f8fafc;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        .field-wrapper input:focus {
+            border-color: rgba(167, 139, 250, 0.85);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+            outline: none;
+        }
+        /* Ajustar checkboxes u otros inputs raros */
+        .field-wrapper input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/details.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="details-page">
+    <div class="details-container">
+        <!-- Inclui o conteúdo do modal -->
+        {% include 'accounts/account_details.html' %}
+    </div>
+</div>
+{% endblock %}

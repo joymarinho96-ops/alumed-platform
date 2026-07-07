@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<section id="cursos" class="announcements-section" style="padding-top: 140px; min-height: 80vh; position: relative;">
+    <!-- Tech Grid Background -->
+    <div class="courses-tech-grid"></div>
+
+    <div class="section-header reveal-up" style="margin-bottom: 50px;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(14, 165, 233, 0.15); border-color: rgba(14, 165, 233, 0.4); color: #7dd3fc; box-shadow: 0 0 20px rgba(14, 165, 233, 0.15);">
+            <i class="fas fa-university"></i> Facultad de Medicina
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-size: clamp(32px, 4vw, 52px); margin-top: 15px;">Cursos para <span class="home-hero-highlight" style="background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">UBA</span></h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8;">Cursos enfocados en el plan de estudios de la UBA. Material preparado con rigor académico.</p>
+    </div>
+
+    <div class="grid-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">
+        {% for course in courses %}
+            <div class="pro-card course-card-pro reveal-up" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="course-img-container">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width: 100%; height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div style="width:100%; height:200px; background: linear-gradient(135deg, #022340 0%, #011324 100%); display:flex; align-items:center; justify-content:center; border-bottom: 1px solid rgba(14, 165, 233, 0.2);">
+                            <i class="fas fa-microscope" style="font-size:50px; color: #0ea5e9; opacity: 0.8; filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.3));"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="course-info" style="display: flex; flex-direction: column; flex-grow: 1; padding: 24px;">
+                    <div style="color:#0ea5e9; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:8px; letter-spacing: 0.05em;">Curso Completo</div>
+                    <h3 style="font-size: 20px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">{{ course.title }}</h3>
+                    <div class="course-description" style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; flex-grow: 1;">
+                        {{ course.description }}
+                    </div>
+                    <p style="font-size:14px; margin-bottom:15px; color: var(--text-muted);"><i class="far fa-clock"></i> {{ course.duration_days }} días de acceso</p>
+
+                    <div class="course-price" style="display: flex; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px; font-size: 22px; font-weight: 700; font-family: 'Orbitron', sans-serif;">
+                        {% if course.is_free %}
+                            <span style="color: #22c55e;">Gratis</span>
+                            <a href="{% url 'payments:create_payment' course.id %}" class="btn-course-sm" style="padding: 10px 20px;">Inscribirse</a>
+                        {% else %}
+                            <span style="color: #fff;">${{ course.price|intcomma }}</span>
+                            <a href="{% url 'payments:create_payment' course.id %}" class="btn-course-sm" style="padding: 10px 20px;">Inscribirse</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: rgba(15, 23, 42, 0.4); border: 1px dashed rgba(14, 165, 233, 0.3); border-radius: 16px; box-shadow: 0 0 30px rgba(14, 165, 233, 0.05);">
+                <div style="width: 100px; height: 100px; background: rgba(14, 165, 233, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <i class="fas fa-stethoscope" style="font-size: 40px; color: #0ea5e9; filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.4));"></i>
+                </div>
+                <h3 style="font-family:'Orbitron', sans-serif; font-size: 24px; color: white;">Próximamente</h3>
+                <p style="color: var(--text-muted); margin-top: 10px; max-width: 500px; margin-left: auto; margin-right: auto;">Estamos preparando los mejores cursos con el enfoque específico de las cátedras de la UBA. ¡Registrate para recibir novedades!</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

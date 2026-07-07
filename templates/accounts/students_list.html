@@ -1,0 +1,283 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Alumnos - ALUMED{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        background:
+            radial-gradient(1000px 460px at 14% -12%, rgba(147, 51, 234, 0.23), transparent 60%),
+            radial-gradient(900px 500px at 92% 8%, rgba(99, 102, 241, 0.18), transparent 62%),
+            linear-gradient(180deg, #070b17 0%, #090f1d 100%) !important;
+    }
+
+    .page-bg-shell {
+        padding: 22px;
+        border-radius: 22px;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* HEADER */
+    .topbar {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 40px;
+        opacity: 0;
+        transform: translateY(14px);
+        animation: topbarIn 0.55s ease forwards;
+    }
+    
+    .page-title h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(34px, 4.2vw, 52px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0;
+        color: white;
+    }
+    .page-title p { color: #b7c3da; margin-top: 5px; font-size: 18px; }
+
+    /* TABLE CARD */
+    .table-card {
+        background: linear-gradient(140deg, rgba(24, 19, 50, 0.86), rgba(12, 18, 34, 0.92));
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 18px;
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+        
+        /* Animação de entrada */
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .students-table tbody tr {
+        opacity: 0;
+        transform: translateY(14px);
+        animation: rowIn 0.45s ease forwards;
+    }
+    .students-table tbody tr:nth-child(1) { animation-delay: 0.12s; }
+    .students-table tbody tr:nth-child(2) { animation-delay: 0.18s; }
+    .students-table tbody tr:nth-child(3) { animation-delay: 0.24s; }
+    .students-table tbody tr:nth-child(4) { animation-delay: 0.30s; }
+    .students-table tbody tr:nth-child(5) { animation-delay: 0.36s; }
+    .students-table tbody tr:nth-child(n+6) { animation-delay: 0.42s; }
+
+    .students-table { width: 100%; border-collapse: collapse; }
+
+    .students-table th {
+        text-align: left;
+        padding: 20px 24px;
+        color: #b7c3da;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(139, 92, 246, 0.08);
+    }
+
+    .students-table td {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+        color: var(--text);
+        vertical-align: middle;
+    }
+
+    .students-table tr:last-child td { border-bottom: none; }
+    .students-table tr:hover { background: rgba(139, 92, 246, 0.08); }
+
+    /* Student Info Cell */
+    .student-cell { display: flex; align-items: center; gap: 16px; }
+    
+    .student-avatar-small {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 600; color: white; font-size: 0.9rem;
+        border: 2px solid rgba(255,255,255,0.1);
+        flex-shrink: 0; /* Impede que o avatar encolha */
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .students-table tr:hover .student-avatar-small {
+        transform: scale(1.06);
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .student-name { font-weight: 600; color: white; display: block; font-size: 17px; }
+    .student-username { font-size: 14px; color: #aab7cf; }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(139, 92, 246, 0.14);
+        color: #d8b4fe;
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        margin-right: 5px; margin-bottom: 5px;
+    }
+
+    .date-text {
+        color: #b7c3da;
+        font-size: 15px;
+    }
+
+    /* Verified Badge */
+    .verified-badge {
+        color: var(--ciano-neon);
+        margin-left: 4px;
+        font-size: 0.85rem;
+    }
+    
+    /* ANIMATIONS */
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes topbarIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes rowIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .topbar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 1.5rem;
+        }
+
+        /* Card View for Mobile */
+        .students-table, .students-table thead, .students-table tbody, .students-table th, .students-table td, .students-table tr {
+            display: block;
+        }
+
+        .students-table thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .students-table tr {
+            border-bottom: 1px solid var(--border);
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+
+        .students-table td {
+            border: none;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .student-cell {
+            margin-bottom: 10px;
+        }
+
+        /* Esconde labels desnecessários ou ajusta layout */
+        .date-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        .date-text::before {
+            content: "Miembro desde: ";
+            color: var(--muted);
+            font-family: "Poppins", sans-serif;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="page-bg-shell">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Comunidad de Estudiantes</h1>
+                <p>Conoce a tus compañeros de estudio.</p>
+            </div>
+        </div>
+
+        <!-- TABLE CARD -->
+        <div class="table-card">
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Cursos Inscritos</th>
+                        <th>Miembro Desde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students_data %}
+                        <tr>
+                            <td>
+                                <div class="student-cell">
+                                    <div class="student-avatar-small">
+                                        {% if student.profile.photo %}
+                                            <img src="{{ student.profile.photo.url }}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                                        {% else %}
+                                            {{ student.user.username|first|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <span class="student-name">
+                                            {{ student.user.first_name }} {{ student.user.last_name }}
+                                            {% if student.user.is_staff %}
+                                                <i class="fas fa-check-circle verified-badge" title="Staff"></i>
+                                            {% endif %}
+                                        </span>
+                                        <span class="student-username">@{{ student.user.username }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% for course in student.courses %}
+                                    <span class="badge">{{ course.title }}</span>
+                                {% empty %}
+                                    <span style="color: var(--muted); font-size: 0.85rem;">Ninguno</span>
+                                {% endfor %}
+                            </td>
+                            <td class="date-text">
+                                {{ student.user.date_joined|date:"d/m/Y" }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 40px; color: var(--muted);">
+                                No hay otros alumnos registrados en este momento.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,322 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Estudiando: {{ deck.title }} - ALUMED{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/flashcard_dashboard.css' %}">
+    <style>
+        .study-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .study-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .study-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .study-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Flashcard Flip Effect */
+        .flashcard-scene {
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(26, 11, 46, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .card-face-front {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+        }
+
+        .card-face-back {
+            background: linear-gradient(145deg, rgba(20, 5, 35, 0.95), rgba(40, 10, 70, 0.95));
+            transform: rotateY(180deg);
+            border-color: var(--accent);
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .card-content {
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .card-face-back .card-content {
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: var(--accent);
+            color: #1a0b2e;
+            font-weight: 700;
+            border: none;
+        }
+        .btn-next:hover {
+            background: #ffe066;
+            box-shadow: 0 0 20px rgba(245, 197, 66, 0.4);
+        }
+
+        .hint-text {
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Notificação Animada */
+        .completion-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--green);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .completion-notification.show {
+            transform: translateX(0);
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="study-container">
+        <div class="study-header">
+            <a href="{% url 'courses:flashcards_dashboard' %}" style="color: var(--muted); text-decoration: none;">
+                <i class="fas fa-times"></i> Salir
+            </a>
+            <span style="color: white; font-weight: 600;">{{ deck.title }}</span>
+            <span style="color: var(--muted);" id="counter">1 / {{ deck.cards.count }}</span>
+        </div>
+
+        <div class="study-progress">
+            <div class="study-progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+
+        <div class="flashcard-scene" id="flashcard">
+            <div class="flashcard">
+                <div class="card-face card-face-front">
+                    <div class="card-label">Pregunta</div>
+                    <div class="card-content" id="card-front-text">Cargando...</div>
+                </div>
+                <div class="card-face card-face-back">
+                    <div class="card-label">Respuesta</div>
+                    <div class="card-content" id="card-back-text">...</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="hint-text">Haz clic en la tarjeta para ver la respuesta</p>
+
+        <div class="controls">
+            <button class="control-btn" id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button class="control-btn btn-next" id="next-btn">
+                Siguiente <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notificação de Conclusão -->
+    <div class="completion-notification" id="completion-notification">
+        <i class="fas fa-check-circle"></i>
+        <span>¡Has completado los flashcards!</span>
+    </div>
+
+    <script>
+        const cards = JSON.parse('{{ cards_json|safe }}');
+        let currentIndex = 0;
+        const totalCards = cards.length;
+
+        const flashcard = document.getElementById('flashcard');
+        const frontText = document.getElementById('card-front-text');
+        const backText = document.getElementById('card-back-text');
+        const counter = document.getElementById('counter');
+        const progressFill = document.getElementById('progress-fill');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const notification = document.getElementById('completion-notification');
+
+        function updateCard() {
+            if (totalCards === 0) {
+                frontText.textContent = "No hay tarjetas en este mazo.";
+                backText.textContent = "";
+                return;
+            }
+
+            const card = cards[currentIndex];
+            frontText.textContent = card.front;
+            backText.textContent = card.back;
+
+            // Reset flip
+            flashcard.querySelector('.flashcard').classList.remove('is-flipped');
+
+            // Update UI
+            counter.textContent = `${currentIndex + 1} / ${totalCards}`;
+            const progress = ((currentIndex + 1) / totalCards) * 100;
+            progressFill.style.width = `${progress}%`;
+
+            // Buttons state
+            prevBtn.disabled = currentIndex === 0;
+            if (currentIndex === totalCards - 1) {
+                nextBtn.innerHTML = 'Finalizar <i class="fas fa-check"></i>';
+            } else {
+                nextBtn.innerHTML = 'Siguiente <i class="fas fa-arrow-right"></i>';
+            }
+        }
+
+        // Flip Logic
+        flashcard.addEventListener('click', () => {
+            if (totalCards > 0) {
+                flashcard.querySelector('.flashcard').classList.toggle('is-flipped');
+            }
+        });
+
+        // Navigation
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < totalCards - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                // Finalizar - Mostrar notificação animada
+                showCompletionNotification();
+            }
+        });
+
+        function showCompletionNotification() {
+            notification.classList.add('show');
+
+            // Redireciona após 2 segundos
+            setTimeout(() => {
+                window.location.href = "{% url 'courses:flashcards_dashboard' %}";
+            }, 2000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                flashcard.querySelector('.flashcard').classList.toggle('is-flipped');
+            } else if (e.code === 'ArrowRight') {
+                if (currentIndex < totalCards - 1) {
+                    currentIndex++;
+                    updateCard();
+                }
+            } else if (e.code === 'ArrowLeft') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCard();
+                }
+            }
+        });
+
+        // Init
+        updateCard();
+    </script>
+{% endblock %}

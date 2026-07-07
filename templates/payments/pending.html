@@ -1,0 +1,36 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <div style="font-size: 4rem; color: #f5c542; margin-bottom: 20px; animation: spin 3s linear infinite;">
+            <i class="fas fa-hourglass-half"></i>
+        </div>
+        <h2 style="color: #f5c542;">Pago Pendiente</h2>
+        <p>Estamos procesando tu pago.</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+        <p style="color: var(--muted); line-height: 1.6;">
+            Esto puede tardar unos minutos. Te notificaremos tan pronto como se confirme.
+        </p>
+    </div>
+
+    <a href="{% url 'home' %}" class="auth-btn" style="text-decoration: none; display: block; text-align: center; background: transparent; border: 2px solid #f5c542; color: #f5c542;">
+        Volver al Inicio
+    </a>
+    
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .auth-btn:hover {
+            background: #f5c542 !important;
+            color: #000 !important;
+            box-shadow: 0 0 20px rgba(245, 197, 66, 0.4) !important;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Examen Oral - ALUMED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* --- DESIGN SYSTEM ALUMED (DARK NEON) --- */
+        :root {
+            --bg: #0f0518;
+            --panel: rgba(20, 5, 35, 0.95);
+            --card-bg: rgba(30, 10, 50, 0.6);
+            --border: rgba(255,255,255,0.08);
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --accent: #f5c542;
+            --roxo-neon: #9d00ff;
+            --roxo-mid: #4a0075;
+            --ciano-neon: #00d4ff;
+            --green: #4ade80;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at top, #240b3b, #0f0518);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- LAYOUT --- */
+        .sidebar-mock {
+            width: 260px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex; flex-direction: column;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 40px;
+            max-width: 1600px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        /* --- COMPONENTS --- */
+        .header-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(157, 0, 255, 0.5);
+        }
+
+        .header-subtitle {
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+
+        /* TABS */
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+            background: rgba(245, 197, 66, 0.1);
+            border: 1px solid rgba(245, 197, 66, 0.2);
+        }
+
+        /* VIEWS */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* CARD STYLE */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex; flex-direction: column;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(157, 0, 255, 0.3);
+        }
+
+        /* ROULETTE SECTION */
+        .roulette-container {
+            text-align: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%;
+        }
+
+        .prof-avatar {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--roxo-mid), var(--roxo-neon));
+            border: 4px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: white;
+            box-shadow: 0 0 30px rgba(157, 0, 255, 0.4);
+            transition: all 0.3s;
+        }
+
+        .prof-name {
+            font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 5px;
+        }
+
+        .prof-role {
+            color: var(--accent); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .prof-profile {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-style: italic;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+            display: none; /* Hidden initially */
+        }
+
+        .spin-btn {
+            margin-top: 30px;
+            background: linear-gradient(90deg, var(--roxo-neon), var(--roxo-mid));
+            color: white; border: none;
+            padding: 15px 40px; border-radius: 50px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.4);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(157, 0, 255, 0.6);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.5; cursor: not-allowed; transform: none;
+        }
+
+        /* QUESTION SECTION */
+        .question-box {
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .question-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);
+        }
+
+        .difficulty-badge {
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+        }
+        .diff-topic { background: rgba(0, 212, 255, 0.1); color: var(--ciano-neon); border: 1px solid var(--ciano-neon); }
+
+        .question-text {
+            font-size: 1.4rem; line-height: 1.6; color: white; margin-bottom: 30px;
+        }
+
+        .action-area {
+            display: flex; gap: 15px;
+        }
+
+        .reveal-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+            color: white; padding: 12px 25px; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; font-weight: 500;
+        }
+        .reveal-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* REPORT SECTION */
+        .report-section {
+            grid-column: 1 / -1;
+            margin-top: 30px;
+            display: none; /* Hidden initially */
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .report-content {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid var(--ciano-neon);
+            padding: 25px; border-radius: 0 12px 12px 0;
+        }
+
+        .report-title {
+            color: var(--ciano-neon); font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .report-text {
+            color: var(--text); font-size: 1rem; line-height: 1.6;
+        }
+
+        .report-text strong { color: white; }
+        .report-text ul { margin-left: 20px; margin-bottom: 15px; }
+        .report-text li { margin-bottom: 8px; }
+        .report-text .highlight { color: var(--accent); font-weight: 600; }
+
+        .report-tips {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        /* STATS VIEW STYLES */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .topics-wall {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .topic-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.05);
+            border-color: var(--roxo-neon);
+        }
+
+        .topic-prof-name {
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .topic-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .topic-list li {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .topic-list li.top-trend {
+            color: var(--ciano-neon);
+            font-weight: 700;
+            border-bottom-color: var(--ciano-neon);
+        }
+
+        .topic-list li.top-trend::after {
+            content: ' 🔥';
+        }
+
+        /* PREDICTIVE ANALYSIS ZONES */
+        .zone-card {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+        .zone-red { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+        .zone-yellow { background: rgba(245, 197, 66, 0.1); border-color: rgba(245, 197, 66, 0.3); }
+        .zone-green { background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.3); }
+
+        .zone-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .zone-red .zone-title { color: var(--danger); }
+        .zone-yellow .zone-title { color: var(--accent); }
+        .zone-green .zone-title { color: var(--green); }
+
+        /* DROPDOWN SELECTOR */
+        .prof-selector {
+            background: var(--bg);
+            color: white;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--roxo-mid); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--roxo-neon); }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-avatar { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .pulsing { animation: pulse-avatar 0.5s infinite; }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .sidebar-mock { display: none; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOCK SIDEBAR (Visual Only) -->
+    <div class="sidebar-mock">
+        <div style="color: white; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 40px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-dna" style="color: var(--roxo-neon);"></i> ALUMED
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <h1 class="header-title">Simulador de Examen Oral</h1>
+        <p class="header-subtitle">Pon a prueba tus conocimientos con temas reales de los profesores de la cátedra.</p>
+
+        <!-- TABS -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchView('simulator', this)">
+                <i class="fas fa-gamepad"></i> Simulador
+            </button>
+            <button class="nav-tab" onclick="switchView('stats', this)">
+                <i class="fas fa-chart-pie"></i> Estadísticas y Tendencias
+            </button>
+        </div>
+
+        <!-- VIEW: SIMULATOR -->
+        <div id="simulator-view" class="view-section active">
+            <div class="dashboard-grid">
+
+                <!-- LEFT: QUESTION DISPLAY -->
+                <div class="glass-card" style="justify-content: center;">
+                    <div id="placeholderText" style="text-align: center; color: var(--muted);">
+                        <i class="fas fa-question-circle" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <p>Presiona "Sortear Tema" para comenzar el desafío.</p>
+                    </div>
+
+                    <div id="questionBox" class="question-box">
+                        <div class="question-header">
+                            <span style="color: var(--muted); font-size: 0.9rem;">Tema Sorteado</span>
+                            <span id="diffBadge" class="difficulty-badge diff-topic">Oral</span>
+                        </div>
+
+                        <div id="questionText" class="question-text">
+                            <!-- Question goes here -->
+                        </div>
+
+                        <div class="action-area">
+                            <button class="reveal-btn" onclick="showReport()">
+                                <i class="fas fa-eye"></i> Ver Respuesta Correcta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PROFESSOR ROULETTE -->
+                <div class="glass-card">
+                    <div class="roulette-container">
+                        <div id="profAvatar" class="prof-avatar">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div id="profName" class="prof-name">¿Quién pregunta?</div>
+                        <div id="profRole" class="prof-role">Esperando sorteo...</div>
+                        <div id="profProfile" class="prof-profile"></div>
+
+                        <button class="spin-btn" onclick="startSimulation()" id="spinBtn">
+                            <i class="fas fa-random"></i> Sortear Tema
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BOTTOM: REPORT/ANSWER -->
+                <div id="reportSection" class="glass-card report-section">
+                    <div class="report-content">
+                        <div class="report-title">
+                            <i class="fas fa-clipboard-check"></i> Explicación y Respuesta Esperada
+                        </div>
+                        <div id="reportText" class="report-text">
+                            <!-- Answer goes here -->
+                        </div>
+                        <div class="report-tips">
+                            <i class="fas fa-user-tie"></i> <strong>Consejo de Postura:</strong> Responde con seguridad, define primero el concepto general y luego profundiza en los detalles moleculares o fisiológicos.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW: STATS -->
+        <div id="stats-view" class="view-section">
+
+            <!-- PREDICTIVE ANALYSIS -->
+            <h3 style="color:white; margin-bottom:20px; font-size:1.5rem;">📊 Análisis Predictivo: ¿Qué va a caer?</h3>
+            <p style="color:var(--muted); margin-bottom:30px;">Basado en el perfil comportamental y el historial de la cátedra.</p>
+
+            <div class="zone-card zone-red">
+                <div class="zone-title"><i class="fas fa-exclamation-triangle"></i> ZONA ROJA (Alta Probabilidad - Estudia Profundamente)</div>
+                <ul style="color: #f1f5f9; margin-left: 20px;">
+                    <li><strong>BARBARA:</strong> Membrana & Mitocondria (Integración estructura-función). Ciclo Celular (p53, checkpoints).</li>
+                    <li><strong>BELLINI:</strong> Cinética Enzimática (Gráficos, Km, Vmax). Bioenergética (Termodinámica, Acoplamiento).</li>
+                    <li><strong>EZEQUIEL:</strong> Tráfico Vesicular (SNAREs, Rabs, COPs).</li>
+                    <li><strong>MONICA:</strong> Cromatina/Núcleo (Histonas, modificaciones).</li>
+                </ul>
+            </div>
+
+            <div class="zone-card zone-yellow">
+                <div class="zone-title"><i class="fas fa-exclamation-circle"></i> ZONA AMARILLA (Probabilidad Media - Conceptos Clave)</div>
+                <ul style="color: #f1f5f9; margin-left: 20px;">
+                    <li><strong>BORIS:</strong> Respiración Celular (Proceso metabólico general).</li>
+                    <li><strong>FLAVIO:</strong> Transporte de Membrana (Bombas, canales, potencial).</li>
+                    <li><strong>ROMAN:</strong> Dogma Central (Procariota vs Eucariota).</li>
+                    <li><strong>GABRIELA:</strong> Regulación de la Expresión Génica.</li>
+                </ul>
+            </div>
+
+            <div class="zone-card zone-green">
+                <div class="zone-title"><i class="fas fa-check-circle"></i> ZONA VERDE (Baja Probabilidad o Preguntas Directas)</div>
+                <ul style="color: #f1f5f9; margin-left: 20px;">
+                    <li><strong>LUIS:</strong> Ploidía (Haploide vs Diploide).</li>
+                    <li><strong>BARBARA:</strong> Temas aislados (Citoesqueleto solo si conectado a divisão).</li>
+                </ul>
+            </div>
+
+            <div class="stats-grid">
+                <div class="glass-card">
+                    <h3 style="color:white; margin-bottom:20px; font-size:1.2rem;">Variedad de Temas por Profesor</h3>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <h3 style="color:white; margin-bottom:20px; font-size:1.2rem;">Probabilidad de Temas (Global)</h3>
+                    <div class="chart-container">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: PROBABILIDADE POR PROFESSOR -->
+            <div class="glass-card" style="margin-bottom: 30px;">
+                <h3 style="color:white; margin-bottom:20px; font-size:1.2rem;">Probabilidad de Tema por Profesor</h3>
+                <select id="profSelector" class="prof-selector" onchange="updateRadarChart()">
+                    <!-- Populated by JS -->
+                </select>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <h3 style="color:white; margin-bottom:20px; font-size:1.5rem;">Mural de Tendencias</h3>
+            <div class="topics-wall" id="topicsWall">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC -->
+    <script>
+        // --- DATA REAL PROFESSORES (NÍVEL UNLP) ---
+        const professorsData = [
+            {
+                name: "Barbara",
+                role: "Docente",
+                icon: "fa-user-tie",
+                profile: "Foco: Mecanismo molecular → Impacto fisiológico. Não aceita 'o que é', quer saber 'como funciona e para que serve'.",
+                topTrend: "Membrana & Mitocôndria",
+                topics: [
+                    {
+                        title: "Membrana Plasmática & Especializações",
+                        answer: `<strong>Estrutura Dinâmica:</strong> O modelo do <strong>Mosaico Fluido</strong> é mantido por interações não-covalentes. A assimetria da bicamada é gerada por enzimas (flipases, flopases, scramblases) no REL e Golgi. O <strong>Colesterol</strong> modula a fluidez: em altas temperaturas, reduz a mobilidade (estabiliza); em baixas, impede o empacotamento excessivo (evita cristalização).<br><br><strong>Glicocálix:</strong> Essencial para reconhecimento celular (ex: grupos sanguíneos ABO) e proteção mecânica.<br><br><strong>Domínios de Membrana (Jangadas Lipídicas):</strong> Microdomínios ricos em colesterol e esfingolipídeos, essenciais para a compartimentalização de receptores de sinalização.<br><br><strong>Complexos Juncionais:</strong><br><ul><li><em>Oclusivas (Tight):</em> Claudinas e ocludinas. Vedam o espaço paracelular (barreira hematoencefálica, epitélio intestinal).</li><li><em>Aderentes/Desmossomos:</em> Caderinas dependentes de Ca²⁺. Conectam-se ao citoesqueleto (actina ou filamentos intermediários) garantindo resistência mecânica.</li><li><em>Comunicantes (Gap):</em> Conexinas formam conexons. Permitem acoplamento elétrico e metabólico (essencial no miocárdio).</li></ul>`
+                    },
+                    {
+                        title: "Mitocôndria e Bioenergética",
+                        answer: `<strong>Compartimentalização:</strong><br><ul><li><em>Membrana Externa:</em> Permeável (porinas).</li><li><em>Membrana Interna (MMI):</em> Impermeável, rica em <strong>cardiolipina</strong> (isolante elétrico) e proteínas da CTE.</li></ul><br><strong>Fosforilação Oxidativa:</strong> Os complexos I, III e IV bombeiam H⁺ gerando a <strong>Força Próton-Motriz</strong> (gradiente eletroquímico). O Complexo II (Succinato DH) não bombeia prótons.<br><br><strong>Acoplamento:</strong> A energia do retorno dos prótons pela porção F₀ da ATP Sintase provoca a rotação da porção F₁ (mecanismo de <em>Binding Change</em>), forçando a síntese de ATP.<br><br><strong>Patologia:</strong> Inibidores (Cianeto, CO no complexo IV) param o fluxo de elétrons e o consumo de O₂. Desacopladores (Termogenina/UCP1) permitem o fluxo de elétrons e consumo de O₂, mas dissipam a energia como <strong>calor</strong> (termogênese sem ATP).`
+                    },
+                    {
+                        title: "Ciclo Celular e Apoptose",
+                        answer: `<strong>Regulação Molecular:</strong> O "motor" do ciclo são as CDKs (Cinases Dependentes de Ciclina), cuja atividade é regulada por ciclinas específicas (ex: Ciclina D-CDK4/6 em G1).<br><br><strong>Checkpoints:</strong><br><ul><li><em>G1/S (Ponto de Restrição):</em> Verifica tamanho e danos no DNA (p53). Se houver dano, p53 induz p21 (inibidor de CDK), parando o ciclo.</li></ul><br><strong>Apoptose (Via Intrínseca/Mitocondrial):</strong> Estresse celular → ativação de proteínas BH3-only → oligomerização de <strong>Bax/Bak</strong> na membrana mitocondrial externa → liberação de <strong>Citocromo C</strong> → formação do <strong>Apoptossomo</strong> (com Apaf-1) → ativação da Caspase-9 (iniciadora) → ativação de Caspases-3/7 (executoras).`
+                    },
+                    {
+                        title: "Replicação do DNA",
+                        answer: `<strong>Maquinaria:</strong> A <strong>Helicase</strong> rompe pontes de hidrogênio; <strong>Topoisomerases</strong> aliviam a tensão torcional (supercoiling); <strong>RPA</strong> (em eucariotos) estabiliza a fita simples.<br><br><strong>Fidelidade:</strong> A DNA Polimerase possui atividade exonuclease 3' → 5' (<strong>proofreading</strong>), corrigindo erros durante a síntese. Em eucariotos: Pol α (primase), Pol δ (fita tardia) e Pol ε (fita líder).<br><br><strong>Telômeros:</strong> A <strong>Telomerase</strong> (ribonucleoproteína) estende as extremidades 3' dos cromossomos lineares, resolvendo o problema da replicação terminal.`
+                    },
+                    {
+                        title: "Gametogênese",
+                        answer: `<strong>Meiose:</strong> Ênfase no <strong>Paquiteno</strong> da Prófase I (Crossing-over/Recombinação Homóloga) para variabilidade genética.<br><br><strong>Espermiogênese:</strong> Condensação extrema da cromatina via troca de <strong>Histonas por Protaminas</strong>, formação do acrossoma (derivado do Golgi) e flagelo (centríolos).`
+                    },
+                    {
+                        title: "Detoxificação (REL e Peroxissomos)",
+                        answer: `<strong>Biotransformação (REL):</strong> O sistema <strong>Citocromo P450</strong> realiza reações de Fase I (hidroxilação), tornando toxinas mais polares para excreção ou conjugação.<br><br><strong>Peroxissomos:</strong> Oxidação de ácidos graxos de cadeia muito longa (β-oxidação peroxissomal) gera H₂O₂, que é neutralizado pela <strong>Catalase</strong>. Defeitos aqui causam doenças graves (ex: Adrenoleucodistrofia).`
+                    },
+                    {
+                        title: "Transcrição e Tradução (Dogma Central)",
+                        answer: `<strong>Processamento de mRNA (Eucariotos):</strong><br><ol><li><strong>Capping 5':</strong> Adição de 7-metilguanosina (proteção e início da tradução).</li><li><strong>Splicing:</strong> Remoção de íntrons pelo <strong>Spliceossomo</strong> (snRNPs). Splicing alternativo gera diversidade proteica.</li><li><strong>Cauda Poli-A 3':</strong> Estabilidade e exportação nuclear.</li></ol><br><strong>Código Genético:</strong> Degenerado (redundante), universal e não ambíguo.`
+                    },
+                    {
+                        title: "Tráfego e Endomembranas",
+                        answer: `<strong>Hipótese do Sinal:</strong> O Peptídeo Sinal na extremidade N-terminal é reconhecido pela <strong>SRP</strong> (Partícula Reconhecedora de Sinal), pausando a tradução e ancorando o ribossomo no translocon (Sec61) do RER.<br><br><strong>Glicosilação:</strong> N-glicosilação inicia no RER (em asparagina) e é remodelada no Golgi (O-glicosilação em serina/treonina).`
+                    }
+                ]
+            },
+            {
+                name: "Bellini",
+                role: "Docente",
+                icon: "fa-user-graduate",
+                profile: "Foco: Termodinâmica e Matemática aplicada à Biologia.",
+                topTrend: "Cinética Enzimática",
+                topics: [
+                    {
+                        title: "Bioenergética",
+                        answer: `<strong>Energia Livre de Gibbs (ΔG):</strong><br><ul><li>ΔG < 0: Exergônica (Espontânea).</li><li>ΔG > 0: Endergônica (Não espontânea).</li></ul><br><strong>Acoplamento:</strong> A hidrólise de ATP (ΔG fortemente negativo) fornece a energia para reações anabólicas desfavoráveis.`
+                    },
+                    {
+                        title: "Cinética Enzimática",
+                        answer: `<strong>Equação de Michaelis-Menten:</strong><br><strong>Interpretação:</strong><br><ul><li>Km (Constante de Michaelis): Inversamente proporcional à afinidade. Km baixo = Alta afinidade.</li><li><strong>Inibição Competitiva:</strong> Aumenta o Km (precisa de mais substrato para deslocar o inibidor), Vmax inalterado.</li><li><strong>Inibição Não-Competitiva:</strong> Diminui o Vmax (enzima inativada), Km inalterado.</li></ul>`
+                    },
+                    {
+                        title: "ATP Sintase",
+                        answer: `Funciona como um motor rotativo molecular. O fluxo de H⁺ altera a conformação das subunidades β entre os estados: <strong>Open</strong> (libera ATP), <strong>Loose</strong> (liga ADP+Pi) e <strong>Tight</strong> (sintetiza ATP).`
+                    }
+                ]
+            },
+            {
+                name: "Ezequiel",
+                role: "Docente",
+                icon: "fa-chalkboard-teacher",
+                profile: "Foco: Mecanismos de transporte e especificidade.",
+                topTrend: "Tráfego Vesicular",
+                topics: [
+                    {
+                        title: "Tráfego Vesicular (Detalhado)",
+                        answer: `<strong>SNAREs:</strong> v-SNARE (vesícula) e t-SNARE (alvo) formam um complexo em "zíper" que fornece a energia para a fusão das membranas, superando a repulsão da água.<br><br><strong>Rab GTPases:</strong> Garantem que a vesícula certa chegue ao destino certo (endereçamento).<br><br><strong>Revestimentos:</strong><br><ul><li><strong>COPII:</strong> Anterógrado (RE → Golgi).</li><li><strong>COPI:</strong> Retrógrado (Golgi → RE ou Golgi → Golgi). Recupera proteínas residentes do RE (sinal KDEL).</li><li><strong>Clatrina:</strong> Golgi → Lisossomo (via receptor M6P) e Endocitose.</li></ul>`
+                    }
+                ]
+            },
+            {
+                name: "Boris",
+                role: "Docente",
+                icon: "fa-user-doctor",
+                profile: "Foco: Respiração celular e homeostase.",
+                topTrend: "Respiração Celular",
+                topics: [
+                    { title: "Respiração Celular", answer: "Processo de oxidação controlada de substratos orgânicos para produção de ATP. Integra glicólise, ciclo de Krebs e cadeia respiratória." },
+                    { title: "Apoptose", answer: "Morte celular programada mediada por mitocôndria, distinta da necrose por não gerar inflamação. Essencial para homeostase tecidual." }
+                ]
+            },
+            {
+                name: "Flavio",
+                role: "Docente",
+                icon: "fa-user-md",
+                profile: "Foco: Transporte e regulação iônica.",
+                topTrend: "Transporte de Membranas",
+                topics: [
+                    { title: "Transporte de Membranas", answer: "Transporte passivo ocorre a favor do gradiente; transporte ativo consome energia. Cálcio é regulado rigidamente por seu papel sinalizador." }
+                ]
+            },
+            {
+                name: "Gabriela",
+                role: "Docente",
+                icon: "fa-user-nurse",
+                profile: "Foco: Expressão gênica e integração.",
+                topTrend: "Expressão Gênica",
+                topics: [
+                    { title: "Expressão Gênica", answer: "Do DNA à proteína funcional, envolvendo controle em múltiplos níveis. A banca cobra sequência lógica e integração." }
+                ]
+            },
+            {
+                name: "Luis",
+                role: "Docente",
+                icon: "fa-user-graduate",
+                profile: "Foco: Genética e ciclo celular.",
+                topTrend: "Ploidia e Ciclo Celular",
+                topics: [
+                    { title: "Ploidia e Ciclo Celular", answer: "Alterações de ploidia impactam viabilidade celular. Controle do ciclo envolve APC/SCF e p53." }
+                ]
+            },
+            {
+                name: "Monica",
+                role: "Docente",
+                icon: "fa-chalkboard-teacher",
+                profile: "Foco: Núcleo e cromatina.",
+                topTrend: "Núcleo e Cromatina",
+                topics: [
+                    { title: "Núcleo e Cromatina", answer: "Histonas organizam o DNA em nucleossomos. Durante a mitose, ocorre fosforilação das histonas e desorganização da envoltura nuclear." }
+                ]
+            },
+            {
+                name: "Roman",
+                role: "Docente",
+                icon: "fa-user-doctor",
+                profile: "Foco: Fluxo de informação genética.",
+                topTrend: "Fluxo da Informação Genética",
+                topics: [
+                    { title: "Fluxo da Informação Genética", answer: "Diferenças entre eucariotos e procariotos refletem organização celular. Expressão gênica diferencial permite diversidade funcional." }
+                ]
+            }
+        ];
+
+        // --- ELEMENTS ---
+        const profAvatar = document.getElementById('profAvatar');
+        const profName = document.getElementById('profName');
+        const profRole = document.getElementById('profRole');
+        const profProfile = document.getElementById('profProfile');
+        const spinBtn = document.getElementById('spinBtn');
+
+        const placeholderText = document.getElementById('placeholderText');
+        const questionBox = document.getElementById('questionBox');
+        const questionText = document.getElementById('questionText');
+        const diffBadge = document.getElementById('diffBadge');
+
+        const reportSection = document.getElementById('reportSection');
+        const reportText = document.getElementById('reportText');
+
+        // --- SOUNDS ---
+        const clickSound = new Audio('/static/sound/clicando.mp3');
+        const playClick = () => {
+            const clone = clickSound.cloneNode();
+            clone.volume = 0.2;
+            clone.play().catch(() => {});
+        };
+
+        // --- FUNCTIONS ---
+        let isSpinning = false;
+
+        function switchView(viewId, btn) {
+            playClick();
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId + '-view').classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (viewId === 'stats') {
+                initCharts();
+                renderTopicsWall();
+            }
+        }
+
+        function startSimulation() {
+            if (isSpinning) return;
+            isSpinning = true;
+            playClick();
+
+            spinBtn.disabled = true;
+            placeholderText.style.display = 'none';
+            questionBox.style.display = 'none';
+            reportSection.style.display = 'none';
+            profProfile.style.display = 'none';
+            profAvatar.classList.add('pulsing');
+
+            let counter = 0;
+            const maxSpins = 15;
+            const interval = setInterval(() => {
+                const randomProf = professorsData[Math.floor(Math.random() * professorsData.length)];
+                updateProfCard(randomProf);
+                counter++;
+
+                if (counter >= maxSpins) {
+                    clearInterval(interval);
+                    finalizeSelection(randomProf);
+                }
+            }, 100);
+        }
+
+        function updateProfCard(prof) {
+            profName.innerText = prof.name;
+            profRole.innerText = prof.role;
+            profAvatar.innerHTML = `<i class="fas ${prof.icon}"></i>`;
+        }
+
+        function finalizeSelection(selectedProf) {
+            profAvatar.classList.remove('pulsing');
+            isSpinning = false;
+            spinBtn.disabled = false;
+            spinBtn.innerHTML = '<i class="fas fa-play-circle" style="font-size: 20px; color: var(--secondary);"></i> Clase de Prueba';
+
+            if (selectedProf.profile) {
+                profProfile.innerText = selectedProf.profile;
+                profProfile.style.display = 'block';
+            }
+
+            const randomTopicObj = selectedProf.topics[Math.floor(Math.random() * selectedProf.topics.length)];
+
+            questionText.innerText = `Desarrolla el siguiente tema: ${randomTopicObj.title}`;
+            reportText.innerHTML = randomTopicObj.answer;
+            questionBox.style.display = 'block';
+        }
+
+        function showReport() {
+            playClick();
+            reportSection.style.display = 'block';
+            reportSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- CHARTS & STATS ---
+        let chartsInitialized = false;
+        let radarChartInstance = null;
+
+        function initCharts() {
+            if (chartsInitialized) return;
+
+            // Populate Dropdown
+            const selector = document.getElementById('profSelector');
+            professorsData.forEach((prof, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = prof.name;
+                selector.appendChild(option);
+            });
+
+            const names = professorsData.map(p => p.name);
+            const counts = professorsData.map(p => p.topics.length);
+            const topTrends = professorsData.map(p => p.topTrend);
+            const colors = ['#9d00ff', '#4a0075', '#00d4ff', '#4ade80', '#f5c542', '#ef4444', '#ff00ff', '#00ff9d', '#ffff00', '#00ffff'];
+
+            // Bar Chart
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: names,
+                    datasets: [{
+                        label: 'Variedad de Temas',
+                        data: counts,
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    return 'Tendencia Principal: ' + topTrends[context.dataIndex];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            // Doughnut Chart (Global Topic Probability)
+            const topicCategories = {
+                "Membrana/Transporte": 0,
+                "Bioenergética/Mitocôndria": 0,
+                "Ciclo Celular/Genética": 0,
+                "Biologia Molecular (Dogma)": 0,
+                "Outros": 0
+            };
+
+            professorsData.forEach(prof => {
+                prof.topics.forEach(topic => {
+                    const t = topic.title.toLowerCase();
+                    if (t.includes("membrana") || t.includes("transporte") || t.includes("vesicular")) {
+                        topicCategories["Membrana/Transporte"]++;
+                    } else if (t.includes("mitocôndria") || t.includes("respiração") || t.includes("bioenergética") || t.includes("atp")) {
+                        topicCategories["Bioenergética/Mitocôndria"]++;
+                    } else if (t.includes("ciclo") || t.includes("meiose") || t.includes("mitose") || t.includes("ploidia")) {
+                        topicCategories["Ciclo Celular/Genética"]++;
+                    } else if (t.includes("transcrição") || t.includes("tradução") || t.includes("replicação") || t.includes("expressão")) {
+                        topicCategories["Biologia Molecular (Dogma)"]++;
+                    } else {
+                        topicCategories["Outros"]++;
+                    }
+                });
+            });
+
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(topicCategories),
+                    datasets: [{
+                        data: Object.values(topicCategories),
+                        backgroundColor: ['#00d4ff', '#f5c542', '#ef4444', '#9d00ff', '#94a3b8'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#f1f5f9' } }
+                    }
+                }
+            });
+
+            // Initial Radar Chart
+            updateRadarChart();
+
+            chartsInitialized = true;
+        }
+
+        function updateRadarChart() {
+            const profIndex = document.getElementById('profSelector').value;
+            const prof = professorsData[profIndex];
+
+            // Calculate topic distribution for this professor
+            const categories = {
+                "Membrana": 0,
+                "Bioenergética": 0,
+                "Ciclo/Genética": 0,
+                "Dogma Central": 0,
+                "Outros": 0
+            };
+
+            prof.topics.forEach(topic => {
+                const t = topic.title.toLowerCase();
+                if (t.includes("membrana") || t.includes("transporte") || t.includes("vesicular")) {
+                    categories["Membrana"]++;
+                } else if (t.includes("mitocôndria") || t.includes("respiração") || t.includes("bioenergética") || t.includes("atp")) {
+                    categories["Bioenergética"]++;
+                } else if (t.includes("ciclo") || t.includes("meiose") || t.includes("mitose") || t.includes("ploidia")) {
+                    categories["Ciclo/Genética"]++;
+                } else if (t.includes("transcrição") || t.includes("tradução") || t.includes("replicação") || t.includes("expressão")) {
+                    categories["Dogma Central"]++;
+                } else {
+                    categories["Outros"]++;
+                }
+            });
+
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        label: `Perfil de ${prof.name}`,
+                        data: Object.values(categories),
+                        backgroundColor: 'rgba(157, 0, 255, 0.2)',
+                        borderColor: '#9d00ff',
+                        pointBackgroundColor: '#00d4ff',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00d4ff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#f1f5f9', font: { size: 12 } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderTopicsWall() {
+            const wall = document.getElementById('topicsWall');
+            if (wall.innerHTML.trim() !== "") return;
+
+            professorsData.forEach(prof => {
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+
+                let topicsListHtml = '<ul class="topic-list">';
+                prof.topics.forEach(t => {
+                    const isTopTrend = t.title.toLowerCase().includes(prof.topTrend.toLowerCase());
+                    const trendClass = isTopTrend ? 'top-trend' : '';
+                    topicsListHtml += `<li class="${trendClass}">${t.title}</li>`;
+                });
+                topicsListHtml += '</ul>';
+
+                card.innerHTML = `
+                    <div class="topic-prof-name"><i class="fas ${prof.icon}"></i> ${prof.name}</div>
+                    ${topicsListHtml}
+                `;
+                wall.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2 style="color: var(--accent);">Conflicto de Sesión</h2>
+        <p>Se ha detectado actividad en otro dispositivo</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px; color: var(--text);">
+        <p style="margin-bottom: 15px;">Hemos detectado que tu cuenta ha iniciado sesión en otro lugar. Por seguridad, solo permitimos una sesión activa a la vez.</p>
+        <p>¿Deseas mantener esta sesión activa aquí y desconectar la otra?</p>
+    </div>
+
+    <form method="POST" style="display: flex; gap: 15px; justify-content: center;">
+        {% csrf_token %}
+        <button type="submit" name="logout" class="auth-btn" style="background: transparent; border: 1px solid var(--danger); color: var(--danger);">
+            Salir
+        </button>
+        <button type="submit" name="stay" class="auth-btn">
+            Mantener Aquí
+        </button>
+    </form>
+{% endblock %}

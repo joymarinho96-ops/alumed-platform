@@ -1,0 +1,36 @@
+{% extends 'accounts/auth_base.html' %}
+{% load i18n %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2>{% trans "Completar Registro" %}</h2>
+        <p>{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}Estás a punto de usar tu cuenta de {{ provider_name }} para iniciar sesión en {{ site_name }}. Como es tu primera vez, por favor confirma tus datos.{% endblocktrans %}</p>
+    </div>
+
+    <form class="auth-form" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="color: var(--muted); font-size: 0.75rem; display: block; margin-top: 5px;">{{ field.help_text|safe }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+
+        <button type="submit" class="auth-btn">{% trans "Registrarse" %}</button>
+    </form>
+    
+    <div class="auth-footer">
+        <p><a href="{% url 'login' %}">{% trans "Cancelar" %}</a></p>
+    </div>
+{% endblock %}

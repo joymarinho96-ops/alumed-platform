@@ -1,0 +1,120 @@
+{% load static %}
+
+<!-- O Overlay e o Modal são controlados pelo CSS para centralização perfeita -->
+<div class="account-modal-card">
+
+    <!-- Header -->
+    <div class="modal-header">
+        <h3><i class="fas fa-id-card-alt"></i> Mi Perfil</h3>
+        <button class="close-btn" onclick="closeAccountModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="modal-scroll-area">
+        <!-- Seção de Foto e Dados Pessoais -->
+        <div class="profile-section">
+            <div class="avatar-wrapper">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="Foto de Perfil" class="profile-img">
+                {% else %}
+                    <div class="profile-placeholder">{{ user.username|first|upper }}</div>
+                {% endif %}
+
+                <!-- Botão de Upload Discreto -->
+                <form id="photo-upload-form" action="{% url 'account_details' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="file-input" class="edit-avatar-btn">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input id="file-input" type="file" name="photo" accept="image/*" onchange="uploadPhoto()" style="display: none;">
+                </form>
+            </div>
+
+            <div class="user-info">
+                <h2 class="user-name">{{ user.first_name }} {{ user.last_name }}</h2>
+                <span class="user-handle">@{{ user.username }}</span>
+                <span class="user-email">{{ user.email }}</span>
+                <div class="member-since">
+                    <i class="far fa-calendar-alt"></i> Miembro desde: {{ user.date_joined|date:"d M Y" }}
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Seção de Cursos e Assinaturas -->
+        <div class="courses-section">
+            <h4><i class="fas fa-graduation-cap"></i> Mis Cursos Activos</h4>
+
+            <div class="courses-list">
+                {% for item in enrollments_data %}
+                    <div class="course-item">
+                        <div class="course-details">
+                            <span class="course-name">{{ item.course.title }}</span>
+                            <span class="course-expiry">
+                                <i class="far fa-clock"></i> Vence el: {{ item.expiration_date|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                        <div class="course-status">
+                            {% if item.status == 'active' %}
+                                <span class="badge badge-active">Activo</span>
+                            {% elif item.status == 'warning' %}
+                                <span class="badge badge-warning">Vence Pronto</span>
+                            {% else %}
+                                <span class="badge badge-expired">Expirado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No tienes cursos activos en este momento.</p>
+                        <a href="{% url 'home' %}#cursos" class="btn-explore">Explorar Cursos</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Ações de Conta -->
+        <div class="account-actions">
+            <a href="{% url 'password_change' %}" class="action-link">
+                <i class="fas fa-lock"></i> Cambiar Contraseña
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function uploadPhoto() {
+        const form = document.getElementById('photo-upload-form');
+        const formData = new FormData(form);
+
+        // Feedback visual de carregamento (opcional)
+        document.querySelector('.edit-avatar-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => {
+            if (response.ok) return response.text();
+            throw new Error('Erro no upload');
+        })
+        .then(html => {
+            // Atualiza o conteúdo do modal
+            const container = document.getElementById('modalContainer');
+            // Mantém o overlay, atualiza o miolo
+            const overlay = container.querySelector('.account-modal-overlay');
+            if(overlay) {
+                overlay.innerHTML = html;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error al actualizar la foto.');
+            document.querySelector('.edit-avatar-btn').innerHTML = '<i class="fas fa-camera"></i>';
+        });
+    }
+</script>

@@ -1,0 +1,22 @@
+{% extends 'accounts/auth_base.html' %}
+{% load i18n %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2>{% trans "Conectar con Google" %}</h2>
+        {% if process == "connect" %}
+            <p>{% blocktrans with provider.name as provider %}Estás a punto de conectar una nueva cuenta de terceros de {{ provider }}.{% endblocktrans %}</p>
+        {% else %}
+            <p>{% blocktrans with provider.name as provider %}Estás a punto de iniciar sesión usando tu cuenta de {{ provider }}.{% endblocktrans %}</p>
+        {% endif %}
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <button type="submit" class="auth-btn">{% trans "Continuar" %}</button>
+    </form>
+    
+    <div class="auth-footer">
+        <p><a href="{% url 'login' %}">{% trans "Cancelar" %}</a></p>
+    </div>
+{% endblock %}

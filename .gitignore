@@ -35,7 +35,10 @@ Thumbs.db
 !wix.config.json
 !wix.config.json.backup
 *.png
-*.html
+# Ignorar solo HTMLs generados o temporales, no los templates de Django
+netlify_build/*.html
+netlify_build/**/*.html
+conecta-biblioteca-source.html
 tmp-*
 @ + *
 tmp_library_server.py

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acceso Requerido - ALUMED{% endblock %}
+
+{% block content %}
+<section style="padding: 140px 0 80px 0; background: #070708; min-height: 100vh; display: flex; align-items: center; position: relative;">
+    <!-- Tech Grid Backing -->
+    <div class="courses-tech-grid" style="opacity: 0.12;"></div>
+    
+    <div style="max-width: 600px; margin: 0 auto; padding: 0 20px; z-index: 10; text-align: center;">
+        <div style="background: linear-gradient(130deg, rgba(36, 27, 74, 0.88), rgba(16, 23, 44, 0.95)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 24px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(12px);">
+            <div style="width: 70px; height: 70px; background: rgba(139, 92, 246, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; color: #a78bfa; font-size: 32px;">
+                <i class="fas fa-lock"></i>
+            </div>
+            
+            <h2 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 24px; font-weight: 700; margin: 0 0 15px 0; letter-spacing: -0.5px;">
+                Acceso al Ecosistema
+            </h2>
+            
+            <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6; margin: 0 0 30px 0; text-align: left;">
+                Para disfrutar las herramientas de ALUMED, crea tu cuenta gratis. <br><br>
+                Así vas a poder guardar tus libros y apuntes favoritos, participar en el foro de testimonios, organizar tus materias y tener la información de la Facultad en un solo lugar.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <a href="{% url 'account_signup' %}{% if next %}?next={{ next }}{% endif %}" class="action-btn-primary" style="display: block; text-decoration: none; padding: 14px 20px; font-size: 14.5px; font-family:'Orbitron', sans-serif; font-weight:700; background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);">
+                    Crear cuenta gratis
+                </a>
+                <a href="{% url 'account_login' %}{% if next %}?next={{ next }}{% endif %}" class="action-btn-secondary" style="display: block; text-decoration: none; padding: 12px 20px; font-size: 14.5px; font-family:'Orbitron', sans-serif; font-weight:700; border-color: rgba(167, 139, 250, 0.3); color: #cbd5e1;">
+                    Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

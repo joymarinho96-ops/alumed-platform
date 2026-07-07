@@ -1,0 +1,845 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="cursos" class="announcements-section" style="padding-top: 140px; min-height: 90vh; position: relative;">
+    <!-- Tech Grid Background -->
+    <div class="courses-tech-grid"></div>
+
+    <!-- Section Header -->
+    <div class="section-header reveal-up" style="margin-bottom: 30px;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: #d8b4fe; box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);">
+            <i class="far fa-calendar-alt"></i> Cronograma 2026
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-size: clamp(32px, 4vw, 52px); margin-top: 15px;">Fechas de <span class="home-hero-highlight" style="background: linear-gradient(135deg, #a855f7 0%, #22d3ee 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Exámenes</span></h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Consulta el calendario de exámenes finales y parciales clave para planificar tus estudios universitarios de forma estratégica.
+        </p>
+    </div>
+
+    <!-- Master Mode Switcher Tabs -->
+    <div style="max-width: 1200px; margin: 0 auto 30px; padding: 0 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <button onclick="switchMasterMode('finales')" id="mode-btn-finales" style="padding: 12px 28px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 30px; color: white; font-family:'Orbitron', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);">
+            <i class="fas fa-file-invoice" style="color: #c084fc;"></i> Exámenes Finales
+        </button>
+        <button onclick="switchMasterMode('parciales')" id="mode-btn-parciales" style="padding: 12px 28px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 30px; color: #cbd5e1; font-family:'Orbitron', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-layer-group" style="color: #22d3ee;"></i> Primeros Parciales
+        </button>
+        <button onclick="switchMasterMode('cartelera')" id="mode-btn-cartelera" style="padding: 12px 28px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 30px; color: #cbd5e1; font-family:'Orbitron', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-satellite-dish" style="color: #a78bfa;"></i> Cartelera en Vivo
+        </button>
+    </div>
+
+    <!-- VIEW 1: EXAMENES FINALES -->
+    <div id="view-finales" style="display: block;">
+        <!-- Search & Filter Controls Panel -->
+        <div style="max-width: 1200px; margin: 0 auto 30px; padding: 0 20px;">
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 16px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <!-- Real-time Search input -->
+                <div style="position: relative; width: 100%; max-width: 450px;">
+                    <input type="text" id="subject-search" placeholder="Buscar materia de finales..." oninput="filterExams()" style="width: 100%; padding: 12px 16px 12px 42px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 10px; color: white; outline: none; font-size: 14px; transition: all 0.3s;" onfocus="this.style.borderColor='#a855f7'; this.style.boxShadow='0 0 10px rgba(168,85,247,0.3)';" onblur="this.style.borderColor='rgba(168, 85, 247, 0.4)'; this.style.boxShadow='none';">
+                    <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(168, 85, 247, 0.6); font-size: 14px;"></i>
+                </div>
+
+                <!-- Year Tabs Filters -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="changeYearTab('all')" class="filter-tab active-filter" id="tab-all" style="padding: 10px 20px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; color: white; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; transition: all 0.2s;">
+                        Todos
+                    </button>
+                    <button onclick="changeYearTab(1)" class="filter-tab" id="tab-1" style="padding: 10px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #cbd5e1; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                        1º Año
+                    </button>
+                    <button onclick="changeYearTab(2)" class="filter-tab" id="tab-2" style="padding: 10px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #cbd5e1; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                        2º Año
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; margin-bottom: 60px;">
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow-x: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px);">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 950px;" id="exams-table">
+                    <thead>
+                        <tr style="background: linear-gradient(90deg, rgba(32, 0, 44, 0.8) 0%, rgba(74, 0, 117, 0.8) 100%); border-bottom: 2px solid rgba(168, 85, 247, 0.3);">
+                            <th style="padding: 18px 15px; color: #f5c542; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; width: 220px;">Materia</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Año</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Mayo</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Junio</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">1º Jul</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Ago</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">2º Ago</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Sep</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Oct</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">Nov</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">1º Dic</th>
+                            <th style="padding: 18px 15px; color: white; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 600; text-align: center;">2º Dic</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exams-table-body">
+                        <!-- Loaded dynamically via JS -->
+                    </tbody>
+                </table>
+                
+                <!-- Empty Results message -->
+                <div id="no-results" style="display: none; text-align: center; padding: 50px 20px; color: #94a3b8;">
+                    <i class="far fa-frown" style="font-size: 40px; color: #a855f7; margin-bottom: 15px;"></i>
+                    <h4 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px;">No se encontraron materias</h4>
+                    <p style="font-size: 14px; margin-top: 5px;">Intenta modificar los filtros o tu búsqueda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: EXAMENES PARCIALES -->
+    <div id="view-parciales" style="display: none;">
+        <!-- Filters Panel for Parciales -->
+        <div style="max-width: 1200px; margin: 0 auto 30px; padding: 0 20px;">
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(34, 211, 238, 0.25); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                
+                <!-- Info disclaimer -->
+                <div style="background: rgba(214, 166, 34, 0.08); border: 1px solid rgba(214, 166, 34, 0.25); rounded-width: 1px; border-radius: 10px; padding: 12px; font-size: 13px; color: rgba(214, 166, 34, 0.9); display: flex; gap: 10px; align-items: flex-start;">
+                    <i class="fas fa-exclamation-triangle" style="margin-top: 3px; flex-shrink: 0;"></i>
+                    <span>La información provista puede cambiar. Consulta siempre la cartelera oficial y el campus de cada cátedra.</span>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center;">
+                    <!-- Search input for parciales -->
+                    <div style="position: relative; width: 100%; max-width: 320px;">
+                        <input type="text" id="parcial-search" placeholder="Filtrar por palabra..." oninput="filterParciales()" style="width: 100%; padding: 10px 12px 10px 38px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 8px; color: white; outline: none; font-size: 13px; transition: all 0.3s;" onfocus="this.style.borderColor='#22d3ee';">
+                        <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(34, 211, 238, 0.6); font-size: 13px;"></i>
+                    </div>
+
+                    <!-- Category filter tags -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="parcial-category-tags">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Grid Container -->
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; margin-bottom: 60px;">
+            <div id="parciales-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px;">
+                <!-- Loaded dynamically via JS -->
+            </div>
+            
+            <div id="parciales-empty" style="display: none; text-align: center; padding: 50px 20px; color: #94a3b8;">
+                <i class="far fa-frown" style="font-size: 40px; color: #22d3ee; margin-bottom: 15px;"></i>
+                <h4 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px;">No se encontraron parciales</h4>
+                <p style="font-size: 14px; margin-top: 5px;">Modifica los filtros de búsqueda.</p>
+            </div>
+        </div>
+
+        <!-- VIEW 3: CARTELERA EN VIVO -->
+        <div id="view-cartelera" style="display: none; max-width: 1200px; margin: 0 auto; padding: 0 20px 60px;">
+            <!-- Alert Preferences Settings Card -->
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 20px; padding: 30px; margin-bottom: 30px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                <!-- Filter checkboxes -->
+                <div>
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 16px; color: white; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-sliders-h" style="color: #a78bfa;"></i> Mis Suscripciones
+                    </h3>
+                    <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Seleccioná las áreas o cátedras de las que querés recibir notificaciones en tus dispositivos.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="pref-estudiantiles" checked onchange="filterCartelera()" style="accent-color: #a78bfa; width: 16px; height: 16px;">
+                            Asuntos Estudiantiles / Cursadas
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="pref-ensenanza" checked onchange="filterCartelera()" style="accent-color: #a78bfa; width: 16px; height: 16px;">
+                            Dirección de Enseñanza / Trámites
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="pref-academica" checked onchange="filterCartelera()" style="accent-color: #a78bfa; width: 16px; height: 16px;">
+                            Secretaría Académica / Fechas
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="pref-catedras" checked onchange="filterCartelera()" style="accent-color: #a78bfa; width: 16px; height: 16px;">
+                            Cátedras (Anatomía, Histología, etc.)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- WhatsApp & Email Subscriptions -->
+                <div>
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 16px; color: white; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-bell" style="color: #facc15;"></i> Alertas en el Acto
+                    </h3>
+                    <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Configurá tus dispositivos para enterarte antes que nadie cuando se publique una novedad.</p>
+                    
+                    <!-- WhatsApp Field -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; color: #cbd5e1; font-size: 11px; font-family:'Orbitron', sans-serif; margin-bottom: 5px;">WHATSAPP ALERTS</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="alert-whatsapp" placeholder="+54 9 221 1234567" style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 13px;">
+                            <button onclick="saveAlertSettings('whatsapp')" class="pomo-btn pomo-btn-main" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px;">
+                                <i class="fab fa-whatsapp"></i> Activar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label style="display: block; color: #cbd5e1; font-size: 11px; font-family:'Orbitron', sans-serif; margin-bottom: 5px;">EMAIL ALERTS</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="alert-email" value="{{ user.email }}" readonly style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; color: #94a3b8; font-size: 13px;">
+                            <button onclick="saveAlertSettings('email')" class="pomo-btn pomo-btn-option" id="btn-email-alert" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px; border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1);">
+                                <i class="far fa-envelope"></i> Activar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Notices Feed Grid -->
+            <div id="cartelera-notices-feed" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+                <!-- Loaded dynamically in JavaScript -->
+            </div>
+
+            <!-- No notices fallback -->
+            <div id="cartelera-no-results" style="display: none; text-align: center; padding: 50px 20px; color: #94a3b8;">
+                <i class="fas fa-satellite-dish" style="font-size: 40px; color: #a78bfa; margin-bottom: 15px;"></i>
+                <h4 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px;">No hay avisos recientes</h4>
+                <p style="font-size: 14px; margin-top: 5px;">Probá modificando las suscripciones o filtros.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Toast alert system for Saved notification -->
+<div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); border: 1px solid #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.3); border-radius: 8px; padding: 12px 20px; color: white; font-family:'Orbitron', sans-serif; font-size: 13px; display: flex; align-items: center; gap: 8px; transform: translateY(150px); transition: transform 0.3s ease; z-index: 9999;">
+    <i class="fas fa-bookmark" style="color: #22d3ee;"></i>
+    <span id="toast-message">Guardado en favoritos</span>
+</div>
+
+<script>
+    // Cartelera notices data from backend scraper
+    const carteleraNoticesData = [
+        {% for notice in cartelera_notices %}
+        {
+            id: "{{ notice.id }}",
+            title: "{{ notice.title|escapejs }}",
+            date: "{{ notice.date }}",
+            url: "{{ notice.url }}",
+            subtitle: "{{ notice.subtitle|escapejs }}",
+            dept: "{{ notice.dept|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    // Examenes Finales JSON Data
+const examData = [
+  { year: 1, subject: "Anatomía A", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 1, subject: "Anatomía B", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 1, subject: "Anatomía C", dates: ["12-may", "24-jun", "16-jul", "11-ago", "27-ago", "14-sep", "23-oct", "18-nov", "1-dic", "14-dic"] },
+  { year: 6, subject: "Bioética", dates: ["13-may", "24-jun", "15-jul", "11-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 1, subject: "Biología", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 3, subject: "Bioquímica Clínica I", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 3, subject: "Bioquímica Clínica II", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 2, subject: "Bioquímica y Biología Molecular", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "16-dic"] },
+  { year: 4, subject: "Calidad de la Atención Médica", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 1, subject: "Ciencias Exactas - Regular", dates: ["12-may", "26-jun", "17-jul", "14-ago", "28-ago", "18-sep", "23-oct", "13-nov", "4-dic", "18-dic"] },
+  { year: 1, subject: "Ciencias Exactas - Libre", dates: ["17-jul", "4-dic"] },
+  { year: 1, subject: "Ciencias Sociales y Medicina", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 6, subject: "Cirugía A", dates: ["13-may", "24-jun", "15-jul", "14-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 6, subject: "Cirugía B", dates: ["13-may", "24-jun", "15-jul", "13-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 6, subject: "Cirugía C", dates: ["15-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 6, subject: "Cirugía D", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 6, subject: "Cirugía E", dates: ["15-may", "26-jun", "17-jul", "14-ago", "28-ago", "18-sep", "23-oct", "13-nov", "4-dic", "18-dic"] },
+  { year: 6, subject: "Cirugía de Tórax", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 1, subject: "Citología, Histología y Embriología", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 5, subject: "Deontología Médica y Medicina Legal", dates: ["13-may", "24-jun", "15-jul", "10-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 4, subject: "Dermatología", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 4, subject: "Diagnóstico y Terapéutica por Imágenes II", dates: ["13-may", "24-jun", "15-jul", "10-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 4, subject: "Discapacidad Intelectual", dates: ["16-may", "27-jun", "15-jul", "18-ago", "29-ago", "19-sep", "24-oct", "14-nov", "5-dic", "19-dic"] },
+  { year: 1, subject: "Ecología Humana y Promoción de la Salud", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 4, subject: "El Paciente con Enfermedad Crónica", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 2, subject: "Epidemiología", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 2, subject: "Estadística Aplicada", dates: ["14-may", "25-jun", "13-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 4, subject: "Farmacología Aplicada", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 3, subject: "Farmacología Básica", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 1, subject: "Filosofía Médica", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 2, subject: "Fisiología y Física Biológica", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 2, subject: "Genética", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Ginecología A", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Ginecología B", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 3, subject: "Historia de la Medicina - Regular", dates: ["13-may", "24-jun", "15-jul", "11-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 3, subject: "Historia de la Medicina - Libre", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 4, subject: "Infectología", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 3, subject: "Informática Aplicada", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 1, subject: "Informática Básica - Libre", dates: ["13-may", "24-jun", "15-jul", "11-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 3, subject: "Informática Médica", dates: ["14-may", "25-jun", "16-jul", "13-ago", "28-ago", "17-sep", "23-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 2, subject: "Inglés Médico", dates: ["11-may", "26-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 3, subject: "Inmunología", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 3, subject: "Introducción a la Epistemología", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 1, subject: "Literatura, Cine y Medicina", dates: ["15-may", "26-jun", "17-jul", "14-ago", "28-ago", "18-sep", "23-oct", "13-nov", "4-dic", "18-dic"] },
+  { year: 4, subject: "Medicina General y Familiar", dates: ["13-may", "24-jun", "15-jul", "11-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 4, subject: "Medicina Interna A", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 4, subject: "Medicina Interna B", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 4, subject: "Medicina Interna C", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 4, subject: "Medicina Interna D", dates: ["13-may", "24-jun", "15-jul", "11-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 4, subject: "Medicina Interna E", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 4, subject: "Medicina Interna F", dates: ["11-may", "22-jun", "15-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "2-dic", "14-dic"] },
+  { year: 3, subject: "Microbiología y Parasitología", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 2, subject: "Neuroanatomía Semiológica - Regular", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 2, subject: "Neuroanatomía Semiológica - Libre", dates: ["13-jul", "24-ago", "9-nov", "30-nov", "14-dic"] },
+  { year: 6, subject: "Neurocirugía", dates: ["13-may", "24-jun", "15-jul", "10-ago", "26-ago", "16-sep", "21-oct", "11-nov", "30-nov", "16-dic"] },
+  { year: 6, subject: "Neurología", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Obstetricia", dates: ["13-may", "24-jun", "15-jul", "13-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 5, subject: "Oftalmología", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 5, subject: "Ortopedia y Traumatología", dates: ["13-may", "25-jun", "15-jul", "13-ago", "26-ago", "17-sep", "21-oct", "12-nov", "2-dic", "17-dic"] },
+  { year: 5, subject: "Otorrinolaringología", dates: ["14-may", "25-jun", "16-jul", "13-ago", "27-ago", "17-sep", "22-oct", "12-nov", "3-dic", "17-dic"] },
+  { year: 3, subject: "Patología A", dates: ["15-may", "25-jun", "15-jul", "10-ago", "26-ago", "15-sep", "21-oct", "12-nov", "2-dic", "17-dic"] },
+  { year: 3, subject: "Patología B", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 5, subject: "Pediatría A", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Pediatría B", dates: ["15-may", "26-jun", "14-jul", "14-ago", "28-ago", "18-sep", "23-oct", "13-nov", "4-dic", "18-dic"] },
+  { year: 2, subject: "Psicología Médica", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Psiquiatría II", dates: ["13-may", "24-jun", "15-jul", "13-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 1, subject: "Salud Ambiental", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 5, subject: "Salud Pública II", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "15-sep", "20-oct", "10-nov", "1-dic", "15-dic"] },
+  { year: 1, subject: "Salud y Medicina Comunitaria", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 1, subject: "Seminario en Investigación", dates: ["11-may", "22-jun", "13-jul", "10-ago", "24-ago", "14-sep", "19-oct", "9-nov", "30-nov", "14-dic"] },
+  { year: 6, subject: "Terapia Intensiva - Regular", dates: ["13-may", "24-jun", "15-jul", "13-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 6, subject: "Terapia Intensiva - Libre", dates: ["13-may", "24-jun", "15-jul", "13-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 5, subject: "Toxicología", dates: ["13-may", "24-jun", "15-jul", "10-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 6, subject: "Trasplante de Órganos", dates: ["13-may", "24-jun", "15-jul", "14-ago", "26-ago", "16-sep", "21-oct", "11-nov", "2-dic", "16-dic"] },
+  { year: 6, subject: "Trasplante de Órganos - Libre", dates: ["14-ago", "26-ago", "16-dic"] },
+  { year: 5, subject: "Urología", dates: ["12-may", "23-jun", "14-jul", "11-ago", "25-ago", "19-sep", "20-oct", "10-nov", "1-dic", "15-dic"] }
+];
+
+// Examenes Parciales JSON Data
+const parcialesData = [
+  {
+    category: "Biología",
+    emoji: "🧬",
+    title: "Biología — 1er parcial",
+    badge: "Info clave",
+    blocks: [
+      { label: "📅 Fecha", val: "Se rinde sábados.<br>1ª fecha probable: a partir de 20/06<br><span style='font-size:11px;color:#94a3b8;'>Estimado / sujeto a confirmación</span>" },
+      { label: "📝 Modalidad", val: "Multiple Choice" },
+      { label: "⏱ Tiempo", val: "45 minutos" },
+      { label: "❓ ¿Cómo es?", val: "<ul style='padding-left:16px;list-style-type:disc;'><li>10 cuestiones</li><li>Opción múltiple</li><li>1 sola correcta</li></ul><span style='font-size:11px;color:#94a3b8;'>Datos estimados según 2025</span>" },
+      { label: "✅ Aprobación", val: "4 correctas = aprueba<br><span style='font-size:11px;color:#94a3b8;'>Referencia basada en 2025</span>" },
+      { label: "🏆 Promoción", val: "7 correctas = promociona<br><span style='font-size:11px;color:#94a3b8;'>Solo como referencia. Confirmar con avisos oficiales</span>" }
+    ],
+    alert: "<strong>Importante:</strong> Información basada en 2025. Puede haber cambios en 2026."
+  },
+  {
+    category: "Anatomía C",
+    emoji: "🦴",
+    title: "Anatomía C — 1er parcial",
+    badge: "Info clave",
+    blocks: [
+      { label: "📅 Fecha", val: "Sábado 11/07" },
+      { label: "📝 Modalidad", val: "Multiple Choice" },
+      { label: "🔄 Recuperatorio", val: "Oral" },
+      { label: "📍 Lugar y horario", val: "A confirmar" },
+      { label: "📚 Temas", val: "<ul style='padding-left:16px;list-style-type:disc;'><li>Aparato locomotor</li><li>Cabeza y cuello</li><li>Tórax</li></ul>" },
+      { label: "📋 ¿Cómo sigue?", val: "<ul style='padding-left:16px;list-style-type:disc;'><li>Antes del receso invernal se toma el 1er parcial</li><li>Incluye todos los temas dados hasta ese momento</li><li>Después del receso comienza la 2da parte</li><li>Se mantiene la misma modalidad</li><li>Cierra con el 2do parcial</li></ul>" },
+      { label: "🏆 Promoción", val: "<ul style='padding-left:16px;list-style-type:disc;'><li>Con 7 o más en ambos parciales</li><li>Solo cuenta la 1ra instancia de evaluación</li><li>Todos los parciales deben aprobarse con 7 o más</li><li>Quienes promocionan rinden Coloquio final</li></ul>" }
+    ]
+  },
+  {
+    category: "Anatomía B",
+    emoji: "🦴",
+    title: "Anatomía B — 1er parcial",
+    badge: "Info clave",
+    blocks: [
+      { label: "📅 Fecha", val: "Rango probable: fines de mayo → mediados de junio<br><span style='font-size:11px;color:#94a3b8;'>Estimado / sujeto a confirmación</span>" },
+      { label: "📝 Modalidad", val: "A confirmar" },
+      { label: "📚 Temas", val: "Contenidos del 1er cuatrimestre<br><span style='font-size:11px;color:#94a3b8;'>Pendiente de confirmación oficial</span>" }
+    ],
+    alert: "<strong>Importante:</strong> Información preliminar. Aguardar comunicación oficial de la cátedra."
+  },
+  {
+    category: "Anatomía A",
+    emoji: "🦴",
+    title: "Anatomía A — 1er parcial",
+    badge: "Info clave",
+    blocks: [
+      { label: "📅 Fecha", val: "A confirmar<br><span style='font-size:11px;color:#94a3b8;'>Pendiente de aviso oficial</span>" },
+      { label: "📝 Modalidad", val: "A confirmar" },
+      { label: "📚 Temas", val: "Contenidos del 1er cuatrimestre" }
+    ],
+    alert: "<strong>Importante:</strong> Información pendiente. Se actualizará cuando la cátedra publique avisos."
+  },
+  {
+    category: "Histo y Embriología",
+    emoji: "🔬",
+    title: "Histo y Embriología — 1er parcial",
+    badge: "Info clave",
+    borderPink: true,
+    blocks: [
+      { label: "📅 Fecha", val: "A confirmar<br><span style='font-size:11px;color:#94a3b8;'>Pendiente de aviso oficial</span>" },
+      { label: "📝 Modalidad", val: "A confirmar" },
+      { label: "📚 Temas", val: "<ul style='padding-left:16px;list-style-type:disc;'><li>Tejidos básicos</li><li>Embriología general</li><li>Contenidos según avance de cursada</li></ul>" }
+    ],
+    alert: "<strong>Importante:</strong> Se actualizará con información oficial de la cátedra."
+  },
+  {
+    category: "Método de estudio",
+    emoji: "🧠",
+    title: "Método para Histología — Ejemplo: Tejido óseo",
+    badge: "Método",
+    borderPurple: true,
+    blocks: [
+      { label: "🎯 Objetivo", val: "Aprender a estudiar tejidos con método activo y visual" },
+      { label: "📖 Pasos sugeridos", val: "<ol style='padding-left:16px;list-style-type:decimal;'><li>Lectura general del tema</li><li>Identificar estructuras clave</li><li>Dibujar o esquematizar</li><li>Relacionar con función</li><li>Practicar con imágenes histológicas</li></ol>" },
+      { label: "💡 Tip", val: "Usá colores para diferenciar tipos celulares y matrices en tus esquemas." }
+    ]
+  }
+];
+
+let activeYearFilter = 'all';
+let currentMasterMode = 'finales';
+let activeParcialCategory = 'Todas';
+
+// Mode Switching (Finales / Parciales / Cartelera)
+function switchMasterMode(mode) {
+    currentMasterMode = mode;
+
+    // Toggle displays
+    document.getElementById('view-finales').style.display = mode === 'finales' ? 'block' : 'none';
+    document.getElementById('view-parciales').style.display = mode === 'parciales' ? 'block' : 'none';
+    document.getElementById('view-cartelera').style.display = mode === 'cartelera' ? 'block' : 'none';
+
+    // Toggle active tab buttons
+    const btnFinales = document.getElementById('mode-btn-finales');
+    const btnParciales = document.getElementById('mode-btn-parciales');
+    const btnCartelera = document.getElementById('mode-btn-cartelera');
+
+    // Reset all buttons
+    [btnFinales, btnParciales, btnCartelera].forEach(btn => {
+        if (btn) {
+            btn.style.background = 'rgba(255, 255, 255, 0.02)';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+            btn.style.color = '#cbd5e1';
+            btn.style.fontWeight = '600';
+            btn.style.boxShadow = 'none';
+        }
+    });
+
+    if (mode === 'finales') {
+        btnFinales.style.background = 'rgba(168, 85, 247, 0.15)';
+        btnFinales.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+        btnFinales.style.color = 'white';
+        btnFinales.style.fontWeight = '700';
+        btnFinales.style.boxShadow = '0 0 15px rgba(168, 85, 247, 0.15)';
+    } else if (mode === 'parciales') {
+        btnParciales.style.background = 'rgba(34, 211, 238, 0.15)';
+        btnParciales.style.borderColor = 'rgba(34, 211, 238, 0.4)';
+        btnParciales.style.color = 'white';
+        btnParciales.style.fontWeight = '700';
+        btnParciales.style.boxShadow = '0 0 15px rgba(34, 211, 238, 0.15)';
+        renderParcialesCategories();
+        filterParciales();
+    } else if (mode === 'cartelera') {
+        btnCartelera.style.background = 'rgba(139, 92, 246, 0.2)';
+        btnCartelera.style.borderColor = 'rgba(139, 92, 246, 0.5)';
+        btnCartelera.style.color = 'white';
+        btnCartelera.style.fontWeight = '700';
+        btnCartelera.style.boxShadow = '0 0 15px rgba(139, 92, 246, 0.25)';
+        renderCarteleraFeed();
+    }
+}
+
+function saveAlertSettings(type) {
+    var msg = "";
+    if (type === 'whatsapp') {
+        var num = document.getElementById('alert-whatsapp').value.trim();
+        if (!num) {
+            alert("Por favor, ingresá un número de WhatsApp válido.");
+            return;
+        }
+        localStorage.setItem('alumed_alert_whatsapp', num);
+        msg = "¡Alertas de WhatsApp activadas con éxito!";
+    } else {
+        localStorage.setItem('alumed_alert_email', 'true');
+        msg = "¡Alertas de Email activadas con éxito!";
+    }
+    
+    // Show standard notification toast
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-message');
+    if (toast && toastMsg) {
+        toastMsg.textContent = msg;
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => {
+            toast.style.transform = 'translateY(150px)';
+        }, 3000);
+    }
+}
+
+function markAsRead(id) {
+    var readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
+    if (!readList.includes(id)) {
+        readList.push(id);
+        localStorage.setItem('alumed_read_notices', JSON.stringify(readList));
+    }
+    renderCarteleraFeed();
+}
+
+function filterCartelera() {
+    renderCarteleraFeed();
+}
+
+function renderCarteleraFeed() {
+    var feed = document.getElementById('cartelera-notices-feed');
+    if (!feed) return;
+    feed.innerHTML = '';
+
+    var showEstudiantiles = document.getElementById('pref-estudiantiles').checked;
+    var showEnsenanza = document.getElementById('pref-ensenanza').checked;
+    var showAcademica = document.getElementById('pref-academica').checked;
+    var showCatedras = document.getElementById('pref-catedras').checked;
+
+    var readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
+    
+    var filtered = carteleraNoticesData.filter(function(notice) {
+        var deptLower = notice.dept.toLowerCase();
+        var titleLower = notice.title.toLowerCase();
+        
+        var isEst = deptLower.includes('estudiant') || titleLower.includes('cupo') || titleLower.includes('relevamiento');
+        var isEns = deptLower.includes('enseñ') || deptLower.includes('ensen') || titleLower.includes('documentac');
+        var isAcad = deptLower.includes('académ') || deptLower.includes('academ') || titleLower.includes('inscripc');
+        var isCatedra = !isEst && !isEns && !isAcad;
+
+        if (isEst && !showEstudiantiles) return false;
+        if (isEns && !showEnsenanza) return false;
+        if (isAcad && !showAcademica) return false;
+        if (isCatedra && !showCatedras) return false;
+        
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        document.getElementById('cartelera-no-results').style.display = 'block';
+        feed.style.display = 'none';
+        return;
+    }
+
+    document.getElementById('cartelera-no-results').style.display = 'none';
+    feed.style.display = 'grid';
+
+    filtered.forEach(function(notice) {
+        var isUnread = !readList.includes(notice.id);
+        var card = document.createElement('div');
+        card.className = 'glass-card';
+        card.style.background = 'rgba(255, 255, 255, 0.02)';
+        card.style.border = isUnread ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid rgba(255, 255, 255, 0.06)';
+        card.style.padding = '22px';
+        card.style.borderRadius = '16px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.justifyContent = 'space-between';
+        card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        card.style.minHeight = '180px';
+        
+        if (isUnread) {
+            card.style.boxShadow = '0 0 15px rgba(139, 92, 246, 0.1)';
+        }
+
+        var textContent = `
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 11px; color: #a78bfa; font-weight: 600; background: rgba(167, 139, 250, 0.08); padding: 3px 10px; border-radius: 99px;">${notice.date}</span>
+                    ${isUnread ? '<span style="font-size: 9px; color: #facc15; font-weight: 700; background: rgba(250, 204, 21, 0.12); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(250,204,21,0.25); text-transform: uppercase; font-family: \'Orbitron\', sans-serif;">Nuevo</span>' : ''}
+                </div>
+                <h3 style="font-size: 15.5px; font-weight: 700; color: white; margin: 0 0 8px 0; line-height: 1.4; font-family: \'Outfit\', sans-serif;">${notice.title}</h3>
+                ${notice.subtitle ? `<p style="font-size: 12.5px; color: #94a3b8; margin: 0 0 12px 0; line-height: 1.4;">${notice.subtitle}</p>` : ''}
+            </div>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; color: #94a3b8; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="far fa-building" style="margin-right: 4px;"></i> ${notice.dept}</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *Nuevo aviso en la Cartelera de Medicina UNLP!*\n\n*' + notice.title + '*\n_' + notice.dept + '_\nFecha: ' + notice.date + '\n\nVer noticia original: ' + notice.url)}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #25d366; font-size: 14px; transition: transform 0.2s;" title="Enviar a WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="${notice.url}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #facc15; font-size: 12.5px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                        Ver Noticia <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+        card.innerHTML = textContent;
+        feed.appendChild(card);
+    });
+}
+
+/* ================= EXAMENES FINALES LOGIC ================= */
+function renderTable(data) {
+    const tbody = document.getElementById('exams-table-body');
+    tbody.innerHTML = '';
+    
+    if (data.length === 0) {
+        document.getElementById('no-results').style.display = 'block';
+        document.getElementById('exams-table').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('no-results').style.display = 'none';
+    document.getElementById('exams-table').style.display = 'table';
+    
+    data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        const bg = index % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
+        tr.style.background = bg;
+        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        tr.style.transition = 'background 0.2s';
+        tr.className = 'table-row-hover';
+        
+        let tdContent = `
+            <td style="padding: 16px 15px; color: white; font-weight: 600; font-size: 14px;">
+                ${row.subject}
+            </td>
+            <td style="padding: 16px 15px; text-align: center;">
+                <span style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; ${row.year === 1 ? 'background:rgba(34,211,238,0.15); border: 1px solid rgba(34,211,238,0.3); color:#22d3ee;' : 'background:rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3); color:#c084fc;'}">
+                    ${row.year}º Año
+                </span>
+            </td>
+        `;
+        
+        row.dates.forEach(date => {
+            tdContent += `<td style="padding: 16px 15px; text-align: center; color: #cbd5e1; font-size: 13px;">${date}</td>`;
+        });
+        
+        tr.innerHTML = tdContent;
+        tbody.appendChild(tr);
+    });
+}
+
+function filterExams() {
+    const searchVal = document.getElementById('subject-search').value.toLowerCase().trim();
+    
+    const filtered = examData.filter(item => {
+        const matchSearch = item.subject.toLowerCase().includes(searchVal);
+        const matchYear = activeYearFilter === 'all' || item.year === activeYearFilter;
+        return matchSearch && matchYear;
+    });
+    
+    renderTable(filtered);
+}
+
+function changeYearTab(yearVal) {
+    activeYearFilter = yearVal;
+    
+    const tabs = document.querySelectorAll('.filter-tab');
+    tabs.forEach(tab => {
+        if (tab.id === 'tab-' + yearVal) {
+            tab.classList.add('active-filter');
+            tab.style.background = 'rgba(168, 85, 247, 0.15)';
+            tab.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+            tab.style.color = 'white';
+            tab.style.fontWeight = '700';
+        } else {
+            tab.classList.remove('active-filter');
+            tab.style.background = 'rgba(255,255,255,0.02)';
+            tab.style.borderColor = 'rgba(255,255,255,0.06)';
+            tab.style.color = '#cbd5e1';
+            tab.style.fontWeight = '600';
+        }
+    });
+    
+    filterExams();
+}
+
+/* ================= EXAMENES PARCIALES LOGIC ================= */
+const categories = ['Todas', 'Biología', 'Anatomía A', 'Anatomía B', 'Anatomía C', 'Histo y Embriología', 'Método de estudio'];
+
+function renderParcialesCategories() {
+    const container = document.getElementById('parcial-category-tags');
+    container.innerHTML = '';
+    
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        btn.onclick = () => selectParcialCategory(cat);
+        
+        btn.style.padding = '8px 16px';
+        btn.style.borderRadius = '20px';
+        btn.style.fontSize = '12px';
+        btn.style.fontFamily = "'Orbitron', sans-serif";
+        btn.style.cursor = 'pointer';
+        btn.style.transition = 'all 0.2s';
+        
+        if (cat === activeParcialCategory) {
+            btn.style.background = '#22d3ee';
+            btn.style.color = '#0B0B0B';
+            btn.style.borderColor = '#22d3ee';
+            btn.style.fontWeight = '700';
+        } else {
+            btn.style.background = 'rgba(255,255,255,0.02)';
+            btn.style.color = '#cbd5e1';
+            btn.style.borderColor = 'rgba(255,255,255,0.06)';
+            btn.style.borderStyle = 'solid';
+            btn.style.borderWidth = '1px';
+            btn.style.fontWeight = '600';
+        }
+        
+        container.appendChild(btn);
+    });
+}
+
+function selectParcialCategory(cat) {
+    activeParcialCategory = cat;
+    renderParcialesCategories();
+    filterParciales();
+}
+
+function filterParciales() {
+    const searchVal = document.getElementById('parcial-search').value.toLowerCase().trim();
+    
+    const filtered = parcialesData.filter(item => {
+        const matchSearch = item.title.toLowerCase().includes(searchVal) || 
+                            item.category.toLowerCase().includes(searchVal) ||
+                            item.blocks.some(b => b.label.toLowerCase().includes(searchVal) || b.val.toLowerCase().includes(searchVal));
+        
+        const matchCategory = activeParcialCategory === 'Todas' || item.category === activeParcialCategory;
+        
+        return matchSearch && matchCategory;
+    });
+    
+    renderParcialesCards(filtered);
+}
+
+function renderParcialesCards(data) {
+    const grid = document.getElementById('parciales-grid');
+    grid.innerHTML = '';
+    
+    if (data.length === 0) {
+        document.getElementById('parciales-empty').style.display = 'block';
+        return;
+    }
+    document.getElementById('parciales-empty').style.display = 'none';
+    
+    data.forEach(item => {
+        const card = document.createElement('div');
+        
+        // Card wrapper styling
+        card.style.background = 'rgba(15, 23, 42, 0.5)';
+        card.style.border = '1px solid rgba(255, 255, 255, 0.06)';
+        card.style.borderRadius = '16px';
+        card.style.padding = '25px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.transition = 'all 0.3s ease';
+        card.className = 'parcial-card-hover';
+        
+        // Top accent coloring
+        if (item.borderPink) {
+            card.style.borderTop = '4px solid #E91E73';
+        } else if (item.borderPurple) {
+            card.style.borderTop = '4px solid #8b5cf6';
+        } else {
+            card.style.borderTop = '4px solid #f5c542';
+        }
+        
+        // Render block contents
+        let blocksHtml = '';
+        item.blocks.forEach(b => {
+            const borderCol = item.borderPink ? '#E91E73' : (item.borderPurple ? '#8b5cf6' : '#f5c542');
+            blocksHtml += `
+                <div style="border-left: 3px solid ${borderCol}; padding-left: 12px; margin-bottom: 12px;">
+                    <p style="font-weight: 700; color: white; margin-bottom: 3px; font-size: 13px;">${b.label}</p>
+                    <p style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">${b.val}</p>
+                </div>
+            `;
+        });
+        
+        // Alert box if present
+        let alertHtml = '';
+        if (item.alert) {
+            const alertBg = item.borderPink ? 'rgba(233,30,115,0.08)' : 'rgba(214,166,34,0.08)';
+            const alertBorder = item.borderPink ? 'rgba(233,30,115,0.25)' : 'rgba(214,166,34,0.25)';
+            const alertText = item.borderPink ? '#f472b6' : '#f4c542';
+            
+            alertHtml = `
+                <div style="background: ${alertBg}; border: 1px solid ${alertBorder}; border-radius: 8px; padding: 10px; font-size: 11px; color: ${alertText}; margin-top: auto; line-height: 1.4;">
+                    ${item.alert}
+                </div>
+            `;
+        }
+        
+        const badgeBg = item.borderPink ? '#E91E73' : (item.borderPurple ? '#8b5cf6' : 'linear-gradient(135deg, #34106B, #4B168C)');
+        
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 24px;">${item.emoji}</span>
+                <span style="background: ${badgeBg}; color: white; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; font-family:'Orbitron', sans-serif;">
+                    ${item.badge}
+                </span>
+            </div>
+            <h3 style="color: white; font-family:'Orbitron', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 15px;">${item.title}</h3>
+            
+            <div style="flex-grow: 1; margin-bottom: 15px;">
+                ${blocksHtml}
+            </div>
+            
+            ${alertHtml}
+            
+            <!-- Actions buttons -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="triggerToast('Detalles: ${item.title} cargados.')" class="btn-parcial-detail" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    <i class="far fa-eye" style="font-size: 11px;"></i> Ver detalles
+                </button>
+                <button onclick="triggerToast('¡Parcial guardado en favoritos!')" class="btn-parcial-save" style="padding: 10px 14px; border-radius: 10px; background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.2); color: #22d3ee; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    <i class="far fa-bookmark"></i>
+                </button>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+}
+
+// Toast Trigger
+function triggerToast(message) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-message').textContent = message;
+    
+    // Slide Up
+    toast.style.transform = 'translateY(0)';
+    
+    // Slide Down after 3 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateY(150px)';
+    }, 2800);
+}
+
+// Initial render
+window.onload = function() {
+    renderTable(examData);
+    
+    // Check url search parameter to toggle between different views
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const tab = urlParams.get('tab');
+    
+    if (tab === 'cartelera') {
+        switchMasterMode('cartelera');
+    } else if (mode === 'parciales' || tab === 'parciales') {
+        switchMasterMode('parciales');
+    }
+};
+</script>
+
+<style>
+.table-row-hover:hover {
+    background: rgba(168, 85, 247, 0.06) !important;
+}
+.parcial-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(34, 211, 238, 0.1) !important;
+    border-color: rgba(34, 211, 238, 0.25) !important;
+}
+.btn-parcial-detail:hover {
+    background: rgba(255,255,255,0.15) !important;
+    transform: scale(1.02);
+}
+.btn-parcial-save:hover {
+    background: #22d3ee !important;
+    color: #0B0B0B !important;
+    transform: scale(1.02);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .active-courses-container {
+        padding: 120px 5% 60px;
+        max-width: 1400px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .courses-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .course-card {
+        background: rgba(15, 15, 20, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: blur(15px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        width: 350px;
+        max-width: 100%;
+    }
+
+    .course-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: rgba(245, 197, 66, 0.6);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 197, 66, 0.2);
+        z-index: 10;
+    }
+
+    .card-image-wrapper {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .course-card:hover .card-image-wrapper img {
+        transform: scale(1.15);
+    }
+
+    .card-details {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .course-title {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .btn-access {
+        display: block;
+        width: 100%;
+        padding: 16px 0;
+        text-align: center;
+        background: rgba(245, 197, 66, 0.05);
+        border: 1px solid #f5c542;
+        color: #f5c542;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-top: auto;
+    }
+
+    .btn-access:hover {
+        background: #f5c542;
+        color: #0a000f;
+        box-shadow: 0 0 30px rgba(245, 197, 66, 0.6);
+    }
+</style>
+
+<div class="active-courses-container">
+    <h1 class="neon-text">Cursos Ativos</h1>
+    
+    {% if enrolled_courses %}
+        <div class="courses-grid">
+            {% for course in enrolled_courses %}
+                <div class="course-card">
+                    {% if course.image %}
+                        <div class="card-image-wrapper">
+                            <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-details">
+                        <h3 class="course-title">{{ course.title }}</h3>
+                        <a href="{% url 'courses:course_dashboard' course.id %}" class="btn-access">Acessar Curso</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Você não está matriculado em nenhum curso no momento.</p>
+            <a href="{% url 'home' %}#cursos" class="btn-access" style="max-width: 200px; margin-top: 20px;">Ver Cursos</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,572 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 140px 0 80px 0; background: #0B0B0B; min-height: 100vh; position: relative;">
+    
+    <!-- Top fixed banner (warning about inscriptions) -->
+    <div style="background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); color: #000; padding: 12px 20px; border-bottom: 3px solid #b45309; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.2); position: relative; z-index: 10; margin-bottom: 40px; border-radius: 12px; max-width: 1200px; margin-left: auto; margin-right: auto;" class="reveal-up">
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div style="font-size: 24px; animation: bounce 1s infinite;">⚠️</div>
+            <div style="flex: 1;">
+                <h4 style="margin: 0; font-weight: 800; font-size: 15px; font-family:'Orbitron', sans-serif;">📋 INSCRIPCIÓN A CURSADA 2026 - 1º AÑO</h4>
+                <p style="margin: 3px 0 0 0; font-size: 13px; font-weight: 600;">
+                    La inscripción a las cursadas de 1º año se realizará por <span style="font-weight: 800; color: #78350f;">SIU Guaraní</span> desde el <span style="font-weight: 800; color: #b91c1c;">11/03 a las 11:00 hs</span> hasta el <span style="font-weight: 800; color: #b91c1c;">13/03 a las 23:59 hs</span>.
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <span style="background: rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;">⏱️ 11 - 13/03</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;" class="reveal-up">
+            <span class="hero-badge" style="background: rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.3); color: #d4af37; font-size: 12px; margin-bottom: 15px; display: inline-block; font-family:'Orbitron', sans-serif;">
+                <i class="far fa-clock"></i> Distribución de Cursadas
+            </span>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(36px, 5vw, 54px); color: white; margin: 0; line-height: 1.1; font-weight: 900;">
+                Comisiones <span class="home-hero-highlight" style="background: linear-gradient(135deg, #d4af37 0%, #f4e4bc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2026</span>
+            </h1>
+            <p style="color: #cbd5e1; font-size: 16px; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 500;">
+                Horarios y Cátedras de la Facultad de Ciencias Médicas (UNLP)
+            </p>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap;" class="reveal-up">
+            <a href="#buscador-sec" class="quick-nav-btn">🔍 Buscador</a>
+            <a href="#biologia-sec" class="quick-nav-btn">Biología</a>
+            <a href="#histologia-sec" class="quick-nav-btn">Histología y Embriología</a>
+            <a href="#anatomia-a-sec" class="quick-nav-btn">Anatomía A</a>
+            <a href="#anatomia-b-sec" class="quick-nav-btn">Anatomía B</a>
+            <a href="#anatomia-c-sec" class="quick-nav-btn">Anatomía C</a>
+            <a href="#sociales-sec" class="quick-nav-btn">Ciencias Sociales</a>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div id="buscador-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
+                <span style="color: #d4af37;">🔍</span> Buscador de Comisiones
+            </h3>
+            <p style="color: #94a3b8; font-size: 13px; margin: 0 0 24px 0;">Filtra por día y horario para planificar tu inscripción sin superposiciones.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                <div>
+                    <label style="color: #cbd5e1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block; font-family:'Orbitron', sans-serif;">Día de la semana</label>
+                    <select id="filterDay" class="filter-select">
+                        <option value="">-- Selecciona un día --</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: #cbd5e1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block; font-family:'Orbitron', sans-serif;">Horario aproximado</label>
+                    <select id="filterTime" class="filter-select">
+                        <option value="">-- Selecciona un horario --</option>
+                        <option value="08:00">08:00 - 10:00</option>
+                        <option value="09:00">09:00 - 11:00 / 14:30</option>
+                        <option value="10:00">10:00 - 12:00</option>
+                        <option value="12:00">12:00 - 14:00</option>
+                        <option value="13:00">13:00 - 15:30 / 17:00</option>
+                        <option value="14:00">14:00 - 16:00</option>
+                        <option value="15:00">15:00 - 17:00</option>
+                        <option value="16:00">16:00 - 18:00</option>
+                        <option value="17:00">17:00 - 19:00</option>
+                        <option value="18:00">18:00 - 20:00</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="buscarComisiones()" class="search-btn">🔍 BUSCAR COMISIONES</button>
+
+            <!-- Search Results -->
+            <div id="searchResults" style="display: none; margin-top: 30px;">
+                <div style="background: rgba(212, 175, 55, 0.08); border-left: 4px solid #d4af37; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <p style="color: #f4e4bc; margin: 0; font-size: 14px; font-weight: 600;">
+                        Se encontraron <span id="resultCount" style="font-weight: 800; color: white;">0</span> comisiones coincidentes:
+                    </p>
+                </div>
+                <div id="resultsList" style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                    <!-- Result cards inserted here -->
+                </div>
+            </div>
+
+            <div id="noResults" style="display: none; margin-top: 30px; text-align: center; padding: 30px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <p style="color: #94a3b8; margin: 0; font-size: 14px;">No hay comisiones disponibles con esos filtros.</p>
+                <p style="color: #64748b; margin: 5px 0 0 0; font-size: 12px;">Prueba combinando otro día u horario.</p>
+            </div>
+        </div>
+
+        <!-- BIOLOGIA -->
+        <div id="biologia-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #22d3ee;">🦠</span> Biología
+                </h3>
+                <span style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.2); color: #22d3ee; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Cátedra Única</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="biologia-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HISTOLOGIA Y EMBRIOLOGIA -->
+        <div id="histologia-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #a855f7;">🔬</span> Histología y Embriología
+                </h3>
+                <span style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); color: #c084fc; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Cátedra Única</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                            <th>Aula</th>
+                        </tr>
+                    </thead>
+                    <tbody id="histologia-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ANATOMIA A -->
+        <div id="anatomia-a-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #ec4899;">🫁</span> Anatomía A
+                </h3>
+                <span style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2); color: #f472b6; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Dissección y Modelos</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anatomia-a-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ANATOMIA B -->
+        <div id="anatomia-b-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #3b82f6;">🧠</span> Anatomía B
+                </h3>
+                <span style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Cátedra Tradicional</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anatomia-b-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ANATOMIA C -->
+        <div id="anatomia-c-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #10b981;">🫀</span> Anatomía C
+                </h3>
+                <span style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Prácticas Clínicas</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anatomia-c-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CIENCIAS SOCIALES -->
+        <div id="sociales-sec" class="comision-card reveal-up" style="margin-bottom: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #f59e0b;">⚖️</span> Ciencias Sociales y Medicina
+                </h3>
+                <span style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Seminarios</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="comision-table">
+                    <thead>
+                        <tr>
+                            <th>Comisión</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sociales-table-body">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Custom Styles for Comisiones Page -->
+<style>
+.comision-card {
+    background: rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.comision-card:hover {
+    border-color: rgba(212, 175, 55, 0.25);
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.04);
+}
+.quick-nav-btn {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    color: #cbd5e1;
+    font-family:'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.quick-nav-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.4);
+    color: #d4af37;
+    transform: translateY(-2px);
+}
+.filter-select {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.25s;
+    outline: none;
+}
+.filter-select:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+}
+.filter-select option {
+    background: #0B0B0B;
+    color: white;
+}
+.search-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #d4af37 0%, #b45309 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+    transition: all 0.3s;
+}
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+}
+.comision-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.comision-table th {
+    background: rgba(0, 0, 0, 0.4);
+    color: #d4af37;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px;
+    text-align: center;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+}
+.comision-table td {
+    padding: 12px 14px;
+    color: #cbd5e1;
+    font-size: 13px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-weight: 500;
+}
+.comision-table tr:hover td {
+    background: rgba(212, 175, 55, 0.05);
+    color: white;
+}
+.comision-table tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.01);
+}
+.result-row {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    transition: all 0.2s;
+}
+.result-row:hover {
+    background: rgba(212, 175, 55, 0.08);
+    border-color: rgba(212, 175, 55, 0.3);
+    transform: translateX(4px);
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+</style>
+
+<!-- In-memory Data & Interactive Search logic -->
+<script>
+const comisionesData = [
+    // Biología
+    { catedra: "Biología", comision: "1", dia: "Lunes", horario: "08:00–10:00", aula: "-" },
+    { catedra: "Biología", comision: "2", dia: "Lunes", horario: "10:00–12:00", aula: "-" },
+    { catedra: "Biología", comision: "3", dia: "Lunes", horario: "12:00–14:00", aula: "-" },
+    { catedra: "Biología", comision: "4", dia: "Lunes", horario: "14:00–16:00", aula: "-" },
+    { catedra: "Biología", comision: "5", dia: "Lunes", horario: "16:00–18:00", aula: "-" },
+    { catedra: "Biología", comision: "6", dia: "Lunes", horario: "18:00–20:00", aula: "-" },
+    { catedra: "Biología", comision: "7", dia: "Martes", horario: "14:00–16:00", aula: "-" },
+    { catedra: "Biología", comision: "8", dia: "Martes", horario: "16:00–18:00", aula: "-" },
+    { catedra: "Biología", comision: "9", dia: "Martes", horario: "18:00–20:00", aula: "-" },
+    { catedra: "Biología", comision: "10", dia: "Miércoles", horario: "08:00–10:00", aula: "-" },
+    { catedra: "Biología", comision: "11", dia: "Miércoles", horario: "10:00–12:00", aula: "-" },
+    { catedra: "Biología", comision: "12", dia: "Miércoles", horario: "12:00–14:00", aula: "-" },
+    { catedra: "Biología", comision: "13", dia: "Jueves", horario: "14:00–16:00", aula: "-" },
+    { catedra: "Biología", comision: "14", dia: "Jueves", horario: "16:00–18:00", aula: "-" },
+    { catedra: "Biología", comision: "15", dia: "Jueves", horario: "18:00–20:00", aula: "-" },
+    { catedra: "Biología", comision: "16", dia: "Viernes", horario: "08:00–10:00", aula: "-" },
+    { catedra: "Biología", comision: "17", dia: "Viernes", horario: "10:00–12:00", aula: "-" },
+    { catedra: "Biología", comision: "18", dia: "Viernes", horario: "12:00–14:00", aula: "-" },
+    { catedra: "Biología", comision: "19", dia: "Viernes", horario: "14:00–16:00", aula: "-" },
+    { catedra: "Biología", comision: "20", dia: "Viernes", horario: "16:00–18:00", aula: "-" },
+    { catedra: "Biología", comision: "21", dia: "Viernes", horario: "18:00–20:00", aula: "-" },
+
+    // Histología
+    { catedra: "Histología", comision: "C01", dia: "Lunes", horario: "10:00–12:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C02", dia: "Lunes", horario: "12:00–14:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C03", dia: "Lunes", horario: "14:00–16:00", aula: "Microcine" },
+    { catedra: "Histología", comision: "C04", dia: "Martes", horario: "08:00–10:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C05", dia: "Martes", horario: "10:00–12:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C06", dia: "Martes", horario: "10:00–12:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C07", dia: "Martes", horario: "12:00–14:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C08", dia: "Martes", horario: "12:00–14:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C09", dia: "Martes", horario: "14:00–16:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C10", dia: "Martes", horario: "14:00–16:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C11", dia: "Martes", horario: "16:00–18:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C12", dia: "Martes", horario: "16:00–18:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C13", dia: "Martes", horario: "18:00–20:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C14", dia: "Martes", horario: "18:00–20:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C15", dia: "Miércoles", horario: "08:00–10:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C16", dia: "Miércoles", horario: "10:00–12:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C17", dia: "Miércoles", horario: "12:00–14:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C18", dia: "Miércoles", horario: "14:00–16:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C19", dia: "Miércoles", horario: "16:00–18:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C20", dia: "Miércoles", horario: "18:00–20:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C21", dia: "Jueves", horario: "08:00–10:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C22", dia: "Jueves", horario: "08:00–10:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C23", dia: "Jueves", horario: "10:00–12:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C24", dia: "Jueves", horario: "10:00–12:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C25", dia: "Jueves", horario: "12:00–14:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C26", dia: "Jueves", horario: "12:00–14:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C27", dia: "Jueves", horario: "14:00–16:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C28", dia: "Jueves", horario: "16:00–18:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C29", dia: "Jueves", horario: "16:00–18:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C30", dia: "Jueves", horario: "18:00–20:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C31", dia: "Jueves", horario: "18:00–20:00", aula: "ANF VIII – Estiu" },
+    { catedra: "Histología", comision: "C32", dia: "Viernes", horario: "08:00–10:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C33", dia: "Viernes", horario: "10:00–12:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C34", dia: "Viernes", horario: "12:00–14:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C35", dia: "Viernes", horario: "14:00–16:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C36", dia: "Viernes", horario: "16:00–18:00", aula: "ANF VII – Mazzei" },
+    { catedra: "Histología", comision: "C37", dia: "Viernes", horario: "18:00–20:00", aula: "ANF VII – Mazzei" },
+
+    // Anatomía A
+    { catedra: "Anatomía A", comision: "1-2", dia: "Lunes", horario: "13:00–17:00", aula: "Salón de Dissección" },
+    { catedra: "Anatomía A", comision: "3-4", dia: "Martes", horario: "13:00–17:00", aula: "Salón de Dissección" },
+    { catedra: "Anatomía A", comision: "5-6", dia: "Miércoles", horario: "09:00–13:00", aula: "Salón de Dissección" },
+    { catedra: "Anatomía A", comision: "7-8", dia: "Miércoles", horario: "13:00–17:00", aula: "Salón de Dissección" },
+    { catedra: "Anatomía A", comision: "9-10", dia: "Jueves", horario: "13:00–17:00", aula: "Salón de Dissección" },
+    { catedra: "Anatomía A", comision: "11-12", dia: "Viernes", horario: "13:00–17:00", aula: "Salón de Dissección" },
+
+    // Anatomía B
+    { catedra: "Anatomía B", comision: "01", dia: "Lunes", horario: "09:00–14:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "02", dia: "Lunes", horario: "13:00–18:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "03", dia: "Martes", horario: "09:00–14:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "04", dia: "Martes", horario: "13:00–18:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "05", dia: "Miércoles", horario: "09:00–14:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "06", dia: "Miércoles", horario: "13:00–18:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "07", dia: "Jueves", horario: "09:00–14:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "08", dia: "Jueves", horario: "13:00–18:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "09", dia: "Viernes", horario: "09:00–14:30", aula: "Cátedra Anato B" },
+    { catedra: "Anatomía B", comision: "10", dia: "Viernes", horario: "13:00–18:30", aula: "Cátedra Anato B" },
+
+    // Anatomía C
+    { catedra: "Anatomía C", comision: "001", dia: "Lunes", horario: "13:00–15:30", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "002", dia: "Lunes", horario: "15:30–17:00", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "003", dia: "Martes", horario: "13:00–15:30", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "004", dia: "Martes", horario: "15:30–17:00", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "005", dia: "Miércoles", horario: "13:00–15:30", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "006", dia: "Miércoles", horario: "15:30–17:00", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "007", dia: "Jueves", horario: "13:00–15:30", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "008", dia: "Jueves", horario: "15:30–17:00", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "009", dia: "Viernes", horario: "13:00–15:30", aula: "Cátedra Anato C" },
+    { catedra: "Anatomía C", comision: "010", dia: "Viernes", horario: "15:30–17:00", aula: "Cátedra Anato C" },
+
+    // Ciencias Sociales
+    { catedra: "Ciencias Sociales", comision: "Seminario 1", dia: "Lunes", horario: "08:00–10:00", aula: "Aula C. Soc." },
+    { catedra: "Ciencias Sociales", comision: "Seminario 2", dia: "Lunes", horario: "10:00–12:00", aula: "Aula C. Soc." },
+    { catedra: "Ciencias Sociales", comision: "Seminario 3", dia: "Martes", horario: "14:00–16:00", aula: "Aula C. Soc." },
+    { catedra: "Ciencias Sociales", comision: "Seminario 4", dia: "Miércoles", horario: "10:00–12:00", aula: "Aula C. Soc." },
+    { catedra: "Ciencias Sociales", comision: "Seminario 5", dia: "Jueves", horario: "16:00–18:00", aula: "Aula C. Soc." },
+    { catedra: "Ciencias Sociales", comision: "Seminario 6", dia: "Viernes", horario: "12:00–14:00", aula: "Aula C. Soc." }
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Populate Tables
+    const populateTable = (catedraName, elementId, includeAula = false) => {
+        const tbody = document.getElementById(elementId);
+        if (!tbody) return;
+        
+        const filtered = comisionesData.filter(c => c.catedra === catedraName);
+        tbody.innerHTML = filtered.map(c => `
+            <tr>
+                <td style="font-weight: 700; color: white;">${c.comision}</td>
+                <td>${c.dia}</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: #d4af37;">${c.horario}</td>
+                ${includeAula ? `<td>${c.aula}</td>` : ''}
+            </tr>
+        `).join('');
+    };
+
+    populateTable("Biología", "biologia-table-body");
+    populateTable("Histología", "histologia-table-body", true);
+    populateTable("Anatomía A", "anatomia-a-table-body");
+    populateTable("Anatomía B", "anatomia-b-table-body");
+    populateTable("Anatomía C", "anatomia-c-table-body");
+    populateTable("Ciencias Sociales", "sociales-table-body");
+});
+
+function buscarComisiones() {
+    const day = document.getElementById("filterDay").value;
+    const time = document.getElementById("filterTime").value;
+
+    const searchResults = document.getElementById("searchResults");
+    const noResults = document.getElementById("noResults");
+    const resultsList = document.getElementById("resultsList");
+    const resultCount = document.getElementById("resultCount");
+
+    if (!day && !time) {
+        alert("Por favor selecciona al menos un criterio (Día o Horario).");
+        return;
+    }
+
+    // Filter logic
+    const results = comisionesData.filter(c => {
+        const dayMatch = !day || c.dia === day;
+        let timeMatch = !time;
+        if (time) {
+            // Check overlaps
+            const hourToCheck = parseInt(time.split(":")[0]);
+            const startHour = parseInt(c.horario.split("–")[0].split(":")[0]);
+            const endHour = parseInt(c.horario.split("–")[1].split(":")[0]);
+            
+            timeMatch = (hourToCheck >= startHour && hourToCheck < endHour) || 
+                        (startHour >= hourToCheck && startHour < hourToCheck + 2);
+        }
+        return dayMatch && timeMatch;
+    });
+
+    resultsList.innerHTML = "";
+    if (results.length > 0) {
+        resultCount.textContent = results.length;
+        resultsList.innerHTML = results.map(c => `
+            <div class="result-row">
+                <div>
+                    <strong style="color: white; font-size: 14px; font-family:'Orbitron', sans-serif;">${c.catedra} - Comisión ${c.comision}</strong>
+                    <p style="margin: 3px 0 0 0; color: #94a3b8; font-size: 12px;">Aula: ${c.aula}</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); color: #d4af37; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; font-family:'Orbitron', sans-serif;">${c.dia}</span>
+                    <span style="color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; margin-left: 10px;">${c.horario}</span>
+                </div>
+            </div>
+        `).join('');
+
+        searchResults.style.display = "block";
+        noResults.style.display = "none";
+    } else {
+        searchResults.style.display = "none";
+        noResults.style.display = "block";
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2>Crear Cuenta</h2>
+        <p>Únete a la comunidad ALUMED</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" class="auth-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="color: var(--muted); font-size: 0.75rem; display: block; margin-top: 5px;">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="auth-btn">Registrarse</button>
+    </form>
+    
+    <div class="auth-footer">
+        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia Sesión</a></p>
+    </div>
+{% endblock %}

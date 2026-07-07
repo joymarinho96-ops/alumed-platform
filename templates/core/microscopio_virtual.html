@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="cursos" class="announcements-section" style="padding-top: 140px; min-height: 90vh; position: relative;">
+    <!-- Tech Grid Background -->
+    <div class="courses-tech-grid"></div>
+
+    <!-- Glowing Skull Decoration -->
+    <div style="position: absolute; top: 80px; right: 5%; width: 260px; height: 260px; z-index: 1; pointer-events: none; opacity: 0.85;" class="animate__animated animate__fadeIn">
+        <!-- Strong Yellow Glow -->
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(245, 197, 66, 0.6) 0%, rgba(245, 197, 66, 0.2) 55%, transparent 80%); filter: blur(25px); border-radius: 50%; z-index: 1;"></div>
+        <!-- Skull Image -->
+        <img src="{% static 'img/skull_drawing.png' %}" style="position: relative; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 18px rgba(245, 197, 66, 0.6)); z-index: 2;" alt="Cráneo">
+    </div>
+
+    <div class="section-header reveal-up" style="margin-bottom: 40px; position: relative; z-index: 3;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(245, 197, 66, 0.15); border-color: rgba(245, 197, 66, 0.4); color: var(--dourado); box-shadow: 0 0 20px rgba(245, 197, 66, 0.15);">
+            <i class="fas fa-microscope"></i> Herramientas de Apoyo
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-size: clamp(32px, 4vw, 52px); margin-top: 15px;">Microscopio <span class="home-hero-highlight" style="background: linear-gradient(135deg, var(--dourado) 0%, #ff8c00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Virtual</span></h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Estudia cortes histológicos reales de manera interactiva. Utiliza los controles del visor para cambiar de aumentos, desplazarte por la muestra y enfocar las diferentes capas del tejido epitelial.
+        </p>
+    </div>
+
+    <!-- Real Histology Slide Viewer Section -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(245, 197, 66, 0.35); border-radius: 20px; padding: 25px; box-shadow: 0 10px 45px rgba(2, 6, 23, 0.6); backdrop-filter: blur(10px);">
+            <h3 style="font-family:'Orbitron', sans-serif; font-size: 22px; color: var(--dourado); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-microscope"></i> Visor Real de la Unión Cardioesofágica 🔬
+            </h3>
+            <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                Explora el preparado histológico real de la unión cardioesofágica (Cardioesophageal Junction). Puedes interactuar directamente con la muestra para estudiar la transición epitelial.
+            </p>
+            <div style="position: relative; width: 100%; height: 700px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #000;">
+                <iframe src="https://histologyguide.com/slideview/MH-111a-cardioesophageal-junction/14-slide-2.html" style="width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,1135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 120px 0 80px 0; background: #070708; min-height: 100vh; position: relative;">
+    <!-- Tech Grid Backing -->
+    <div class="courses-tech-grid" style="opacity: 0.12;"></div>
+
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+        
+        <!-- CONECTA Brand Header -->
+        <div style="text-align: center; margin-bottom: 40px;" class="reveal-up">
+            <!-- Animated transparent Alumed ECG Logo -->
+            <img src="{% static 'img/alumed_logo_ecg.png' %}" class="animated-conecta-logo" alt="Logo Instituto ALUMED">
+            
+            <span class="hero-badge" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 11px; margin-bottom: 15px; display: inline-block; font-family:'Orbitron', sans-serif; letter-spacing: 2px;">
+                APOYO PSICOLÓGICO CONECTA 🌙
+            </span>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(34px, 5vw, 54px); color: white; margin: 0; font-weight: 900; letter-spacing: -1px;">
+                Portal <span style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CONECTA</span>
+            </h1>
+            <p style="color: #cbd5e1; font-size: 16px; margin-top: 15px; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 500;">
+                "Tu bienestar es parte de tu éxito académico"
+            </p>
+        </div>
+
+        <!-- Quick Access Icon Bar -->
+        <div class="conecta-nav-tabs reveal-up" style="margin-bottom: 45px;">
+            <a href="#section-mood" class="conecta-tab-link"><span class="tab-icon">📊</span> Medidor de Humor</a>
+            <a href="#section-quiz" class="conecta-tab-link"><span class="tab-icon">🧠</span> Evaluación</a>
+            <a href="#section-consulta" class="conecta-tab-link"><span class="tab-icon">💬</span> Consulta</a>
+            <a href="#section-calma" class="conecta-tab-link"><span class="tab-icon">🆘</span> Quiero Calma</a>
+            <a href="#section-sonidos" class="conecta-tab-link"><span class="tab-icon">🎧</span> Sonidos</a>
+        </div>
+
+        <!-- Layout Grid -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 50px;" class="reveal-up">
+            
+            <!-- Left Column: Main Interactive Content -->
+            <div style="display: flex; flex-direction: column; gap: 35px;">
+                
+                <!-- 📊 SECTION: Medidor de Humor -->
+                <div id="section-mood" class="psy-card scroll-margin">
+                    <h3 class="psy-card-title"><span style="color:#a855f7;">📊</span> Medidor de Humor</h3>
+                    <p style="color: #94a3b8; font-size: 13.5px; margin: 0 0 20px 0; line-height: 1.5;">
+                        ¿Cómo te sentís esta semana? Tu respuesta nos ayuda a medir la temperatura emocional de nuestra comunidad académica.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px;">
+                        <button onclick="voteMood('tranquilo', '#10b981')" class="mood-selector-btn calm">
+                            <span class="mood-emoji">😊</span>
+                            <strong>Tranquilo</strong>
+                        </button>
+                        <button onclick="voteMood('cansado', '#fbbf24')" class="mood-selector-btn tired">
+                            <span class="mood-emoji">😴</span>
+                            <strong>Cansado</strong>
+                        </button>
+                        <button onclick="voteMood('estresado', '#f97316')" class="mood-selector-btn stressed">
+                            <span class="mood-emoji">😟</span>
+                            <strong>Estresado</strong>
+                        </button>
+                        <button onclick="voteMood('saturado', '#ef4444')" class="mood-selector-btn burnout">
+                            <span class="mood-emoji">🔴</span>
+                            <strong>Saturado</strong>
+                        </button>
+                    </div>
+
+                    <!-- Community Stats Row -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 20px;">
+                        <h4 style="font-size:12px; color:#cbd5e1; font-family:'Orbitron', sans-serif; margin: 0 0 15px 0; text-transform:uppercase; letter-spacing:1px;">Estado de estudiantes esta semana:</h4>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                            <div class="community-stat-card">
+                                <span class="stat-num" style="color: #10b981;">18%</span>
+                                <span class="stat-lbl">Tranquilos</span>
+                            </div>
+                            <div class="community-stat-card">
+                                <span class="stat-num" style="color: #fbbf24;">42%</span>
+                                <span class="stat-lbl">Cansados</span>
+                            </div>
+                            <div class="community-stat-card">
+                                <span class="stat-num" style="color: #f97316;">30%</span>
+                                <span class="stat-lbl">Estresados</span>
+                            </div>
+                            <div class="community-stat-card">
+                                <span class="stat-num" style="color: #ef4444;">10%</span>
+                                <span class="stat-lbl">Saturados</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🧠 SECTION: Evaluación de Bienestar -->
+                <div id="section-quiz" class="psy-card scroll-margin">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                        <h3 class="psy-card-title" style="margin:0;"><span style="color:#22d3ee;">🧠</span> Evaluación de Bienestar</h3>
+                        <span id="quiz-badge" class="hero-badge" style="margin:0; background:rgba(34, 211, 238, 0.1); color:#22d3ee; border-color:rgba(34, 211, 238, 0.2); font-size:10px;">10 Preguntas</span>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 13.5px; margin: 0 0 20px 0; line-height: 1.5;">
+                        ¿Cómo está tu balance neurobiológico? Responde estas 10 preguntas. Tu respuesta nos ayuda a entender qué neurotransmisores necesitás fortalecer.
+                    </p>
+
+                    <!-- Interactive Quiz Area -->
+                    <div id="quiz-block" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 25px;">
+                        <!-- Progress slider -->
+                        <div style="display:flex; justify-content:space-between; font-size:11.5px; color:#cbd5e1; margin-bottom: 8px; font-family:'Orbitron', sans-serif;">
+                            <span id="q-idx-lbl">Pregunta 1 de 10</span>
+                            <span id="q-pct-lbl">10%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="margin-bottom: 25px; height:4px;">
+                            <div id="q-progress-fill" class="progress-bar-fill" style="width: 10%;"></div>
+                        </div>
+
+                        <!-- Current Question Box -->
+                        <div id="q-content-box">
+                            <h4 id="q-text" style="color:white; font-size:15px; font-weight:700; margin:0 0 20px 0; line-height:1.5;">1. ¿Cuánto te cuesta empezar una tarea importante?</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px;" id="q-options-container">
+                                <!-- Dynamically loaded options -->
+                            </div>
+                        </div>
+
+                        <!-- Results container -->
+                        <div id="q-results-box" style="display: none;">
+                            <h4 style="color:white; font-family:'Orbitron', sans-serif; font-size:16px; text-align:center; margin: 0 0 20px 0;">Tu Perfil Químico Cerebral</h4>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
+                                        <strong style="color: #fbbf24;">Dopamina (Motivación)</strong>
+                                        <span id="res-val-dopamine" style="color: #fbbf24; font-weight:700;">--</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div id="res-bar-dopamine" class="progress-bar-fill" style="width:0%; background:#fbbf24;"></div></div>
+                                </div>
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
+                                        <strong style="color: #c084fc;">Serotonina (Humor)</strong>
+                                        <span id="res-val-serotonin" style="color: #c084fc; font-weight:700;">--</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div id="res-bar-serotonin" class="progress-bar-fill" style="width:0%; background:#c084fc;"></div></div>
+                                </div>
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
+                                        <strong style="color: #22d3ee;">GABA (Calma mental)</strong>
+                                        <span id="res-val-gaba" style="color: #22d3ee; font-weight:700;">--</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div id="res-bar-gaba" class="progress-bar-fill" style="width:0%; background:#22d3ee;"></div></div>
+                                </div>
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
+                                        <strong style="color: #ec4899;">Endorfinas (Resistencia física)</strong>
+                                        <span id="res-val-endorphin" style="color: #ec4899; font-weight:700;">--</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div id="res-bar-endorphin" class="progress-bar-fill" style="width:0%; background:#ec4899;"></div></div>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.15); border-radius: 10px; padding: 18px;">
+                                <strong style="color:white; font-size:13px; font-family:'Orbitron', sans-serif; display:block; margin-bottom:6px;">Recomendación Conecta:</strong>
+                                <p id="res-advice-text" style="color:#cbd5e1; font-size:13px; line-height:1.6; margin:0;"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🌿 SECTION: Filosofía y Recursos -->
+                <div class="psy-card">
+                    <h3 class="psy-card-title"><span style="color:#ec4899;">📚</span> Nuestra Filosofía</h3>
+                    <p style="color:#cbd5e1; font-size:14px; line-height:1.6; margin: 0 0 25px 0;">
+                        En Conecta creemos que el bienestar también forma parte del proceso de aprendizaje. Por eso compartimos algunos tips simples que pueden ayudarte a recuperar foco, calma y equilibrio durante la cursada.
+                    </p>
+
+                    <h4 style="font-family:'Orbitron', sans-serif; color:white; font-size:12px; text-transform:uppercase; margin: 0 0 15px 0; letter-spacing:1px;">Tips para tu bienestar:</h4>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        
+                        <!-- Tip 1 -->
+                        <div class="wellbeing-tip-card">
+                            <span class="tip-icon">🧠</span>
+                            <div class="tip-body">
+                                <strong>Respirar antes de estudiar</strong>
+                                <p>Tomarte 2 o 3 minutos para respirar profundo antes de empezar a estudiar o rendir puede ayudar a bajar la ansiedad y mejorar la concentración.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tip 2 -->
+                        <div class="wellbeing-tip-card">
+                            <span class="tip-icon">📚</span>
+                            <div class="tip-body">
+                                <strong>Estudiar en bloques</strong>
+                                <p>Dividir el estudio en bloques de 25 a 40 minutos con pausas cortas ayuda a mantener la atención.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tip 3 -->
+                        <div class="wellbeing-tip-card">
+                            <span class="tip-icon">🌿</span>
+                            <div class="tip-body">
+                                <strong>Hacer pausas reales</strong>
+                                <p>Caminar, tomar agua o estirarte puede ayudar a resetear la mente cuando sentís que ya no podés concentrarte.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tip 4 -->
+                        <div class="wellbeing-tip-card">
+                            <span class="tip-icon">💬</span>
+                            <div class="tip-body">
+                                <strong>Hablar cuando algo pesa demasiado</strong>
+                                <p>La vida universitaria también puede traer momentos difíciles. Hablar con alguien puede ayudar a ordenar lo que estás sintiendo.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- New Eye-Catching WhatsApp Button -->
+                    <div style="margin-top: 25px; text-align: center;">
+                        <a href="https://wa.link/pjnilo" target="_blank" class="action-btn-primary" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; padding: 14px 30px; font-size: 14.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                            <i class="fab fa-whatsapp" style="font-size: 18px;"></i> ¿Charlemos un cachito?
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Sidebar Interactive Modules -->
+            <div style="display: flex; flex-direction: column; gap: 35px;">
+                
+                <!-- 🆘 QUICK ACCESS: NECESITO CALMA AHORA -->
+                <a href="#section-calma" style="text-decoration: none;" class="calma-banner-btn">
+                    <span style="font-size:24px; display:block; margin-bottom:8px;">🆘</span>
+                    <strong>NECESITO CALMA AHORA</strong>
+                    <span style="font-size:11px; opacity:0.8; font-family:'Orbitron', sans-serif;">Iniciar Respirador Guiado</span>
+                </a>
+
+                <!-- 🆘 SECTION: Quiero Calma (Respirador Guiado) -->
+                <div id="section-calma" class="psy-card scroll-margin">
+                    <h3 class="psy-card-title"><span style="color:#ef4444;">🆘</span> El Refugio de la Calma</h3>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 0 0 20px 0; line-height:1.5;">
+                        Tómate un minuto para regular tu pulso cardíaco y estabilizar tu respiración.
+                    </p>
+
+                    <div class="meditation-player-box">
+                        <div class="meditation-circle-container">
+                            <div id="meditation-circle" class="meditation-pulse-circle"></div>
+                            <span id="meditation-prompt">Parado</span>
+                        </div>
+                        <div style="flex:1;">
+                            <strong id="meditation-phase-title" style="color:white; font-size:14px; font-family:'Orbitron', sans-serif; display:block; margin-bottom:4px;">Ciclo Consciente</strong>
+                            <p id="meditation-phase-desc" style="color:#cbd5e1; font-size:12.5px; line-height:1.5; margin:0 0 15px 0;">Presiona el botón para iniciar un ciclo de respiración diafragmática.</p>
+                            <button id="meditation-btn" onclick="toggleMeditation()" class="action-btn-secondary" style="width:100%; text-align:center;"><i class="fas fa-play"></i> Iniciar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 💬 SECTION: Consulta (Caterine Porto) -->
+                <div id="section-consulta" class="psy-card scroll-margin">
+                    <h3 class="psy-card-title"><span style="color:#10b981;">💬</span> Consulta en Línea</h3>
+                    <span class="hero-badge" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981; font-size: 10px; margin-bottom: 15px; display: inline-block; font-family:'Orbitron', sans-serif;">TOTALMENTE GRATIS</span>
+                    
+                    <div class="support-image-container" style="margin: 0 auto 20px auto;">
+                        <div class="dynamic-glow-circle"></div>
+                        <img src="{% static 'img/caterine_porto.png' %}" class="support-photo" alt="Lic. Caterine Porto">
+                    </div>
+
+                    <div style="margin-bottom:15px; text-align:center;">
+                        <h4 style="color:white; font-size:17px; font-weight:700; margin:0;">Lic. Caterine Porto</h4>
+                        <p style="color:#94a3b8; font-size:12.5px; margin:2px 0 0 0;">Psicóloga FCM UNLP</p>
+                    </div>
+
+                    <div style="margin-bottom:15px;">
+                        <strong style="color:white; font-size:12px; font-family:'Orbitron', sans-serif; text-transform:uppercase; display:block; margin-bottom:5px;">Especialización:</strong>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            <span class="spec-tag">Análisis de Comportamiento</span>
+                            <span class="spec-tag">Psicoanálisis</span>
+                        </div>
+                    </div>
+
+                    <p style="color:#cbd5e1; font-size:13px; line-height:1.6; margin:0 0 20px 0;">
+                        Ofrece acompañamiento especializado para estudiantes universitarios, enfocado en bienestar emocional y manejo del estrés académico.
+                    </p>
+
+                    <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:15px;">
+                        <strong style="color:white; font-size:13px; display:block; margin-bottom:5px;">¿Necesitas hablar? ¡Vamos!</strong>
+                        <p style="color:#94a3b8; font-size:12.5px; margin:0 0 15px 0;">No estás solo en esto. Agendar una sesión de orientación es el primer paso para recuperar tu equilibrio emocional.</p>
+                        
+                        <a href="https://wa.link/pjnilo" target="_blank" class="action-btn-primary" style="display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; width:100%;">
+                            <i class="fab fa-whatsapp"></i> Agendar ahora mismo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 🎧 SECTION: Sonidos (ASMR Ambient Mixer) -->
+                <div id="section-sonidos" class="psy-card scroll-margin">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 class="psy-card-title" style="margin: 0;"><span style="color:#a855f7;">🎧</span> Sonidos Relajantes</h3>
+                        <button id="asmr-master-play" onclick="toggleAsmrMaster()" class="asmr-play-btn"><i class="fas fa-play"></i> Iniciar</button>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 0 0 15px 0; line-height:1.5;">
+                        Crea una atmósfera relajante mezclando frecuencias e intensidades.
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="sound-slider-row">
+                            <div class="sound-label">🌧️ Lluvia</div>
+                            <input type="range" id="volume-rain" min="0" max="1" step="0.05" value="0.5" class="asmr-slider" oninput="updateAsmrVolume('rain')">
+                        </div>
+                        <div class="sound-slider-row">
+                            <div class="sound-label">🌊 Océano</div>
+                            <input type="range" id="volume-ocean" min="0" max="1" step="0.05" value="0.3" class="asmr-slider" oninput="updateAsmrVolume('ocean')">
+                        </div>
+                        <div class="sound-slider-row">
+                            <div class="sound-label">🌲 Bosque</div>
+                            <input type="range" id="volume-forest" min="0" max="1" step="0.05" value="0.2" class="asmr-slider" oninput="updateAsmrVolume('forest')">
+                        </div>
+                        <div class="sound-slider-row">
+                            <div class="sound-label">📻 Ruido Marrón</div>
+                            <input type="range" id="volume-brown" min="0" max="1" step="0.05" value="0.1" class="asmr-slider" oninput="updateAsmrVolume('brown')">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Custom Styles for Conecta Portal -->
+<style>
+@keyframes logoPulse {
+    0% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 10px rgba(245, 197, 66, 0.45));
+    }
+    50% {
+        transform: scale(1.08) rotate(2deg);
+        filter: drop-shadow(0 0 25px rgba(245, 197, 66, 0.85));
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 10px rgba(245, 197, 66, 0.45));
+    }
+}
+.animated-conecta-logo {
+    animation: logoPulse 3s infinite ease-in-out;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px auto;
+    display: block;
+    border-radius: 50%;
+}
+
+.psy-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s;
+}
+.psy-card:hover {
+    border-color: rgba(255,255,255,0.08);
+}
+.scroll-margin {
+    scroll-margin-top: 100px;
+}
+
+.psy-card-title {
+    font-family: 'Orbitron', sans-serif;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.conecta-nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 6px;
+    border-radius: 30px;
+}
+.conecta-tab-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 20px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.2s;
+}
+.conecta-tab-link:hover {
+    background: rgba(255,255,255,0.04);
+    color: white;
+}
+.tab-icon {
+    font-size: 14px;
+}
+
+.mood-selector-btn {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 18px 10px;
+    color: #cbd5e1;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mood-selector-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+}
+.mood-emoji {
+    font-size: 26px;
+}
+.mood-selector-btn strong {
+    font-size: 12px;
+}
+.mood-selector-btn.calm:hover { border-color: #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15); background: rgba(16, 185, 129, 0.04); }
+.mood-selector-btn.tired:hover { border-color: #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); background: rgba(251, 191, 36, 0.04); }
+.mood-selector-btn.stressed:hover { border-color: #f97316; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15); background: rgba(249, 115, 22, 0.04); }
+.mood-selector-btn.burnout:hover { border-color: #ef4444; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15); background: rgba(239, 68, 68, 0.04); }
+
+.community-stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.stat-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+}
+.stat-lbl {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* Quiz questions styles */
+.progress-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.quiz-option-btn {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: #cbd5e1;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    text-align: left;
+    transition: all 0.2s;
+}
+.quiz-option-btn:hover {
+    background: rgba(168, 85, 247, 0.05);
+    border-color: rgba(168, 85, 247, 0.35);
+    color: white;
+    padding-left: 22px;
+}
+
+.result-score-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+/* Wellbeing Tips */
+.wellbeing-tip-card {
+    display: flex;
+    gap: 15px;
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+    transition: transform 0.2s;
+}
+.wellbeing-tip-card:hover {
+    transform: translateX(4px);
+    background: rgba(255,255,255,0.02);
+}
+.tip-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.tip-body strong {
+    color: white;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 4px;
+}
+.tip-body p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Call to action */
+.calma-banner-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+    border: 2px dashed rgba(239, 68, 68, 0.4);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.08);
+    transition: all 0.3s;
+}
+.calma-banner-btn:hover {
+    border-color: #ef4444;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+}
+.calma-banner-btn strong {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+/* Breathing */
+.meditation-player-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+}
+@media (max-width: 500px) {
+    .meditation-player-box {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+.meditation-circle-container {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.meditation-pulse-circle {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.05);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    transition: transform 3s ease-in-out;
+}
+.meditation-circle-container span {
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+    z-index: 5;
+    text-transform: uppercase;
+}
+.action-btn-secondary {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: white;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+}
+.action-btn-secondary:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* Consultation support styles */
+.support-image-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);
+}
+.dynamic-glow-circle {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(236, 72, 153, 0) 70%);
+    filter: blur(20px);
+    z-index: 1;
+    animation: pulseGlow 4s infinite alternate ease-in-out;
+}
+.support-photo {
+    position: relative;
+    z-index: 2;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+.support-image-container:hover .support-photo {
+    transform: scale(1.05);
+}
+@keyframes pulseGlow {
+    0% {
+        transform: translate(-10px, -10px) scale(0.9);
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(236, 72, 153, 0) 70%);
+    }
+    50% {
+        transform: translate(10px, 15px) scale(1.08);
+        background: radial-gradient(circle, rgba(34, 211, 238, 0.3) 0%, rgba(168, 85, 247, 0) 70%);
+    }
+    100% {
+        transform: translate(-5px, 5px) scale(0.95);
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(34, 211, 238, 0) 70%);
+    }
+}
+.spec-tag {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+.action-btn-primary {
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    color: white;
+    font-weight: 700;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+    transition: all 0.2s;
+    text-align: center;
+}
+.action-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(168, 85, 247, 0.35);
+}
+
+/* ASMR mixer styles */
+.asmr-play-btn {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-family:'Orbitron', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.asmr-play-btn:hover {
+    background: rgba(168, 85, 247, 0.25);
+    color: white;
+}
+.sound-slider-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+.sound-label {
+    width: 100px;
+    font-size: 13px;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+.asmr-slider {
+    flex: 1;
+    accent-color: #a855f7;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    outline: none;
+}
+</style>
+
+<!-- JS Logic: Tab Scroll & Neurobiological Test -->
+<script>
+// Smooth scroll to sections when tabs are clicked
+document.querySelectorAll('.conecta-tab-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+
+// Mood Tracker
+function voteMood(moodKey, color) {
+    document.querySelectorAll('.mood-selector-btn').forEach(btn => {
+        btn.style.borderColor = 'rgba(255,255,255,0.05)';
+        btn.style.background = 'rgba(255,255,255,0.01)';
+    });
+    const btn = document.querySelector(`.mood-selector-btn.${moodKey === 'tranquilo' ? 'calm' : moodKey === 'cansado' ? 'tired' : moodKey === 'estresado' ? 'stressed' : 'burnout'}`);
+    if (btn) {
+        btn.style.borderColor = color;
+        btn.style.background = `${color}10`;
+    }
+}
+
+// 10-Question Neurobiological Test Data
+const quizQuestions = [
+    {
+        num: 1,
+        text: "1. ¿Cuánto te cuesta empezar una tarea importante?",
+        nt: "dopamine",
+        options: [
+            { text: "Me cuesta muchísimo, procrastino siempre", val: 4 },
+            { text: "Me cuesta bastante", val: 3 },
+            { text: "A veces me cuesta", val: 2 },
+            { text: "Me cuesta poco", val: 0 }
+        ]
+    },
+    {
+        num: 2,
+        text: "2. ¿Cómo describirías tu estado de ánimo general?",
+        nt: "serotonin",
+        options: [
+            { text: "Deprimido, sin esperanza", val: 4 },
+            { text: "Frecuentemente bajo", val: 3 },
+            { text: "Neutral, con altibajos", val: 2 },
+            { text: "Positivo y estable", val: 0 }
+        ]
+    },
+    {
+        num: 3,
+        text: "3. ¿Cuánto tiempo tardas en conciliar el sueño?",
+        nt: "gaba",
+        options: [
+            { text: "Más de 1 hora", val: 4 },
+            { text: "30-60 min", val: 3 },
+            { text: "15-30 min", val: 2 },
+            { text: "Menos de 15 min", val: 0 }
+        ]
+    },
+    {
+        num: 4,
+        text: "4. ¿Con qué frecuencia sientes ansiedad?",
+        nt: "gaba",
+        options: [
+            { text: "Constantemente", val: 4 },
+            { text: "Muy frecuentemente", val: 3 },
+            { text: "Ocasionalmente", val: 2 },
+            { text: "Raramente", val: 0 }
+        ]
+    },
+    {
+        num: 5,
+        text: "5. ¿Cuán concentrado te sientes en clases largas?",
+        nt: "dopamine",
+        options: [
+            { text: "Casi no puedo concentrarme", val: 4 },
+            { text: "Tengo problemas para mantener foco", val: 3 },
+            { text: "Logro concentrarme con esfuerzo", val: 2 },
+            { text: "Me concentro muy bien", val: 0 }
+        ]
+    },
+    {
+        num: 6,
+        text: "6. ¿Te sientes conectado con otras personas?",
+        nt: "serotonin",
+        options: [
+            { text: "Me siento aislado", val: 4 },
+            { text: "Relaciones superficiales", val: 3 },
+            { text: "Algunos amigos cercanos", val: 2 },
+            { text: "Conectado y apoyado", val: 0 }
+        ]
+    },
+    {
+        num: 7,
+        text: "7. ¿Cuántos días te sientes realmente relajado?",
+        nt: "gaba",
+        options: [
+            { text: "0-1 día", val: 4 },
+            { text: "1-2 días", val: 3 },
+            { text: "3-4 días", val: 2 },
+            { text: "5+ días", val: 0 }
+        ]
+    },
+    {
+        num: 8,
+        text: "8. ¿Cuánto afecta el estrés tu cuerpo?",
+        nt: "endorphin",
+        options: [
+            { text: "Mucho, síntomas frecuentes", val: 4 },
+            { text: "Bastante, dolor regular", val: 3 },
+            { text: "A veces", val: 2 },
+            { text: "Poco", val: 0 }
+        ]
+    },
+    {
+        num: 9,
+        text: "9. ¿Cuál es tu energía física durante el día?",
+        nt: "endorphin",
+        options: [
+            { text: "Muy baja, agotado", val: 4 },
+            { text: "Baja, especialmente tardes", val: 3 },
+            { text: "Normal", val: 2 },
+            { text: "Muy buena", val: 0 }
+        ]
+    },
+    {
+        num: 10,
+        text: "10. ¿Sientes expectativa positiva del futuro?",
+        nt: "serotonin",
+        options: [
+            { text: "No, me veo estancado", val: 4 },
+            { text: "Poco, tengo dudas", val: 3 },
+            { text: "Moderadamente", val: 2 },
+            { text: "Sí, tengo esperanza", val: 0 }
+        ]
+    }
+];
+
+let currentQIdx = 0;
+let quizScores = { dopamine: 0, serotonin: 0, gaba: 0, endorphin: 0 };
+let maxQuizScores = { dopamine: 8, serotonin: 12, gaba: 12, endorphin: 8 };
+
+function initQuiz() {
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const q = quizQuestions[currentQIdx];
+    
+    // Label and progress
+    const displayIdx = currentQIdx + 1;
+    document.getElementById('q-idx-lbl').innerHTML = `Pregunta ${displayIdx} de 10`;
+    document.getElementById('q-pct-lbl').innerHTML = `${displayIdx * 10}%`;
+    document.getElementById('q-progress-fill').style.width = `${displayIdx * 10}%`;
+    
+    // Question Text
+    document.getElementById('q-text').innerHTML = q.text;
+    
+    // Question Options
+    const optContainer = document.getElementById('q-options-container');
+    optContainer.innerHTML = '';
+    
+    q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.innerHTML = opt.text;
+        btn.onclick = () => selectQuizOption(opt.val, q.nt);
+        optContainer.appendChild(btn);
+    });
+}
+
+function selectQuizOption(val, ntKey) {
+    quizScores[ntKey] += val;
+    
+    currentQIdx++;
+    if (currentQIdx < quizQuestions.length) {
+        loadQuestion();
+    } else {
+        displayQuizResults();
+    }
+}
+
+function displayQuizResults() {
+    // Show/hide blocks
+    document.getElementById('q-content-box').style.display = 'none';
+    document.getElementById('q-results-box').style.display = 'block';
+    
+    // Calculate depletion levels (percentage of worst score)
+    const pctDopamine = Math.min(100, Math.round((quizScores.dopamine / maxQuizScores.dopamine) * 100));
+    const pctSerotonin = Math.min(100, Math.round((quizScores.serotonin / maxQuizScores.serotonin) * 100));
+    const pctGaba = Math.min(100, Math.round((quizScores.gaba / maxQuizScores.gaba) * 100));
+    const pctEndorphin = Math.min(100, Math.round((quizScores.endorphin / maxQuizScores.endorphin) * 100));
+    
+    // Convert to stability scores (100 - depletion percentage)
+    const stabDopamine = 100 - pctDopamine;
+    const stabSerotonin = 100 - pctSerotonin;
+    const stabGaba = 100 - pctGaba;
+    const stabEndorphin = 100 - pctEndorphin;
+    
+    // Update score displays
+    document.getElementById('res-val-dopamine').innerHTML = `${stabDopamine}%`;
+    document.getElementById('res-val-serotonin').innerHTML = `${stabSerotonin}%`;
+    document.getElementById('res-val-gaba').innerHTML = `${stabGaba}%`;
+    document.getElementById('res-val-endorphin').innerHTML = `${stabEndorphin}%`;
+    
+    // Update progress bars
+    document.getElementById('res-bar-dopamine').style.width = `${stabDopamine}%`;
+    document.getElementById('res-bar-serotonin').style.width = `${stabSerotonin}%`;
+    document.getElementById('res-bar-gaba').style.width = `${stabGaba}%`;
+    document.getElementById('res-bar-endorphin').style.width = `${stabEndorphin}%`;
+    
+    // Advice based on lowest score (highest depletion)
+    let lowestStab = stabDopamine;
+    let lowestKey = 'dopamine';
+    
+    if (stabSerotonin < lowestStab) { lowestStab = stabSerotonin; lowestKey = 'serotonin'; }
+    if (stabGaba < lowestStab) { lowestStab = stabGaba; lowestKey = 'gaba'; }
+    if (stabEndorphin < lowestStab) { lowestStab = stabEndorphin; lowestKey = 'endorphin'; }
+    
+    let adviceText = "";
+    if (lowestKey === 'dopamine') {
+        adviceText = "Tu perfil muestra agotamiento en Dopamina (Motivación y foco). Te recomendamos estudiar en bloques cortos (Pomodoro), fraccionar tus tareas en micro-pasos simples y tomar sol 10-15 minutos antes de empezar a estudiar.";
+    } else if (lowestKey === 'serotonin') {
+        adviceText = "Tu nivel de Serotonina (Estado de ánimo) sugiere aislamiento. Es crucial agendar un bloque recreativo diario obligatorio sin culpa (caminar al aire libre, ver amigos) y realizar actividad física moderada.";
+    } else if (lowestKey === 'gaba') {
+        adviceText = "Tu indicador de GABA (Tranquilidad) muestra fatiga o niveles altos de ansiedad. Reduce la cafeína después de mediodía, evita usar pantallas antes de dormir y haz las pausas de respiración profunda que compartimos en esta página.";
+    } else {
+        adviceText = "Tus puntuaciones sugieren fatiga física corporal (Endorfinas). Asegúrate de realizar estiramientos durante tus pausas de estudio, hidratarte bien y cambiar de postura regularmente.";
+    }
+    
+    document.getElementById('res-advice-text').innerHTML = adviceText;
+}
+
+// 3. Web Audio API ASMR Synthesized Mixer
+let audioCtx = null;
+let audioNodes = {};
+let isPlayingAsmr = false;
+
+function initAudioContext() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function createBrownNoiseNode() {
+    const bufferSize = 10 * audioCtx.sampleRate;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    
+    let lastOut = 0.0;
+    for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.5;
+    }
+    
+    const noiseSource = audioCtx.createBufferSource();
+    noiseSource.buffer = noiseBuffer;
+    noiseSource.loop = true;
+    return noiseSource;
+}
+
+function toggleAsmrMaster() {
+    if (!audioCtx) {
+        initAudioContext();
+    }
+    
+    const btn = document.getElementById('asmr-master-play');
+    
+    if (!isPlayingAsmr) {
+        isPlayingAsmr = true;
+        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar';
+        btn.style.background = 'rgba(239, 68, 68, 0.15)';
+        btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        btn.style.color = '#f87171';
+        
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        // Brown noise source
+        const brownSource = createBrownNoiseNode();
+        const brownGain = audioCtx.createGain();
+        brownGain.gain.value = parseFloat(document.getElementById('volume-brown').value) * 0.15;
+        brownSource.connect(brownGain);
+        brownGain.connect(audioCtx.destination);
+        brownSource.start();
+        
+        // Ocean sweeps
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.Q.value = 1.0;
+        
+        const noise = createBrownNoiseNode();
+        const oceanGain = audioCtx.createGain();
+        oceanGain.gain.value = parseFloat(document.getElementById('volume-ocean').value) * 0.3;
+        
+        noise.connect(filter);
+        filter.connect(oceanGain);
+        oceanGain.connect(audioCtx.destination);
+        noise.start();
+        
+        let waveTime = 0;
+        const waveSweep = setInterval(() => {
+            if (!isPlayingAsmr) {
+                clearInterval(waveSweep);
+                return;
+            }
+            waveTime += 0.05;
+            const frequency = 250 + Math.sin(waveTime * 0.8) * 150;
+            filter.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        }, 50);
+        
+        audioNodes.brownSource = brownSource;
+        audioNodes.brownGain = brownGain;
+        audioNodes.oceanSource = noise;
+        audioNodes.oceanGain = oceanGain;
+        
+    } else {
+        isPlayingAsmr = false;
+        btn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+        btn.style.background = 'rgba(168, 85, 247, 0.15)';
+        btn.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+        btn.style.color = '#c084fc';
+        
+        if (audioNodes.brownSource) {
+            try { audioNodes.brownSource.stop(); } catch(e){}
+        }
+        if (audioNodes.oceanSource) {
+            try { audioNodes.oceanSource.stop(); } catch(e){}
+        }
+        audioNodes = {};
+    }
+}
+
+function updateAsmrVolume(soundKey) {
+    if (!isPlayingAsmr) return;
+    const vol = parseFloat(document.getElementById(`volume-${soundKey}`).value);
+    
+    if (soundKey === 'brown' && audioNodes.brownGain) {
+        audioNodes.brownGain.gain.setValueAtTime(vol * 0.15, audioCtx.currentTime);
+    }
+    if (soundKey === 'ocean' && audioNodes.oceanGain) {
+        audioNodes.oceanGain.gain.setValueAtTime(vol * 0.3, audioCtx.currentTime);
+    }
+}
+
+// 4. Guided breathing logic
+let isMeditating = false;
+let meditationInterval = null;
+let meditationSeconds = 0;
+
+function toggleMeditation() {
+    const btn = document.getElementById('meditation-btn');
+    const circle = document.getElementById('meditation-circle');
+    const prompt = document.getElementById('meditation-prompt');
+    const desc = document.getElementById('meditation-phase-desc');
+    
+    if (!isMeditating) {
+        isMeditating = true;
+        btn.innerHTML = '<i class="fas fa-stop"></i> Parar';
+        meditationSeconds = 0;
+        runBreathingCycle();
+        
+        meditationInterval = setInterval(() => {
+            meditationSeconds++;
+            if (meditationSeconds >= 60) {
+                clearInterval(meditationInterval);
+                isMeditating = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+                prompt.innerHTML = 'Listo 🧘‍♀️';
+                desc.innerHTML = '¡Ciclo completado! Siente tu ritmo cardíaco más relajado y estable.';
+                circle.style.transform = 'scale(1)';
+            } else {
+                runBreathingCycle();
+            }
+        }, 1000);
+    } else {
+        clearInterval(meditationInterval);
+        isMeditating = false;
+        btn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+        prompt.innerHTML = 'Parado';
+        desc.innerHTML = 'Presiona el botón para iniciar un ciclo de respiración diafragmática.';
+        circle.style.transform = 'scale(1)';
+    }
+}
+
+function runBreathingCycle() {
+    const circle = document.getElementById('meditation-circle');
+    const prompt = document.getElementById('meditation-prompt');
+    const phase = meditationSeconds % 12; // 12 second total cycles (4 in, 4 hold, 4 out)
+    
+    if (phase < 4) {
+        prompt.innerHTML = 'Inhala 💨';
+        circle.style.transform = 'scale(1.35)';
+    } else if (phase < 8) {
+        prompt.innerHTML = 'Sostén 🧘‍♀️';
+    } else {
+        prompt.innerHTML = 'Exhala 🍃';
+        circle.style.transform = 'scale(1)';
+    }
+}
+
+// Initialize quiz on page load
+window.addEventListener('load', initQuiz);
+</script>
+{% endblock %}

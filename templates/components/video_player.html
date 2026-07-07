@@ -1,0 +1,231 @@
+{% load static %}
+
+<!-- Plyr.js CSS and JS for HTML5 MP4 videos -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+<!-- Custom Plyr Accent Styling to match ALUMED purple theme -->
+<style>
+    :root {
+        --plyr-color-main: #a855f7;
+    }
+    .plyr--full-ui input[type=range] {
+        color: #a855f7;
+    }
+    .plyr__control--overlaid {
+        background: rgba(168, 85, 247, 0.85);
+    }
+</style>
+
+<div id="alumed-player-wrapper" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    
+    <!-- YouTube API Target -->
+    <div id="yt-player-target" style="width: 100%; height: 100%; display: none;"></div>
+    
+    <!-- Plyr / HTML5 Video Target -->
+    <div id="plyr-player-container" style="width: 100%; height: 100%; display: none;">
+        <video id="plyr-player-target" class="plyr-video" playsinline controls style="width: 100%; height: 100%;"></video>
+    </div>
+    
+    <!-- Vimeo / Drive / Generic Embed Target -->
+    <iframe id="iframe-player-target" style="width: 100%; height: 100%; border: 0; display: none;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    
+    <!-- Custom ALUMED Fallback Preview Card (Error 153 Bypasser) -->
+    <div id="alumed-player-fallback" style="display: none; position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 10;">
+        <!-- Glowing Blurred Backdrop -->
+        <div id="fallback-backdrop" style="position: absolute; inset: 0; background-size: cover; background-position: center; filter: blur(25px) brightness(0.24); transform: scale(1.1);"></div>
+        
+        <div style="position: absolute; inset: 0; background: rgba(10, 5, 20, 0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center;">
+            <div style="width: 66px; height: 66px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #ef4444; font-size: 28px; box-shadow: 0 0 25px rgba(239, 68, 68, 0.25);">
+                <i class="fab fa-youtube"></i>
+            </div>
+            
+            <h3 id="fallback-video-title" style="font-family:'Orbitron', sans-serif; color: white; font-size: clamp(16px, 3.5vw, 20px); font-weight: 700; margin: 0 0 8px 0; max-width: 600px; line-height: 1.3;">
+                Título del Video
+            </h3>
+            
+            <p style="color: #cbd5e1; font-size: clamp(12.5px, 2.5vw, 14.5px); max-width: 500px; line-height: 1.6; margin: 0 0 20px 0;">
+                Este video tiene restricciones de reproducción externa de YouTube.<br>
+                ¡Pero podés mirarlo gratis directamente en su plataforma!
+            </p>
+            
+            <a id="fallback-youtube-btn" href="#" target="_blank" class="action-btn-primary" style="text-decoration: none; padding: 12px 28px; font-size: 13.5px; font-family:'Orbitron', sans-serif; font-weight:700; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);">
+                <i class="fab fa-youtube" style="margin-right: 6px;"></i> Ver en YouTube
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Define global queue and ready handler at the very top of script block
+    window.ytQueue = window.ytQueue || [];
+    window.ytIsReady = window.ytIsReady || false;
+    
+    if (!window.onYouTubeIframeAPIReady) {
+        window.onYouTubeIframeAPIReady = function() {
+            window.ytIsReady = true;
+            console.log("YouTube Iframe API is ready. Processing queue of length:", window.ytQueue.length);
+            while (window.ytQueue.length > 0) {
+                var cb = window.ytQueue.shift();
+                try { cb(); } catch(e) { console.error("Error in YT API initialization queue:", e); }
+            }
+        };
+    }
+
+    // Load YouTube Iframe API if not already loaded
+    if (!window.YT_API_LOADED) {
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        window.YT_API_LOADED = true;
+    }
+
+    var activeYtPlayer = null;
+    var activePlyrInstance = null;
+
+    // Helper: Parse Video Source and ID
+    function parseVideoUrl(url) {
+        // Direct MP4 / WebM
+        if (url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i)) {
+            return { provider: 'html5', id: url };
+        }
+        
+        // YouTube Regexes
+        var ytReg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        var ytMatch = url.match(ytReg);
+        if (ytMatch && ytMatch[2].length === 11) {
+            return { provider: 'youtube', id: ytMatch[2] };
+        }
+        
+        // Vimeo Regexes
+        var vimReg = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)/;
+        var vimMatch = url.match(vimReg);
+        if (vimMatch) {
+            return { provider: 'vimeo', id: vimMatch[1] };
+        }
+        if (url.includes('player.vimeo.com/video/')) {
+            var vId = url.split('video/')[1]?.split('?')[0];
+            if (vId) return { provider: 'vimeo', id: vId };
+        }
+        
+        // Google Drive
+        if (url.includes('drive.google.com')) {
+            var driveReg = /\/file\/d\/([^\/]+)/;
+            var driveMatch = url.match(driveReg);
+            if (driveMatch) {
+                return { provider: 'drive', id: driveMatch[1] };
+            }
+        }
+        
+        // Generic Embed / Iframe
+        return { provider: 'generic', id: url };
+    }
+
+    // Main Router function: load video source into player
+    function loadAlumedVideo(url, title, desc) {
+        console.log("Loading Video:", url, title);
+        
+        // Hide all targets and fallback
+        document.getElementById('yt-player-target').style.display = 'none';
+        document.getElementById('plyr-player-container').style.display = 'none';
+        document.getElementById('iframe-player-target').style.display = 'none';
+        document.getElementById('alumed-player-fallback').style.display = 'none';
+        
+        // Cleanup active players
+        if (activeYtPlayer) {
+            try { activeYtPlayer.destroy(); } catch(e) {}
+            activeYtPlayer = null;
+        }
+        if (activePlyrInstance) {
+            try { activePlyrInstance.destroy(); } catch(e) {}
+            activePlyrInstance = null;
+        }
+
+        // Recreate clean container for YT target
+        var ytTarget = document.getElementById('yt-player-target');
+        ytTarget.innerHTML = '';
+        var innerTarget = document.createElement('div');
+        innerTarget.id = 'yt-inner-target';
+        ytTarget.appendChild(innerTarget);
+
+        var videoInfo = parseVideoUrl(url);
+
+        if (videoInfo.provider === 'youtube') {
+            document.getElementById('yt-player-target').style.display = 'block';
+            
+            var initYtPlayer = function() {
+                activeYtPlayer = new YT.Player('yt-inner-target', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoInfo.id,
+                    playerVars: {
+                        'autoplay': 1,
+                        'modestbranding': 1,
+                        'rel': 0
+                    },
+                    events: {
+                        'onError': function(event) {
+                            console.warn("YouTube API Error Caught:", event.data);
+                            if (event.data === 101 || event.data === 150 || event.data === 2 || event.data === 5) {
+                                triggerFallback(videoInfo.id, title, url);
+                            }
+                        }
+                    }
+                });
+            };
+
+            if (window.ytIsReady && typeof YT !== 'undefined' && YT.Player) {
+                initYtPlayer();
+            } else {
+                window.ytQueue.push(initYtPlayer);
+            }
+
+        } else if (videoInfo.provider === 'html5') {
+            document.getElementById('plyr-player-container').style.display = 'block';
+            var videoEl = document.getElementById('plyr-player-target');
+            videoEl.src = url;
+            
+            // Check if Plyr is loaded, else use native HTML5 controls
+            if (typeof Plyr !== 'undefined') {
+                activePlyrInstance = new Plyr(videoEl, {
+                    autoplay: true,
+                    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                    settings: ['captions', 'quality', 'speed'],
+                    speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }
+                });
+            } else {
+                console.warn("Plyr CDN not loaded or failed. Falling back to native controls.");
+                videoEl.controls = true;
+                videoEl.autoplay = true;
+            }
+
+        } else if (videoInfo.provider === 'vimeo') {
+            document.getElementById('iframe-player-target').style.display = 'block';
+            var embedUrl = "https://player.vimeo.com/video/" + videoInfo.id + "?autoplay=1&title=0&byline=0&portrait=0";
+            document.getElementById('iframe-player-target').src = embedUrl;
+
+        } else if (videoInfo.provider === 'drive') {
+            document.getElementById('iframe-player-target').style.display = 'block';
+            var embedUrl = "https://drive.google.com/file/d/" + videoInfo.id + "/preview";
+            document.getElementById('iframe-player-target').src = embedUrl;
+
+        } else {
+            document.getElementById('iframe-player-target').style.display = 'block';
+            document.getElementById('iframe-player-target').src = url;
+        }
+    }
+
+    // Trigger the premium fallback card layout
+    function triggerFallback(videoId, title, originalUrl) {
+        console.log("Triggering fallback preview for video ID:", videoId);
+        document.getElementById('yt-player-target').style.display = 'none';
+        document.getElementById('fallback-video-title').textContent = title;
+        document.getElementById('fallback-youtube-btn').href = originalUrl;
+        
+        var thumbUrl = "https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg";
+        document.getElementById('fallback-backdrop').style.backgroundImage = "url('" + thumbUrl + "')";
+        document.getElementById('alumed-player-fallback').style.backgroundImage = "url('" + thumbUrl + "')";
+        document.getElementById('alumed-player-fallback').style.display = 'block';
+    }
+</script>

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Bem-vindo ao painel, {{ request.user.username }}!</h1>
+
+<a href="{% url 'logout' %}">Sair</a>
+{% endblock %}

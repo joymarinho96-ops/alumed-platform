@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="cursos" class="announcements-section" style="padding-top: 140px; min-height: 90vh; position: relative; background: radial-gradient(circle at center, rgba(245, 197, 66, 0.28) 0%, rgba(20, 10, 5, 0.95) 75%), #0a0502;">
+    <!-- Tech Grid Background -->
+    <div class="courses-tech-grid" style="opacity: 0.15; filter: hue-rotate(220deg);"></div>
+
+    <div class="section-header reveal-up" style="margin-bottom: 40px;">
+        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(245, 197, 66, 0.15); border-color: rgba(245, 197, 66, 0.4); color: #fdf6e2; box-shadow: 0 0 20px rgba(245, 197, 66, 0.15);">
+            <i class="fas fa-cube"></i> Modelos Interactivos
+        </span>
+        <h2 class="animate__animated animate__fadeInLeft" style="font-size: clamp(32px, 4vw, 52px); margin-top: 15px;">Laboratorio <span class="home-hero-highlight" style="background: linear-gradient(135deg, #f5c542 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">3D</span></h2>
+        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Explora modelos celulares, sistemas completos y anatomía patológica en tres dimensiones de forma interactiva con controles de rotación y zoom táctiles.
+        </p>
+    </div>
+
+    <!-- Main Grid: 3D Viewport & Resources -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start;">
+        
+        <!-- Interactive 3D Panel -->
+        <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(245, 197, 66, 0.3); border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(2, 6, 23, 0.6), 0 0 20px rgba(245, 197, 66, 0.08); backdrop-filter: blur(10px);">
+            
+            <!-- Tabs Selector -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(245, 197, 66, 0.15); padding-bottom: 15px; overflow-x: auto;" class="tabs-scroll">
+                <button onclick="switch3DModel('zygote')" class="tab-btn active-tab" id="btn-zygote" style="padding: 10px 20px; background: rgba(245, 197, 66, 0.12); border: 1px solid rgba(245, 197, 66, 0.4); border-radius: 8px; color: white; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; white-space: nowrap; transition: all 0.2s;">
+                    <i class="fas fa-male" style="margin-right: 6px;"></i> Atlas Zygote Body 3D
+                </button>
+                <button onclick="switch3DModel('cell')" class="tab-btn" id="btn-cell" style="padding: 10px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #cbd5e1; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap; transition: all 0.2s;">
+                    <i class="fas fa-bacteria" style="margin-right: 6px;"></i> Célula Animal 3D
+                </button>
+                <button onclick="switch3DModel('heart')" class="tab-btn" id="btn-heart" style="padding: 10px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; color: #cbd5e1; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap; transition: all 0.2s;">
+                    <i class="fas fa-heart" style="margin-right: 6px;"></i> Corazón Humano 3D
+                </button>
+            </div>
+
+            <!-- Viewport Container -->
+            <div style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #080710;">
+                
+                <!-- Zygote Body (Atlas 3D) -->
+                <div id="model-zygote" class="model-view" style="display: block;">
+                    <div style="position: relative; padding-bottom: 66.6%; height: 0; overflow: hidden;">
+                        <iframe src="https://www.zygotebody.com" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                    </div>
+                    <div style="padding: 20px 10px 10px;">
+                        <h3 style="font-family:'Orbitron', sans-serif; font-size: 19px; color: white; margin-bottom: 8px;">Atlas de Anatomía Zygote Body</h3>
+                        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 0;">
+                            Explora capas musculares, óseas, nerviosas y de órganos. Utiliza el panel deslizante del lado izquierdo de Zygote Body para aumentar o disminuir la visibilidad de los diferentes sistemas corporales.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Animal Cell (Célula 3D) -->
+                <div id="model-cell" class="model-view" style="display: none;">
+                    <div style="position: relative; padding-bottom: 75%; height: 0; overflow: hidden;">
+                        <iframe title="Animal Cell" src="https://sketchfab.com/models/0b15c013059844d7a26c1f16752f8b61/embed?transparent=1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+                    </div>
+                    <div style="padding: 20px 10px 10px;">
+                        <h3 style="font-family:'Orbitron', sans-serif; font-size: 19px; color: white; margin-bottom: 8px;">Célula Animal Interactiva</h3>
+                        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 0;">
+                            Identifica los organelos celulares clave como las mitocondrias, el núcleo, el retículo endoplasmático rugoso y liso, el aparato de Golgi y los lisosomas en tres dimensiones.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Heart Model -->
+                <div id="model-heart" class="model-view" style="display: none;">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                        <iframe title="3d Animated Realistic Human Heart - V2.0" src="https://sketchfab.com/models/168b474fba564f688048212e99b4159d/embed?transparent=1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+                    </div>
+                    <div style="padding: 20px 10px 10px;">
+                        <h3 style="font-family:'Orbitron', sans-serif; font-size: 19px; color: white; margin-bottom: 8px;">Corazón Humano Realista Animado 3D</h3>
+                        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 0;">
+                            Modelo interactivo animado en 3D del corazón por <a href="https://sketchfab.com/docjana" target="_blank" rel="nofollow" style="font-weight: bold; color: var(--accent);">Doctor Jana</a>. Rota y observa el ciclo de contracción y flujo sanguíneo.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Resources list -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 16px; padding: 25px; backdrop-filter: blur(10px);">
+                <h3 style="font-family:'Orbitron', sans-serif; font-size: 18px; color: white; margin-bottom: 15px;"><i class="fas fa-folder-open"></i> Recursos del TP</h3>
+                <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 20px;">
+                    Accesos directos para complementar tu preparación práctica para la cátedra.
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Resource Item -->
+                    <a href="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" target="_blank" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-book-reader" style="color: #a855f7;"></i>
+                            <span style="font-size: 14px; font-weight: 600;">Biblioteca Digital</span>
+                        </div>
+                        <i class="fas fa-external-link-alt" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </a>
+
+                    <!-- Resource Item -->
+                    <div style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="far fa-calendar-alt" style="color: #06b6d4;"></i>
+                            <span style="font-size: 14px; font-weight: 600; color: white;">Calendario de TPs</span>
+                        </div>
+                        <span style="font-size: 12px; color: #06b6d4; font-weight: 700;">Disponible en WhatsApp</span>
+                    </div>
+
+                    <!-- Resource Item -->
+                    <a href="{% url 'unlp' %}" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-graduation-cap" style="color: #ec4899;"></i>
+                            <span style="font-size: 14px; font-weight: 600;">Clase Histo Urinario</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 16px; padding: 25px; backdrop-filter: blur(10px);">
+                <h3 style="font-family:'Orbitron', sans-serif; font-size: 18px; color: white; margin-bottom: 10px;"><i class="fas fa-cubes"></i> Modelado Científico</h3>
+                <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 0;">
+                    La visualización tridimensional ayuda a la retención de relaciones espaciales anatómicas y de ultraestructura. Combina la observación 3D con tus láminas histológicas bi-dimensionales para tener un entendimiento holístico.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<script>
+function switch3DModel(modelKey) {
+    // Hide all views
+    const views = document.querySelectorAll('.model-view');
+    views.forEach(view => view.style.display = 'none');
+    
+    // Show selected view
+    document.getElementById('model-' + modelKey).style.display = 'block';
+    
+    // Style active tab button
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+        if(btn.id === 'btn-' + modelKey) {
+            btn.classList.add('active-tab');
+            btn.style.background = 'rgba(168, 85, 247, 0.12)';
+            btn.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+            btn.style.color = 'white';
+            btn.style.fontWeight = '700';
+        } else {
+            btn.classList.remove('active-tab');
+            btn.style.background = 'rgba(255,255,255,0.02)';
+            btn.style.borderColor = 'rgba(255,255,255,0.06)';
+            btn.style.color = '#cbd5e1';
+            btn.style.fontWeight = '600';
+        }
+    });
+}
+</script>
+
+<style>
+.res-item:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(168, 85, 247, 0.3) !important;
+    transform: translateX(4px);
+}
+.tabs-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+.tabs-scroll::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.2);
+    border-radius: 10px;
+}
+</style>
+{% endblock %}

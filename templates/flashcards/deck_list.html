@@ -1,0 +1,289 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Mis Mazos - ALUMED{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/flashcard_dashboard.css' %}">
+    <style>
+        .deck-list-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            color: white;
+        }
+
+        .back-btn {
+            color: var(--muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: white; }
+
+        /* Grid de Decks Expandido */
+        .decks-grid-large {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .deck-card-large {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .deck-card-large:hover {
+            transform: translateY(-5px);
+            border-color: var(--roxo-neon);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .deck-header-large {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .deck-icon-large {
+            width: 50px;
+            height: 50px;
+            background: rgba(157, 0, 255, 0.1);
+            color: var(--roxo-neon);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .deck-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-edit { background: rgba(255,255,255,0.05); color: var(--muted); }
+        .btn-edit:hover { background: var(--accent); color: #1a0b2e; }
+
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .btn-delete:hover { background: #ef4444; color: white; }
+
+        .deck-title-large {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .deck-category-large {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .deck-stats {
+            display: flex;
+            gap: 15px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .deck-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Modal de Exclusão */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: #1a0b2e;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%; max-width: 400px;
+            text-align: center;
+            transform: scale(0.9); transition: all 0.3s;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .modal-actions {
+            display: flex; justify-content: center; gap: 15px; margin-top: 25px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px; border-radius: 10px; border: none;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-cancel { background: rgba(255,255,255,0.1); color: white; }
+        .btn-cancel:hover { background: rgba(255,255,255,0.2); }
+        .btn-confirm-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); }
+        .btn-confirm-delete:hover { background: #ef4444; color: white; }
+
+        @media (max-width: 768px) {
+            .decks-grid-large { grid-template-columns: 1fr; }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="deck-list-container">
+        <div class="header-section">
+            <div class="header-title">
+                <a href="{% url 'courses:flashcards_dashboard' %}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+                <h1 style="margin-top: 10px;">Mis Mazos</h1>
+            </div>
+        </div>
+
+        <div class="decks-grid-large">
+            {% for deck in decks %}
+            <div class="deck-card-large" onclick="window.location.href='{% url 'courses:study_deck' deck.id %}'">
+                <div class="deck-header-large">
+                    <div class="deck-icon-large">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="deck-actions">
+                        <a href="{% url 'courses:deck_detail' deck.id %}" class="action-btn btn-edit" onclick="event.stopPropagation();" title="Editar">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <div class="action-btn btn-delete" onclick="openDeleteModal(event, {{ deck.id }})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deck-title-large">{{ deck.title }}</div>
+                <div>
+                    <span class="deck-category-large">{{ deck.category }}</span>
+                </div>
+
+                <div class="deck-stats">
+                    <span><i class="fas fa-clone"></i> {{ deck.cards.count }} Tarjetas</span>
+                    <span><i class="far fa-calendar-alt"></i> {{ deck.created_at|date:"d M Y" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--muted);">
+                <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                <h3>No tienes mazos creados aún.</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 15px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: white; margin-bottom: 10px;">¿Eliminar Mazo?</h3>
+            <p style="color: var(--muted);">Esta acción eliminará el mazo y todas sus tarjetas permanentemente.</p>
+
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" id="cancel-delete-btn">Cancelar</button>
+                <button class="modal-btn btn-confirm-delete" id="confirm-delete-btn">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const deleteModal = document.getElementById('delete-confirm-modal');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        let deckIdToDelete = null;
+
+        function openDeleteModal(event, deckId) {
+            event.stopPropagation();
+            deckIdToDelete = deckId;
+            deleteModal.classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            deleteModal.classList.remove('active');
+            deckIdToDelete = null;
+        }
+
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deckIdToDelete) {
+                fetch(`/cursos/flashcards/${deckIdToDelete}/delete/`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert("Error al eliminar el mazo.");
+                        closeDeleteModal();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    closeDeleteModal();
+                });
+            }
+        });
+    </script>
+{% endblock %}

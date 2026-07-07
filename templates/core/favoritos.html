@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Mis Favoritos - ALUMED{% endblock %}
+
+{% block main_content %}
+<div class="welcome-hero" style="background: linear-gradient(135deg, rgba(245, 197, 66, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%); border: 1px solid rgba(245, 197, 66, 0.3);">
+    <h1 style="font-family: 'Orbitron', sans-serif; font-weight: 700; color: white;">Mis Favoritos 🌟</h1>
+    <p style="color: #cbd5e1; font-size: 15px; margin-top: 10px; max-width: 650px; line-height: 1.6;">
+        Guardá tus libros, apuntes de clase y recursos favoritos para tenerlos siempre a mano y estudiar más rápido.
+    </p>
+</div>
+
+<div class="premium-panel" style="margin-top: 30px; text-align: center; padding: 60px 20px; border: 1px dashed rgba(255,255,255,0.1);">
+    <div style="font-size: 48px; color: #f5c542; margin-bottom: 20px;">
+        <i class="far fa-star"></i>
+    </div>
+    <h3 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 20px; margin-bottom: 12px;">Sección Vacía</h3>
+    <p style="color: #94a3b8; font-size: 14.5px; max-width: 500px; margin: 0 auto 25px auto; line-height: 1.6;">
+        Todavía no guardaste ningún recurso en favoritos. Explora la biblioteca y haz clic en el ícono de estrella para agregarlos.
+    </p>
+    <a href="/biblioteca/" class="action-btn-primary" style="text-decoration: none; padding: 12px 28px; font-weight: 600; font-size: 13.5px; font-family:'Orbitron', sans-serif; background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);">
+        Explorar Biblioteca Pública
+    </a>
+</div>
+{% endblock %}

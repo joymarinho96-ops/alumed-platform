@@ -1,0 +1,310 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Mis Mazos - ALUMED{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/flashcard_dashboard.css' %}">
+    <style>
+        /* --- MOBILE SPECIFIC STYLES --- */
+        .mobile-container {
+            padding: 15px;
+            padding-bottom: 80px; /* Espaço para o menu inferior se houver ou scroll */
+        }
+
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            position: sticky;
+            top: 0;
+            background: var(--bg); /* Cor de fundo do body */
+            z-index: 10;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-title {
+            font-size: 1.4rem;
+            color: white;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .mobile-back-btn {
+            color: var(--muted);
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        /* Lista de Cards */
+        .mobile-deck-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-deck-card {
+            background: rgba(20, 5, 35, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s;
+            animation: slideUp 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stagger animation */
+        .mobile-deck-card:nth-child(1) { animation-delay: 0.05s; }
+        .mobile-deck-card:nth-child(2) { animation-delay: 0.1s; }
+        .mobile-deck-card:nth-child(3) { animation-delay: 0.15s; }
+        .mobile-deck-card:nth-child(4) { animation-delay: 0.2s; }
+        .mobile-deck-card:nth-child(5) { animation-delay: 0.25s; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(157, 0, 255, 0.15);
+            color: var(--roxo-neon);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .card-menu-btn {
+            color: var(--muted);
+            padding: 5px 10px;
+            font-size: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .card-category {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }
+
+        .card-stats i { margin-right: 5px; }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .m-btn {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .m-btn-study {
+            background: var(--primary-gradient); /* Usando gradiente do tema */
+            background-color: var(--roxo-neon); /* Fallback */
+            color: white;
+            grid-column: 1 / -1; /* Ocupa toda a largura */
+        }
+
+        .m-btn-edit {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .m-btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Modal Mobile Ajustado */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000;
+            display: flex; align-items: flex-end; /* Bottom sheet style */
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: #1a0b2e;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            padding: 30px 20px;
+            width: 100%;
+            text-align: center;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-top: 1px solid var(--accent);
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .modal-actions {
+            display: flex; flex-direction: column; gap: 10px; margin-top: 20px;
+        }
+
+        .modal-btn {
+            width: 100%; padding: 15px; border-radius: 12px; font-size: 1rem; border: none; font-weight: 600;
+        }
+        .btn-cancel { background: rgba(255,255,255,0.1); color: white; }
+        .btn-confirm-delete { background: var(--danger); color: white; }
+
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="mobile-container">
+        <div class="mobile-header">
+            <a href="{% url 'courses:flashcards_dashboard' %}" class="mobile-back-btn">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <h1 class="mobile-title">Mis Mazos</h1>
+            <div style="width: 24px;"></div> <!-- Spacer para centralizar título -->
+        </div>
+
+        <div class="mobile-deck-list">
+            {% for deck in decks %}
+            <div class="mobile-deck-card">
+                <div class="card-top">
+                    <div class="card-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <!-- Opcional: Menu de 3 pontos se quiser mais opções -->
+                </div>
+
+                <div class="card-title">{{ deck.title }}</div>
+                <div><span class="card-category">{{ deck.category }}</span></div>
+
+                <div class="card-stats">
+                    <span><i class="fas fa-clone"></i> {{ deck.cards.count }} Tarjetas</span>
+                    <span><i class="far fa-calendar-alt"></i> {{ deck.created_at|date:"d/m" }}</span>
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'courses:study_deck' deck.id %}" class="m-btn m-btn-study">
+                        <i class="fas fa-play"></i> Estudiar
+                    </a>
+                    <a href="{% url 'courses:deck_detail' deck.id %}" class="m-btn m-btn-edit">
+                        <i class="fas fa-pen"></i> Editar
+                    </a>
+                    <button class="m-btn m-btn-delete" onclick="openDeleteModal({{ deck.id }})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 40px; color: var(--muted);">
+                <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                <p>No tienes mazos creados.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal de Exclusão (Bottom Sheet Style) -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 10px;">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 style="color: white; margin-bottom: 10px;">¿Eliminar Mazo?</h3>
+            <p style="color: var(--muted); font-size: 0.9rem;">Esta acción es permanente y no se puede deshacer.</p>
+
+            <div class="modal-actions">
+                <button class="modal-btn btn-confirm-delete" id="confirm-delete-btn">Eliminar Definitivamente</button>
+                <button class="modal-btn btn-cancel" id="cancel-delete-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const deleteModal = document.getElementById('delete-confirm-modal');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        let deckIdToDelete = null;
+
+        function openDeleteModal(deckId) {
+            deckIdToDelete = deckId;
+            deleteModal.classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            deleteModal.classList.remove('active');
+            setTimeout(() => { deckIdToDelete = null; }, 300); // Espera animação
+        }
+
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deckIdToDelete) {
+                fetch(`/cursos/flashcards/${deckIdToDelete}/delete/`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert("Error al eliminar el mazo.");
+                        closeDeleteModal();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    closeDeleteModal();
+                });
+            }
+        });
+    </script>
+{% endblock %}

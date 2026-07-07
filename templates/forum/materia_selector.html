@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Testimonios por Materia - ALUMED{% endblock %}
+
+{% block content %}
+<section style="padding: 140px 0 80px 0; background: radial-gradient(circle at center, rgba(245, 197, 66, 0.28) 0%, rgba(20, 10, 5, 0.95) 75%), #0a0502; min-height: 100vh; position: relative; overflow: hidden;">
+    <!-- Background Tech Grid -->
+    <div class="courses-tech-grid" style="opacity: 0.12; filter: hue-rotate(220deg);"></div>
+    
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; z-index: 10; position: relative;">
+        <!-- Header Section -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: #a78bfa; letter-spacing: 2px; text-transform: uppercase;">
+                Portal de Testimonios
+            </span>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(28px, 4vw, 42px); color: white; font-weight: 900; margin: 10px 0 15px; background: linear-gradient(135deg, #fff 30%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Elegí tu Materia
+            </h1>
+            <p style="color: #94a3b8; font-size: 15.5px; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                Accedé al foro de testimonios de finales de cada materia para saber qué preguntas hacen los docentes, cómo es el examen y preparar tu estrategia.
+            </p>
+        </div>
+
+        <!-- Subjects Grouped by Academic Year -->
+        
+        <!-- 1º AÑO -->
+        <div style="margin-bottom: 45px;">
+            <h3 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px; font-weight: 800; margin-bottom: 20px; border-left: 3px solid #ec4899; padding-left: 12px; display: inline-block;">
+                1º Año — Fundamentos
+            </h3>
+            <div class="selector-grid">
+                {% for sub in subjects %}
+                    {% if sub.key == 'anatomia' or sub.key == 'biologia' or sub.key == 'histologia' or sub.key == 'sociales' %}
+                        <a href="?materia={{ sub.key }}" class="materia-card">
+                            <div class="card-glow"></div>
+                            <div class="materia-icon">
+                                {% if sub.key == 'anatomia' %}🧠{% elif sub.key == 'biologia' %}🦠{% elif sub.key == 'histologia' %}🔬{% else %}🏥{% endif %}
+                            </div>
+                            <div class="materia-info">
+                                <h4>{{ sub.name }}</h4>
+                                <p>{{ sub.count }} testimonio{{ sub.count|pluralize:"s" }}</p>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 2º AÑO -->
+        <div style="margin-bottom: 45px;">
+            <h3 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px; font-weight: 800; margin-bottom: 20px; border-left: 3px solid #a855f7; padding-left: 12px; display: inline-block;">
+                2º Año — Fisiología y Procesos
+            </h3>
+            <div class="selector-grid">
+                {% for sub in subjects %}
+                    {% if sub.key == 'fisiologia' or sub.key == 'bioquimica' or sub.key == 'psicologia' %}
+                        <a href="?materia={{ sub.key }}" class="materia-card">
+                            <div class="card-glow"></div>
+                            <div class="materia-icon">
+                                {% if sub.key == 'fisiologia' %}🫀{% elif sub.key == 'bioquimica' %}🧪{% else %}💬{% endif %}
+                            </div>
+                            <div class="materia-info">
+                                <h4>{{ sub.name }}</h4>
+                                <p>{{ sub.count }} testimonio{{ sub.count|pluralize:"s" }}</p>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 3º AÑO -->
+        <div>
+            <h3 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 18px; font-weight: 800; margin-bottom: 20px; border-left: 3px solid #3b82f6; padding-left: 12px; display: inline-block;">
+                3º Año — Puente Clínico
+            </h3>
+            <div class="selector-grid">
+                {% for sub in subjects %}
+                    {% if sub.key == 'farmacologia' or sub.key == 'microbiologia' or sub.key == 'patologia' or sub.key == 'semiologia' %}
+                        <a href="?materia={{ sub.key }}" class="materia-card">
+                            <div class="card-glow"></div>
+                            <div class="materia-icon">
+                                {% if sub.key == 'farmacologia' %}💊{% elif sub.key == 'microbiologia' %}🧫{% elif sub.key == 'patologia' %}🫁{% else %}📋{% endif %}
+                            </div>
+                            <div class="materia-info">
+                                <h4>{{ sub.name }}</h4>
+                                <p>{{ sub.count }} testimonio{{ sub.count|pluralize:"s" }}</p>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advanced Layout Styles for Subject Cards -->
+<style>
+.selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.materia-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(20, 24, 38, 0.72) 0%, rgba(10, 12, 20, 0.88) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    color: white;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.materia-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(167, 139, 250, 0.34);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.15);
+}
+.card-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+    transition: all 0.3s;
+}
+.materia-card:hover .card-glow {
+    background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 70%);
+}
+.materia-icon {
+    font-size: 32px;
+    margin-right: 18px;
+    background: rgba(255,255,255,0.03);
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+}
+.materia-card:hover .materia-icon {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.3);
+    transform: scale(1.05);
+}
+.materia-info {
+    flex-grow: 1;
+}
+.materia-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    transition: color 0.3s;
+}
+.materia-card:hover h4 {
+    color: #c084fc;
+}
+.materia-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+.arrow-icon {
+    color: #475569;
+    font-size: 14px;
+    transition: all 0.3s;
+    margin-left: 10px;
+}
+.materia-card:hover .arrow-icon {
+    color: #c084fc;
+    transform: translateX(4px);
+}
+</style>
+
+<!-- Matrix Code Rain Canvas (in glowing gold) -->
+<canvas id="matrixCanvas"></canvas>
+<style>
+    #matrixCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.08; /* sutil golden glow rain */
+    }
+</style>
+<script>
+    (function() {
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        
+        const alphabet = "ATCGΔΩΨΦΘΣ1234567890ANATOMIAHISTOLOGIAFISIOLOGIA";
+        const chars = alphabet.split("");
+        
+        const fontSize = 14;
+        const columns = Math.ceil(canvas.width / fontSize);
+        
+        const rainDrops = Array(columns).fill(1).map(() => Math.random() * -100);
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 5, 2, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#f5c542'; 
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * fontSize;
+                const y = rainDrops[i] * fontSize;
+                
+                if (y > 0) {
+                    ctx.fillText(text, x, y);
+                }
+                
+                if (y > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i] += 0.85;
+            }
+        }
+        
+        setInterval(draw, 33);
+    })();
+</script>
+{% endblock %}

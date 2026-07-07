@@ -1,0 +1,66 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block auth_content %}
+    <div class="auth-header">
+        <h2 style="font-family: 'Orbitron', sans-serif;">Iniciar Sesión</h2>
+        <p>Bienvenido de nuevo a ALUMED</p>
+    </div>
+
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p class="error-message" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; text-align: left;">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p class="error-message" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; text-align: left;">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'account_login' %}" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_login">Usuario o Email</label>
+            <input type="text" name="login" id="id_login" required placeholder="Ingresá tu usuario o email" autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">Contraseña</label>
+            <input type="password" name="password" id="id_password" required placeholder="Ingresá tu contraseña" autocomplete="current-password">
+        </div>
+        
+        <div class="forgot-password-link" style="text-align: right; margin-bottom: 15px;">
+            <a href="{% url 'account_reset_password' %}" style="color: #a78bfa; text-decoration: none; font-size: 12.5px; font-weight: 500;">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+
+        <button type="submit" class="auth-btn">Entrar</button>
+    </form>
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+    <div class="social-login" style="margin-top: 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+        <p style="color: #cbd5e1; font-size: 13px; margin-bottom: 12px;">O inicia sesión con</p>
+        {% for provider in socialaccount_providers %}
+            {% if provider.id == "google" %}
+            <a href="{% provider_login_url provider.id process='login' %}{% if next %}?next={{ next }}{% endif %}" class="action-btn-secondary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 13.5px; color: white; background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); width: 100%; justify-content: center; font-weight: 700; transition: all 0.2s;">
+                <i class="fab fa-google" style="color: #ef4444;"></i> Google
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="auth-footer" style="margin-top: 25px; text-align: center; font-size: 13.5px; color: #94a3b8;">
+        <p>¿No tienes cuenta? <a href="{% url 'account_signup' %}{% if next %}?next={{ next }}{% endif %}" style="color: #a78bfa; font-weight: 600; text-decoration: none;">Crear cuenta gratis</a></p>
+    </div>
+{% endblock %}
