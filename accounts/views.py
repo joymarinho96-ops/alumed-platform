@@ -174,34 +174,48 @@ def auth_gate_view(request):
 
     return redirect(next_url)
 
-from django.contrib.auth.forms import AuthenticationForm
-
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('student_dashboard')
+    error = None
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                next_url = request.GET.get('next', 'student_dashboard')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        # Permitir login por email también
+        if '@' in username:
+            try:
+                u = User.objects.get(email__iexact=username)
+                username = u.username
+            except User.DoesNotExist:
+                pass
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            next_url = request.POST.get('next') or request.GET.get('next') or ''
+            if next_url and next_url.startswith('/'):
                 return redirect(next_url)
-    else:
-        form = AuthenticationForm()
-    return render(request, 'accounts/login.html', {'form': form})
+            return redirect('student_dashboard')
+        else:
+            error = 'Usuario o contraseña incorrectos.'
+    next_url = request.GET.get('next', '')
+    return render(request, 'accounts/login.html', {'error': error, 'next': next_url})
 
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('student_dashboard')
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('student_dashboard')
+            try:
+                user = form.save()
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                next_url = request.POST.get('next') or request.GET.get('next') or ''
+                if next_url and next_url.startswith('/'):
+                    return redirect(next_url)
+                return redirect('student_dashboard')
+            except Exception as e:
+                logger.error(f'Error en registro: {e}')
+                form.add_error(None, 'Error al crear la cuenta. Intentá de nuevo.')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})

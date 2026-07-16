@@ -249,6 +249,8 @@
 
   <!-- Campo hidden do avatar -->
   <input type="hidden" name="avatar" id="avatarInput" value="av01">
+  <!-- Campo hidden para next redirect -->
+  <input type="hidden" name="next" value="{{ request.GET.next }}">
 
   {% for field in form %}
     {% if field.name != 'avatar' %}

@@ -8,19 +8,20 @@
         <p>Bienvenido de nuevo a ALUMED</p>
     </div>
 
-    {% if form.errors %}
-        <p class="error-message">Tu usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.</p>
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
     {% endif %}
 
     <form method="POST" class="auth-form">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
         <div class="form-group">
-            <label for="id_username">Usuario</label>
-            <input type="text" name="username" id="id_username" required>
+            <label for="id_username">Usuario o Email</label>
+            <input type="text" name="username" id="id_username" required autocomplete="username">
         </div>
         <div class="form-group">
             <label for="id_password">Contraseña</label>
-            <input type="password" name="password" id="id_password" required>
+            <input type="password" name="password" id="id_password" required autocomplete="current-password">
         </div>
         
         <div class="forgot-password-link">

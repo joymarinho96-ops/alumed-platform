@@ -5,38 +5,57 @@ from .models import Profile
 import re
 from django.core.exceptions import ValidationError
 
+
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, help_text="Informe un e-mail válido.")
+    first_name = forms.CharField(
+        max_length=30, required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Nombre (opcional)', 'class': 'auth-input'})
+    )
+    last_name = forms.CharField(
+        max_length=30, required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Apellido (opcional)', 'class': 'auth-input'})
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'placeholder': 'Email', 'class': 'auth-input'})
+    )
     avatar = forms.CharField(
-        required=False,
-        initial='av01',
+        required=False, initial='av01',
         widget=forms.HiddenInput()
     )
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = UserCreationForm.Meta.fields + ('email',)
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-
+        email = self.cleaned_data.get('email', '').strip().lower()
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            raise ValidationError("Formato de e-mail inválido.")
-
-        if User.objects.filter(email=email).exists():
-            raise ValidationError("Este e-mail ya está registrado.")
-
+            raise ValidationError("Formato de email inválido.")
+        if User.objects.filter(email__iexact=email).exists():
+            raise ValidationError("Ya existe una cuenta con este email.")
         return email
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username', '').strip()
+        if User.objects.filter(username__iexact=username).exists():
+            raise ValidationError("Este nombre de usuario ya está en uso.")
+        return username
+
     def save(self, commit=True):
+        from django.db import transaction
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
+        user.email = self.cleaned_data['email'].lower()
+        user.first_name = self.cleaned_data.get('first_name', '')
+        user.last_name = self.cleaned_data.get('last_name', '')
         if commit:
-            user.save()
-            avatar = self.cleaned_data.get('avatar') or 'av01'
-            profile, _ = Profile.objects.get_or_create(user=user)
-            profile.avatar = avatar
-            profile.save()
+            with transaction.atomic():
+                user.save()
+                # O signal post_save já cria o Profile; usamos get_or_create para segurança
+                avatar = self.cleaned_data.get('avatar') or 'av01'
+                profile, _ = Profile.objects.get_or_create(user=user)
+                profile.avatar = avatar
+                profile.save()
         return user
 
 
