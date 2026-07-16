@@ -78,3 +78,5 @@ netlify_build/**/*.html
 !wix.config.json
 !wix.config.json.backup
 !cors.json
+
+.vercel

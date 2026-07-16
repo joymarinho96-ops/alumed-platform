@@ -11,14 +11,32 @@ import re as _re
 # ─────────────────────────────────────────────────────────────────────────────
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    wix_member_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
-    photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    avatar = models.CharField(max_length=50, blank=True, default='av01')
+    YEAR_CHOICES = [
+        ('',         'Não informado'),
+        ('ingreso',  'Ingreso'),
+        ('1',        '1° Año'),
+        ('2',        '2° Año'),
+        ('3',        '3° Año'),
+        ('4',        '4° Año'),
+        ('5',        '5° Año'),
+        ('6',        '6° Año'),
+        ('internado','Internado'),
+    ]
+
+    user                     = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    wix_member_id            = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    photo                    = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    avatar                   = models.CharField(max_length=50, blank=True, default='av01')
     last_announcement_view_time = models.DateTimeField(default=timezone.now)
+    year                     = models.CharField(
+                                   max_length=10, choices=YEAR_CHOICES, blank=True, default='',
+                                   verbose_name='Ano na carreira',
+                                   help_text='Informe em qual ano da FCM-UNLP voce esta.'
+                               )
 
     def __str__(self):
         return f'Perfil de {self.user.username}'
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────

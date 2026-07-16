@@ -224,11 +224,20 @@ class CarteleraItem(models.Model):
     url          = models.URLField(max_length=500, verbose_name='URL original')
     category     = models.CharField(max_length=200, blank=True, verbose_name='Categoria/Matéria')
 
+    # ── Segmentação por ano ──────────────────────────────────────
+    # CSV de anos alvo: '' = todos | 'ingreso,1,2' = só esses anos
+    target_years = models.CharField(
+        max_length=100, blank=True, default='',
+        verbose_name='Anos alvo',
+        help_text='Vazio = todos os alunos. Ex: "ingreso,1,2" = só esses anos.',
+    )
+
     # ── Controle de ciclo de vida ────────────────────────────────
     first_seen_at = models.DateTimeField(auto_now_add=True, verbose_name='Primeira vez visto')
     last_seen_at  = models.DateTimeField(auto_now=True,     verbose_name='Última vez visto')
     notified_at   = models.DateTimeField(null=True, blank=True, verbose_name='Notificado em')
     is_active     = models.BooleanField(default=True, verbose_name='Ainda ativo na cartelera')
+
 
     class Meta:
         ordering            = ['-date_parsed', '-first_seen_at']
