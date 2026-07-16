@@ -821,8 +821,39 @@ def _validate_payload(data):
     cleaned['calendar_active']  = cal_active
     cleaned['consent_granted']  = bool(data.get('consent_granted', False))
     cleaned['revoke_consent']   = bool(data.get('revoke_consent',  False))
-
     return errors, cleaned
+
+
+@login_required
+@student_auth_required
+def api_cartelera_live(request):
+    """
+    GET /conecta/api/cartelera/
+    Retorna os avisos ativos da Cartelera FCM do banco (capturados pelo scraper).
+    Cache de 10 minutos para evitar queries repetidas.
+    Resposta JSON para consumo pelo Conecta Dashboard via fetch().
+    """
+    CACHE_KEY = 'conecta_radar_cartelera'
+    cached = cache.get(CACHE_KEY)
+    if cached is not None:
+        return JsonResponse({'avisos': cached, 'source': 'cache'})
+
+    from core.models import CarteleraItem
+    avisos_qs = CarteleraItem.objects.filter(is_active=True).order_by('-date_parsed', '-first_seen_at')[:30]
+    avisos = [
+        {
+            'id':       item.external_id,
+            'title':    item.title,
+            'subtitle': item.subtitle,
+            'issuer':   item.issuer,
+            'date':     item.date_str,
+            'url':      item.url,
+            'is_new':   item.notified_at is None,
+        }
+        for item in avisos_qs
+    ]
+    cache.set(CACHE_KEY, avisos, timeout=600)  # 10 min
+    return JsonResponse({'avisos': avisos, 'source': 'db'})
 
 
 @login_required

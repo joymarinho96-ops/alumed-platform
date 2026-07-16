@@ -45,6 +45,9 @@ urlpatterns = [
     # Conecta FCM — Preferences API v2 (GET + POST)
     path('conecta/api/preferences/', views.conecta_preferences, name='conecta_preferences'),
 
+    # Conecta Radar — Cartelera FCM ao vivo
+    path('conecta/api/cartelera/', views.api_cartelera_live, name='api_cartelera_live'),
+
     # URLs de autenticação do Django
     path('', include('django.contrib.auth.urls')),
 ]

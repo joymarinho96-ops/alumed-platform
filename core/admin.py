@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Announcement, Event, LibraryResource, Product, Popup, Testimonial, TestimonialVideo, DigitalBook
+from .models import Announcement, Event, LibraryResource, Product, Popup, Testimonial, TestimonialVideo, DigitalBook, CarteleraItem
 from django.utils.html import format_html
 from django.utils import timezone
 from datetime import timedelta
@@ -100,3 +100,32 @@ class DigitalBookAdmin(admin.ModelAdmin):
     list_filter = ('subject', 'year', 'category')
     search_fields = ('title', 'description', 'tags')
 
+
+@admin.register(CarteleraItem)
+class CarteleraItemAdmin(admin.ModelAdmin):
+    list_display  = ('title_short', 'date_str', 'issuer', 'is_active', 'notified_at', 'first_seen_at')
+    list_filter   = ('is_active', 'date_parsed', 'issuer')
+    search_fields = ('title', 'subtitle', 'issuer', 'external_id')
+    readonly_fields = ('external_id', 'content_hash', 'first_seen_at', 'last_seen_at')
+    ordering = ('-date_parsed', '-first_seen_at')
+    list_per_page = 30
+
+    def title_short(self, obj):
+        return obj.title[:70] + ('...' if len(obj.title) > 70 else '')
+    title_short.short_description = 'Titulo'
+
+    actions = ['mark_notified', 'mark_active', 'mark_inactive']
+
+    def mark_notified(self, request, queryset):
+        from django.utils import timezone
+        queryset.update(notified_at=timezone.now())
+        self.message_user(request, f'{queryset.count()} avisos marcados como notificados.')
+    mark_notified.short_description = 'Marcar como notificado'
+
+    def mark_active(self, request, queryset):
+        queryset.update(is_active=True)
+    mark_active.short_description = 'Marcar como ativo'
+
+    def mark_inactive(self, request, queryset):
+        queryset.update(is_active=False)
+    mark_inactive.short_description = 'Marcar como inativo'
