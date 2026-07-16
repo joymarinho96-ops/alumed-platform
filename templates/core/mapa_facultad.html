@@ -4,215 +4,373 @@
 {% block title %}Mapa Interactivo — FCM UNLP | ALUMED{% endblock %}
 
 {% block content %}
-<section style="padding-top:120px;min-height:100vh;position:relative;">
+<section style="padding-top:110px;min-height:100vh;position:relative;">
 <div class="courses-tech-grid"></div>
 
 <!-- HEADER -->
-<div class="section-header reveal-up" style="margin-bottom:32px;text-align:center;">
+<div style="text-align:center;margin-bottom:24px;">
   <span class="hero-badge" style="background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35);color:#22d3ee;">
-    <i class="fas fa-map-marked-alt"></i> Mapa Interactivo
+    <i class="fas fa-map-marked-alt"></i> Mapa Interactivo — FCM UNLP
   </span>
-  <h1 style="font-size:clamp(28px,4vw,48px);margin-top:14px;">
-    Mapa de la <span style="background:linear-gradient(135deg,#22d3ee,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Facultad</span>
+  <h1 style="font-size:clamp(24px,3.5vw,42px);margin-top:12px;">
+    Mapa del <span style="background:linear-gradient(135deg,#22d3ee,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Campus</span>
   </h1>
-  <p style="opacity:.75;max-width:600px;margin:10px auto 0;font-size:15px;">
-    Encontrá anfiteatros, aulas, oficinas administrativas y servicios de la FCM UNLP.
+  <p style="opacity:.65;font-size:14px;margin:6px auto 0;max-width:560px;">
+    Hacé clic en un edificio para ver información. Usá los filtros para ver los accesos.
   </p>
 </div>
 
-<!-- SEARCH BAR -->
-<div style="max-width:900px;margin:0 auto 24px;padding:0 16px;">
-  <div style="position:relative;">
-    <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(34,211,238,.6);font-size:14px;"></i>
-    <input id="mapaSearch" type="text" placeholder="Buscar aula, anfiteatro, oficina..."
-      oninput="filterMapTable()"
-      style="width:100%;padding:13px 16px 13px 44px;background:rgba(8,10,20,.8);border:1px solid rgba(34,211,238,.25);border-radius:12px;color:white;font-size:14px;outline:none;box-sizing:border-box;transition:all .3s;"
-      onfocus="this.style.borderColor='#22d3ee';this.style.boxShadow='0 0 12px rgba(34,211,238,.2)'"
-      onblur="this.style.borderColor='rgba(34,211,238,.25)';this.style.boxShadow='none'">
+<!-- CONTROLES -->
+<div style="max-width:960px;margin:0 auto 16px;padding:0 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;">
+  <button class="route-btn active" id="btn-peatonal" onclick="toggleRoute('peatonal')" style="display:flex;align-items:center;gap:6px;">
+    <svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#FFE600" stroke-width="2.5" stroke-dasharray="4,3"/></svg>
+    Acceso peatonal
+  </button>
+  <button class="route-btn active" id="btn-vehicular" onclick="toggleRoute('vehicular')" style="display:flex;align-items:center;gap:6px;">
+    <svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#60a5fa" stroke-width="2.5" stroke-dasharray="4,3"/></svg>
+    Acceso vehicular
+  </button>
+  <button class="route-btn active" id="btn-salida" onclick="toggleRoute('salida')" style="display:flex;align-items:center;gap:6px;">
+    <svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#f87171" stroke-width="2.5" stroke-dasharray="4,3"/></svg>
+    Salida vehicular
+  </button>
+  <a href="https://maps.google.com/?q=Facultad+de+Ciencias+Medicas+UNLP+La+Plata+Av+60" target="_blank"
+     style="padding:7px 14px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);border-radius:10px;color:#a78bfa;font-size:12px;text-decoration:none;display:flex;align-items:center;gap:6px;">
+    <i class="fas fa-directions"></i> Cómo llegar
+  </a>
+</div>
+
+<!-- LAYOUT PRINCIPAL -->
+<div style="max-width:960px;margin:0 auto;padding:0 16px 60px;display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start;">
+
+  <!-- ── SVG MAP ── -->
+  <div style="background:rgba(6,8,16,.9);border:1px solid rgba(34,211,238,.18);border-radius:18px;overflow:hidden;position:relative;">
+
+    <!-- Zoom controls -->
+    <div style="position:absolute;top:12px;right:12px;z-index:20;display:flex;flex-direction:column;gap:4px;">
+      <button onclick="zoomIn()" style="width:30px;height:30px;background:rgba(8,10,20,.9);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:white;font-size:16px;cursor:pointer;line-height:1;">+</button>
+      <button onclick="zoomOut()" style="width:30px;height:30px;background:rgba(8,10,20,.9);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:white;font-size:16px;cursor:pointer;line-height:1;">−</button>
+      <button onclick="resetView()" style="width:30px;height:30px;background:rgba(8,10,20,.9);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#22d3ee;font-size:10px;cursor:pointer;line-height:1;">↺</button>
+    </div>
+
+    <svg id="campusMap" viewBox="0 0 700 620"
+         style="width:100%;height:auto;display:block;cursor:grab;transition:transform .1s;"
+         xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Grid de fondo -->
+        <pattern id="cgrid" width="25" height="25" patternUnits="userSpaceOnUse">
+          <path d="M 25 0 L 0 0 0 25" fill="none" stroke="rgba(34,211,238,0.04)" stroke-width=".5"/>
+        </pattern>
+        <!-- Filtros -->
+        <filter id="bGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="selGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Gradiente hierba/bosque -->
+        <linearGradient id="bGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#14532d" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#052e16" stop-opacity=".9"/>
+        </linearGradient>
+        <!-- Gradiente asfalto -->
+        <linearGradient id="roadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#1e293b"/>
+          <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+        <!-- Clip para el mapa -->
+        <clipPath id="mapClip">
+          <rect x="0" y="0" width="700" height="620"/>
+        </clipPath>
+      </defs>
+
+      <g clip-path="url(#mapClip)">
+
+      <!-- ══ FONDO ══ -->
+      <rect width="700" height="620" fill="#0a0e1a"/>
+      <rect width="700" height="620" fill="url(#cgrid)"/>
+
+      <!-- ══ BOSQUE LA PLATA (sur) ══ -->
+      <rect x="0" y="500" width="700" height="120" fill="url(#bGreen)" rx="0"/>
+      <text x="350" y="545" text-anchor="middle" fill="rgba(74,222,128,.5)" font-size="13" font-family="Outfit,sans-serif" font-weight="700" letter-spacing="3">BOSQUE LA PLATA</text>
+      <!-- Árboles bosque (círculos verdes) -->
+      <g opacity=".6">
+        <circle cx="60"  cy="530" r="14" fill="#16a34a"/><circle cx="110" cy="518" r="11" fill="#15803d"/>
+        <circle cx="160" cy="535" r="13" fill="#14532d"/><circle cx="210" cy="520" r="12" fill="#166534"/>
+        <circle cx="260" cy="538" r="14" fill="#16a34a"/><circle cx="310" cy="522" r="10" fill="#15803d"/>
+        <circle cx="360" cy="532" r="13" fill="#14532d"/><circle cx="410" cy="525" r="12" fill="#166534"/>
+        <circle cx="460" cy="540" r="14" fill="#16a34a"/><circle cx="510" cy="515" r="11" fill="#15803d"/>
+        <circle cx="560" cy="530" r="13" fill="#14532d"/><circle cx="610" cy="525" r="12" fill="#166534"/>
+        <circle cx="660" cy="538" r="10" fill="#16a34a"/>
+        <circle cx="85"  cy="570" r="12" fill="#15803d"/><circle cx="135" cy="560" r="14" fill="#166534"/>
+        <circle cx="185" cy="572" r="11" fill="#16a34a"/><circle cx="235" cy="565" r="13" fill="#14532d"/>
+        <circle cx="285" cy="575" r="12" fill="#15803d"/><circle cx="335" cy="558" r="14" fill="#166534"/>
+        <circle cx="385" cy="572" r="11" fill="#16a34a"/><circle cx="435" cy="568" r="13" fill="#14532d"/>
+        <circle cx="485" cy="580" r="12" fill="#15803d"/><circle cx="535" cy="562" r="14" fill="#166534"/>
+        <circle cx="585" cy="575" r="11" fill="#16a34a"/><circle cx="635" cy="560" r="13" fill="#14532d"/>
+      </g>
+
+      <!-- ══ AVENIDA 60 ══ -->
+      <rect x="0" y="468" width="700" height="32" fill="#1e293b"/>
+      <line x1="0" y1="484" x2="700" y2="484" stroke="rgba(255,255,255,.15)" stroke-width="1.5" stroke-dasharray="20,12"/>
+      <text x="180" y="479" fill="rgba(255,255,255,.5)" font-size="10" font-family="monospace" text-anchor="middle">◀ Hacia Berisso · Av. 122</text>
+      <text x="350" y="487" fill="rgba(255,255,255,.45)" font-size="10" font-family="monospace" text-anchor="middle">Av. 60</text>
+      <text x="570" y="479" fill="rgba(255,255,255,.5)" font-size="10" font-family="monospace" text-anchor="middle">Centro La Plata ▶</text>
+
+      <!-- ══ VÍAS DEL TREN (izquierda) ══ -->
+      <rect x="0" y="0" width="10" height="468" fill="#111827"/>
+      <line x1="3" y1="0" x2="3" y2="468" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+      <line x1="7" y1="0" x2="7" y2="468" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+      <!-- Traviesas -->
+      <g stroke="rgba(255,255,255,.2)" stroke-width="2">
+        <line x1="0" y1="30"  x2="10" y2="30"/> <line x1="0" y1="55"  x2="10" y2="55"/>
+        <line x1="0" y1="80"  x2="10" y2="80"/> <line x1="0" y1="105" x2="10" y2="105"/>
+        <line x1="0" y1="130" x2="10" y2="130"/><line x1="0" y1="155" x2="10" y2="155"/>
+        <line x1="0" y1="180" x2="10" y2="180"/><line x1="0" y1="205" x2="10" y2="205"/>
+        <line x1="0" y1="230" x2="10" y2="230"/><line x1="0" y1="255" x2="10" y2="255"/>
+        <line x1="0" y1="280" x2="10" y2="280"/><line x1="0" y1="305" x2="10" y2="305"/>
+        <line x1="0" y1="330" x2="10" y2="330"/><line x1="0" y1="355" x2="10" y2="355"/>
+        <line x1="0" y1="380" x2="10" y2="380"/><line x1="0" y1="405" x2="10" y2="405"/>
+        <line x1="0" y1="430" x2="10" y2="430"/><line x1="0" y1="455" x2="10" y2="455"/>
+      </g>
+
+      <!-- ══ CALLE LATERAL DERECHA ══ -->
+      <rect x="655" y="0" width="45" height="468" fill="#111827"/>
+      <line x1="655" y1="0" x2="655" y2="468" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+
+      <!-- ══ ÁRBOLES PERIMETRALES ══ -->
+      <!-- Fila superior -->
+      <g fill="#166534" opacity=".75">
+        <circle cx="30"  cy="12" r="8"/><circle cx="55"  cy="14" r="7"/><circle cx="80"  cy="10" r="8"/>
+        <circle cx="120" cy="12" r="7"/><circle cx="145" cy="14" r="8"/><circle cx="170" cy="10" r="7"/>
+        <circle cx="195" cy="13" r="8"/><circle cx="220" cy="11" r="7"/><circle cx="245" cy="14" r="8"/>
+        <circle cx="480" cy="12" r="7"/><circle cx="505" cy="14" r="8"/><circle cx="530" cy="10" r="7"/>
+        <circle cx="555" cy="13" r="8"/><circle cx="580" cy="11" r="7"/><circle cx="605" cy="14" r="8"/>
+        <circle cx="630" cy="10" r="7"/>
+      </g>
+      <!-- Árbol fila derecha perimetral -->
+      <g fill="#166534" opacity=".7">
+        <circle cx="646" cy="130" r="7"/><circle cx="648" cy="165" r="8"/><circle cx="646" cy="200" r="7"/>
+        <circle cx="648" cy="240" r="8"/><circle cx="646" cy="280" r="7"/><circle cx="648" cy="320" r="8"/>
+        <circle cx="646" cy="360" r="7"/><circle cx="648" cy="400" r="8"/><circle cx="646" cy="440" r="7"/>
+      </g>
+      <!-- Árboles carretera (zona norte de Av 60) -->
+      <g fill="#166534" opacity=".65">
+        <circle cx="30"  cy="458" r="7"/><circle cx="70"  cy="460" r="8"/><circle cx="115" cy="458" r="7"/>
+        <circle cx="160" cy="460" r="8"/><circle cx="205" cy="456" r="7"/><circle cx="265" cy="460" r="8"/>
+        <circle cx="310" cy="458" r="7"/><circle cx="360" cy="460" r="7"/><circle cx="415" cy="456" r="8"/>
+        <circle cx="460" cy="460" r="7"/><circle cx="510" cy="458" r="8"/><circle cx="560" cy="456" r="7"/>
+        <circle cx="605" cy="460" r="8"/><circle cx="640" cy="458" r="7"/>
+      </g>
+
+      <!-- ══ EDIFICIO ANEXO INIBIOLP (arriba izq) ══ -->
+      <g id="bld-inibiolp" class="bld" data-name="Anexo Edificio INIBIOLP"
+         data-info="Edificio auxiliar del Instituto de Investigaciones Bioquímicas de La Plata"
+         data-detail="Investigación biomédica · Acceso restringido · Personal docente">
+        <rect x="18" y="22" width="115" height="55" fill="rgba(100,100,110,.25)" stroke="rgba(180,180,190,.5)" stroke-width="1.5" rx="3"/>
+        <text x="75" y="44" text-anchor="middle" fill="rgba(220,220,230,.8)" font-size="8.5" font-family="Outfit,sans-serif" font-weight="700">Anexo Edificio</text>
+        <text x="75" y="57" text-anchor="middle" fill="rgba(220,220,230,.8)" font-size="8.5" font-family="Outfit,sans-serif" font-weight="700">INIBIOLP</text>
+        <text x="75" y="70" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="7" font-family="monospace">Investigación Bioquímica</text>
+      </g>
+
+      <!-- ══ DEPENDENCIAS FAC. AGRONOMÍA ══ -->
+      <g id="bld-agronomia" class="bld" data-name="Dependencias Fac. de Agronomía"
+         data-info="Edificio compartido con la Facultad de Agronomía y Ciencias Forestales"
+         data-detail="Administración conjunta · Av. 60 N°123 · Lun–Vie 8–18h">
+        <rect x="145" y="22" width="360" height="60" fill="rgba(100,100,110,.3)" stroke="rgba(180,180,190,.45)" stroke-width="1.5" rx="3"/>
+        <text x="325" y="50" text-anchor="middle" fill="rgba(220,220,230,.8)" font-size="10" font-family="Outfit,sans-serif" font-weight="600">Dependencias de la Fac. de Agronomía</text>
+        <text x="325" y="66" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="8" font-family="monospace">Facultad de Ciencias Agrarias y Forestales · UNLP</text>
+      </g>
+
+      <!-- ══ MANTENIMIENTO (franja izq vertical) ══ -->
+      <g id="bld-mant" class="bld" data-name="Mantenimiento"
+         data-info="Área de servicios generales y mantenimiento de infraestructura"
+         data-detail="Acceso personal · Emergencias técnicas · Tel. interno 2301">
+        <rect x="10" y="95" width="30" height="295" fill="rgba(90,90,100,.3)" stroke="rgba(160,160,175,.4)" stroke-width="1.5" rx="2"/>
+        <text x="25" y="248" text-anchor="middle" fill="rgba(210,210,220,.75)" font-size="8.5" font-family="Outfit,sans-serif" font-weight="700" transform="rotate(-90,25,248)">MANTENIMIENTO</text>
+      </g>
+
+      <!-- ══ ADMINISTRACIÓN ══ -->
+      <g id="bld-admin" class="bld" data-name="Administración"
+         data-info="Dirección de Administración General de la FCM UNLP"
+         data-detail="Habilitaciones · RRHH · Tesorería · Piso 1, Lun–Vie 9–17h">
+        <rect x="40" y="95" width="68" height="295" fill="rgba(100,100,115,.3)" stroke="rgba(170,170,185,.45)" stroke-width="1.5" rx="2"/>
+        <text x="74" y="248" text-anchor="middle" fill="rgba(220,220,230,.85)" font-size="9" font-family="Outfit,sans-serif" font-weight="700" transform="rotate(-90,74,248)">ADMINISTRACIÓN</text>
+      </g>
+
+      <!-- ══ HOSPITAL UNIVERSITARIO INTEGRADO ══ -->
+      <g id="bld-hospital" class="bld" data-name="Hospital Universitario Integrado"
+         data-info="Hospital de la UNLP para prácticas clínicas y atención médica docente-asistencial"
+         data-detail="Guardia 24h · Consultorio externo · Prácticas de 4°–6° año · Tel. 0800-222-4658">
+        <rect x="108" y="95" width="170" height="155" fill="rgba(100,100,115,.3)" stroke="rgba(170,170,185,.45)" stroke-width="1.5" rx="3"/>
+        <text x="193" y="165" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Hospital</text>
+        <text x="193" y="181" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Universitario</text>
+        <text x="193" y="197" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Integrado</text>
+        <text x="193" y="215" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="8" font-family="monospace">Guardia 24h</text>
+      </g>
+
+      <!-- ══ ÁREA TECNOLÓGICA EDUCATIVA ══ -->
+      <g id="bld-tec" class="bld" data-name="Área Tecnológica Educativa"
+         data-info="Centro de tecnología educativa, aulas multimedia y laboratorios de informática"
+         data-detail="Aulas TEC 1–6 · Laboratorios informática · Aula virtual · Lun–Vie 8–21h">
+        <rect x="282" y="95" width="170" height="155" fill="rgba(100,100,115,.3)" stroke="rgba(170,170,185,.45)" stroke-width="1.5" rx="3"/>
+        <text x="367" y="165" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Área</text>
+        <text x="367" y="181" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Tecnológica</text>
+        <text x="367" y="197" text-anchor="middle" fill="rgba(220,220,230,.9)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">Educativa</text>
+        <text x="367" y="215" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="8" font-family="monospace">Labs · Multimedia</text>
+      </g>
+
+      <!-- ══ ALA IZQUIERDA ══ -->
+      <g id="bld-ala-izq" class="bld" data-name="Ala Izquierda (Ala Izq.)"
+         data-info="Ala oeste del Edificio Principal — aulas de 1° a 3° año"
+         data-detail="Aulas A1–A12 · Boxes de estudio · Acceso por galería norte">
+        <rect x="108" y="258" width="160" height="170" fill="rgba(100,100,115,.3)" stroke="rgba(170,170,185,.45)" stroke-width="1.5" rx="3"/>
+        <text x="188" y="350" text-anchor="middle" fill="rgba(220,220,230,.85)" font-size="11" font-family="Outfit,sans-serif" font-weight="700">Ala Izq.</text>
+        <text x="188" y="367" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="8" font-family="monospace">Aulas A1–A12</text>
+      </g>
+
+      <!-- ══ EDIFICIO PRINCIPAL (forma curva/fan) ══ -->
+      <!-- Base rectangular central -->
+      <g id="bld-principal" class="bld" data-name="Edificio Principal — Fac. de Cs. Médicas"
+         data-info="Edificio central de la Facultad de Ciencias Médicas de la UNLP"
+         data-detail="Decanato · Secretaría Académica · SAE · Bedelía · Anfiteatro Mayor · Hall central · Dirección al 1° piso por escaleras del hall">
+        <!-- Cuerpo central -->
+        <path d="M 280,258 L 460,258 L 480,320 L 460,428 L 280,428 L 260,320 Z"
+              fill="rgba(110,110,130,.35)" stroke="rgba(180,180,200,.55)" stroke-width="2" rx="4"/>
+        <!-- Círculo/fuente central (patio interior) -->
+        <circle cx="370" cy="340" r="28" fill="rgba(30,35,55,.8)" stroke="rgba(180,180,200,.3)" stroke-width="1.5"/>
+        <circle cx="370" cy="340" r="18" fill="rgba(20,25,45,.9)" stroke="rgba(124,58,237,.3)" stroke-width="1"/>
+        <text x="370" y="336" text-anchor="middle" fill="rgba(200,200,220,.6)" font-size="7" font-family="monospace">Hall</text>
+        <text x="370" y="348" text-anchor="middle" fill="rgba(200,200,220,.6)" font-size="7" font-family="monospace">Central</text>
+        <!-- Labels -->
+        <text x="370" y="285" text-anchor="middle" fill="rgba(230,230,245,.9)" font-size="9.5" font-family="Outfit,sans-serif" font-weight="700">EDIFICIO PRINCIPAL</text>
+        <text x="370" y="300" text-anchor="middle" fill="rgba(200,200,220,.7)" font-size="8" font-family="Outfit,sans-serif">Fac. de Cs. Médicas</text>
+        <!-- Flecha escaleras -->
+        <text x="370" y="393" text-anchor="middle" fill="rgba(255,230,0,.7)" font-size="7" font-family="monospace">↑ 1° piso por escaleras</text>
+        <text x="370" y="405" text-anchor="middle" fill="rgba(255,230,0,.5)" font-size="7" font-family="monospace">del hall central</text>
+      </g>
+
+      <!-- ══ ALA DERECHA ══ -->
+      <g id="bld-ala-der" class="bld" data-name="Ala Derecha (Ala Der.)"
+         data-info="Ala este del Edificio Principal — laboratorios y aulas de prácticas"
+         data-detail="Aulas B1–B12 · Lab. Histología · Lab. Microbiología · Sala de estudio">
+        <rect x="460" y="258" width="160" height="170" fill="rgba(100,100,115,.3)" stroke="rgba(170,170,185,.45)" stroke-width="1.5" rx="3"/>
+        <text x="540" y="350" text-anchor="middle" fill="rgba(220,220,230,.85)" font-size="11" font-family="Outfit,sans-serif" font-weight="700">Ala Der.</text>
+        <text x="540" y="367" text-anchor="middle" fill="rgba(180,180,190,.5)" font-size="8" font-family="monospace">Aulas B1–B12</text>
+      </g>
+
+      <!-- ══ PARKING "E" ══ -->
+      <g id="bld-parking" class="bld" data-name="Estacionamiento (E)"
+         data-info="Estacionamiento oficial de la Facultad — acceso vehicular por Av. 60"
+         data-detail="Capacidad: ~120 vehículos · Lun–Vie 7–20h · Sábados hasta 14h · Gratuito para docentes">
+        <!-- Autos en fila -->
+        <rect x="55" y="290" width="40" height="140" fill="rgba(40,50,70,.6)" stroke="rgba(120,140,160,.3)" stroke-width="1" rx="2"/>
+        <!-- "E" de estacionamiento -->
+        <circle cx="75" cy="360" r="22" fill="rgba(15,25,45,.9)" stroke="rgba(96,165,250,.6)" stroke-width="2.5"/>
+        <text x="75" y="365" text-anchor="middle" fill="#60a5fa" font-size="20" font-family="Outfit,sans-serif" font-weight="900">E</text>
+        <!-- Carros pequeños -->
+        <rect x="58" y="294" width="15" height="8" fill="rgba(248,113,113,.6)" rx="2"/>
+        <rect x="58" y="308" width="15" height="8" fill="rgba(96,165,250,.6)" rx="2"/>
+        <rect x="58" y="322" width="15" height="8" fill="rgba(220,220,220,.4)" rx="2"/>
+        <rect x="58" y="336" width="15" height="8" fill="rgba(248,113,113,.6)" rx="2"/>
+        <rect x="58" y="350" width="15" height="8" fill="rgba(96,165,250,.6)" rx="2"/>
+      </g>
+
+      <!-- ══ ACCESO PRINCIPAL (sur del edificio) ══ -->
+      <g id="bld-acceso" class="bld" data-name="Acceso Principal"
+         data-info="Entrada peatonal principal desde Av. 60"
+         data-detail="Guardia · Información · Orientación para ingresantes · Rampas de accesibilidad">
+        <rect x="325" y="428" width="90" height="22" fill="rgba(248,113,113,.2)" stroke="#f87171" stroke-width="1.5" rx="3"/>
+        <text x="370" y="443" text-anchor="middle" fill="#f87171" font-size="9" font-family="Outfit,sans-serif" font-weight="700">Acceso principal</text>
+      </g>
+
+      <!-- ══ ACCESO VEHICULAR DERECHO ══ -->
+      <g id="bld-acceso-veh" class="bld" data-name="Acceso Vehicular"
+         data-info="Entrada vehicular — Av. 122 hacia Centro La Plata"
+         data-detail="Solo ingreso autorizado · Docentes y personal · Control de acceso">
+        <rect x="590" y="448" width="50" height="18" fill="rgba(96,165,250,.15)" stroke="#60a5fa" stroke-width="1.5" rx="3"/>
+        <text x="615" y="460" text-anchor="middle" fill="#60a5fa" font-size="7.5" font-family="monospace">Acceso Veh.</text>
+      </g>
+
+      <!-- ══ SEÑAL PEATONAL IZQUIERDA ══ -->
+      <g>
+        <rect x="15" y="468" width="55" height="28" fill="rgba(255,230,0,.15)" stroke="rgba(255,230,0,.5)" stroke-width="1" rx="3"/>
+        <text x="42" y="479" text-anchor="middle" fill="#FFE600" font-size="7" font-family="monospace">Hacia Av.122</text>
+        <text x="42" y="491" text-anchor="middle" fill="#FFE600" font-size="7" font-family="monospace">Berisso ◀</text>
+      </g>
+
+      <!-- ══ SEMÁFORO derecha ══ -->
+      <g>
+        <rect x="552" y="460" width="12" height="30" fill="#1e293b" rx="2"/>
+        <circle cx="558" cy="465" r="4" fill="#f87171" opacity=".9"/>
+        <circle cx="558" cy="475" r="4" fill="#fbbf24" opacity=".5"/>
+        <circle cx="558" cy="485" r="4" fill="#4ade80" opacity=".5"/>
+      </g>
+
+      <!-- ══════════════════════════════════════════
+           RUTAS ANIMADAS
+      ══════════════════════════════════════════ -->
+
+      <!-- Acceso peatonal (amarillo) — desde Av 60 norte hasta hall -->
+      <g id="route-peatonal" class="route-group">
+        <polyline points="370,468 370,450 370,428" fill="none" stroke="#FFE600" stroke-width="2.5" stroke-dasharray="6,5" opacity=".85" class="anim-dash"/>
+        <polyline points="370,428 370,390" fill="none" stroke="#FFE600" stroke-width="2.5" stroke-dasharray="6,5" opacity=".85" class="anim-dash"/>
+        <!-- flecha dirección -->
+        <polygon points="370,380 364,396 376,396" fill="#FFE600" opacity=".8"/>
+      </g>
+
+      <!-- Acceso vehicular (azul) — entra por der, rodea, estaciona -->
+      <g id="route-vehicular" class="route-group">
+        <polyline points="635,468 635,440 600,420 540,410 460,410 400,420 370,428"
+                  fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-dasharray="6,5" opacity=".85" class="anim-dash"/>
+        <polygon points="370,428 378,415 362,415" fill="#60a5fa" opacity=".8"/>
+      </g>
+
+      <!-- Salida vehicular (rojo) — sale por derecha a Av 60 -->
+      <g id="route-salida" class="route-group">
+        <polyline points="615,468 615,450 580,430 550,420 530,430 540,468"
+                  fill="none" stroke="#f87171" stroke-width="2.5" stroke-dasharray="6,5" opacity=".85" class="anim-dash"/>
+        <polygon points="540,468 534,455 546,455" fill="#f87171" opacity=".8"/>
+      </g>
+
+      <!-- ══ TOOLTIP FLOTANTE ══ -->
+      <g id="svgTooltip" style="display:none;" pointer-events="none">
+        <rect id="svgTTRect" x="0" y="0" width="160" height="38" rx="7"
+              fill="rgba(6,8,20,.95)" stroke="rgba(34,211,238,.5)" stroke-width="1.5"/>
+        <text id="svgTTName" x="10" y="20" fill="#22d3ee" font-size="11" font-weight="700" font-family="Outfit,sans-serif"></text>
+        <text id="svgTTSub"  x="10" y="33" fill="rgba(255,255,255,.55)" font-size="8.5" font-family="monospace"></text>
+      </g>
+
+      </g><!-- end clip -->
+    </svg>
+  </div>
+
+  <!-- ── PANEL INFO ── -->
+  <div id="infoPanel" style="background:rgba(6,8,20,.92);border:1px solid rgba(34,211,238,.2);border-radius:16px;padding:20px;min-height:200px;transition:all .3s;">
+    <div id="infoPanelDefault" style="text-align:center;padding:30px 0;opacity:.5;">
+      <i class="fas fa-hand-pointer" style="font-size:28px;color:#22d3ee;margin-bottom:12px;display:block;"></i>
+      <p style="font-size:13px;color:#94a3b8;">Hacé clic en<br>un edificio del mapa</p>
+    </div>
+    <div id="infoPanelContent" style="display:none;">
+      <div id="infoIcon" style="font-size:28px;margin-bottom:10px;text-align:center;"></div>
+      <h3 id="infoName" style="font-family:'Outfit',sans-serif;font-size:14px;color:white;font-weight:800;margin:0 0 8px;line-height:1.3;"></h3>
+      <p id="infoDesc" style="font-size:12px;color:#94a3b8;margin:0 0 12px;line-height:1.5;border-left:2px solid #22d3ee;padding-left:10px;"></p>
+      <div id="infoDetail" style="font-size:11px;color:#64748b;line-height:1.7;"></div>
+    </div>
   </div>
 </div>
 
-<!-- LAYOUT: MAP + TABLE -->
-<div style="max-width:1200px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;">
-
-  <!-- ── MAPA SVG INTERATIVO ── -->
-  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(34,211,238,.2);border-radius:20px;padding:20px;position:sticky;top:100px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="width:8px;height:8px;background:#22d3ee;border-radius:50%;box-shadow:0 0 8px #22d3ee;display:inline-block;"></span>
-        <span style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;font-weight:700;">FCM — Facultad de Ciencias Médicas · UNLP</span>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button onclick="resetZoom()" style="padding:5px 12px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:8px;color:#22d3ee;font-size:11px;cursor:pointer;">↺ Reset</button>
-        <a href="https://maps.google.com/?q=Facultad+de+Ciencias+Medicas+UNLP+La+Plata" target="_blank"
-           style="padding:5px 12px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);border-radius:8px;color:#a78bfa;font-size:11px;text-decoration:none;">
-          <i class="fas fa-directions"></i> Cómo llegar
-        </a>
-      </div>
-    </div>
-
-    <!-- SVG MAP -->
-    <div id="svgContainer" style="overflow:hidden;border-radius:12px;cursor:grab;background:rgba(4,6,14,.9);">
-      <svg id="campusMap" viewBox="0 0 800 580" style="width:100%;height:auto;display:block;"
-           xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="mgrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34,211,238,0.06)" stroke-width="0.5"/>
-          </pattern>
-          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="goldGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-
-        <!-- Grid -->
-        <rect width="100%" height="100%" fill="url(#mgrid)"/>
-
-        <!-- ── CALLES ── -->
-        <!-- Calle 60 (horizontal superior) -->
-        <rect x="0" y="0" width="800" height="28" fill="rgba(30,40,60,.8)" rx="0"/>
-        <text x="400" y="19" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace">Calle 60</text>
-
-        <!-- Calle 62 (horizontal inferior) -->
-        <rect x="0" y="552" width="800" height="28" fill="rgba(30,40,60,.8)" rx="0"/>
-        <text x="400" y="567" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace">Calle 62</text>
-
-        <!-- Av. 1 (vertical izquierda) -->
-        <rect x="0" y="0" width="30" height="580" fill="rgba(30,40,60,.9)"/>
-        <text x="15" y="290" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace" transform="rotate(-90,15,290)">Av. 1</text>
-
-        <!-- Diagonal 74 (vertical derecha) -->
-        <rect x="770" y="0" width="30" height="580" fill="rgba(30,40,60,.9)"/>
-        <text x="785" y="290" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace" transform="rotate(90,785,290)">Diagonal 74</text>
-
-        <!-- ── EDIFICIO PRINCIPAL (centro) ── -->
-        <rect id="bld-principal" class="campus-bld" x="200" y="80" width="400" height="200"
-              fill="rgba(124,58,237,0.22)" stroke="#7c3aed" stroke-width="2" rx="8"
-              data-name="Edificio Principal" data-info="Hall central · Decanato · Secretarías"/>
-        <text x="400" y="165" text-anchor="middle" fill="#c4b5fd" font-size="13" font-weight="700" font-family="Outfit,sans-serif">EDIFICIO PRINCIPAL</text>
-        <text x="400" y="183" text-anchor="middle" fill="rgba(196,181,253,.6)" font-size="10" font-family="monospace">Hall · Decanato · Secretarías</text>
-
-        <!-- Entrada principal -->
-        <rect x="370" y="278" width="60" height="16" fill="rgba(248,113,113,.35)" stroke="#f87171" stroke-width="1.5" rx="3"/>
-        <text x="400" y="290" text-anchor="middle" fill="#f87171" font-size="9" font-family="monospace">ENTRADA</text>
-
-        <!-- ── ALA BERISSO (izquierda) ── -->
-        <rect id="bld-berisso" class="campus-bld" x="50" y="120" width="130" height="360"
-              fill="rgba(245,200,66,.12)" stroke="#f5c842" stroke-width="1.5" rx="6"
-              data-name="Ala Berisso" data-info="Aulas B1–B8 · Laboratorios · Boxes estudio"/>
-        <text x="115" y="295" text-anchor="middle" fill="#f5c842" font-size="12" font-weight="700" font-family="Outfit,sans-serif" transform="rotate(-90,115,295)">ALA BERISSO</text>
-
-        <!-- ── ALA LA PLATA (derecha) ── -->
-        <rect id="bld-laplata" class="campus-bld" x="620" y="120" width="130" height="360"
-              fill="rgba(245,200,66,.12)" stroke="#f5c842" stroke-width="1.5" rx="6"
-              data-name="Ala La Plata" data-info="Aulas LP1–LP8 · Sala de estudio · Impresión"/>
-        <text x="685" y="295" text-anchor="middle" fill="#f5c842" font-size="12" font-weight="700" font-family="Outfit,sans-serif" transform="rotate(90,685,295)">ALA LA PLATA</text>
-
-        <!-- ── ANFITEATRO A (abajo izquierda) ── -->
-        <ellipse id="bld-anfA" class="campus-bld" cx="200" cy="430" rx="90" ry="60"
-                 fill="rgba(192,132,252,.18)" stroke="#c084fc" stroke-width="2"
-                 data-name="Anfiteatro A" data-info="Cap. 280 · Clases magistrales · Equipado AV"/>
-        <text x="200" y="427" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" font-family="Outfit,sans-serif">ANFI A</text>
-        <text x="200" y="443" text-anchor="middle" fill="rgba(192,132,252,.6)" font-size="9" font-family="monospace">Cap. 280</text>
-
-        <!-- ── ANFITEATRO B (abajo derecha) ── -->
-        <ellipse id="bld-anfB" class="campus-bld" cx="600" cy="430" rx="90" ry="60"
-                 fill="rgba(192,132,252,.18)" stroke="#c084fc" stroke-width="2"
-                 data-name="Anfiteatro B" data-info="Cap. 240 · Clases magistrales · Proyector 4K"/>
-        <text x="600" y="427" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" font-family="Outfit,sans-serif">ANFI B</text>
-        <text x="600" y="443" text-anchor="middle" fill="rgba(192,132,252,.6)" font-size="9" font-family="monospace">Cap. 240</text>
-
-        <!-- ── ADMINISTRATIVO (centro abajo) ── -->
-        <rect id="bld-admin" class="campus-bld" x="300" y="320" width="200" height="100"
-              fill="rgba(96,165,250,.12)" stroke="#60a5fa" stroke-width="1.5" rx="6"
-              data-name="Bloque Administrativo" data-info="SAE · Bedelía · Tesorería · RRHH"/>
-        <text x="400" y="366" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700" font-family="Outfit,sans-serif">ADMINISTRATIVO</text>
-        <text x="400" y="382" text-anchor="middle" fill="rgba(96,165,250,.6)" font-size="9" font-family="monospace">SAE · Bedelía · Tesorería</text>
-
-        <!-- ── LABORATORIOS ── -->
-        <rect id="bld-lab" class="campus-bld" x="300" y="445" width="200" height="70"
-              fill="rgba(74,222,128,.12)" stroke="#4ade80" stroke-width="1.5" rx="6"
-              data-name="Laboratorios FCM" data-info="Histología · Microbiología · Anatomía · Bioquímica"/>
-        <text x="400" y="477" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700" font-family="Outfit,sans-serif">LABORATORIOS</text>
-        <text x="400" y="492" text-anchor="middle" fill="rgba(74,222,128,.6)" font-size="9" font-family="monospace">Histo · Micro · Anatomía</text>
-
-        <!-- ── BIBLIOTECA ── -->
-        <rect id="bld-bib" class="campus-bld" x="50" y="60" width="130" height="55"
-              fill="rgba(251,191,36,.15)" stroke="#fbbf24" stroke-width="1.5" rx="6"
-              data-name="Biblioteca FCM" data-info="Lunes a Viernes 8–20h · +3000 títulos · Wi-Fi"/>
-        <text x="115" y="84" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700" font-family="Outfit,sans-serif">BIBLIOTECA</text>
-        <text x="115" y="100" text-anchor="middle" fill="rgba(251,191,36,.6)" font-size="9" font-family="monospace">L–V 8–20h</text>
-
-        <!-- ── BIENESTAR ── -->
-        <rect id="bld-bien" class="campus-bld" x="620" y="60" width="130" height="55"
-              fill="rgba(251,113,133,.12)" stroke="#fb7185" stroke-width="1.5" rx="6"
-              data-name="Bienestar Estudiantil" data-info="Psicología · Trabajo Social · Becas · Deportes"/>
-        <text x="685" y="84" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="700" font-family="Outfit,sans-serif">BIENESTAR</text>
-        <text x="685" y="100" text-anchor="middle" fill="rgba(251,113,133,.6)" font-size="9" font-family="monospace">Psicología · Becas</text>
-
-        <!-- ── PINES DE ACCESO ── -->
-        <!-- Acceso Calle 60 -->
-        <circle cx="400" cy="38" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Calle 60" data-info="Entrada norte · Guardia · Orientación"/>
-        <text x="400" y="42" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚪</text>
-
-        <!-- Acceso Calle 62 -->
-        <circle cx="400" cy="542" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Calle 62" data-info="Entrada sur · Acceso vehicular"/>
-        <text x="400" y="546" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚗</text>
-
-        <!-- Acceso Av. 1 -->
-        <circle cx="38" cy="290" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Av. 1" data-info="Entrada lateral · Bicicletas"/>
-        <text x="38" y="294" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚲</text>
-
-        <!-- ── TOOLTIP flotante ── -->
-        <g id="mapTooltip" style="display:none;">
-          <rect id="ttRect" x="0" y="0" width="180" height="60" rx="8" fill="rgba(8,10,20,.95)" stroke="rgba(34,211,238,.4)" stroke-width="1.5"/>
-          <text id="ttTitle" x="10" y="20" fill="#22d3ee" font-size="12" font-weight="700" font-family="Outfit,sans-serif"></text>
-          <text id="ttInfo"  x="10" y="36" fill="rgba(255,255,255,.7)" font-size="9" font-family="monospace"></text>
-          <text id="ttInfo2" x="10" y="50" fill="rgba(255,255,255,.5)" font-size="9" font-family="monospace"></text>
-        </g>
-      </svg>
-    </div>
-
-    <!-- Leyenda -->
-    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);">
-      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#c084fc;display:inline-block;"></span> Anfiteatros</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#f5c842;display:inline-block;"></span> Alas Berisso/LP</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#60a5fa;display:inline-block;"></span> Administrativo</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block;"></span> Laboratorios</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#f87171;display:inline-block;"></span> Accesos</span>
-    </div>
-  </div>
-
-  <!-- ── TABLA DE AULAS ── -->
-  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;">
-    <h3 style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;margin:0 0 16px;display:flex;align-items:center;gap:8px;">
-      <i class="fas fa-door-open" style="color:#22d3ee;"></i> AULAS Y ESPACIOS
+<!-- GOOGLE MAPS -->
+<div style="max-width:960px;margin:0 auto;padding:0 16px 60px;">
+  <div style="background:rgba(6,8,20,.92);border:1px solid rgba(34,211,238,.12);border-radius:16px;padding:18px;">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:12px;color:white;margin:0 0 14px;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-location-dot" style="color:#f87171;"></i> UBICACIÓN REAL — FCM UNLP
     </h3>
-    <div style="max-height:520px;overflow-y:auto;scrollbar-width:thin;">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead>
-          <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
-            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Espacio</th>
-            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Bloque</th>
-            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Cap.</th>
-          </tr>
-        </thead>
-        <tbody id="aulasTbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- GOOGLE MAPS EMBED -->
-<div style="max-width:1200px;margin:32px auto 0;padding:0 16px 60px;">
-  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(34,211,238,.15);border-radius:20px;padding:20px;">
-    <h3 style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;margin:0 0 16px;display:flex;align-items:center;gap:8px;">
-      <i class="fas fa-location-dot" style="color:#f87171;"></i> UBICACIÓN EN GOOGLE MAPS
-    </h3>
-    <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.4!2d-57.9514!3d-34.9214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e62b3e4b5c0d%3A0x1a2b3c4d5e6f7a8b!2sFacultad+de+Ciencias+M%C3%A9dicas+UNLP!5e0!3m2!1ses!2sar!4v1700000000000"
-        width="100%" height="340" style="border:none;display:block;" allowfullscreen loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
+    <div style="border-radius:10px;overflow:hidden;">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1635.7!2d-57.9515!3d-34.9214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e62ba0b3f987%3A0xf83e9cb66e0ad3!2sFacultad%20de%20Ciencias%20M%C3%A9dicas%20%7C%20UNLP!5e0!3m2!1ses!2sar!4v1700000000000"
+              width="100%" height="300" style="border:none;display:block;" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
 </div>
@@ -220,118 +378,161 @@
 </section>
 
 <style>
-.campus-bld {
-  cursor: pointer;
-  transition: all .25s ease;
+/* ── Route buttons ── */
+.route-btn {
+  padding:7px 14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  color:#94a3b8;
+  font-size:12px;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:'Outfit',sans-serif;
 }
-.campus-bld:hover {
-  filter: drop-shadow(0 0 12px currentColor);
-  opacity: 1 !important;
+.route-btn.active {
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.25);
+  color:white;
 }
-.campus-bld.highlighted {
-  stroke-width: 3 !important;
-  filter: drop-shadow(0 0 16px currentColor) !important;
-}
-.campus-pin { cursor: pointer; transition: all .2s; }
-.campus-pin:hover { r: 13; }
+.route-btn:hover { background:rgba(255,255,255,.12); }
 
-.aula-row { cursor:pointer; transition: background .2s; }
-.aula-row:hover { background: rgba(34,211,238,.07); }
-.aula-row.active { background: rgba(34,211,238,.12); }
+/* ── Edificios clickeables ── */
+.bld {
+  cursor:pointer;
+  transition:all .2s;
+}
+.bld rect, .bld path, .bld ellipse, .bld circle:first-child {
+  transition:fill .2s, stroke .2s, filter .2s;
+}
+.bld:hover rect, .bld:hover path {
+  fill-opacity: .55 !important;
+  stroke: #22d3ee !important;
+  stroke-width: 2.5 !important;
+  filter: drop-shadow(0 0 8px rgba(34,211,238,.5));
+}
+.bld.selected rect, .bld.selected path {
+  stroke: #FFE600 !important;
+  stroke-width: 3 !important;
+  fill-opacity: .6 !important;
+  filter: drop-shadow(0 0 12px rgba(255,230,0,.5));
+}
+
+/* ── Animación dash ── */
+.anim-dash {
+  stroke-dashoffset: 0;
+  animation: dashMove 1.2s linear infinite;
+}
+@keyframes dashMove {
+  from { stroke-dashoffset: 22; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* ── Zoom cursor ── */
+#campusMap { user-select:none; }
 </style>
 
 <script>
-// ── Datos de aulas ──
-const aulas = [
-  {id:'bld-anfA', nombre:'Anfiteatro A',           bloque:'Central',    cap:'280', color:'#c084fc'},
-  {id:'bld-anfB', nombre:'Anfiteatro B',           bloque:'Central',    cap:'240', color:'#c084fc'},
-  {id:'bld-berisso', nombre:'Aulas B1 – B8',       bloque:'Ala Berisso',cap:'40–80',color:'#f5c842'},
-  {id:'bld-laplata', nombre:'Aulas LP1 – LP8',     bloque:'Ala La Plata',cap:'40–80',color:'#f5c842'},
-  {id:'bld-admin', nombre:'SAE',                   bloque:'Administrativo',cap:'—',color:'#60a5fa'},
-  {id:'bld-admin', nombre:'Bedelía',               bloque:'Administrativo',cap:'—',color:'#60a5fa'},
-  {id:'bld-admin', nombre:'Tesorería',             bloque:'Administrativo',cap:'—',color:'#60a5fa'},
-  {id:'bld-lab',   nombre:'Lab. Histología',       bloque:'Laboratorios',cap:'30', color:'#4ade80'},
-  {id:'bld-lab',   nombre:'Lab. Microbiología',    bloque:'Laboratorios',cap:'30', color:'#4ade80'},
-  {id:'bld-lab',   nombre:'Lab. Anatomía',         bloque:'Laboratorios',cap:'25', color:'#4ade80'},
-  {id:'bld-lab',   nombre:'Lab. Bioquímica',       bloque:'Laboratorios',cap:'25', color:'#4ade80'},
-  {id:'bld-bib',   nombre:'Biblioteca',            bloque:'Edificio Principal',cap:'—',color:'#fbbf24'},
-  {id:'bld-bien',  nombre:'Bienestar Estudiantil', bloque:'Norte',      cap:'—',color:'#fb7185'},
-  {id:'bld-principal', nombre:'Decanato',          bloque:'Edificio Principal',cap:'—',color:'#a78bfa'},
-  {id:'bld-principal', nombre:'Secretaría Académica',bloque:'Edificio Principal',cap:'—',color:'#a78bfa'},
-];
+// ── Zoom / Pan ──
+let scale = 1, tx = 0, ty = 0;
+let dragging = false, startX, startY, startTx, startTy;
 
-let allAulas = [...aulas];
-
-function renderAulas(data) {
-  const tbody = document.getElementById('aulasTbody');
-  if (!tbody) return;
-  tbody.innerHTML = data.map((a, i) => `
-    <tr class="aula-row" onclick="highlightBuilding('${a.id}', this)" data-id="${a.id}">
-      <td style="padding:9px 6px;font-size:12px;color:white;border-bottom:1px solid rgba(255,255,255,.04);">
-        <span style="width:7px;height:7px;border-radius:50%;background:${a.color};display:inline-block;margin-right:6px;"></span>${a.nombre}
-      </td>
-      <td style="padding:9px 6px;font-size:11px;color:#64748b;border-bottom:1px solid rgba(255,255,255,.04);">${a.bloque}</td>
-      <td style="padding:9px 6px;font-size:11px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.04);">${a.cap}</td>
-    </tr>
-  `).join('');
+const svg = document.getElementById('campusMap');
+function applyTransform() {
+  svg.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  svg.style.transformOrigin = 'center center';
 }
+function zoomIn()   { scale = Math.min(3, scale + 0.25); applyTransform(); }
+function zoomOut()  { scale = Math.max(0.6, scale - 0.25); applyTransform(); }
+function resetView(){ scale=1; tx=0; ty=0; applyTransform(); }
 
-function filterMapTable() {
-  const q = document.getElementById('mapaSearch').value.toLowerCase();
-  renderAulas(allAulas.filter(a =>
-    a.nombre.toLowerCase().includes(q) || a.bloque.toLowerCase().includes(q)
-  ));
-}
+svg.addEventListener('wheel', e => {
+  e.preventDefault();
+  scale = Math.max(0.6, Math.min(3, scale - e.deltaY*0.001));
+  applyTransform();
+}, {passive:false});
 
-function highlightBuilding(bldId, row) {
-  // Reset all
-  document.querySelectorAll('.campus-bld').forEach(b => b.classList.remove('highlighted'));
-  document.querySelectorAll('.aula-row').forEach(r => r.classList.remove('active'));
-  // Highlight
-  const el = document.getElementById(bldId);
-  if (el) { el.classList.add('highlighted'); el.scrollIntoView && el.scrollIntoViewIfNeeded?.(); }
-  row.classList.add('active');
-}
+svg.addEventListener('mousedown', e => {
+  dragging = true; startX = e.clientX; startY = e.clientY; startTx = tx; startTy = ty;
+  svg.style.cursor='grabbing';
+});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  tx = startTx + (e.clientX - startX);
+  ty = startTy + (e.clientY - startY);
+  applyTransform();
+});
+window.addEventListener('mouseup', () => { dragging = false; svg.style.cursor='grab'; });
 
-// Tooltip interativo no SVG
-document.addEventListener('DOMContentLoaded', () => {
-  renderAulas(allAulas);
+// ── Edificios: info ──
+const bldIcons = {
+  'bld-inibiolp':'🔬','bld-agronomia':'🌿','bld-mant':'🔧','bld-admin':'🏛️',
+  'bld-hospital':'🏥','bld-tec':'💻','bld-ala-izq':'📚','bld-principal':'🎓',
+  'bld-ala-der':'🔬','bld-parking':'🚗','bld-acceso':'🚪','bld-acceso-veh':'🚘'
+};
+let selected = null;
 
-  const svg     = document.getElementById('campusMap');
-  const tooltip = document.getElementById('mapTooltip');
-  const ttRect  = document.getElementById('ttRect');
-  const ttTitle = document.getElementById('ttTitle');
-  const ttInfo  = document.getElementById('ttInfo');
-  const ttInfo2 = document.getElementById('ttInfo2');
+document.querySelectorAll('.bld').forEach(bld => {
+  bld.addEventListener('click', e => {
+    e.stopPropagation();
+    if (selected) selected.classList.remove('selected');
+    bld.classList.add('selected');
+    selected = bld;
 
-  function showTT(el, evt) {
-    const name  = el.dataset.name  || '';
-    const info  = el.dataset.info  || '';
-    const parts = info.split(' · ');
-    ttTitle.textContent = name;
-    ttInfo.textContent  = parts[0] || '';
-    ttInfo2.textContent = parts.slice(1).join(' · ') || '';
+    const name   = bld.dataset.name   || '—';
+    const info   = bld.dataset.info   || '';
+    const detail = bld.dataset.detail || '';
+    const icon   = bldIcons[bld.id]   || '🏢';
 
+    document.getElementById('infoPanelDefault').style.display  = 'none';
+    document.getElementById('infoPanelContent').style.display  = 'block';
+    document.getElementById('infoIcon').textContent            = icon;
+    document.getElementById('infoName').textContent            = name;
+    document.getElementById('infoDesc').textContent            = info;
+
+    const rows = detail.split(' · ').map(d =>
+      `<div style="display:flex;align-items:flex-start;gap:6px;"><span style="color:#22d3ee;flex-shrink:0;">▸</span><span>${d}</span></div>`
+    ).join('');
+    document.getElementById('infoDetail').innerHTML = rows;
+  });
+
+  // Tooltip SVG on hover
+  bld.addEventListener('mouseenter', e => {
+    const tt   = document.getElementById('svgTooltip');
+    const name = bld.dataset.name || '';
+    document.getElementById('svgTTName').textContent = name;
+    document.getElementById('svgTTSub').textContent  = (bld.dataset.detail||'').split(' · ')[0];
+    tt.style.display = 'block';
+  });
+  bld.addEventListener('mousemove', e => {
     const svgRect = svg.getBoundingClientRect();
     const pt = svg.createSVGPoint();
-    pt.x = evt.clientX; pt.y = evt.clientY;
-    const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-
-    const tx = Math.min(svgP.x + 12, 600);
-    const ty = Math.max(svgP.y - 70, 10);
-    tooltip.setAttribute('transform', `translate(${tx},${ty})`);
-    tooltip.style.display = 'block';
-  }
-
-  [...document.querySelectorAll('.campus-bld'), ...document.querySelectorAll('.campus-pin')].forEach(el => {
-    el.addEventListener('mouseenter', e => showTT(el, e));
-    el.addEventListener('mousemove',  e => showTT(el, e));
-    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    pt.x = e.clientX; pt.y = e.clientY;
+    const sp = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const tx2 = Math.min(sp.x + 10, 520), ty2 = Math.max(sp.y - 50, 5);
+    document.getElementById('svgTooltip').setAttribute('transform', `translate(${tx2},${ty2})`);
+  });
+  bld.addEventListener('mouseleave', () => {
+    document.getElementById('svgTooltip').style.display = 'none';
   });
 });
 
-function resetZoom() {
-  document.getElementById('campusMap').style.transform = 'scale(1)';
+svg.addEventListener('click', e => {
+  if (!e.target.closest('.bld')) {
+    if (selected) { selected.classList.remove('selected'); selected = null; }
+    document.getElementById('infoPanelDefault').style.display  = 'block';
+    document.getElementById('infoPanelContent').style.display  = 'none';
+  }
+});
+
+// ── Toggle rutas ──
+const routeState = { peatonal: true, vehicular: true, salida: true };
+function toggleRoute(name) {
+  routeState[name] = !routeState[name];
+  const group  = document.getElementById('route-' + name);
+  const btn    = document.getElementById('btn-' + name);
+  if (group) group.style.display = routeState[name] ? '' : 'none';
+  btn.classList.toggle('active', routeState[name]);
 }
 </script>
 {% endblock %}
