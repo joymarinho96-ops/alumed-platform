@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view
+from core.telegram_views import telegram_webhook, setup_webhook
 
 
 urlpatterns = [
@@ -40,6 +41,10 @@ urlpatterns = [
     path('favoritos/', favoritos, name='favoritos'),
     path('mapa-facultad/', mapa_facultad_view, name='mapa_facultad'),
     path('becas/', becas_view, name='becas'),
+
+    # Telegram Bot Webhook
+    path('telegram/webhook/', telegram_webhook, name='telegram_webhook'),
+    path('telegram/setup-webhook/', setup_webhook, name='telegram_setup_webhook'),
 ]
 
 if settings.DEBUG:
