@@ -4358,7 +4358,9 @@
             <div class="user-menu">
                 <button class="user-menu-btn">
                     {% if user.profile.photo %}
-                        <img src="{{ user.profile.photo.url }}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">
+                        <img src="{{ user.profile.photo.url }}" style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid rgba(168,85,247,.5);">
+                    {% elif user.profile.avatar %}
+                        <span id="navAvatarEmoji" style="font-size:22px;line-height:1;" title="{{ user.profile.avatar }}">🎓</span>
                     {% else %}
                         <i class="fas fa-user-circle" style="font-size: 22px;"></i>
                     {% endif %}
@@ -7878,5 +7880,23 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
             requestAnimationFrame(animate);
         })();
     </script>
+
+{% if user.is_authenticated and user.profile.avatar %}
+<script>
+/* ── AVATAR EMOJI RESOLVER ── */
+(function(){
+  var AVATAR_EMOJIS = {
+    av01:'⚛️',av02:'🔬',av03:'🧬',av04:'🧪',av05:'🧠',av06:'🦠',av07:'💎',
+    av08:'❤️',av09:'🦴',av10:'👁️',av11:'🫁',av12:'🧠',av13:'💀',
+    av14:'👩‍⚕️',av15:'👨‍⚕️',av16:'👩‍🎓',av17:'👨‍🎓',av18:'👩‍🔬',av19:'👨‍🔬',av20:'👩‍⚕️',av21:'🤖',
+    av22:'🌌',av23:'🪐',av24:'🌙',av25:'⭐',av26:'☄️',av27:'✨',av28:'🌠'
+  };
+  var slug = '{{ user.profile.avatar|escapejs }}';
+  var el = document.getElementById('navAvatarEmoji');
+  if(el && AVATAR_EMOJIS[slug]) el.textContent = AVATAR_EMOJIS[slug];
+})();
+</script>
+{% endif %}
+
 </body>
 </html>

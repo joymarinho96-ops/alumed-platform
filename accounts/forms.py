@@ -6,8 +6,12 @@ import re
 from django.core.exceptions import ValidationError
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, help_text="Informe um e-mail válido e existente.")
-    photo = forms.ImageField(required=True, label="Foto de Perfil")
+    email = forms.EmailField(required=True, help_text="Informe un e-mail válido.")
+    avatar = forms.CharField(
+        required=False,
+        initial='av01',
+        widget=forms.HiddenInput()
+    )
 
     class Meta(UserCreationForm.Meta):
         model = User
@@ -15,45 +19,32 @@ class CustomUserCreationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        
-        # 1. Validação de Sintaxe Básica (já feita pelo EmailField, mas reforçando)
+
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValidationError("Formato de e-mail inválido.")
 
-        # 2. Validação de Domínio (Simples)
-        domain = email.split('@')[1]
-        
-        # Lista de domínios comuns para evitar erros de digitação óbvios
-        common_domains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'live.com']
-        
-        # Verifica se é um domínio conhecido com erro de digitação (ex: gmil.com)
-        # Esta é uma heurística simples. Para validação real de existência (MX Records),
-        # seria necessário instalar a biblioteca 'dnspython'.
-        
-        # Verifica unicidade
         if User.objects.filter(email=email).exists():
-            raise ValidationError("Este e-mail já está cadastrado.")
+            raise ValidationError("Este e-mail ya está registrado.")
 
         return email
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email'] # Garante que o e-mail seja salvo no User
+        user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            # Salva a foto no perfil
-            photo = self.cleaned_data.get('photo')
-            if photo:
-                # Usa get_or_create para evitar erro de duplicidade se o signal já criou o perfil
-                profile, created = Profile.objects.get_or_create(user=user)
-                profile.photo = photo
-                profile.save()
+            avatar = self.cleaned_data.get('avatar') or 'av01'
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.avatar = avatar
+            profile.save()
         return user
+
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['photo']
+        fields = ['photo', 'avatar']
+
 
 class CustomSignupForm(forms.Form):
     first_name = forms.CharField(
@@ -71,4 +62,3 @@ class CustomSignupForm(forms.Form):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
-

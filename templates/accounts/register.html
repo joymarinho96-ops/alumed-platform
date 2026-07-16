@@ -2,31 +2,427 @@
 {% load static %}
 
 {% block auth_content %}
-    <div class="auth-header">
-        <h2>Crear Cuenta</h2>
-        <p>Únete a la comunidad ALUMED</p>
-    </div>
-    
-    <form method="post" enctype="multipart/form-data" class="auth-form">
-        {% csrf_token %}
-        
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                    <small style="color: var(--muted); font-size: 0.75rem; display: block; margin-top: 5px;">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                    <div class="error-message">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
 
-        <button type="submit" class="auth-btn">Registrarse</button>
-    </form>
-    
-    <div class="auth-footer">
-        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia Sesión</a></p>
+<style>
+/* ══════════════════════════════════════════════
+   AVATAR PICKER — ESTILO NETFLIX / HBO
+══════════════════════════════════════════════ */
+.av-section {
+  margin: 0 0 28px;
+}
+.av-label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgba(200,180,255,.6);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.av-label i { color: #a855f7; }
+
+/* Selecionado preview */
+.av-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.av-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid #a855f7;
+  box-shadow: 0 0 0 4px rgba(168,85,247,.18), 0 0 24px rgba(168,85,247,.4);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: all .35s cubic-bezier(.34,1.56,.64,1);
+  background: rgba(20,10,40,.8);
+  display: flex; align-items: center; justify-content: center;
+}
+.av-preview img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: all .3s ease;
+}
+.av-preview-info {
+  flex: 1;
+}
+.av-preview-name {
+  font-size: .95rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 3px;
+}
+.av-preview-hint {
+  font-size: .72rem;
+  color: rgba(148,163,184,.6);
+}
+
+/* Carrossel */
+.av-carousel-wrap {
+  position: relative;
+}
+.av-carousel {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 4px 14px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+}
+.av-carousel::-webkit-scrollbar { display: none; }
+
+/* Cada bolinha */
+.av-item {
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .22s cubic-bezier(.34,1.56,.64,1);
+  scroll-snap-align: start;
+  position: relative;
+  background: rgba(20,10,40,.7);
+  display: flex; align-items: center; justify-content: center;
+}
+.av-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .25s ease;
+}
+.av-item:hover {
+  transform: scale(1.12) translateY(-3px);
+  border-color: rgba(168,85,247,.6);
+  box-shadow: 0 4px 20px rgba(168,85,247,.4);
+}
+.av-item:hover img { transform: scale(1.05); }
+
+.av-item.selected {
+  border: 2.5px solid #a855f7;
+  box-shadow:
+    0 0 0 3px rgba(168,85,247,.2),
+    0 0 20px rgba(168,85,247,.5),
+    0 4px 16px rgba(0,0,0,.3);
+  transform: scale(1.15) translateY(-4px);
+}
+.av-item.selected::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  font-weight: 900;
+  color: white;
+  background: rgba(168,85,247,.35);
+  backdrop-filter: blur(2px);
+  border-radius: 50%;
+}
+
+/* Botões de navegação do carrossel */
+.av-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,85,247,.3);
+  background: rgba(14,10,30,.9);
+  color: #c084fc;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all .2s;
+  font-size: .8rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,.4);
+  backdrop-filter: blur(8px);
+}
+.av-nav:hover {
+  background: rgba(124,58,237,.3);
+  border-color: rgba(168,85,247,.6);
+  transform: translateY(-50%) scale(1.1);
+}
+.av-nav.prev { left: -16px; }
+.av-nav.next { right: -16px; }
+
+/* Dots de categoria */
+.av-cats {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.av-cat {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: rgba(200,180,255,.5);
+  cursor: pointer;
+  transition: all .18s;
+}
+.av-cat.active,
+.av-cat:hover {
+  background: rgba(124,58,237,.18);
+  border-color: rgba(168,85,247,.35);
+  color: #c084fc;
+}
+
+/* Rótulo abaixo do formulário */
+.auth-form .form-group label {
+  font-size: .78rem;
+  font-weight: 600;
+  color: rgba(200,180,255,.7);
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+  display: block;
+}
+.auth-form .form-group input[type="text"],
+.auth-form .form-group input[type="email"],
+.auth-form .form-group input[type="password"] {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(20,14,45,.85);
+  border: 1px solid rgba(139,92,246,.25);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: .88rem;
+  transition: border-color .25s, box-shadow .25s;
+  box-sizing: border-box;
+}
+.auth-form .form-group input:focus {
+  border-color: rgba(167,139,250,.7);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.12);
+  outline: none;
+}
+</style>
+
+<div class="auth-header">
+  <h2>Crear Cuenta</h2>
+  <p>Únete a la comunidad ALUMED</p>
+</div>
+
+<!-- ══ AVATAR PICKER ══ -->
+<div class="av-section">
+  <div class="av-label"><i class="fas fa-user-circle"></i> Elegí tu avatar</div>
+
+  <!-- Preview del seleccionado -->
+  <div class="av-preview-wrap">
+    <div class="av-preview" id="avPreviewCircle">
+      <img src="" id="avPreviewImg" alt="Avatar seleccionado">
     </div>
+    <div class="av-preview-info">
+      <div class="av-preview-name" id="avPreviewName">Sin selección</div>
+      <div class="av-preview-hint">Deslizá las bolinhas para elegir 👇</div>
+    </div>
+  </div>
+
+  <!-- Categorías -->
+  <div class="av-cats" id="avCats">
+    <button type="button" class="av-cat active" data-cat="all">✨ Todos</button>
+    <button type="button" class="av-cat" data-cat="ciencias">🔬 Ciencias</button>
+    <button type="button" class="av-cat" data-cat="anatomia">🦷 Anatomía</button>
+    <button type="button" class="av-cat" data-cat="personas">👩‍⚕️ Médicos</button>
+    <button type="button" class="av-cat" data-cat="astro">🌌 Cosmos</button>
+  </div>
+
+  <!-- Carrossel -->
+  <div class="av-carousel-wrap">
+    <button type="button" class="av-nav prev" id="avPrev"><i class="fas fa-chevron-left"></i></button>
+    <div class="av-carousel" id="avCarousel"></div>
+    <button type="button" class="av-nav next" id="avNext"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<!-- Formulário -->
+<form method="post" class="auth-form" id="registerForm">
+  {% csrf_token %}
+
+  <!-- Campo hidden do avatar -->
+  <input type="hidden" name="avatar" id="avatarInput" value="av01">
+
+  {% for field in form %}
+    {% if field.name != 'avatar' %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+        <small style="color:rgba(148,163,184,.6);font-size:.72rem;display:block;margin-top:5px;">{{ field.help_text }}</small>
+      {% endif %}
+      {% for error in field.errors %}
+        <div class="error-message">{{ error }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if form.non_field_errors %}
+    <div class="error-message">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <button type="submit" class="auth-btn" id="submitBtn">
+    <i class="fas fa-rocket" style="margin-right:8px;"></i>Crear mi cuenta
+  </button>
+</form>
+
+<div class="auth-footer">
+  <p>¿Ya tenés cuenta? <a href="{% url 'login' %}">Iniciar Sesión</a></p>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// AVATAR DATA — 28 avatares organizados por categoría
+// ══════════════════════════════════════════════
+const AVATARS = [
+  // Ciencias
+  { id:'av01', name:'Átomo', cat:'ciencias',  emoji:'⚛️',  bg:'linear-gradient(135deg,#1e1b4b,#312e81)', fg:'#a5b4fc' },
+  { id:'av02', name:'Microscopio', cat:'ciencias', emoji:'🔬', bg:'linear-gradient(135deg,#064e3b,#065f46)', fg:'#6ee7b7' },
+  { id:'av03', name:'ADN',  cat:'ciencias',  emoji:'🧬',  bg:'linear-gradient(135deg,#1e3a5f,#1e40af)', fg:'#93c5fd' },
+  { id:'av04', name:'Química', cat:'ciencias', emoji:'🧪', bg:'linear-gradient(135deg,#4c0519,#9f1239)', fg:'#fda4af' },
+  { id:'av05', name:'Neurona', cat:'ciencias', emoji:'🧠', bg:'linear-gradient(135deg,#2d1b69,#5b21b6)', fg:'#ddd6fe' },
+  { id:'av06', name:'Célula', cat:'ciencias',  emoji:'🦠',  bg:'linear-gradient(135deg,#14532d,#166534)', fg:'#86efac' },
+  { id:'av07', name:'Cristal', cat:'ciencias', emoji:'💎', bg:'linear-gradient(135deg,#0c4a6e,#0369a1)', fg:'#7dd3fc' },
+
+  // Anatomia
+  { id:'av08', name:'Corazón', cat:'anatomia', emoji:'❤️', bg:'linear-gradient(135deg,#450a0a,#7f1d1d)', fg:'#fca5a5' },
+  { id:'av09', name:'Vértebra', cat:'anatomia', emoji:'🦴', bg:'linear-gradient(135deg,#292524,#44403c)', fg:'#d6d3d1' },
+  { id:'av10', name:'Ojo',     cat:'anatomia', emoji:'👁️', bg:'linear-gradient(135deg,#0f172a,#1e293b)', fg:'#94a3b8' },
+  { id:'av11', name:'Pulmón',  cat:'anatomia', emoji:'🫁', bg:'linear-gradient(135deg,#1a0533,#4a1d96)', fg:'#c4b5fd' },
+  { id:'av12', name:'Cerebro', cat:'anatomia', emoji:'🧠', bg:'linear-gradient(135deg,#44084a,#86198f)', fg:'#f0abfc' },
+  { id:'av13', name:'Hueso',   cat:'anatomia', emoji:'💀', bg:'linear-gradient(135deg,#1c1917,#292524)', fg:'#a8a29e' },
+
+  // Personas / Médicos
+  { id:'av14', name:'Doctora', cat:'personas', emoji:'👩‍⚕️', bg:'linear-gradient(135deg,#0f4c75,#1b6ca8)', fg:'#7dd3fc' },
+  { id:'av15', name:'Doctor',  cat:'personas', emoji:'👨‍⚕️', bg:'linear-gradient(135deg,#005c4b,#128c7e)', fg:'#6ee7b7' },
+  { id:'av16', name:'Estudiante ♀', cat:'personas', emoji:'👩‍🎓', bg:'linear-gradient(135deg,#6b21a8,#7c3aed)', fg:'#ddd6fe' },
+  { id:'av17', name:'Estudiante ♂', cat:'personas', emoji:'👨‍🎓', bg:'linear-gradient(135deg,#1e3a5f,#1e40af)', fg:'#bfdbfe' },
+  { id:'av18', name:'Científica', cat:'personas', emoji:'👩‍🔬', bg:'linear-gradient(135deg,#134e4a,#0f766e)', fg:'#99f6e4' },
+  { id:'av19', name:'Científico', cat:'personas', emoji:'👨‍🔬', bg:'linear-gradient(135deg,#1e1b4b,#4338ca)', fg:'#c7d2fe' },
+  { id:'av20', name:'Enfermera',  cat:'personas', emoji:'👩‍⚕️', bg:'linear-gradient(135deg,#9f1239,#be123c)', fg:'#fda4af' },
+  { id:'av21', name:'Robot Med', cat:'personas', emoji:'🤖', bg:'linear-gradient(135deg,#0f2027,#2c5364)', fg:'#7dd3fc' },
+
+  // Cosmos
+  { id:'av22', name:'Galaxia', cat:'astro', emoji:'🌌', bg:'linear-gradient(135deg,#020617,#0f172a)', fg:'#818cf8' },
+  { id:'av23', name:'Planeta', cat:'astro', emoji:'🪐', bg:'linear-gradient(135deg,#1a1a2e,#16213e)', fg:'#a5b4fc' },
+  { id:'av24', name:'Luna',    cat:'astro', emoji:'🌙', bg:'linear-gradient(135deg,#111827,#1f2937)', fg:'#fde68a' },
+  { id:'av25', name:'Estrella',cat:'astro', emoji:'⭐', bg:'linear-gradient(135deg,#451a03,#78350f)', fg:'#fde68a' },
+  { id:'av26', name:'Cometa',  cat:'astro', emoji:'☄️', bg:'linear-gradient(135deg,#0f172a,#1e3a5f)', fg:'#7dd3fc' },
+  { id:'av27', name:'Nebulosa',cat:'astro', emoji:'✨', bg:'linear-gradient(135deg,#2d1b69,#6d28d9)', fg:'#ede9fe' },
+  { id:'av28', name:'Aurora',  cat:'astro', emoji:'🌠', bg:'linear-gradient(135deg,#022c22,#064e3b)', fg:'#6ee7b7' },
+];
+
+// Estado
+let selectedId = 'av01';
+let activeFilter = 'all';
+
+const carousel = document.getElementById('avCarousel');
+const previewImg = document.getElementById('avPreviewImg');
+const previewCircle = document.getElementById('avPreviewCircle');
+const previewName = document.getElementById('avPreviewName');
+const avatarInput = document.getElementById('avatarInput');
+
+// Renderiza bolinhas
+function renderCarousel(filter = 'all') {
+  carousel.innerHTML = '';
+  const list = filter === 'all' ? AVATARS : AVATARS.filter(a => a.cat === filter);
+
+  list.forEach(av => {
+    const item = document.createElement('div');
+    item.className = 'av-item' + (av.id === selectedId ? ' selected' : '');
+    item.dataset.id = av.id;
+    item.title = av.name;
+
+    // Bolinha SVG inline com emoji
+    item.innerHTML = `
+      <svg viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg" width="58" height="58">
+        <defs>
+          <radialGradient id="bg-${av.id}" cx="40%" cy="35%">
+            <stop offset="0%" stop-color="${av.fg}" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#000" stop-opacity=".6"/>
+          </radialGradient>
+        </defs>
+        <rect width="58" height="58" rx="29" fill="url(#bg-${av.id})" style="fill:${av.fg}22"/>
+        <text x="29" y="36" text-anchor="middle" font-size="26" dominant-baseline="middle">${av.emoji}</text>
+      </svg>`;
+
+    item.addEventListener('click', () => selectAvatar(av));
+    carousel.appendChild(item);
+  });
+}
+
+// Seleciona avatar
+function selectAvatar(av) {
+  selectedId = av.id;
+  avatarInput.value = av.id;
+
+  // Update preview
+  previewName.textContent = av.name;
+  previewCircle.style.background = av.bg;
+  previewCircle.style.borderColor = av.fg;
+  previewCircle.style.boxShadow = `0 0 0 4px ${av.fg}22, 0 0 24px ${av.fg}66`;
+
+  // Troca o preview para emoji SVG
+  previewImg.style.display = 'none';
+  previewCircle.innerHTML = `
+    <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
+      <rect width="72" height="72" rx="36" fill="${av.fg}15"/>
+      <text x="36" y="44" text-anchor="middle" font-size="36" dominant-baseline="middle">${av.emoji}</text>
+    </svg>`;
+
+  // Animação de pulso
+  previewCircle.style.transform = 'scale(1.1)';
+  setTimeout(() => previewCircle.style.transform = '', 300);
+
+  // Update items
+  document.querySelectorAll('.av-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === av.id);
+  });
+}
+
+// Filtro de categorias
+document.querySelectorAll('.av-cat').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.av-cat').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    renderCarousel(activeFilter);
+    // Re-selecionar o atual se ainda estiver visible
+    const cur = AVATARS.find(a => a.id === selectedId);
+    if (cur && (activeFilter === 'all' || cur.cat === activeFilter)) {
+      setTimeout(() => selectAvatar(cur), 50);
+    }
+  });
+});
+
+// Nav buttons
+document.getElementById('avPrev').addEventListener('click', () => {
+  carousel.scrollBy({ left: -180, behavior: 'smooth' });
+});
+document.getElementById('avNext').addEventListener('click', () => {
+  carousel.scrollBy({ left: 180, behavior: 'smooth' });
+});
+
+// Init
+renderCarousel();
+selectAvatar(AVATARS[0]);
+
+// Validação antes de enviar
+document.getElementById('registerForm').addEventListener('submit', (e) => {
+  if (!avatarInput.value) {
+    avatarInput.value = 'av01';
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Creando cuenta...';
+  btn.disabled = true;
+});
+</script>
 {% endblock %}

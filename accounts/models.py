@@ -14,6 +14,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     wix_member_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    avatar = models.CharField(max_length=50, blank=True, default='av01')
     last_announcement_view_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
