@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mapa Interactivo — FCM UNLP | ALUMED{% endblock %}
+
+{% block content %}
+<section style="padding-top:120px;min-height:100vh;position:relative;">
+<div class="courses-tech-grid"></div>
+
+<!-- HEADER -->
+<div class="section-header reveal-up" style="margin-bottom:32px;text-align:center;">
+  <span class="hero-badge" style="background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35);color:#22d3ee;">
+    <i class="fas fa-map-marked-alt"></i> Mapa Interactivo
+  </span>
+  <h1 style="font-size:clamp(28px,4vw,48px);margin-top:14px;">
+    Mapa de la <span style="background:linear-gradient(135deg,#22d3ee,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Facultad</span>
+  </h1>
+  <p style="opacity:.75;max-width:600px;margin:10px auto 0;font-size:15px;">
+    Encontrá anfiteatros, aulas, oficinas administrativas y servicios de la FCM UNLP.
+  </p>
+</div>
+
+<!-- SEARCH BAR -->
+<div style="max-width:900px;margin:0 auto 24px;padding:0 16px;">
+  <div style="position:relative;">
+    <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(34,211,238,.6);font-size:14px;"></i>
+    <input id="mapaSearch" type="text" placeholder="Buscar aula, anfiteatro, oficina..."
+      oninput="filterMapTable()"
+      style="width:100%;padding:13px 16px 13px 44px;background:rgba(8,10,20,.8);border:1px solid rgba(34,211,238,.25);border-radius:12px;color:white;font-size:14px;outline:none;box-sizing:border-box;transition:all .3s;"
+      onfocus="this.style.borderColor='#22d3ee';this.style.boxShadow='0 0 12px rgba(34,211,238,.2)'"
+      onblur="this.style.borderColor='rgba(34,211,238,.25)';this.style.boxShadow='none'">
+  </div>
+</div>
+
+<!-- LAYOUT: MAP + TABLE -->
+<div style="max-width:1200px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;">
+
+  <!-- ── MAPA SVG INTERATIVO ── -->
+  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(34,211,238,.2);border-radius:20px;padding:20px;position:sticky;top:100px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="width:8px;height:8px;background:#22d3ee;border-radius:50%;box-shadow:0 0 8px #22d3ee;display:inline-block;"></span>
+        <span style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;font-weight:700;">FCM — Facultad de Ciencias Médicas · UNLP</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="resetZoom()" style="padding:5px 12px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:8px;color:#22d3ee;font-size:11px;cursor:pointer;">↺ Reset</button>
+        <a href="https://maps.google.com/?q=Facultad+de+Ciencias+Medicas+UNLP+La+Plata" target="_blank"
+           style="padding:5px 12px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);border-radius:8px;color:#a78bfa;font-size:11px;text-decoration:none;">
+          <i class="fas fa-directions"></i> Cómo llegar
+        </a>
+      </div>
+    </div>
+
+    <!-- SVG MAP -->
+    <div id="svgContainer" style="overflow:hidden;border-radius:12px;cursor:grab;background:rgba(4,6,14,.9);">
+      <svg id="campusMap" viewBox="0 0 800 580" style="width:100%;height:auto;display:block;"
+           xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="mgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34,211,238,0.06)" stroke-width="0.5"/>
+          </pattern>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="goldGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Grid -->
+        <rect width="100%" height="100%" fill="url(#mgrid)"/>
+
+        <!-- ── CALLES ── -->
+        <!-- Calle 60 (horizontal superior) -->
+        <rect x="0" y="0" width="800" height="28" fill="rgba(30,40,60,.8)" rx="0"/>
+        <text x="400" y="19" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace">Calle 60</text>
+
+        <!-- Calle 62 (horizontal inferior) -->
+        <rect x="0" y="552" width="800" height="28" fill="rgba(30,40,60,.8)" rx="0"/>
+        <text x="400" y="567" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace">Calle 62</text>
+
+        <!-- Av. 1 (vertical izquierda) -->
+        <rect x="0" y="0" width="30" height="580" fill="rgba(30,40,60,.9)"/>
+        <text x="15" y="290" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace" transform="rotate(-90,15,290)">Av. 1</text>
+
+        <!-- Diagonal 74 (vertical derecha) -->
+        <rect x="770" y="0" width="30" height="580" fill="rgba(30,40,60,.9)"/>
+        <text x="785" y="290" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="monospace" transform="rotate(90,785,290)">Diagonal 74</text>
+
+        <!-- ── EDIFICIO PRINCIPAL (centro) ── -->
+        <rect id="bld-principal" class="campus-bld" x="200" y="80" width="400" height="200"
+              fill="rgba(124,58,237,0.22)" stroke="#7c3aed" stroke-width="2" rx="8"
+              data-name="Edificio Principal" data-info="Hall central · Decanato · Secretarías"/>
+        <text x="400" y="165" text-anchor="middle" fill="#c4b5fd" font-size="13" font-weight="700" font-family="Outfit,sans-serif">EDIFICIO PRINCIPAL</text>
+        <text x="400" y="183" text-anchor="middle" fill="rgba(196,181,253,.6)" font-size="10" font-family="monospace">Hall · Decanato · Secretarías</text>
+
+        <!-- Entrada principal -->
+        <rect x="370" y="278" width="60" height="16" fill="rgba(248,113,113,.35)" stroke="#f87171" stroke-width="1.5" rx="3"/>
+        <text x="400" y="290" text-anchor="middle" fill="#f87171" font-size="9" font-family="monospace">ENTRADA</text>
+
+        <!-- ── ALA BERISSO (izquierda) ── -->
+        <rect id="bld-berisso" class="campus-bld" x="50" y="120" width="130" height="360"
+              fill="rgba(245,200,66,.12)" stroke="#f5c842" stroke-width="1.5" rx="6"
+              data-name="Ala Berisso" data-info="Aulas B1–B8 · Laboratorios · Boxes estudio"/>
+        <text x="115" y="295" text-anchor="middle" fill="#f5c842" font-size="12" font-weight="700" font-family="Outfit,sans-serif" transform="rotate(-90,115,295)">ALA BERISSO</text>
+
+        <!-- ── ALA LA PLATA (derecha) ── -->
+        <rect id="bld-laplata" class="campus-bld" x="620" y="120" width="130" height="360"
+              fill="rgba(245,200,66,.12)" stroke="#f5c842" stroke-width="1.5" rx="6"
+              data-name="Ala La Plata" data-info="Aulas LP1–LP8 · Sala de estudio · Impresión"/>
+        <text x="685" y="295" text-anchor="middle" fill="#f5c842" font-size="12" font-weight="700" font-family="Outfit,sans-serif" transform="rotate(90,685,295)">ALA LA PLATA</text>
+
+        <!-- ── ANFITEATRO A (abajo izquierda) ── -->
+        <ellipse id="bld-anfA" class="campus-bld" cx="200" cy="430" rx="90" ry="60"
+                 fill="rgba(192,132,252,.18)" stroke="#c084fc" stroke-width="2"
+                 data-name="Anfiteatro A" data-info="Cap. 280 · Clases magistrales · Equipado AV"/>
+        <text x="200" y="427" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" font-family="Outfit,sans-serif">ANFI A</text>
+        <text x="200" y="443" text-anchor="middle" fill="rgba(192,132,252,.6)" font-size="9" font-family="monospace">Cap. 280</text>
+
+        <!-- ── ANFITEATRO B (abajo derecha) ── -->
+        <ellipse id="bld-anfB" class="campus-bld" cx="600" cy="430" rx="90" ry="60"
+                 fill="rgba(192,132,252,.18)" stroke="#c084fc" stroke-width="2"
+                 data-name="Anfiteatro B" data-info="Cap. 240 · Clases magistrales · Proyector 4K"/>
+        <text x="600" y="427" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" font-family="Outfit,sans-serif">ANFI B</text>
+        <text x="600" y="443" text-anchor="middle" fill="rgba(192,132,252,.6)" font-size="9" font-family="monospace">Cap. 240</text>
+
+        <!-- ── ADMINISTRATIVO (centro abajo) ── -->
+        <rect id="bld-admin" class="campus-bld" x="300" y="320" width="200" height="100"
+              fill="rgba(96,165,250,.12)" stroke="#60a5fa" stroke-width="1.5" rx="6"
+              data-name="Bloque Administrativo" data-info="SAE · Bedelía · Tesorería · RRHH"/>
+        <text x="400" y="366" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700" font-family="Outfit,sans-serif">ADMINISTRATIVO</text>
+        <text x="400" y="382" text-anchor="middle" fill="rgba(96,165,250,.6)" font-size="9" font-family="monospace">SAE · Bedelía · Tesorería</text>
+
+        <!-- ── LABORATORIOS ── -->
+        <rect id="bld-lab" class="campus-bld" x="300" y="445" width="200" height="70"
+              fill="rgba(74,222,128,.12)" stroke="#4ade80" stroke-width="1.5" rx="6"
+              data-name="Laboratorios FCM" data-info="Histología · Microbiología · Anatomía · Bioquímica"/>
+        <text x="400" y="477" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700" font-family="Outfit,sans-serif">LABORATORIOS</text>
+        <text x="400" y="492" text-anchor="middle" fill="rgba(74,222,128,.6)" font-size="9" font-family="monospace">Histo · Micro · Anatomía</text>
+
+        <!-- ── BIBLIOTECA ── -->
+        <rect id="bld-bib" class="campus-bld" x="50" y="60" width="130" height="55"
+              fill="rgba(251,191,36,.15)" stroke="#fbbf24" stroke-width="1.5" rx="6"
+              data-name="Biblioteca FCM" data-info="Lunes a Viernes 8–20h · +3000 títulos · Wi-Fi"/>
+        <text x="115" y="84" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700" font-family="Outfit,sans-serif">BIBLIOTECA</text>
+        <text x="115" y="100" text-anchor="middle" fill="rgba(251,191,36,.6)" font-size="9" font-family="monospace">L–V 8–20h</text>
+
+        <!-- ── BIENESTAR ── -->
+        <rect id="bld-bien" class="campus-bld" x="620" y="60" width="130" height="55"
+              fill="rgba(251,113,133,.12)" stroke="#fb7185" stroke-width="1.5" rx="6"
+              data-name="Bienestar Estudiantil" data-info="Psicología · Trabajo Social · Becas · Deportes"/>
+        <text x="685" y="84" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="700" font-family="Outfit,sans-serif">BIENESTAR</text>
+        <text x="685" y="100" text-anchor="middle" fill="rgba(251,113,133,.6)" font-size="9" font-family="monospace">Psicología · Becas</text>
+
+        <!-- ── PINES DE ACCESO ── -->
+        <!-- Acceso Calle 60 -->
+        <circle cx="400" cy="38" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Calle 60" data-info="Entrada norte · Guardia · Orientación"/>
+        <text x="400" y="42" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚪</text>
+
+        <!-- Acceso Calle 62 -->
+        <circle cx="400" cy="542" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Calle 62" data-info="Entrada sur · Acceso vehicular"/>
+        <text x="400" y="546" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚗</text>
+
+        <!-- Acceso Av. 1 -->
+        <circle cx="38" cy="290" r="10" fill="#f87171" opacity=".9" filter="url(#glow)" class="campus-pin" data-name="Acceso Av. 1" data-info="Entrada lateral · Bicicletas"/>
+        <text x="38" y="294" text-anchor="middle" fill="white" font-size="9" font-weight="700">🚲</text>
+
+        <!-- ── TOOLTIP flotante ── -->
+        <g id="mapTooltip" style="display:none;">
+          <rect id="ttRect" x="0" y="0" width="180" height="60" rx="8" fill="rgba(8,10,20,.95)" stroke="rgba(34,211,238,.4)" stroke-width="1.5"/>
+          <text id="ttTitle" x="10" y="20" fill="#22d3ee" font-size="12" font-weight="700" font-family="Outfit,sans-serif"></text>
+          <text id="ttInfo"  x="10" y="36" fill="rgba(255,255,255,.7)" font-size="9" font-family="monospace"></text>
+          <text id="ttInfo2" x="10" y="50" fill="rgba(255,255,255,.5)" font-size="9" font-family="monospace"></text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Leyenda -->
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#c084fc;display:inline-block;"></span> Anfiteatros</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#f5c842;display:inline-block;"></span> Alas Berisso/LP</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#60a5fa;display:inline-block;"></span> Administrativo</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block;"></span> Laboratorios</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#f87171;display:inline-block;"></span> Accesos</span>
+    </div>
+  </div>
+
+  <!-- ── TABLA DE AULAS ── -->
+  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;margin:0 0 16px;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-door-open" style="color:#22d3ee;"></i> AULAS Y ESPACIOS
+    </h3>
+    <div style="max-height:520px;overflow-y:auto;scrollbar-width:thin;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Espacio</th>
+            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Bloque</th>
+            <th style="text-align:left;padding:8px 6px;font-size:10px;color:#64748b;font-family:monospace;text-transform:uppercase;">Cap.</th>
+          </tr>
+        </thead>
+        <tbody id="aulasTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GOOGLE MAPS EMBED -->
+<div style="max-width:1200px;margin:32px auto 0;padding:0 16px 60px;">
+  <div style="background:rgba(8,10,20,.85);border:1px solid rgba(34,211,238,.15);border-radius:20px;padding:20px;">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:13px;color:white;margin:0 0 16px;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-location-dot" style="color:#f87171;"></i> UBICACIÓN EN GOOGLE MAPS
+    </h3>
+    <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.4!2d-57.9514!3d-34.9214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e62b3e4b5c0d%3A0x1a2b3c4d5e6f7a8b!2sFacultad+de+Ciencias+M%C3%A9dicas+UNLP!5e0!3m2!1ses!2sar!4v1700000000000"
+        width="100%" height="340" style="border:none;display:block;" allowfullscreen loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<style>
+.campus-bld {
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.campus-bld:hover {
+  filter: drop-shadow(0 0 12px currentColor);
+  opacity: 1 !important;
+}
+.campus-bld.highlighted {
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 16px currentColor) !important;
+}
+.campus-pin { cursor: pointer; transition: all .2s; }
+.campus-pin:hover { r: 13; }
+
+.aula-row { cursor:pointer; transition: background .2s; }
+.aula-row:hover { background: rgba(34,211,238,.07); }
+.aula-row.active { background: rgba(34,211,238,.12); }
+</style>
+
+<script>
+// ── Datos de aulas ──
+const aulas = [
+  {id:'bld-anfA', nombre:'Anfiteatro A',           bloque:'Central',    cap:'280', color:'#c084fc'},
+  {id:'bld-anfB', nombre:'Anfiteatro B',           bloque:'Central',    cap:'240', color:'#c084fc'},
+  {id:'bld-berisso', nombre:'Aulas B1 – B8',       bloque:'Ala Berisso',cap:'40–80',color:'#f5c842'},
+  {id:'bld-laplata', nombre:'Aulas LP1 – LP8',     bloque:'Ala La Plata',cap:'40–80',color:'#f5c842'},
+  {id:'bld-admin', nombre:'SAE',                   bloque:'Administrativo',cap:'—',color:'#60a5fa'},
+  {id:'bld-admin', nombre:'Bedelía',               bloque:'Administrativo',cap:'—',color:'#60a5fa'},
+  {id:'bld-admin', nombre:'Tesorería',             bloque:'Administrativo',cap:'—',color:'#60a5fa'},
+  {id:'bld-lab',   nombre:'Lab. Histología',       bloque:'Laboratorios',cap:'30', color:'#4ade80'},
+  {id:'bld-lab',   nombre:'Lab. Microbiología',    bloque:'Laboratorios',cap:'30', color:'#4ade80'},
+  {id:'bld-lab',   nombre:'Lab. Anatomía',         bloque:'Laboratorios',cap:'25', color:'#4ade80'},
+  {id:'bld-lab',   nombre:'Lab. Bioquímica',       bloque:'Laboratorios',cap:'25', color:'#4ade80'},
+  {id:'bld-bib',   nombre:'Biblioteca',            bloque:'Edificio Principal',cap:'—',color:'#fbbf24'},
+  {id:'bld-bien',  nombre:'Bienestar Estudiantil', bloque:'Norte',      cap:'—',color:'#fb7185'},
+  {id:'bld-principal', nombre:'Decanato',          bloque:'Edificio Principal',cap:'—',color:'#a78bfa'},
+  {id:'bld-principal', nombre:'Secretaría Académica',bloque:'Edificio Principal',cap:'—',color:'#a78bfa'},
+];
+
+let allAulas = [...aulas];
+
+function renderAulas(data) {
+  const tbody = document.getElementById('aulasTbody');
+  if (!tbody) return;
+  tbody.innerHTML = data.map((a, i) => `
+    <tr class="aula-row" onclick="highlightBuilding('${a.id}', this)" data-id="${a.id}">
+      <td style="padding:9px 6px;font-size:12px;color:white;border-bottom:1px solid rgba(255,255,255,.04);">
+        <span style="width:7px;height:7px;border-radius:50%;background:${a.color};display:inline-block;margin-right:6px;"></span>${a.nombre}
+      </td>
+      <td style="padding:9px 6px;font-size:11px;color:#64748b;border-bottom:1px solid rgba(255,255,255,.04);">${a.bloque}</td>
+      <td style="padding:9px 6px;font-size:11px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.04);">${a.cap}</td>
+    </tr>
+  `).join('');
+}
+
+function filterMapTable() {
+  const q = document.getElementById('mapaSearch').value.toLowerCase();
+  renderAulas(allAulas.filter(a =>
+    a.nombre.toLowerCase().includes(q) || a.bloque.toLowerCase().includes(q)
+  ));
+}
+
+function highlightBuilding(bldId, row) {
+  // Reset all
+  document.querySelectorAll('.campus-bld').forEach(b => b.classList.remove('highlighted'));
+  document.querySelectorAll('.aula-row').forEach(r => r.classList.remove('active'));
+  // Highlight
+  const el = document.getElementById(bldId);
+  if (el) { el.classList.add('highlighted'); el.scrollIntoView && el.scrollIntoViewIfNeeded?.(); }
+  row.classList.add('active');
+}
+
+// Tooltip interativo no SVG
+document.addEventListener('DOMContentLoaded', () => {
+  renderAulas(allAulas);
+
+  const svg     = document.getElementById('campusMap');
+  const tooltip = document.getElementById('mapTooltip');
+  const ttRect  = document.getElementById('ttRect');
+  const ttTitle = document.getElementById('ttTitle');
+  const ttInfo  = document.getElementById('ttInfo');
+  const ttInfo2 = document.getElementById('ttInfo2');
+
+  function showTT(el, evt) {
+    const name  = el.dataset.name  || '';
+    const info  = el.dataset.info  || '';
+    const parts = info.split(' · ');
+    ttTitle.textContent = name;
+    ttInfo.textContent  = parts[0] || '';
+    ttInfo2.textContent = parts.slice(1).join(' · ') || '';
+
+    const svgRect = svg.getBoundingClientRect();
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+    const tx = Math.min(svgP.x + 12, 600);
+    const ty = Math.max(svgP.y - 70, 10);
+    tooltip.setAttribute('transform', `translate(${tx},${ty})`);
+    tooltip.style.display = 'block';
+  }
+
+  [...document.querySelectorAll('.campus-bld'), ...document.querySelectorAll('.campus-pin')].forEach(el => {
+    el.addEventListener('mouseenter', e => showTT(el, e));
+    el.addEventListener('mousemove',  e => showTT(el, e));
+    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  });
+});
+
+function resetZoom() {
+  document.getElementById('campusMap').style.transform = 'scale(1)';
+}
+</script>
+{% endblock %}

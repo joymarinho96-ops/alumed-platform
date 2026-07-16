@@ -187,6 +187,10 @@ def facultad(request):
     return render(request, 'core/facultad.html')
 
 
+def mapa_facultad_view(request):
+    return render(request, 'core/mapa_facultad.html')
+
+
 def biblioteca(request):
     books = DigitalBook.objects.all().order_by('subject', 'title')
     library_payload = build_library_payload(books)
