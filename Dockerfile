@@ -20,5 +20,5 @@ COPY . .
 # Coletar arquivos estaticos
 RUN python manage.py collectstatic --noinput || true
 
-# Comando padrao (pode ser sobrescrito por cada servico no Railway)
-CMD ["gunicorn", "alumed.wsgi:application", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120"]
+# Usar shell format para $PORT funcionar
+CMD gunicorn alumed.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
