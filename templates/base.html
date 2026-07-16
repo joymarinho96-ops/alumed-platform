@@ -5630,9 +5630,13 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   overflow-y: auto;
   transform: translateX(-100%);
   transition: transform .35s cubic-bezier(.4,0,.2,1);
+  visibility: hidden;
+  pointer-events: none;
 }
 .nav-mobile-drawer.open {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
 }
 .nav-drawer-links {
   display: flex; flex-direction: column; gap: 4px; flex: 1;
@@ -5688,7 +5692,9 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   /* Nav hamburger aparece */
   .nav-hamburger { display: flex; }
   .nav-links { display: none !important; }
-  .nav-mobile-drawer { display: flex; }
+  /* Drawer: display:flex só quando .open — SEM .open permanece oculto */
+  .nav-mobile-drawer { display: flex; visibility: hidden; pointer-events: none; }
+  .nav-mobile-drawer.open { visibility: visible; pointer-events: auto; }
 
   /* Spine: fica entre navbar e conteúdo, menor */
   .ao-spine-track { order: 0; }
