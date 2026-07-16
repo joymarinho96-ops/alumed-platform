@@ -1,0 +1,330 @@
+<!-- SpineScene: Realistic 3D Human Spine Component with HUD Navigation -->
+<div class="spine-webgl-viewport">
+    
+    <!-- Left connecting lines (from spine to HUD items on the right) -->
+    <svg class="spine-hud-connectors" viewBox="0 0 400 700">
+        <!-- Vertical guide line -->
+        <line x1="120" y1="50" x2="120" y2="650" class="hud-line-vert" />
+        
+        <!-- Horizontal connectors linking spine (x=120) to HUD nodes (x=240) -->
+        <line x1="120" y1="90" x2="240" y2="90" class="hud-connector" id="hconn-alumed" />
+        <line x1="120" y1="180" x2="240" y2="180" class="hud-connector" id="hconn-conecta" />
+        <line x1="120" y1="270" x2="240" y2="270" class="hud-connector" id="hconn-biblioteca" />
+        <line x1="120" y1="360" x2="240" y2="360" class="hud-connector" id="hconn-joy" />
+        <line x1="120" y1="450" x2="240" y2="450" class="hud-connector" id="hconn-herramientas" />
+        <line x1="120" y1="540" x2="240" y2="540" class="hud-connector" id="hconn-planes" />
+        
+        <!-- Bottom visual anchor dot -->
+        <circle cx="120" cy="610" r="6" class="hud-anchor-dot" />
+    </svg>
+
+    <!-- Overlay canvas for glowing action potential particles -->
+    <canvas class="spine-canvas" id="neural-canvas"></canvas>
+    
+    <!-- 3D Spine anatomical model from Sketchfab -->
+    <iframe 
+        title="Columna espinal humana / Human spine" 
+        class="spine-3d-iframe"
+        src="https://sketchfab.com/models/92aa35b6d21f4407a295975cb502c4c1/embed?autostart=1&internal=1&tracking=0&ui_ar=0&ui_infos=0&ui_watermark=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&transparent=1&dnt=1"
+        frameborder="0" 
+        allowfullscreen 
+        mozallowfullscreen="true" 
+        webkitallowfullscreen="true" 
+        allow="autoplay; fullscreen; xr-spatial-tracking" 
+        xr-spatial-tracking 
+        execution-while-out-of-viewport 
+        execution-while-not-rendered 
+        web-share>
+    </iframe>
+
+    <!-- Right Side HUD Navigation Menu -->
+    <div class="spine-hud-nav">
+        <!-- item 1: ALUMED -->
+        <div class="hud-nav-item" id="hud-alumed" onclick="scrollToSection('alumed-section')">
+            <div class="hud-nav-circle"><i class="fas fa-brain"></i></div>
+            <div class="hud-nav-info">
+                <h4>ALUMED</h4>
+                <p>Aprendé a tu ritmo con los mejores recursos y docentes.</p>
+            </div>
+        </div>
+
+        <!-- item 2: CONECTA -->
+        <div class="hud-nav-item" id="hud-conecta" onclick="scrollToSection('conecta-section')">
+            <div class="hud-nav-circle"><i class="fas fa-bell"></i></div>
+            <div class="hud-nav-info">
+                <h4>CONECTA</h4>
+                <p>La cartelera de tu facultad en tiempo real.</p>
+            </div>
+        </div>
+
+        <!-- item 3: BIBLIOTECA -->
+        <div class="hud-nav-item" id="hud-biblioteca" onclick="scrollToSection('biblioteca-section')">
+            <div class="hud-nav-circle"><i class="fas fa-book-open"></i></div>
+            <div class="hud-nav-info">
+                <h4>BIBLIOTECA</h4>
+                <p>Todos los contenidos organizados por materia y tema.</p>
+            </div>
+        </div>
+
+        <!-- item 4: IA PROFE JOY -->
+        <div class="hud-nav-item" id="hud-joy" onclick="scrollToSection('joy-section')">
+            <div class="hud-nav-circle"><i class="fas fa-wand-magic-sparkles"></i></div>
+            <div class="hud-nav-info">
+                <h4>IA PROFE JOY</h4>
+                <p>Tu profesora 24/7. Resuelve, explica, acompaña.</p>
+            </div>
+        </div>
+
+        <!-- item 5: HERRAMIENTAS -->
+        <div class="hud-nav-item" id="hud-herramientas" onclick="scrollToSection('herramientas-section')">
+            <div class="hud-nav-circle"><i class="fas fa-cube"></i></div>
+            <div class="hud-nav-info">
+                <h4>HERRAMIENTAS</h4>
+                <p>Microscopio, Anatomía 3D, Simulacros y más.</p>
+            </div>
+        </div>
+
+        <!-- item 6: PLANES -->
+        <div class="hud-nav-item" id="hud-planes" onclick="scrollToSection('planes-section')">
+            <div class="hud-nav-circle"><i class="fas fa-crown"></i></div>
+            <div class="hud-nav-info">
+                <h4>PLANES</h4>
+                <p>Elegí el plan que se adapta a vos.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .spine-webgl-viewport {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 45vw;
+        height: 100vh;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    
+    .spine-3d-iframe {
+        width: 250px;
+        height: 80%;
+        border: none;
+        pointer-events: auto;
+        /* Glowing brand color filter matching official mockup style */
+        filter: hue-rotate(240deg) saturate(2.4) brightness(1.2) contrast(1.1) drop-shadow(0 0 35px rgba(124, 58, 237, 0.45));
+        transition: filter 0.4s ease;
+        position: absolute;
+        left: 0px;
+        top: 10%;
+    }
+    
+    .spine-canvas {
+        position: absolute;
+        left: 0;
+        top: 10%;
+        width: 250px;
+        height: 80%;
+        z-index: 11;
+        pointer-events: none;
+    }
+
+    /* ── HUD SVG CONNECTORS ── */
+    .spine-hud-connectors {
+        position: absolute;
+        left: 0px;
+        top: 10%;
+        width: 250px;
+        height: 80%;
+        overflow: visible;
+        z-index: 12;
+    }
+    .hud-line-vert {
+        stroke: rgba(124, 58, 237, 0.15);
+        stroke-width: 1.5;
+    }
+    .hud-connector {
+        stroke: rgba(255, 255, 255, 0.12);
+        stroke-width: 1.5;
+        transition: all 0.4s ease;
+    }
+    .hud-connector.active {
+        stroke: var(--color-gold-neon);
+        stroke-width: 2;
+        filter: drop-shadow(0 0 4px rgba(255, 230, 0, 0.5));
+    }
+    .hud-anchor-dot {
+        fill: none;
+        stroke: var(--color-gold-neon);
+        stroke-width: 2;
+    }
+
+    /* ── RIGHT HUD NAVIGATION MENU ── */
+    .spine-hud-nav {
+        position: absolute;
+        left: 200px;
+        top: 12%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 13;
+        width: 320px;
+        pointer-events: auto;
+    }
+
+    .hud-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        opacity: 0.5;
+        transform: translate3d(0, 0, 0);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .hud-nav-item:hover, .hud-nav-item.active {
+        opacity: 1;
+    }
+
+    .hud-nav-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2.5px solid rgba(124, 58, 237, 0.4);
+        background: #110822;
+        color: #a78bfa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .hud-nav-item:hover .hud-nav-circle, .hud-nav-item.active .hud-nav-circle {
+        border-color: var(--color-gold-neon);
+        color: var(--color-gold-neon);
+        box-shadow: 0 0 16px rgba(255, 230, 0, 0.35);
+        transform: scale(1.1);
+    }
+
+    .hud-nav-info {}
+    .hud-nav-info h4 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #fff;
+        margin: 0 0 2px 0;
+        letter-spacing: 0.5px;
+        transition: color 0.3s;
+    }
+    .hud-nav-item:hover .hud-nav-info h4, .hud-nav-item.active .hud-nav-info h4 {
+        color: var(--color-gold-neon);
+    }
+    .hud-nav-info p {
+        font-size: 0.72rem;
+        color: var(--color-text-dim);
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    @media (max-width: 1024px) {
+        .spine-webgl-viewport {
+            display: none !important;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ── 1. Neural Particles Canvas Overlay ──
+        const viewport = document.querySelector('.spine-webgl-viewport');
+        const canvas = document.getElementById('neural-canvas');
+        if (!viewport || !canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = 250;
+        let height = canvas.height = viewport.offsetHeight * 0.8;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = 250;
+            height = canvas.height = viewport.offsetHeight * 0.8;
+        });
+
+        // Electrical Action Potentials traveling down the spinal cord path
+        class ActionPotential {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.y = Math.random() * height;
+                this.x = 120; // Aligned with the guide line x1=120
+                this.speed = 1.8 + Math.random() * 2.4;
+                this.radius = 1.2 + Math.random() * 2;
+                this.opacity = 0.3 + Math.random() * 0.6;
+                this.color = Math.random() > 0.5 ? '#FFE600' : '#7c3aed';
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > height) {
+                    this.reset();
+                    this.y = 0;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 8;
+                ctx.globalAlpha = this.opacity;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        const particles = Array.from({ length: 25 }, () => new ActionPotential());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // ── 2. ScrollTrigger for Syncing HUD Nav States ──
+        const sections = [
+            { id: 'alumed-section', hud: 'hud-alumed', conn: 'hconn-alumed' },
+            { id: 'conecta-section', hud: 'hud-conecta', conn: 'hconn-conecta' },
+            { id: 'biblioteca-section', hud: 'hud-biblioteca', conn: 'hconn-biblioteca' },
+            { id: 'joy-section', hud: 'hud-joy', conn: 'hconn-joy' },
+            { id: 'herramientas-section', hud: 'hud-herramientas', conn: 'hconn-herramientas' },
+            { id: 'planes-section', hud: 'hud-planes', conn: 'hconn-planes' }
+        ];
+
+        sections.forEach((sec) => {
+            ScrollTrigger.create({
+                trigger: `#${sec.id}`,
+                start: "top center+=120",
+                end: "bottom center-=120",
+                onToggle: self => {
+                    const hud = document.getElementById(sec.hud);
+                    const conn = document.getElementById(sec.conn);
+                    if (self.isActive) {
+                        hud?.classList.add('active');
+                        conn?.classList.add('active');
+                    } else {
+                        hud?.classList.remove('active');
+                        conn?.classList.remove('active');
+                    }
+                }
+            });
+        });
+    });
+</script>

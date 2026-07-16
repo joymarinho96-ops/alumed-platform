@@ -5,8 +5,9 @@ app_name = 'courses'
 
 urlpatterns = [
     path('flashcards/', views.flashcards_dashboard, name='flashcards_dashboard'),
-    path('flashcards/all/', views.deck_list, name='deck_list'), # Nova URL para ver todos
+    path('flashcards/all/', views.deck_list, name='deck_list'),
     path('flashcards/create-deck/', views.create_deck, name='create_deck'),
+    path('flashcards/generate-ai/', views.generate_flashcards_ai, name='generate_flashcards_ai'),  # ← IA
     path('flashcards/<int:deck_id>/', views.deck_detail, name='deck_detail'),
     path('flashcards/<int:deck_id>/delete/', views.delete_deck, name='delete_deck'),
     path('flashcards/<int:deck_id>/create-card/', views.create_flashcard, name='create_flashcard'),

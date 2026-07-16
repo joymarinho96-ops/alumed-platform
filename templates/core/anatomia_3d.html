@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block content %}
-<section id="cursos" class="announcements-section" style="padding-top: 140px; min-height: 90vh; position: relative; background: radial-gradient(circle at center, rgba(245, 197, 66, 0.28) 0%, rgba(20, 10, 5, 0.95) 75%), #0a0502;">
+{% block title %}Laboratorio 3D - ALUMED{% endblock %}
+
+{% block main_content %}
+<section id="cursos" class="announcements-section" style="padding-top: 20px; min-height: 90vh; position: relative;">
     <!-- Tech Grid Background -->
     <div class="courses-tech-grid" style="opacity: 0.15; filter: hue-rotate(220deg);"></div>
 
@@ -91,22 +93,22 @@
 
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <!-- Resource Item -->
-                    <a href="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" target="_blank" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">
+                    <a href="{% url 'biblioteca' %}" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-book-reader" style="color: #a855f7;"></i>
                             <span style="font-size: 14px; font-weight: 600;">Biblioteca Digital</span>
                         </div>
-                        <i class="fas fa-external-link-alt" style="font-size: 12px; color: var(--text-muted);"></i>
+                        <i class="fas fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
                     </a>
 
                     <!-- Resource Item -->
-                    <div style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                    <a href="{% url 'cronograma_tps' %}" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <i class="far fa-calendar-alt" style="color: #06b6d4;"></i>
-                            <span style="font-size: 14px; font-weight: 600; color: white;">Calendario de TPs</span>
+                            <span style="font-size: 14px; font-weight: 600;">Calendario de TPs</span>
                         </div>
-                        <span style="font-size: 12px; color: #06b6d4; font-weight: 700;">Disponible en WhatsApp</span>
-                    </div>
+                        <i class="fas fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </a>
 
                     <!-- Resource Item -->
                     <a href="{% url 'unlp' %}" style="padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: white; transition: all 0.2s;" class="res-item">

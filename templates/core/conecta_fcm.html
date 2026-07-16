@@ -1,141 +1,860 @@
-{% extends 'dashboard_base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
 {% load static %}
-
-{% block sidebar_content %}
-    {{ block.super }}
-{% endblock %}
-
-{% block main_content %}
-<!-- Tech Grid Background -->
-<div class="courses-tech-grid" style="position: absolute; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; z-index: 1;"></div>
-
-<div style="position: relative; z-index: 5; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-    <!-- Section Header -->
-    <div class="section-header reveal-up" style="margin-bottom: 40px; text-align: center;">
-        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(167, 139, 250, 0.12); border-color: rgba(167, 139, 250, 0.4); color: #a78bfa; box-shadow: 0 0 25px rgba(167, 139, 250, 0.15); font-family: 'Orbitron', sans-serif; font-size: 11px; padding: 6px 16px; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-flex; align-items: center; gap: 8px;">
-            <i class="fas fa-network-wired"></i> CONECTA FCM
-        </span>
-        <h2 class="animate__animated animate__fadeInLeft" style="font-family: 'Orbitron', sans-serif; font-size: clamp(32px, 4vw, 52px); margin-top: 15px; color: white; font-weight: 800;">
-            Portal <span class="home-hero-highlight" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Académico</span>
-        </h2>
-        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 600px; margin-left: auto; margin-right: auto; color: #cbd5e1; font-size: 15px; line-height: 1.6;">
-            Accedé a todas las herramientas académicas de la Facultad de Ciencias Médicas en un solo lugar.
-        </p>
-    </div>
-
-    <!-- Cards Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;" class="reveal-up">
-        
-        <!-- Card 1: Cronograma de TPs -->
-        <a href="/cronograma-tps/" class="conecta-card" style="text-decoration: none;">
-            <div class="conecta-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
-            <h3 class="conecta-title">Cronograma de TPs</h3>
-            <p class="conecta-description">Fechas de cursadas y trabajos prácticos semanales de las materias oficiales de medicina.</p>
-            <div class="conecta-footer-link">
-                Acceder <i class="fas fa-chevron-right"></i>
-            </div>
-        </a>
-
-        <!-- Card 2: Parciales y Finales -->
-        <a href="/cronograma-finales/" class="conecta-card" style="text-decoration: none;">
-            <div class="conecta-icon-wrapper" style="background: rgba(167, 139, 250, 0.1); color: #a78bfa;">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
-            <h3 class="conecta-title">Parciales y Finales</h3>
-            <p class="conecta-description">Fechas de mesas de exámenes finales y parciales con calendario interactivo completo.</p>
-            <div class="conecta-footer-link">
-                Acceder <i class="fas fa-chevron-right"></i>
-            </div>
-        </a>
-
-        <!-- Card 3: Comisiones -->
-        <a href="/comisiones/" class="conecta-card" style="text-decoration: none;">
-            <div class="conecta-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                <i class="fas fa-users"></i>
-            </div>
-            <h3 class="conecta-title">Distribución de Comisiones</h3>
-            <p class="conecta-description">Buscador y listado de alumnos distribuidos en las respectivas comisiones de cátedra.</p>
-            <div class="conecta-footer-link">
-                Acceder <i class="fas fa-chevron-right"></i>
-            </div>
-        </a>
-
-        <!-- Card 4: Plan de Estudios -->
-        <a href="/plan-estudios/" class="conecta-card" style="text-decoration: none;">
-            <div class="conecta-icon-wrapper" style="background: rgba(245, 197, 66, 0.1); color: #f5c542;">
-                <i class="fas fa-map-signs"></i>
-            </div>
-            <h3 class="conecta-title">Plan de Estudios</h3>
-            <p class="conecta-description">Correlatividades, materias obligatorias y optativas del plan curricular de medicina.</p>
-            <div class="conecta-footer-link">
-                Acceder <i class="fas fa-chevron-right"></i>
-            </div>
-        </a>
-
-    </div>
-</div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONECTA FCM — Portal Inteligente de la Facultad</title>
+<meta name="description" content="Toda la información oficial de tu Facultad de Medicina, organizada en un solo lugar. Cartelera, horarios, comisiones, exámenes y más.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    .conecta-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 20px;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 250px;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        backdrop-filter: blur(10px);
-    }
-    .conecta-card:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.04);
-        border-color: rgba(167, 139, 250, 0.3);
-        box-shadow: 0 12px 40px rgba(167, 139, 250, 0.08);
-    }
-    .conecta-icon-wrapper {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        margin-bottom: 20px;
-        transition: transform 0.3s ease;
-    }
-    .conecta-card:hover .conecta-icon-wrapper {
-        transform: scale(1.1);
-    }
-    .conecta-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 17px;
-        font-weight: 700;
-        color: white;
-        margin: 0 0 10px 0;
-    }
-    .conecta-description {
-        font-size: 13.5px;
-        color: #94a3b8;
-        line-height: 1.5;
-        margin: 0 0 25px 0;
-        flex-grow: 1;
-    }
-    .conecta-footer-link {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 12px;
-        font-weight: 700;
-        color: #a78bfa;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: transform 0.2s ease;
-    }
-    .conecta-card:hover .conecta-footer-link {
-        transform: translateX(4px);
-    }
+/* ═══════════════════════════════════════════════════════
+   CONECTA FCM — Landing v2.0
+   Paleta: Dourado · Âmbar · Branco · Glassmorphism
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --gold:    #f5c842;
+  --gold2:   #fbbf24;
+  --gold3:   #e8a020;
+  --amber:   #f59e0b;
+  --cream:   #fdf8ee;
+  --dark:    #09050f;
+  --dark2:   #120a1e;
+  --purple:  #2d1060;
+  --glass:   rgba(255,248,220,.05);
+  --glass2:  rgba(255,248,220,.09);
+  --border:  rgba(245,200,66,.18);
+  --border2: rgba(255,255,255,.07);
+  --text:    #f0e8d0;
+  --muted:   rgba(220,200,160,.55);
+  --green:   #4ade80;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:'Outfit',sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse 80% 55% at 10% 0%,   rgba(90,55,10,.28)  0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 90% 15%,  rgba(245,200,66,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(45,16,96,.30)   0%, transparent 65%),
+    linear-gradient(160deg, #100810 0%, #080410 55%, #120a06 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+
+/* ── Grid background ── */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(rgba(245,200,66,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,.022) 1px, transparent 1px);
+  background-size:50px 50px;
+}
+
+/* ── Glow orbs ── */
+.orb {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(80px);
+}
+.orb-1 { width:500px; height:500px; top:-150px; left:-100px; background:radial-gradient(circle, rgba(245,200,66,.12), transparent 70%); animation:drift 12s ease-in-out infinite; }
+.orb-2 { width:400px; height:400px; top:40%; right:-100px; background:radial-gradient(circle, rgba(245,200,66,.07), transparent 70%); animation:drift 15s ease-in-out infinite reverse; }
+.orb-3 { width:350px; height:350px; bottom:-80px; left:35%; background:radial-gradient(circle, rgba(120,50,200,.14), transparent 70%); animation:drift 10s ease-in-out infinite 2s; }
+@keyframes drift { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(30px,25px) scale(1.08);} }
+
+/* ── NAVBAR ── */
+.nav {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 40px;
+  background:rgba(10,5,20,.85); border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+}
+.nav-brand {
+  display:flex; align-items:center; gap:10px;
+  font-family:'Cinzel',serif; font-weight:700; font-size:1.05rem; color:var(--gold);
+  text-decoration:none; letter-spacing:.04em;
+}
+.nav-brand .bolt { font-size:1.2rem; }
+.nav-links-bar { display:flex; align-items:center; gap:6px; }
+.nav-link {
+  padding:7px 16px; border-radius:8px; font-size:.78rem; font-weight:600;
+  color:var(--muted); text-decoration:none; transition:all .2s;
+  border:1px solid transparent;
+}
+.nav-link:hover { color:var(--gold); border-color:var(--border); background:var(--glass); }
+.nav-cta {
+  padding:8px 20px; border-radius:10px; font-size:.8rem; font-weight:800;
+  background:linear-gradient(135deg, rgba(245,200,66,.25), rgba(245,200,66,.12));
+  border:1px solid rgba(245,200,66,.45); color:var(--gold);
+  text-decoration:none; transition:all .25s;
+  box-shadow:0 0 16px rgba(245,200,66,.1);
+}
+.nav-cta:hover { background:linear-gradient(135deg, rgba(245,200,66,.38), rgba(245,200,66,.2)); box-shadow:0 0 30px rgba(245,200,66,.25); transform:translateY(-1px); }
+.nav-back { color:var(--muted); font-size:.75rem; }
+
+/* ═══════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════ */
+.hero {
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1fr 420px; gap:32px; align-items:center;
+  max-width:1280px; margin:0 auto;
+  padding:70px 40px 60px;
+}
+@media(max-width:1000px){ .hero{ grid-template-columns:1fr; padding:40px 24px; } }
+
+/* Left */
+.hero-left { display:flex; flex-direction:column; gap:0; }
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 16px; border-radius:99px; margin-bottom:20px; align-self:flex-start;
+  background:rgba(245,200,66,.1); border:1px solid rgba(245,200,66,.3);
+  font-size:.68rem; font-weight:800; letter-spacing:.1em; color:var(--gold); text-transform:uppercase;
+}
+.hero-eyebrow .live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blink 1.3s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.2;} }
+
+.hero-title {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:clamp(2.2rem,5vw,3.8rem); line-height:1.08;
+  margin-bottom:18px; color:#fff;
+}
+.hero-title .gold {
+  background:linear-gradient(135deg, #f5c842 0%, #fbbf24 40%, #f59e0b 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 20px rgba(245,200,66,.5));
+}
+.hero-subtitle {
+  font-size:1.05rem; color:rgba(220,200,150,.75); line-height:1.65;
+  margin-bottom:28px; max-width:500px;
+}
+
+/* Checklist */
+.hero-checklist { display:flex; flex-direction:column; gap:9px; margin-bottom:34px; }
+.hero-check {
+  display:flex; align-items:center; gap:11px;
+  font-size:.88rem; color:rgba(220,200,160,.8); font-weight:500;
+}
+.hero-check .chk {
+  width:20px; height:20px; border-radius:6px; flex-shrink:0;
+  background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.65rem; color:var(--green);
+}
+
+/* Buttons */
+.hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-primary {
+  padding:14px 28px; border-radius:13px; font-size:.9rem; font-weight:800;
+  background:linear-gradient(135deg, #f5c842, #f59e0b);
+  color:#0a0510; border:none; cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px; transition:all .25s;
+  box-shadow:0 4px 20px rgba(245,200,66,.35), 0 0 40px rgba(245,200,66,.15);
+  letter-spacing:.02em;
+}
+.btn-primary:hover { transform:translateY(-3px); box-shadow:0 8px 35px rgba(245,200,66,.5), 0 0 60px rgba(245,200,66,.2); }
+.btn-secondary {
+  padding:14px 28px; border-radius:13px; font-size:.9rem; font-weight:800;
+  background:var(--glass2); border:1px solid var(--border);
+  color:var(--gold); cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px; transition:all .25s;
+  backdrop-filter:blur(10px);
+}
+.btn-secondary:hover { background:rgba(245,200,66,.12); border-color:rgba(245,200,66,.4); transform:translateY(-3px); box-shadow:0 4px 20px rgba(245,200,66,.15); }
+
+/* ── RIGHT: Cartelera Viva ── */
+.cartelera-panel {
+  background:rgba(20,10,35,.8);
+  border:1px solid var(--border);
+  border-radius:22px; padding:20px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.5), 0 0 60px rgba(245,200,66,.06);
+  position:relative; overflow:hidden;
+}
+.cartelera-panel::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(245,200,66,.04), transparent 55%);
+  pointer-events:none; border-radius:22px;
+}
+
+.panel-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
+}
+.panel-title { font-size:.65rem; font-weight:900; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); }
+.panel-live {
+  display:flex; align-items:center; gap:5px;
+  font-size:.6rem; font-weight:700; color:var(--green); letter-spacing:.05em;
+}
+.panel-updated { font-size:.6rem; color:var(--muted); margin-bottom:14px; display:flex; align-items:center; gap:5px; }
+.panel-updated .upd-dot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 1.4s infinite; }
+
+/* Notice cards */
+.notice-stack { display:flex; flex-direction:column; gap:10px; }
+.notice-card {
+  padding:14px 15px; border-radius:14px;
+  background:rgba(0,0,0,.3); position:relative; overflow:hidden;
+  transition:all .3s; cursor:pointer; border:1px solid rgba(255,255,255,.06);
+}
+.notice-card:hover { transform:translateX(4px) translateY(-1px); }
+.notice-card.urgent  { border-left:3px solid #f87171; }
+.notice-card.warning { border-left:3px solid var(--gold); }
+.notice-card.success { border-left:3px solid var(--green); }
+.notice-card.info    { border-left:3px solid #60a5fa; }
+
+.notice-prio {
+  display:inline-block; padding:2px 8px; border-radius:5px;
+  font-size:.54rem; font-weight:900; letter-spacing:.1em; text-transform:uppercase; margin-bottom:7px;
+}
+.prio-urgent  { background:rgba(248,113,113,.12); color:#f87171; border:1px solid rgba(248,113,113,.25); }
+.prio-warning { background:rgba(245,200,66,.1); color:var(--gold); border:1px solid rgba(245,200,66,.25); }
+.prio-success { background:rgba(74,222,128,.08); color:var(--green); border:1px solid rgba(74,222,128,.22); }
+.prio-info    { background:rgba(96,165,250,.08); color:#60a5fa; border:1px solid rgba(96,165,250,.2); }
+
+.notice-dept  { font-size:.58rem; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:rgba(96,165,250,.65); margin-bottom:4px; }
+.notice-title { font-size:.84rem; font-weight:700; color:#f0e8d0; line-height:1.4; }
+.notice-meta  { font-size:.62rem; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:5px; }
+
+.panel-footer { margin-top:14px; }
+.panel-link {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px; border-radius:11px; width:100%;
+  background:rgba(245,200,66,.08); border:1px solid rgba(245,200,66,.2);
+  color:var(--gold); font-size:.75rem; font-weight:800; text-decoration:none;
+  transition:all .2s; letter-spacing:.03em;
+}
+.panel-link:hover { background:rgba(245,200,66,.16); box-shadow:0 0 20px rgba(245,200,66,.15); }
+
+/* ═══════════════════════════════════════
+   FEATURES STRIP
+   ═══════════════════════════════════════ */
+.features {
+  position:relative; z-index:1;
+  max-width:1280px; margin:0 auto; padding:0 40px 60px;
+}
+.features-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px;
+}
+.feature-pill {
+  display:flex; align-items:center; gap:12px;
+  padding:16px 18px; border-radius:14px;
+  background:var(--glass); border:1px solid var(--border2);
+  transition:all .25s; cursor:default;
+  backdrop-filter:blur(12px);
+}
+.feature-pill:hover { background:var(--glass2); border-color:var(--border); transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,.3); }
+.feature-icon {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:rgba(245,200,66,.1); border:1px solid rgba(245,200,66,.2);
+  display:flex; align-items:center; justify-content:center; font-size:.95rem;
+}
+.feature-name { font-size:.78rem; font-weight:700; color:rgba(220,200,150,.85); }
+
+/* ═══════════════════════════════════════
+   MAPA SECTION
+   ═══════════════════════════════════════ */
+.section {
+  position:relative; z-index:1;
+  max-width:1280px; margin:0 auto; padding:0 40px 60px;
+}
+.section-label { font-size:.6rem; font-weight:900; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:8px; }
+.section-title { font-size:clamp(1.4rem,3vw,2rem); font-weight:900; color:#fff; margin-bottom:6px; }
+.section-sub   { font-size:.88rem; color:var(--muted); margin-bottom:28px; line-height:1.6; }
+
+.mapa-card {
+  background:rgba(20,10,35,.7); border:1px solid var(--border);
+  border-radius:22px; overflow:hidden;
+  backdrop-filter:blur(16px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.4);
+  display:grid; grid-template-columns:1fr 320px; gap:0;
+}
+@media(max-width:860px){ .mapa-card{ grid-template-columns:1fr; } }
+
+.mapa-visual {
+  background:linear-gradient(135deg, rgba(245,200,66,.06), rgba(45,16,96,.15));
+  padding:32px; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  min-height:280px; position:relative; overflow:hidden;
+  border-right:1px solid var(--border2);
+}
+.mapa-placeholder {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; max-width:340px;
+}
+.mapa-block {
+  border-radius:8px; padding:10px 8px; text-align:center;
+  font-size:.58rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  transition:all .25s; cursor:default;
+}
+.mapa-block:hover { transform:scale(1.06); }
+.mb-hosp  { background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.25); color:#f87171; grid-column:span 2; padding:16px; }
+.mb-bib   { background:rgba(245,200,66,.1);   border:1px solid rgba(245,200,66,.22);  color:var(--gold); }
+.mb-sec   { background:rgba(96,165,250,.08);   border:1px solid rgba(96,165,250,.2);   color:#60a5fa; }
+.mb-lab   { background:rgba(74,222,128,.08);   border:1px solid rgba(74,222,128,.2);   color:var(--green); }
+.mb-aula  { background:rgba(168,85,247,.08);   border:1px solid rgba(168,85,247,.2);   color:#c084fc; }
+.mb-ca    { background:rgba(251,191,36,.08);   border:1px solid rgba(251,191,36,.2);   color:var(--gold2); }
+.mb-med   { background:rgba(239,68,68,.08);    border:1px solid rgba(239,68,68,.2);    color:#ef4444; }
+
+.mapa-info { padding:32px; display:flex; flex-direction:column; justify-content:center; gap:16px; }
+.mapa-info h3 { font-size:1.2rem; font-weight:900; color:#fff; margin-bottom:4px; }
+.mapa-info p  { font-size:.84rem; color:var(--muted); line-height:1.6; }
+.mapa-spots { display:flex; flex-direction:column; gap:8px; }
+.mapa-spot {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:10px;
+  background:rgba(0,0,0,.2); border:1px solid rgba(255,255,255,.05);
+  font-size:.78rem; color:rgba(220,200,150,.75);
+  transition:all .2s;
+}
+.mapa-spot:hover { background:rgba(245,200,66,.06); border-color:var(--border); color:var(--text); }
+.mapa-spot-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* ═══════════════════════════════════════
+   EVENTOS SECTION
+   ═══════════════════════════════════════ */
+.eventos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+.evento-card {
+  background:rgba(0,0,0,.3); border:1px solid rgba(245,200,66,.1);
+  border-radius:18px; padding:20px; transition:all .3s; position:relative; overflow:hidden;
+}
+.evento-card:hover { transform:translateY(-4px); border-color:rgba(245,200,66,.28); box-shadow:0 12px 35px rgba(0,0,0,.4), 0 0 20px rgba(245,200,66,.06); }
+.evento-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(245,200,66,.03), transparent 60%);
+  pointer-events:none;
+}
+.evento-date { font-size:.65rem; font-weight:900; color:var(--gold); letter-spacing:.08em; margin-bottom:8px; text-transform:uppercase; }
+.evento-title { font-size:.92rem; font-weight:800; color:#f0e8d0; margin-bottom:6px; line-height:1.35; }
+.evento-sub   { font-size:.74rem; color:var(--muted); line-height:1.5; }
+.evento-type  {
+  display:inline-block; padding:3px 10px; border-radius:6px;
+  font-size:.58rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; margin-top:10px;
+}
+.type-final   { background:rgba(248,113,113,.12); color:#f87171; border:1px solid rgba(248,113,113,.25); }
+.type-parcial { background:rgba(245,200,66,.1);   color:var(--gold); border:1px solid rgba(245,200,66,.25); }
+.type-tp      { background:rgba(168,85,247,.1);   color:#c084fc; border:1px solid rgba(168,85,247,.25); }
+.type-aviso   { background:rgba(74,222,128,.08);  color:var(--green); border:1px solid rgba(74,222,128,.22); }
+
+/* ═══════════════════════════════════════
+   CTA FINAL
+   ═══════════════════════════════════════ */
+.cta-strip {
+  position:relative; z-index:1;
+  max-width:1280px; margin:0 auto; padding:0 40px 80px;
+}
+.cta-box {
+  background:linear-gradient(135deg, rgba(245,200,66,.1), rgba(245,200,66,.04), rgba(45,16,96,.12));
+  border:1px solid rgba(245,200,66,.25); border-radius:24px; padding:48px;
+  text-align:center; position:relative; overflow:hidden;
+  backdrop-filter:blur(16px);
+  box-shadow:0 0 80px rgba(245,200,66,.06);
+}
+.cta-box::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(245,200,66,.07), transparent 65%);
+  pointer-events:none;
+}
+.cta-title { font-family:'Cinzel',serif; font-size:clamp(1.5rem,3vw,2.2rem); font-weight:900; color:#fff; margin-bottom:12px; }
+.cta-title span { color:var(--gold); }
+.cta-sub { font-size:.95rem; color:var(--muted); margin-bottom:28px; max-width:520px; margin-left:auto; margin-right:auto; line-height:1.6; }
+.cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+/* ─── Responsive ─── */
+@media(max-width:640px){
+  .nav { padding:12px 20px; }
+  .section, .features { padding-left:20px; padding-right:20px; }
+  .cta-strip { padding-left:20px; padding-right:20px; }
+  .cta-box { padding:30px 20px; }
+  .hero { padding:40px 20px 30px; }
+}
 </style>
-{% endblock %}
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── NAVBAR ── -->
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <span class="bolt">⚡</span>
+    <span>CONECTA FCM</span>
+  </a>
+  <div class="nav-links-bar">
+    <a href="/cartelera/" class="nav-link">Cartelera</a>
+    <a href="/cronograma-finales/" class="nav-link">Finales</a>
+    <a href="/plan-estudios/" class="nav-link">Plan de Estudios</a>
+    <a href="/" class="nav-link nav-back"><i class="fas fa-arrow-left"></i> ALUMED OS</a>
+    <a href="/conecta/dashboard/" class="nav-cta"><i class="fas fa-bolt"></i> Acceder al Dashboard</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- Left -->
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="live-dot"></span>
+      Sistema activo · FCM La Plata
+    </div>
+
+    <h1 class="hero-title">
+      ⚡ <span class="gold">CONECTA</span><br>FCM
+    </h1>
+
+    <p class="hero-subtitle">
+      Toda la información oficial de tu Facultad de Medicina,<br>
+      organizada en un solo lugar.
+    </p>
+
+    <div class="hero-checklist">
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Cartelera oficial en tiempo real</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Horarios y comisiones</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Plan de estudios por año</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Exámenes finales y parciales</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Google Calendar sincronizado</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> WhatsApp y alertas inteligentes</div>
+      <div class="hero-check"><span class="chk"><i class="fas fa-check"></i></span> Apoyo psicológico y mapas</div>
+    </div>
+
+    <div class="hero-btns">
+      <a href="/conecta/dashboard/" class="btn-primary">
+        <i class="fas fa-bolt"></i> Explorar Conecta
+      </a>
+      <a href="/conecta/dashboard/" class="btn-secondary">
+        <i class="fas fa-desktop"></i> Conocer Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Right: Cartelera viva -->
+  <div class="cartelera-panel">
+    <div class="panel-header">
+      <span class="panel-title">📋 Cartelera en Vivo</span>
+      <span class="panel-live"><span class="live-dot"></span> EN VIVO</span>
+    </div>
+    <div class="panel-updated">
+      <span class="upd-dot"></span>
+      <span id="updatedTime">Actualizado hace 0 min</span>
+    </div>
+
+    <div class="notice-stack">
+      {% if cartelera_notices %}
+        {% for notice in cartelera_notices|slice:":4" %}
+        <div class="notice-card {% if notice.priority == 'high' %}urgent{% elif notice.priority == 'medium' %}warning{% elif notice.priority == 'low' %}info{% else %}success{% endif %}">
+          <div class="notice-prio prio-{% if notice.priority == 'high' %}urgent{% elif notice.priority == 'medium' %}warning{% elif notice.priority == 'low' %}info{% else %}success{% endif %}">
+            {% if notice.priority == 'high' %}🔴 URGENTE{% elif notice.priority == 'medium' %}🟡 ATENCIÓN{% else %}🟢 INFO{% endif %}
+          </div>
+          <div class="notice-dept">{{ notice.department|default:"Secretaría" }}</div>
+          <div class="notice-title">{{ notice.title }}</div>
+          <div class="notice-meta"><i class="far fa-clock" style="font-size:.55rem;"></i> {{ notice.created_at|timesince }} atrás</div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="notice-card urgent">
+        <div class="notice-prio prio-urgent">🔴 URGENTE</div>
+        <div class="notice-dept">DIRECCIÓN</div>
+        <div class="notice-title">Suspensión de clases — Jueves 17/07</div>
+        <div class="notice-meta"><i class="far fa-clock" style="font-size:.55rem;"></i> hace 5 min</div>
+      </div>
+      <div class="notice-card warning">
+        <div class="notice-prio prio-warning">🟡 SECRETARÍA</div>
+        <div class="notice-dept">SECRETARÍA ACADÉMICA</div>
+        <div class="notice-title">Inscripciones a finales abiertas hasta el 20/07</div>
+        <div class="notice-meta"><i class="far fa-clock" style="font-size:.55rem;"></i> hace 2h</div>
+      </div>
+      <div class="notice-card success">
+        <div class="notice-prio prio-success">🟢 EXÁMENES</div>
+        <div class="notice-dept">DEPARTAMENTO ACADÉMICO</div>
+        <div class="notice-title">Mesa de final de Anatomía publicada — Agosto</div>
+        <div class="notice-meta"><i class="far fa-clock" style="font-size:.55rem;"></i> hace 1 día</div>
+      </div>
+      <div class="notice-card info">
+        <div class="notice-prio prio-info">🔵 INFO</div>
+        <div class="notice-dept">COMISIONES</div>
+        <div class="notice-title">Cambio de aula — Histología B2 → Aula 12</div>
+        <div class="notice-meta"><i class="far fa-clock" style="font-size:.55rem;"></i> hace 3h</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="panel-footer">
+      <a href="/conecta/dashboard/#cartelera" class="panel-link">
+        <i class="fas fa-external-link-alt"></i> Ver cartelera completa en el Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FEATURES STRIP
+     ════════════════════════════════════════ -->
+<div class="features">
+  <div class="features-grid">
+    <div class="feature-pill"><div class="feature-icon">📋</div><div class="feature-name">Cartelera Oficial</div></div>
+    <div class="feature-pill"><div class="feature-icon">📅</div><div class="feature-name">Calendario</div></div>
+    <div class="feature-pill"><div class="feature-icon">🕐</div><div class="feature-name">Horarios</div></div>
+    <div class="feature-pill"><div class="feature-icon">👥</div><div class="feature-name">Comisiones</div></div>
+    <div class="feature-pill"><div class="feature-icon">📖</div><div class="feature-name">Plan de Estudios</div></div>
+    <div class="feature-pill"><div class="feature-icon">🗺️</div><div class="feature-name">Mapa Facultad</div></div>
+    <div class="feature-pill"><div class="feature-icon">🔔</div><div class="feature-name">Alertas</div></div>
+    <div class="feature-pill"><div class="feature-icon">💚</div><div class="feature-name">Apoyo Psicológico</div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAPA SECTION — INTERATIVO
+     ════════════════════════════════════════ -->
+{% load static %}
+<section class="section">
+  <span class="section-label">🗺️ Campus FCM</span>
+  <h2 class="section-title">Mapa de la Facultad</h2>
+  <p class="section-sub">Encontrá dónde está cada aula, secretaría, laboratorio y servicio. Pasá el mouse por los puntos para ver los detalles.</p>
+
+  <style>
+  /* ── MAP INTERATIVO ── */
+  .map-wrap {
+    position:relative; border-radius:22px; overflow:hidden;
+    border:1px solid rgba(245,200,66,.25);
+    box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.5), 0 0 80px rgba(245,200,66,.06);
+    background:#0a0510;
+  }
+  .map-img {
+    width:100%; display:block;
+    opacity:.88; transition:opacity .4s;
+    filter: saturate(1.1) contrast(1.05);
+  }
+  .map-wrap:hover .map-img { opacity:.72; }
+
+  /* Overlay escuro leve para os pins aparecerem bem */
+  .map-overlay {
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(10,5,20,.15) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(10,5,20,.35) 100%);
+  }
+
+  /* Pins */
+  .map-pin {
+    position:absolute; transform:translate(-50%,-100%);
+    cursor:pointer; z-index:10;
+    display:flex; flex-direction:column; align-items:center;
+    transition:transform .25s;
+  }
+  .map-pin:hover { transform:translate(-50%,-100%) scale(1.18); }
+
+  .pin-dot {
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; position:relative;
+    box-shadow:0 0 0 3px rgba(255,255,255,.15), 0 4px 16px rgba(0,0,0,.6);
+    animation:pinPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pinPulse {
+    0%,100%{ box-shadow:0 0 0 3px rgba(255,255,255,.15), 0 4px 16px rgba(0,0,0,.6); }
+    50%{ box-shadow:0 0 0 6px rgba(255,255,255,.08), 0 0 20px currentColor, 0 4px 16px rgba(0,0,0,.6); }
+  }
+  .pin-dot::after {
+    content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    width:0; height:0;
+    border-left:5px solid transparent;
+    border-right:5px solid transparent;
+    border-top:7px solid currentColor;
+  }
+  .pin-label {
+    margin-top:8px; padding:3px 10px; border-radius:7px;
+    font-size:.62rem; font-weight:800; letter-spacing:.05em; white-space:nowrap;
+    background:rgba(10,5,20,.88); border:1px solid rgba(255,255,255,.15);
+    color:#f0e8d0; backdrop-filter:blur(8px);
+    opacity:0; transform:translateY(4px); transition:all .2s;
+    pointer-events:none;
+  }
+  .map-pin:hover .pin-label { opacity:1; transform:translateY(0); }
+
+  /* Tooltip */
+  .map-tooltip {
+    position:absolute; z-index:100; pointer-events:none;
+    background:rgba(15,8,28,.96); border:1px solid rgba(245,200,66,.3);
+    border-radius:14px; padding:14px 16px; min-width:200px;
+    box-shadow:0 8px 30px rgba(0,0,0,.6), 0 0 20px rgba(245,200,66,.08);
+    backdrop-filter:blur(16px);
+    opacity:0; transition:opacity .2s; transform:translateY(6px);
+  }
+  .map-tooltip.visible { opacity:1; transform:translateY(0); }
+  .tooltip-title { font-size:.82rem; font-weight:900; color:#f0e8d0; margin-bottom:5px; }
+  .tooltip-rows  { display:flex; flex-direction:column; gap:4px; }
+  .tooltip-row   { font-size:.7rem; color:rgba(220,200,150,.7); display:flex; align-items:center; gap:6px; }
+  .tooltip-row i { font-size:.62rem; color:var(--gold); width:12px; }
+
+  /* Scan line effect */
+  .map-scan {
+    position:absolute; inset:0; pointer-events:none; z-index:5;
+    background:linear-gradient(180deg,
+      transparent 0%,
+      rgba(245,200,66,.04) 50%,
+      transparent 100%);
+    background-size:100% 4px;
+    animation:scanMove 4s linear infinite;
+    opacity:.6;
+  }
+  @keyframes scanMove { 0%{background-position:0 -100%;} 100%{background-position:0 200%;} }
+
+  /* Bottom info bar */
+  .map-bar {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(90deg, rgba(10,5,20,.95), rgba(20,10,40,.9), rgba(10,5,20,.95));
+    border-top:1px solid rgba(245,200,66,.18);
+    padding:10px 20px;
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+    backdrop-filter:blur(12px);
+  }
+  .map-bar-item {
+    display:flex; align-items:center; gap:6px;
+    font-size:.62rem; font-weight:700; color:rgba(220,200,150,.65);
+    white-space:nowrap;
+  }
+  .map-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  </style>
+
+  <div class="map-wrap" id="mapaWrap">
+    <img src="{% static 'img/mapa_fcm.png' %}" alt="Mapa FCM La Plata" class="map-img" id="mapaImg">
+    <div class="map-overlay"></div>
+    <div class="map-scan"></div>
+
+    <!-- ── PINS ── posições calibradas sobre a imagem ── -->
+    <!-- Berisso (ala esquerda) -->
+    <div class="map-pin" style="left:38%;top:68%;"
+         data-title="Ala Berisso" data-info="Aulas 15 · Aula 27 · Anfiteatro Maccari · 4to piso" data-color="#f5c842">
+      <div class="pin-dot" style="background:#f5c842;color:#f5c842;">🏛️</div>
+      <div class="pin-label">Ala Berisso</div>
+    </div>
+
+    <!-- La Plata (ala direita) -->
+    <div class="map-pin" style="left:68%;top:68%;"
+         data-title="Ala La Plata" data-info="Aula 17 · Aula LT · Anfiteatro Etulain · 1er piso" data-color="#f5c842">
+      <div class="pin-dot" style="background:#f5c842;color:#f5c842;">🏛️</div>
+      <div class="pin-label">Ala La Plata</div>
+    </div>
+
+    <!-- Edificio Principal -->
+    <div class="map-pin" style="left:53%;top:74%;"
+         data-title="Edificio Principal" data-info="Secretaría Académica · Decanato · Dirección · Planta baja" data-color="#60a5fa">
+      <div class="pin-dot" style="background:#60a5fa;color:#60a5fa;">🏢</div>
+      <div class="pin-label">Edificio Principal</div>
+    </div>
+
+    <!-- Anfiteatro Prieto Díaz A -->
+    <div class="map-pin" style="left:56%;top:28%;"
+         data-title="Prieto Díaz A" data-info="Planta baja de Berisso · Anfiteatro principal · Capacidad grande" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Prieto Díaz A</div>
+    </div>
+
+    <!-- Anfiteatro Galli -->
+    <div class="map-pin" style="left:77%;top:28%;"
+         data-title="Anfiteatro Galli" data-info="1er piso de La Plata · Clases magistrales" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Galli</div>
+    </div>
+
+    <!-- Rawson -->
+    <div class="map-pin" style="left:46%;top:50%;"
+         data-title="Rawson (Aula)" data-info="2do piso de Berisso · Aula grande · Anatomía" data-color="#4ade80">
+      <div class="pin-dot" style="background:#4ade80;color:#4ade80;">📐</div>
+      <div class="pin-label">Rawson</div>
+    </div>
+
+    <!-- Aula Fuschere -->
+    <div class="map-pin" style="left:53%;top:58%;"
+         data-title="Aula Fuschere" data-info="Área central · Acceso desde pasillo principal" data-color="#fb923c">
+      <div class="pin-dot" style="background:#fb923c;color:#fb923c;">📚</div>
+      <div class="pin-label">Fuschere</div>
+    </div>
+
+    <!-- Acceso Principal -->
+    <div class="map-pin" style="left:53%;top:91%;"
+         data-title="Acceso Principal" data-info="Entrada a la Facultad · Guardia · Orientación" data-color="#f87171">
+      <div class="pin-dot" style="background:#f87171;color:#f87171;">🚪</div>
+      <div class="pin-label">Acceso Principal</div>
+    </div>
+
+    <!-- Tooltip flotante -->
+    <div class="map-tooltip" id="mapaTooltip">
+      <div class="tooltip-title" id="ttTitle">—</div>
+      <div class="tooltip-rows" id="ttRows"></div>
+    </div>
+
+    <!-- Info bar inferior -->
+    <div class="map-bar">
+      <div class="map-bar-item"><span class="map-legend-dot" style="background:#c084fc;"></span> Anfiteatros</div>
+      <div class="map-bar-item"><span class="map-legend-dot" style="background:#f5c842;"></span> Alas Berisso / La Plata</div>
+      <div class="map-bar-item"><span class="map-legend-dot" style="background:#60a5fa;"></span> Administrativo</div>
+      <div class="map-bar-item"><span class="map-legend-dot" style="background:#4ade80;"></span> Aulas</div>
+      <div class="map-bar-item"><span class="map-legend-dot" style="background:#f87171;"></span> Accesos</div>
+      <a href="/facultad/" class="map-bar-item" style="margin-left:auto;color:var(--gold);text-decoration:none;gap:6px;border:1px solid rgba(245,200,66,.25);padding:5px 14px;border-radius:8px;background:rgba(245,200,66,.08);transition:all .2s;" onmouseover="this.style.background='rgba(245,200,66,.18)'" onmouseout="this.style.background='rgba(245,200,66,.08)'">
+        <i class="fas fa-external-link-alt" style="font-size:.6rem;"></i> Ver mapa completo
+      </a>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var pins = document.querySelectorAll('.map-pin');
+    var tooltip = document.getElementById('mapaTooltip');
+    var ttTitle = document.getElementById('ttTitle');
+    var ttRows  = document.getElementById('ttRows');
+    var wrap    = document.getElementById('mapaWrap');
+
+    pins.forEach(function(pin){
+      pin.addEventListener('mouseenter', function(e){
+        ttTitle.textContent = pin.dataset.title;
+        var infos = pin.dataset.info.split(' · ');
+        ttRows.innerHTML = infos.map(function(t){
+          return '<div class="tooltip-row"><i class="fas fa-map-pin"></i>' + t + '</div>';
+        }).join('');
+        tooltip.classList.add('visible');
+        positionTooltip(e);
+      });
+      pin.addEventListener('mousemove', positionTooltip);
+      pin.addEventListener('mouseleave', function(){
+        tooltip.classList.remove('visible');
+      });
+    });
+
+    function positionTooltip(e){
+      var wRect = wrap.getBoundingClientRect();
+      var x = e.clientX - wRect.left + 14;
+      var y = e.clientY - wRect.top  - 20;
+      // Keep inside bounds
+      if(x + 220 > wRect.width)  x = e.clientX - wRect.left - 230;
+      if(y + 120 > wRect.height) y = e.clientY - wRect.top  - 130;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = y + 'px';
+    }
+
+    // Stagger pin entrance animation
+    pins.forEach(function(pin, i){
+      pin.style.opacity='0';
+      pin.style.transform='translate(-50%,-80%)';
+      setTimeout(function(){
+        pin.style.transition='opacity .4s ease, transform .4s ease';
+        pin.style.opacity='1';
+        pin.style.transform='translate(-50%,-100%)';
+      }, 400 + i*100);
+    });
+
+    // Delay animation offsets for each pin so they don't all pulse in sync
+    document.querySelectorAll('.pin-dot').forEach(function(dot, i){
+      dot.style.animationDelay = (i * 0.35) + 's';
+    });
+  })();
+  </script>
+</section>
+
+<!-- ════════════════════════════════════════
+     PRÓXIMOS EVENTOS
+     ════════════════════════════════════════ -->
+<section class="section">
+  <span class="section-label">📅 Agenda</span>
+  <h2 class="section-title">Próximos eventos</h2>
+  <p class="section-sub">Finales, parciales, TPs y avisos importantes de la facultad.</p>
+
+  <div class="eventos-grid">
+    <div class="evento-card">
+      <div class="evento-date">📅 18 Jul 2026</div>
+      <div class="evento-title">Parcial de Histología</div>
+      <div class="evento-sub">Comisiones A, B y C. Modalidad presencial. Aula 201, Piso 2.</div>
+      <span class="evento-type type-parcial">PARCIAL</span>
+    </div>
+    <div class="evento-card">
+      <div class="evento-date">📅 23 Jul 2026</div>
+      <div class="evento-title">Entrega TP — Biología Celular</div>
+      <div class="evento-sub">Entrega en la plataforma institucional antes de las 23:59hs.</div>
+      <span class="evento-type type-tp">TP</span>
+    </div>
+    <div class="evento-card">
+      <div class="evento-date">📅 01 Ago 2026</div>
+      <div class="evento-title">Final de Anatomía Descriptiva</div>
+      <div class="evento-sub">Mesa examinadora completa. Inscripciones abiertas hasta el 25/07.</div>
+      <span class="evento-type type-final">FINAL</span>
+    </div>
+    <div class="evento-card">
+      <div class="evento-date">📅 04 Ago 2026</div>
+      <div class="evento-title">Inicio 2° Cuatrimestre</div>
+      <div class="evento-sub">Comienzo oficial de clases del segundo cuatrimestre 2026.</div>
+      <span class="evento-type type-aviso">AVISO</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     CTA FINAL
+     ════════════════════════════════════════ -->
+<div class="cta-strip">
+  <div class="cta-box">
+    <h2 class="cta-title">Tu facultad, <span>organizada</span>.</h2>
+    <p class="cta-sub">Accedé al Dashboard Conecta FCM y tenés toda la información institucional en tiempo real, en un solo lugar.</p>
+    <div class="cta-btns">
+      <a href="/conecta/dashboard/" class="btn-primary">
+        <i class="fas fa-bolt"></i> Entrar al Dashboard Conecta
+      </a>
+      <a href="/" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a ALUMED OS
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Contador de atualização ────────────────────────────
+(function(){
+  var start = Date.now();
+  var el = document.getElementById('updatedTime');
+  function update(){
+    var mins = Math.floor((Date.now()-start)/60000);
+    el.textContent = mins === 0
+      ? 'Actualizado ahora mismo'
+      : 'Actualizado hace ' + mins + ' min' + (mins>1?'s':'');
+  }
+  setInterval(update, 30000);
+
+  // Subtle card pulse animation on load
+  document.querySelectorAll('.notice-card').forEach(function(card, i){
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(10px)';
+    setTimeout(function(){
+      card.style.transition = 'all .4s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 150 + i*80);
+  });
+
+  // Feature pills entrance
+  document.querySelectorAll('.feature-pill').forEach(function(el, i){
+    el.style.opacity='0'; el.style.transform='translateY(12px)';
+    setTimeout(function(){
+      el.style.transition='all .35s ease';
+      el.style.opacity='1';
+      el.style.transform='translateY(0)';
+    }, 300 + i*60);
+  });
+
+  // Evento cards entrance
+  document.querySelectorAll('.evento-card').forEach(function(el, i){
+    el.style.opacity='0'; el.style.transform='translateY(14px)';
+    setTimeout(function(){
+      el.style.transition='all .4s ease';
+      el.style.opacity='1';
+      el.style.transform='translateY(0)';
+    }, 100 + i*90);
+  });
+})();
+</script>
+</body>
+</html>

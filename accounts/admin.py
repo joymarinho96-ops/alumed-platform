@@ -1,7 +1,35 @@
 from django.contrib import admin
-from .models import Profile, ChatMessage
+from .models import (Profile, ChatMessage, AccessProduct, UserAccess,
+                     ConectaPreference, ConectaSubscription, ConectaConsentEvent)
 from django.utils import timezone
 from datetime import timedelta
+
+@admin.register(ConectaPreference)
+class ConectaPreferenceAdmin(admin.ModelAdmin):
+    list_display    = ('user','whatsapp_number','alert_email',
+                       'whatsapp_active','email_active','calendar_active',
+                       'consent_granted','updated_at')
+    list_filter     = ('whatsapp_active','email_active','calendar_active','consent_granted')
+    search_fields   = ('user__username','user__email','whatsapp_number','alert_email')
+    readonly_fields = ('consent_at','consent_version','consent_channels','updated_at')
+
+@admin.register(ConectaSubscription)
+class ConectaSubscriptionAdmin(admin.ModelAdmin):
+    list_display  = ('user','type','key','enabled','updated_at')
+    list_filter   = ('type','enabled')
+    search_fields = ('user__username','key')
+
+@admin.register(ConectaConsentEvent)
+class ConectaConsentEventAdmin(admin.ModelAdmin):
+    list_display  = ('user','action','version','channels','whatsapp','email','ip_address','created_at')
+    list_filter   = ('action','version')
+    search_fields = ('user__username','email','whatsapp')
+    readonly_fields = ('user','action','version','channels','whatsapp','email',
+                       'ip_address','user_agent','created_at')
+    # Inmutable — sin botón add ni delete
+    def has_add_permission(self, request): return False
+    def has_delete_permission(self, request, obj=None): return False
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -44,3 +72,19 @@ class ChatMessageAdmin(admin.ModelAdmin):
         return redirect('admin:accounts_chatmessage_changelist')
 
     change_list_template = "admin/accounts/chatmessage/change_list.html"
+
+
+@admin.register(AccessProduct)
+class AccessProductAdmin(admin.ModelAdmin):
+    list_display = ('slug', 'name', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('slug', 'name')
+
+
+@admin.register(UserAccess)
+class UserAccessAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'is_active', 'source', 'granted_at', 'expires_at')
+    list_filter = ('is_active', 'source', 'product')
+    search_fields = ('user__username', 'user__email', 'product__slug')
+    raw_id_fields = ('user',)
+    date_hierarchy = 'granted_at'

@@ -166,21 +166,14 @@ def grupos(request):
     return render(request, 'courses/groups.html')
 
 
-@student_auth_required
-
-
-
-@student_auth_required
 def microscopio_virtual(request):
     return render(request, 'core/microscopio_virtual.html')
 
 
-@student_auth_required
 def anatomia_3d(request):
     return render(request, 'core/anatomia_3d.html')
 
 
-@student_auth_required
 def cronograma_finales(request):
     cartelera_notices = get_cached_cartelera()
     return render(request, 'core/cronograma_finales.html', {'cartelera_notices': cartelera_notices})
@@ -190,12 +183,10 @@ def info_util(request):
     return render(request, 'core/info_util.html')
 
 
-@student_auth_required
 def facultad(request):
     return render(request, 'core/facultad.html')
 
 
-@student_auth_required
 def biblioteca(request):
     books = DigitalBook.objects.all().order_by('subject', 'title')
     library_payload = build_library_payload(books)
@@ -209,32 +200,26 @@ def biblioteca(request):
     )
 
 
-@student_auth_required
 def cronograma_tps(request):
     return render(request, 'core/cronograma_tps.html')
 
 
-@student_auth_required
 def plan_estudios(request):
     return render(request, 'core/plan_estudios.html')
 
 
-@student_auth_required
 def apoyo_psicologico(request):
     return render(request, 'core/apoyo_psicologico.html')
 
 
-@student_auth_required
 def comisiones(request):
     return render(request, 'core/comisiones.html')
 
 
-@student_auth_required
 def club(request):
     return render(request, 'core/club.html')
 
 
-@student_auth_required
 def favoritos(request):
     return render(request, 'core/favoritos.html')
 
@@ -245,6 +230,22 @@ def cartelera_view(request):
 
 
 def conecta_fcm_view(request):
-    return render(request, 'core/conecta_fcm.html')
+    cartelera_notices = get_cached_cartelera()
+    return render(request, 'core/conecta_fcm.html', {
+        'cartelera_notices': cartelera_notices,
+    })
 
 
+def conecta_landing_view(request):
+    """
+    Landing publica do Conecta FCM.
+    Nao requer login — mostra funcionalidades e CTA 'Activar mi Conecta'.
+    Se o usuario ja tem acesso, redireciona direto para o dashboard.
+    """
+    from django.shortcuts import redirect as _redirect
+    if request.user.is_authenticated:
+        # Verifica se ja tem acesso
+        from accounts.views import has_product_access
+        if has_product_access(request.user, 'CONECTA_FCM'):
+            return _redirect('conecta_dashboard')
+    return render(request, 'core/conecta_landing.html')

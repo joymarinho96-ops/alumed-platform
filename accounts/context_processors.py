@@ -16,10 +16,10 @@ def wix_urls(request):
             'ver_curso': 'https://alumed.wixsite.com/alumed/aula',
             'continuar_cursando': 'https://alumed.wixsite.com/alumed/aula',
             'mi_panel': 'https://alumed.wixsite.com/alumed/mi-panel',
-            'mis_clases': 'https://alumed.wixsite.com/alumed/mis-clases',
+            'mis_clases': 'https://www.alumedestudiantes.com/miscursos',
             'pagar_cuota': 'https://alumed.wixsite.com/alumed/pagos',
             'checkout': 'https://alumed.wixsite.com/alumed/checkout',
             'renovar_acceso': 'https://alumed.wixsite.com/alumed/renovacion',
-            'mi_biblioteca_adquirida': 'https://alumed.wixsite.com/alumed/biblioteca-adquirida',
+            'mi_biblioteca_adquirida': 'https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual',
         }
     }

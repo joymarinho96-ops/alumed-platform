@@ -1,0 +1,11 @@
+{% if href %}
+<a href="{{ href }}" class="btn-primary-alumed" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 13.5px; font-family:'Outfit', sans-serif; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; border: none; font-weight: 700; border-radius: 8px; cursor: pointer; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(124, 58, 237, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(124, 58, 237, 0.25)';">
+    {% if icon %}<i class="fas {{ icon }}"></i>{% endif %}
+    {{ text }}
+</a>
+{% else %}
+<button type="{{ type|default:'button' }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %} class="btn-primary-alumed" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 13.5px; font-family:'Outfit', sans-serif; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; border: none; font-weight: 700; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(124, 58, 237, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(124, 58, 237, 0.25)';">
+    {% if icon %}<i class="fas {{ icon }}"></i>{% endif %}
+    {{ text }}
+</button>
+{% endif %}

@@ -1,103 +1,84 @@
+{% extends 'dashboard_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ course.title }} - ALUMED</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <style>
-        body {
-            overflow: hidden;
-            background-color: #0a000f;
-        }
-        .ai-tutor-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-        #voice-visualizer {
-            width: 100%;
-            max-width: 500px;
-            height: 150px;
-            border-radius: 12px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(245, 197, 66, 0.3);
-            margin-bottom: 30px;
-        }
-        .status-text {
-            font-size: 1.2rem;
-            color: #ccc;
-            margin-bottom: 20px;
-            height: 30px;
-        }
-        .mic-button {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--dourado);
-            border: none;
-            cursor: pointer;
-            font-size: 2.5rem;
-            color: var(--preto);
-            box-shadow: 0 0 20px rgba(245, 197, 66, 0.5);
-            transition: all 0.3s ease;
-        }
-        .mic-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(245, 197, 66, 0.8);
-        }
-        .mic-button.is-listening {
-            animation: pulse-mic 1.5s infinite;
-        }
-        @keyframes pulse-mic {
-            0% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.5); background: #ff4444; }
-            50% { box-shadow: 0 0 40px rgba(255, 68, 68, 1); background: #ff6b6b; }
-            100% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.5); background: #ff4444; }
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-bg-grid"></div>
-    <div class="ai-tutor-container">
-        <h1 class="neon-text" style="margin-bottom: 15px;">{{ course.title }}</h1>
-        <p style="color: #aaa; margin-bottom: 40px;">Treinamento para Prova Oral</p>
 
-        <div id="voice-visualizer"></div>
-        <p id="status" class="status-text">Pressione o botão para começar</p>
+{% block title %}{{ course.title }} - Profe Joy AI{% endblock %}
+
+{% block main_content %}
+<div class="ai-tutor-wrapper" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px;">
+    
+    <!-- Glassmorphism Card Container -->
+    <div style="background: rgba(30, 17, 59, 0.45); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 24px; padding: 40px 30px; max-width: 550px; width: 100%; text-align: center; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 15px 35px rgba(18, 9, 36, 0.4); z-index: 5; position: relative;">
         
-        <button id="mic-button" class="mic-button">
+        <!-- Glowing Brain / AI Icon -->
+        <div style="width: 80px; height: 80px; background: rgba(124, 58, 237, 0.15); border: 1.5px solid rgba(124, 58, 237, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--dourado); font-size: 2.2rem; box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);">
+            <i class="fas fa-brain"></i>
+        </div>
+
+        <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: white; margin-bottom: 8px;">{{ course.title }}</h1>
+        <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--dourado); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Entrenamiento de Examen Oral con IA</p>
+
+        <!-- Waveform Visualizer Mock -->
+        <div id="voice-visualizer" style="width: 100%; height: 100px; border-radius: 16px; background: rgba(18, 9, 36, 0.4); border: 1px solid rgba(124, 58, 237, 0.2); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 15px; position: relative; overflow: hidden;">
+            <div class="wave-bar" style="width: 4px; height: 15px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 25px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 35px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 20px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 30px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 40px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 15px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+            <div class="wave-bar" style="width: 4px; height: 25px; background: var(--dourado); border-radius: 4px; transition: height 0.15s ease;"></div>
+        </div>
+
+        <p id="status" style="font-family: 'Inter', sans-serif; font-size: 15px; color: #cbd5e1; margin-bottom: 30px;" class="status-text">Presiona el micrófono para iniciar la conversación</p>
+        
+        <!-- Glowing Mic Button -->
+        <button id="mic-button" class="mic-button" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); border: none; cursor: pointer; font-size: 2rem; color: white; box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3); transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; justify-content: center;">
             <i class="fas fa-microphone"></i>
         </button>
     </div>
+</div>
 
-    <script>
-        // Lógica básica da interface (sem a API do ElevenLabs ainda)
-        const micButton = document.getElementById('mic-button');
-        const statusText = document.getElementById('status');
-        let isListening = false;
+<style>
+    .mic-button:hover {
+        transform: scale(1.08);
+        box-shadow: 0 12px 30px rgba(124, 58, 237, 0.45);
+    }
+    .mic-button.is-listening {
+        animation: pulse-mic 1.5s infinite;
+    }
+    @keyframes pulse-mic {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); background: #ef4444; }
+        70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); background: #f87171; }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); background: #ef4444; }
+    }
+</style>
 
-        micButton.addEventListener('click', () => {
-            isListening = !isListening;
-            if (isListening) {
-                micButton.classList.add('is-listening');
-                statusText.textContent = "Ouvindo...";
-                // Aqui você iniciaria a captura de áudio
-            } else {
-                micButton.classList.remove('is-listening');
-                statusText.textContent = "Processando...";
-                // Aqui você pararia a captura e enviaria para a API
-            }
+<script>
+    const micButton = document.getElementById('mic-button');
+    const statusText = document.getElementById('status');
+    const waveBars = document.querySelectorAll('.wave-bar');
+    let isListening = false;
+    let waveInterval;
+
+    function animateWave() {
+        waveBars.forEach(bar => {
+            const height = Math.floor(Math.random() * 50) + 15;
+            bar.style.height = height + 'px';
         });
-    </script>
-</body>
-</html>
+    }
+
+    micButton.addEventListener('click', () => {
+        isListening = !isListening;
+        if (isListening) {
+            micButton.classList.add('is-listening');
+            statusText.textContent = "Escuchando tu respuesta...";
+            waveInterval = setInterval(animateWave, 150);
+        } else {
+            micButton.classList.remove('is-listening');
+            statusText.textContent = "Procesando audio...";
+            clearInterval(waveInterval);
+            waveBars.forEach(bar => bar.style.height = '15px');
+        }
+    });
+</script>
+{% endblock %}

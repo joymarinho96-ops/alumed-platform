@@ -12,7 +12,8 @@ from django.core.cache import cache
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from .models import ChatMessage, Profile
+from .models import (ChatMessage, Profile, AccessProduct, UserAccess,
+                     ConectaPreference, ConectaSubscription, ConectaConsentEvent)
 from django.core.management import call_command
 from django.contrib import messages
 from functools import wraps
@@ -23,9 +24,39 @@ def student_auth_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             next_url = request.get_full_path()
-            return redirect(f"{reverse('auth_gate')}?next={next_url}")
+            return redirect(f"{reverse('login')}?next={next_url}")
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+
+def has_product_access(user, product_slug):
+    """
+    Verifica se um usuario tem acesso ativo a um AccessProduct (ex: CONECTA_FCM).
+    Independente de Enrollment de cursos.
+    Staff sempre tem acesso.
+    """
+    if user.is_staff:
+        return True
+    return UserAccess.objects.filter(
+        user=user,
+        product__slug=product_slug,
+        is_active=True,
+    ).filter(
+        Q(expires_at__isnull=True) | Q(expires_at__gt=timezone.now())
+    ).exists()
+
+
+def conecta_access_required(view_func):
+    """Protege views do Conecta FCM. Requer login + UserAccess(CONECTA_FCM) ativo."""
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            next_url = request.get_full_path()
+            return redirect(f"{reverse('login')}?next={next_url}")
+        if not has_product_access(request.user, 'CONECTA_FCM'):
+            return redirect('conecta_landing')
+        return view_func(request, *args, **kwargs)
+    return _wrapped
 
 import jwt
 import hashlib
@@ -141,18 +172,47 @@ def auth_gate_view(request):
 
     return redirect(next_url)
 
+from django.contrib.auth.forms import AuthenticationForm
+
 def login_view(request):
-    return redirect('https://alumed.wixsite.com/alumed/login')
+    if request.user.is_authenticated:
+        return redirect('student_dashboard')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                next_url = request.GET.get('next', 'student_dashboard')
+                return redirect(next_url)
+    else:
+        form = AuthenticationForm()
+    return render(request, 'accounts/login.html', {'form': form})
 
 def register_view(request):
-    return redirect('https://alumed.wixsite.com/alumed/registro')
+    if request.user.is_authenticated:
+        return redirect('student_dashboard')
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('student_dashboard')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'accounts/register.html', {'form': form})
 
 def logout_view(request):
     logout(request)
     return redirect('home')
 
-@student_auth_required
 def student_dashboard_view(request):
+    # Usuarios no autenticados van al inicio (sin bloqueo de login)
+    if not request.user.is_authenticated:
+        from django.shortcuts import redirect
+        return redirect('home')
     # Busca TODAS as matrículas, ordenadas por expiração (as que vencem primeiro ou já venceram aparecem antes)
     enrollments = Enrollment.objects.filter(user=request.user).order_by('expiration_date')
     courses_with_progress = []
@@ -332,6 +392,69 @@ def student_dashboard_view(request):
         'chatmed_pending': chatmed_pending,
     }
     return render(request, 'accounts/student_dashboard.html', context)
+
+
+@conecta_access_required
+def conecta_dashboard_view(request):
+    """Dashboard Conecta FCM — Centro de control de la vida universitaria. Requer UserAccess(CONECTA_FCM)."""
+
+    # Cartelera en vivo
+    from core.views import get_cached_cartelera
+    cartelera_notices = get_cached_cartelera()
+
+    # Upcoming exams from calendar events
+    upcoming_exams = Event.objects.filter(
+        event_type='exam',
+        start_date__gte=timezone.now().date()
+    ).order_by('start_date')[:5]
+
+    # All events for calendar
+    events = Event.objects.all()
+    events_list = []
+    for event in events:
+        start_str = event.start_date.strftime('%Y-%m-%d') if event.start_date else ''
+        end_str = event.end_date.strftime('%Y-%m-%d') if event.end_date else start_str
+        events_list.append({
+            'title': event.title,
+            'start': start_str,
+            'end': end_str,
+            'type': event.event_type,
+        })
+    events_json = json.dumps(events_list, cls=DjangoJSONEncoder)
+
+    # Smart notification count (new announcements)
+    profile = request.user.profile
+    last_view = profile.last_announcement_view_time
+    new_notices_count = len([n for n in cartelera_notices]) if cartelera_notices else 0
+    has_new_announcements = Announcement.objects.filter(
+        is_active=True,
+        created_at__gt=last_view
+    ).exists()
+
+    # La Plata weather (reuse cache key from status bar if available)
+    weather_data = cache.get('laplata_weather', {
+        'temp': '--',
+        'desc': 'La Plata',
+        'wind': '--',
+        'rain': '--',
+    })
+
+    context = {
+        'cartelera_notices': cartelera_notices,
+        'upcoming_exams': upcoming_exams,
+        'events_json': events_json,
+        'new_notices_count': new_notices_count,
+        'has_new_announcements': has_new_announcements,
+        'weather_data': weather_data,
+    }
+    return render(request, 'accounts/conecta_dashboard.html', context)
+
+
+@student_auth_required
+def mis_cursos_view(request):
+    """Redireciona diretamente para a pagina de cursos no Wix."""
+    return redirect('https://www.alumedestudiantes.com/miscursos')
+
 
 @student_auth_required
 def students_list_view(request):
@@ -613,3 +736,195 @@ def alumed_store_view(request):
         'products': products
     }
     return render(request, 'accounts/store.html', context)
+
+
+# ── Conecta FCM — Preferences API v2 ─────────────────────────────────────────
+# Endpoint unico: GET/POST /conecta/api/preferences/
+# Seguridad: login_required, CSRF, opera solo sobre request.user
+# Fuente de verdad: BD Django. localStorage = cache visual solamente.
+
+from .conecta_catalog import catalog_for_api, ALL_INST_SLUGS, ALL_SUBJECT_SLUGS
+from .models import _normalize_e164
+from django.db import transaction
+import re as _re2
+
+_MAX_INST     = 12
+_MAX_SUBJECTS = 60
+
+
+def _get_client_ip(request):
+    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR', '')
+
+
+def _validate_payload(data):
+    """Valida el payload del POST. Retorna (errors_dict, cleaned_data)."""
+    errors  = {}
+    cleaned = {}
+
+    inst_raw = data.get('institutional', [])
+    if not isinstance(inst_raw, list):
+        errors['institutional'] = 'Debe ser una lista de slugs.'
+    elif len(inst_raw) > _MAX_INST:
+        errors['institutional'] = f'Maximo {_MAX_INST} categorias.'
+    else:
+        unknown = [s for s in inst_raw if s not in ALL_INST_SLUGS]
+        if unknown:
+            errors['institutional'] = f'Slugs desconocidos: {unknown}'
+        else:
+            cleaned['institutional'] = list(set(inst_raw))
+
+    subj_raw = data.get('subjects', [])
+    if not isinstance(subj_raw, list):
+        errors['subjects'] = 'Debe ser una lista de slugs.'
+    elif len(subj_raw) > _MAX_SUBJECTS:
+        errors['subjects'] = f'Maximo {_MAX_SUBJECTS} materias.'
+    else:
+        unknown = [s for s in subj_raw if s not in ALL_SUBJECT_SLUGS]
+        if unknown:
+            errors['subjects'] = f'Slugs desconocidos: {unknown}'
+        else:
+            cleaned['subjects'] = list(set(subj_raw))
+
+    wa_raw  = data.get('whatsapp_number', '').strip()
+    wa_norm = _normalize_e164(wa_raw) if wa_raw else ''
+    if wa_raw and not _re2.match(r'^\+[0-9]{10,15}$', wa_norm):
+        errors['whatsapp_number'] = 'Numero invalido. Usar formato E.164.'
+    else:
+        cleaned['whatsapp_number'] = wa_norm
+
+    em_raw = data.get('alert_email', '').strip().lower()
+    if em_raw and not _re2.match(r'^[^@]+@[^@]+\.[^@]+$', em_raw):
+        errors['alert_email'] = 'Email invalido.'
+    else:
+        cleaned['alert_email'] = em_raw
+
+    wa_active  = bool(data.get('whatsapp_active', False))
+    em_active  = bool(data.get('email_active',    False))
+    cal_active = bool(data.get('calendar_active', False))
+
+    if wa_active and not cleaned.get('whatsapp_number', ''):
+        errors['whatsapp_active'] = 'No se puede activar WhatsApp sin numero valido.'
+    if em_active and not cleaned.get('alert_email', ''):
+        errors['email_active'] = 'No se puede activar Email sin direccion valida.'
+
+    cleaned['whatsapp_active']  = wa_active
+    cleaned['email_active']     = em_active
+    cleaned['calendar_active']  = cal_active
+    cleaned['consent_granted']  = bool(data.get('consent_granted', False))
+    cleaned['revoke_consent']   = bool(data.get('revoke_consent',  False))
+
+    return errors, cleaned
+
+
+@login_required
+def conecta_preferences(request):
+    """GET  -> devuelve preferencias + catalogo completo.
+       POST -> valida y persiste preferencias de forma transaccional."""
+
+    if request.method == 'GET':
+        user = request.user
+        try:
+            pref = user.conecta_preference
+            pref_data = {
+                'whatsapp_number': pref.whatsapp_number,
+                'alert_email':     pref.alert_email,
+                'whatsapp_active': pref.whatsapp_active,
+                'email_active':    pref.email_active,
+                'calendar_active': pref.calendar_active,
+                'consent_granted': pref.consent_granted,
+                'consent_at':      pref.consent_at.isoformat() if pref.consent_at else None,
+                'consent_version': pref.consent_version,
+            }
+        except ConectaPreference.DoesNotExist:
+            pref_data = {}
+
+        subs          = ConectaSubscription.objects.filter(user=user, enabled=True).values('type', 'key')
+        institutional = [s['key'] for s in subs if s['type'] == 'institutional']
+        subjects      = [s['key'] for s in subs if s['type'] == 'subject']
+
+        return JsonResponse({
+            'ok': True,
+            'preferences':   pref_data,
+            'subscriptions': {'institutional': institutional, 'subjects': subjects},
+            'catalog':       catalog_for_api(),
+        })
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except (json.JSONDecodeError, ValueError) as exc:
+            return JsonResponse({'ok': False, 'errors': {'json': str(exc)}}, status=400)
+
+        errors, cleaned = _validate_payload(data)
+        if errors:
+            return JsonResponse({'ok': False, 'errors': errors}, status=400)
+
+        user = request.user
+        ip   = _get_client_ip(request)
+        ua   = request.META.get('HTTP_USER_AGENT', '')[:300]
+
+        with transaction.atomic():
+            pref, _ = ConectaPreference.objects.get_or_create(user=user)
+            pref.whatsapp_number = cleaned['whatsapp_number'] or pref.whatsapp_number
+            pref.alert_email     = cleaned['alert_email']     or pref.alert_email
+            pref.whatsapp_active = cleaned['whatsapp_active']
+            pref.email_active    = cleaned['email_active']
+            pref.calendar_active = cleaned['calendar_active']
+
+            if cleaned['revoke_consent']:
+                pref.revoke_consent(ip=ip, ua=ua)
+            elif cleaned['consent_granted'] and not pref.consent_granted:
+                channels = ','.join(filter(None, [
+                    'whatsapp' if cleaned['whatsapp_active'] else '',
+                    'email'    if cleaned['email_active']    else '',
+                    'calendar' if cleaned['calendar_active'] else '',
+                ]))
+                pref.consent_granted  = True
+                pref.consent_at       = timezone.now()
+                pref.consent_version  = ConectaPreference.CONSENT_VERSION
+                pref.consent_channels = channels
+                pref.save()
+                ConectaConsentEvent.objects.create(
+                    user=user, action='granted',
+                    version=ConectaPreference.CONSENT_VERSION,
+                    channels=channels,
+                    whatsapp=pref.whatsapp_number,
+                    email=pref.alert_email,
+                    ip_address=ip, user_agent=ua,
+                )
+            else:
+                pref.save()
+
+            new_inst = set(cleaned.get('institutional', []))
+            ConectaSubscription.objects.filter(
+                user=user, type='institutional'
+            ).exclude(key__in=new_inst).update(enabled=False)
+            for slug in new_inst:
+                ConectaSubscription.objects.update_or_create(
+                    user=user, type='institutional', key=slug,
+                    defaults={'enabled': True}
+                )
+
+            new_subj = set(cleaned.get('subjects', []))
+            ConectaSubscription.objects.filter(
+                user=user, type='subject'
+            ).exclude(key__in=new_subj).update(enabled=False)
+            for slug in new_subj:
+                ConectaSubscription.objects.update_or_create(
+                    user=user, type='subject', key=slug,
+                    defaults={'enabled': True}
+                )
+
+        return JsonResponse({
+            'ok': True,
+            'message': 'Preferencias guardadas correctamente.',
+            'institutional_count': ConectaSubscription.objects.filter(
+                user=user, type='institutional', enabled=True).count(),
+            'subject_count': ConectaSubscription.objects.filter(
+                user=user, type='subject', enabled=True).count(),
+        })
+
+    return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+
+

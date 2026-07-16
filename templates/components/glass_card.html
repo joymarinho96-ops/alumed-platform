@@ -1,0 +1,9 @@
+<div class="glass-card" style="background: rgba(30, 17, 59, 0.45); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 20px; padding: 24px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px 0 rgba(18, 9, 36, 0.37); transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;">
+    {% if title %}
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; color: white; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            {% if icon %}<i class="fas {{ icon }}" style="color: var(--dourado);"></i>{% endif %}
+            {{ title }}
+        </h3>
+    {% endif %}
+    {{ content|safe }}
+</div>

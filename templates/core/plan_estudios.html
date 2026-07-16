@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block content %}
-<section style="padding: 120px 0 80px 0; background: radial-gradient(circle at center, rgba(245, 197, 66, 0.28) 0%, rgba(20, 10, 5, 0.95) 75%), #0a0502; min-height: 100vh; position: relative; overflow: hidden;">
+{% block title %}Plan de Estudios - ALUMED{% endblock %}
+
+{% block main_content %}
+<section style="padding: 20px 0 80px 0; min-height: 100vh; position: relative; overflow: hidden;">
     
     <!-- Glowing vintage rib cage background overlay (made transparent and placed behind contents) -->
     <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -40%); width: min(650px, 95vw); height: min(800px, 120vh); background: url('/static/img/rib_cage_vintage.png') no-repeat center center; background-size: contain; opacity: 0.11; pointer-events: none; z-index: 0; filter: blur(0.5px);"></div>

@@ -4121,59 +4121,8 @@
             }
         }
 
-
-    /* ── CONECTA FCM NAV BUTTON — Premium Gold ──────────────────── */
-    .nav-conecta-btn {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px !important;
-        border-radius: 20px !important;
-        font-size: 12.5px !important;
-        font-weight: 800 !important;
-        letter-spacing: .03em;
-        color: #000 !important;
-        text-decoration: none;
-        background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24) !important;
-        background-size: 200% 200% !important;
-        border: 1px solid rgba(251,191,36,.6) !important;
-        box-shadow:
-            0 0 12px rgba(251,191,36,.45),
-            0 0 28px rgba(251,191,36,.2),
-            inset 0 1px 0 rgba(255,255,255,.3) !important;
-        animation: conectaGlow 2.5s ease-in-out infinite, conectaShift 3s ease infinite !important;
-        transition: all .25s ease !important;
-        position: relative;
-        overflow: hidden;
-    }
-    .nav-conecta-btn::before {
-        content: '';
-        position: absolute; inset: 0; border-radius: 20px;
-        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
-        transform: translateX(-100%);
-        transition: transform .5s ease;
-    }
-    .nav-conecta-btn:hover::before { transform: translateX(100%); }
-    .nav-conecta-btn:hover {
-        transform: translateY(-2px) scale(1.04) !important;
-        box-shadow:
-            0 0 20px rgba(251,191,36,.7),
-            0 0 50px rgba(251,191,36,.3),
-            0 4px 20px rgba(0,0,0,.3) !important;
-        color: #000 !important;
-    }
-    @keyframes conectaGlow {
-        0%,100% { box-shadow: 0 0 10px rgba(251,191,36,.4), 0 0 24px rgba(251,191,36,.15), inset 0 1px 0 rgba(255,255,255,.3); }
-        50%      { box-shadow: 0 0 18px rgba(251,191,36,.7), 0 0 40px rgba(251,191,36,.3), inset 0 1px 0 rgba(255,255,255,.3); }
-    }
-    @keyframes conectaShift {
-        0%,100% { background-position: 0% 50%; }
-        50%      { background-position: 100% 50%; }
-    }
-
     {% block extra_head %}{% endblock %}
 </style>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const photo = document.querySelector(".photo-reveal");
@@ -4264,12 +4213,9 @@
     
     <div class="nav-links">
         <a href="{% url 'home' %}#home">Inicio</a>
-        <a href="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" target="_blank" rel="noopener noreferrer">Biblioteca</a>
+        <a href="{% url 'biblioteca' %}">Biblioteca</a>
         <a href="{% url 'microscopio_virtual' %}">Microscopio</a>
         <a href="{% url 'anatomia_3d' %}">Anatomía 3D</a>
-        
-        <a href="/cronograma-finales/?mode=finales">Finales</a>
-        <a href="/cronograma-finales/?mode=parciales">Parciales</a>
         
         <!-- Académico Dropdown -->
         <div class="nav-dropdown">
@@ -4287,12 +4233,6 @@
 
         <a href="{% url 'facultad' %}">Facultad</a>
         <a href="{% url 'club' %}">Club</a>
-
-        <!-- ⭐ CONECTA FCM — Botão premium dourado -->
-        <a href="{% url 'conecta_fcm' %}" class="nav-conecta-btn" id="nav-conecta-btn">
-            <i class="fas fa-bolt" style="font-size:11px;"></i>
-            Conecta FCM
-        </a>
         
         {% if user.is_authenticated %}
             <a href="{% url 'student_dashboard' %}">Mi Panel</a>
@@ -4329,2570 +4269,767 @@
 
 <main>
     {% block content %}
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     ALUMED OS — HERO + LANDING ENGINE v6 FINAL
-     Spine viva · Sticky page-level · Timeline dinâmica · Interação total
-     ═══════════════════════════════════════════════════════════════════════ -->
-
-<!-- ══ STATUS BAR — La Plata OS ══════════════════════════════════════════ -->
-<style>
-/* ── STATUS BAR ────────────────────────────────────────────────────────── */
-#ao-status-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 34px;
-  z-index: 9999;
-  background: rgba(4,2,12,.78);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  border-bottom: 1px solid rgba(124,58,237,.14);
-  box-shadow:
-    0 1px 0 rgba(124,58,237,.06),
-    0 2px 24px rgba(4,2,12,.55),
-    inset 0 -1px 0 rgba(255,255,255,.03);
-  display: flex;
-  align-items: center;
-  gap: 0;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: rgba(203,213,225,.68);
-  overflow: hidden;
-  user-select: none;
-}
-.sb-group {
-  display: flex; align-items: center; gap: 7px;
-  padding: 0 14px;
-  height: 100%;
-  border-right: 1px solid rgba(255,255,255,.055);
-  flex-shrink: 0;
-  transition: background .2s;
-}
-.sb-group:hover { background: rgba(124,58,237,.06); }
-.sb-group:last-child { border-right: none; margin-left: auto; }
-.sb-icon { font-size: 10px; color: rgba(167,139,250,.65); flex-shrink:0; }
-.sb-icon-gold { color: rgba(251,191,36,.65); }
-.sb-val {
-  font-weight: 600; color: rgba(226,232,240,.88);
-  letter-spacing: .01em;
-}
-.sb-val-bright {
-  color: #fff; font-weight: 700;
-}
-.sb-sep { width:1px; height:14px; background:rgba(255,255,255,.07); flex-shrink:0; }
-.sb-live-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 6px #22c55e;
-  animation: sbBlink 1.8s ease-in-out infinite;
-  flex-shrink: 0;
-}
-@keyframes sbBlink {
-  0%,100% { opacity: 1; box-shadow: 0 0 6px #22c55e; }
-  50%      { opacity: .45; box-shadow: 0 0 2px #22c55e; }
-}
-.sb-temp-badge {
-  background: linear-gradient(135deg, rgba(124,58,237,.22), rgba(79,70,229,.14));
-  border: 1px solid rgba(124,58,237,.28);
-  border-radius: 5px;
-  padding: 1px 7px;
-  font-size: 11px; font-weight: 800;
-  color: #c4b5fd;
-  letter-spacing: .03em;
-}
-.sb-forecast-item {
-  display:flex; align-items:center; gap:5px; flex-shrink:0;
-  padding: 0 10px;
-  border-right: 1px solid rgba(255,255,255,.055);
-}
-.sb-forecast-item:last-child { border-right:none; }
-.sb-fc-day { font-size:10px; color:rgba(148,163,184,.6); font-weight:700; letter-spacing:.06em; }
-.sb-fc-range { font-size:11px; color:rgba(203,213,225,.82); }
-.sb-fc-hi { color: #fde68a; font-weight:700; }
-.sb-fc-lo { color: rgba(148,163,184,.65); }
-
-/* Adjust navbar and body for status bar */
-body { padding-top: 34px !important; }
-nav.navbar { top: 34px !important; }
-
-/* Mobile: hide non-essential groups */
-@media (max-width: 768px) {
-  .sb-hide-mobile { display: none !important; }
-  #ao-status-bar { justify-content: center; }
-  .sb-group { border-right: none; padding: 0 10px; }
-}
-@media (max-width: 480px) {
-  .sb-group:not(.sb-mobile-show) { display: none; }
-}
-
-/* Skeleton loader while fetching */
-.sb-loading { opacity: 0.45; font-style: italic; }
-</style>
-
-<div id="ao-status-bar" role="complementary" aria-label="Estado del sistema">
-  <!-- Live indicator -->
-  <div class="sb-group">
-    <div class="sb-live-dot"></div>
-    <span class="sb-val" style="letter-spacing:.06em;font-size:10.5px;">EN VIVO</span>
-  </div>
-
-  <!-- Ciudad -->
-  <div class="sb-group sb-mobile-show">
-    <i class="fas fa-location-dot sb-icon sb-icon-gold"></i>
-    <span class="sb-val-bright">La Plata</span>
-    <span style="color:rgba(148,163,184,.45); font-size:10px;">Buenos Aires</span>
-  </div>
-
-  <!-- Temperatura + clima -->
-  <div class="sb-group sb-mobile-show">
-    <i class="fas fa-temperature-half sb-icon"></i>
-    <span class="sb-temp-badge" id="sb-temp">--°C</span>
-    <span class="sb-val" id="sb-wdesc" style="max-width:130px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">cargando…</span>
-  </div>
-
-  <!-- Lluvia -->
-  <div class="sb-group sb-hide-mobile">
-    <i class="fas fa-cloud-rain sb-icon"></i>
-    <span class="sb-val">Lluvia</span>
-    <span class="sb-val-bright" id="sb-rain">--%</span>
-  </div>
-
-  <!-- Viento -->
-  <div class="sb-group sb-hide-mobile">
-    <i class="fas fa-wind sb-icon"></i>
-    <span class="sb-val" id="sb-wind">-- km/h</span>
-  </div>
-
-  <!-- Forecast 3 días -->
-  <div class="sb-group sb-hide-mobile" style="gap:0; padding:0 4px;">
-    <div class="sb-forecast-item" id="sb-fc0"><span class="sb-fc-day">---</span><span class="sb-fc-range"><span class="sb-fc-hi">--°</span> / <span class="sb-fc-lo">--°</span></span></div>
-    <div class="sb-forecast-item" id="sb-fc1"><span class="sb-fc-day">---</span><span class="sb-fc-range"><span class="sb-fc-hi">--°</span> / <span class="sb-fc-lo">--°</span></span></div>
-    <div class="sb-forecast-item" id="sb-fc2"><span class="sb-fc-day">---</span><span class="sb-fc-range"><span class="sb-fc-hi">--°</span> / <span class="sb-fc-lo">--°</span></span></div>
-  </div>
-
-  <!-- Fecha y hora -->
-  <div class="sb-group sb-mobile-show" style="margin-left:auto; border-right:none; border-left:1px solid rgba(255,255,255,.055);">
-    <i class="fas fa-calendar sb-icon"></i>
-    <span class="sb-val" id="sb-date">---</span>
-    <div class="sb-sep"></div>
-    <i class="fas fa-clock sb-icon"></i>
-    <span class="sb-val-bright" id="sb-time" style="font-variant-numeric:tabular-nums; letter-spacing:.04em;">--:--</span>
-  </div>
-</div>
-
-<script>
-/* ── STATUS BAR: Weather + Clock ──────────────────────────────────────── */
-(function(){
-  var DAYS_ES  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-  var DAYS_SH  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  var MONTHS   = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-
-  function wmoDesc(code){
-    if(code===0)           return '☀️ Despejado';
-    if(code<=2)            return '🌤 Parcialmente nublado';
-    if(code===3)           return '☁️ Nublado';
-    if(code<=48)           return '🌫 Niebla';
-    if(code<=57)           return '🌦 Llovizna';
-    if(code<=67)           return '🌧 Lluvia';
-    if(code<=77)           return '❄️ Nieve';
-    if(code<=82)           return '🌧 Lluvias';
-    if(code<=86)           return '🌨 Nevada';
-    if(code<=99)           return '⛈️ Tormenta';
-    return '🌡 Variable';
-  }
-
-  /* Clock */
-  function tickClock(){
-    var now  = new Date();
-    var day  = DAYS_ES[now.getDay()];
-    var date = now.getDate();
-    var mon  = MONTHS[now.getMonth()];
-    var hh   = String(now.getHours()).padStart(2,'0');
-    var mm   = String(now.getMinutes()).padStart(2,'0');
-    var dEl  = document.getElementById('sb-date');
-    var tEl  = document.getElementById('sb-time');
-    if(dEl) dEl.textContent = day.charAt(0).toUpperCase()+day.slice(1)+' '+date+' de '+mon;
-    if(tEl) tEl.textContent = hh+':'+mm;
-  }
-  tickClock();
-  setInterval(tickClock, 15000);
-
-  /* Weather — Open-Meteo (free, no key) */
-  function fetchWeather(){
-    var url = 'https://api.open-meteo.com/v1/forecast'
-      + '?latitude=-34.921&longitude=-57.954'
-      + '&current=temperature_2m,weather_code,precipitation_probability,wind_speed_10m'
-      + '&daily=weather_code,temperature_2m_max,temperature_2m_min'
-      + '&timezone=America%2FArgentina%2FBuenos_Aires'
-      + '&forecast_days=4';
-
-    fetch(url)
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        var cur  = d.current;
-        var day  = d.daily;
-
-        /* Current */
-        var temp = document.getElementById('sb-temp');
-        var wdsc = document.getElementById('sb-wdesc');
-        var rain = document.getElementById('sb-rain');
-        var wind = document.getElementById('sb-wind');
-        if(temp) temp.textContent = Math.round(cur.temperature_2m)+'°C';
-        if(wdsc) wdsc.textContent = wmoDesc(cur.weather_code);
-        if(rain) rain.textContent = (cur.precipitation_probability||0)+'%';
-        if(wind) wind.textContent = Math.round(cur.wind_speed_10m)+' km/h';
-
-        /* 3-day forecast (indices 1-3, skip today=0) */
-        for(var i=0;i<3;i++){
-          var fc = document.getElementById('sb-fc'+i);
-          if(!fc || !day.time[i+1]) continue;
-          var dt  = new Date(day.time[i+1]+'T00:00:00');
-          var shr = DAYS_SH[dt.getDay()];
-          var hi  = Math.round(day.temperature_2m_max[i+1]);
-          var lo  = Math.round(day.temperature_2m_min[i+1]);
-          fc.innerHTML =
-            '<span class="sb-fc-day">'+shr+'</span>'
-            +'<span class="sb-fc-range"><span class="sb-fc-hi">'+hi+'°</span>'
-            +' / <span class="sb-fc-lo">'+lo+'°</span></span>';
-        }
-      })
-      .catch(function(){ /* silently ignore on network error */ });
-  }
-  fetchWeather();
-  setInterval(fetchWeather, 600000); /* refresh every 10 min */
-})();
-</script>
-
+<!-- CDN Scripts for 3D Immersive Engine -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-
 
 <style>
-/* ───────────────────────────────────────────────────────────────────────
-   DESIGN TOKENS
-   ─────────────────────────────────────────────────────────────────────── */
-:root {
-  --bg:       #07030f;
-  --purple:   #7c3aed;
-  --violet:   #a855f7;
-  --pink:     #c026d3;
-  --orange:   #f97316;
-  --gold:     #fbbf24;
-  --gold2:    #FFE600;
-  --dim:      #94a3b8;
-  --nav-h:    68px;
-  --spine-w:  26%;   /* spine column width */
-  --tl-w:     32%;   /* timeline column width */
-  --content-w:42%;   /* left content column width */
-}
+    /* ════════════════════════════════════════════════════════════
+       ALUMED OS — PIXEL PERFECT PORTAL & SPINE REDESIGN
+       ════════════════════════════════════════════════════════════ */
+    
+    :root {
+        --color-bg: #070312;
+        --color-panel: rgba(13, 8, 30, 0.65);
+        --color-border: rgba(147, 51, 234, 0.15);
+        --color-purple-neon: #7c3aed;
+        --color-gold-neon: #FFE600;
+        --color-orange-neon: #f97316;
+        --color-white: #ffffff;
+        --color-text-dim: #94a3b8;
+    }
 
-/* ── BASE ─────────────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
-body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    body {
+        background-color: var(--color-bg) !important;
+        color: var(--color-white);
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+    }
 
-/* ── ATMOSPHERE ───────────────────────────────────────────────────────── */
-.ao-atm {
-  position: fixed; inset: 0; z-index: -6; pointer-events: none;
-  background:
-    radial-gradient(ellipse 68% 52% at 58% 20%, rgba(100,28,210,0.30) 0%, transparent 58%),
-    radial-gradient(ellipse 45% 42% at 14% 70%, rgba(50,14,120,0.18) 0%, transparent 55%),
-    radial-gradient(ellipse 38% 36% at 70% 80%, rgba(170,80,8,0.12) 0%, transparent 55%),
-    var(--bg);
-}
-.ao-grid-pattern {
-  position: fixed; inset: 0; z-index: -5; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(124,58,237,0.042) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124,58,237,0.042) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 85% 65% at 54% 22%, black 0%, transparent 78%);
-}
+    /* Ambient Atmosphere background */
+    .landing-bg-container {
+        position: fixed;
+        inset: 0;
+        z-index: -5;
+        background: radial-gradient(circle at 60% 30%, #170932 0%, #070312 65%);
+        pointer-events: none;
+    }
+    
+    .grid-pattern-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: -4;
+        opacity: 0.05;
+        background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+        background-size: 50px 50px;
+        pointer-events: none;
+    }
 
-/* ── NAVBAR ───────────────────────────────────────────────────────────── */
-.navbar {
-  background: rgba(7,3,15,0.04) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.055) !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(3px) !important;
-  transition: background .5s, border-color .5s, box-shadow .5s, backdrop-filter .5s !important;
-  position: sticky !important; top: 0 !important; z-index: 100 !important;
-}
-.navbar.ao-glass {
-  background: rgba(7,3,15,0.94) !important;
-  border-bottom: 1px solid rgba(148,163,184,0.11) !important;
-  box-shadow: 0 4px 48px rgba(0,0,0,0.7) !important;
-  backdrop-filter: blur(28px) saturate(160%) !important;
-}
-/* Nav active state */
-.nav-links a { position: relative; transition: color .25s; }
-.nav-links a.ao-active { color: var(--gold2) !important; }
-.nav-links a.ao-active::after {
-  content:''; position: absolute;
-  left:0; right:0; bottom:-3px; height:2px; border-radius:2px;
-  background: var(--gold2); box-shadow: 0 0 10px var(--gold2);
-}
+    /* ── IMMERSIVE GRID LAYOUT ── */
+    .portal-wrap-engine {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 110px 24px 80px;
+        position: relative;
+        z-index: 15;
+    }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   PAGE-LEVEL LAYOUT
-   Left col scrolls · Spine + Timeline are STICKY for entire page
-   ═══════════════════════════════════════════════════════════════════════ */
-.ao-page {
-  display: grid;
-  grid-template-columns: var(--content-w) var(--spine-w) var(--tl-w);
-  position: relative;
-}
-
-/* LEFT CONTENT (scrolls) */
-.ao-content { position: relative; z-index: 10; }
-
-/* SPINE TRACK (sticky) */
-.ao-spine-track { position: relative; }
-.ao-spine-sticky {
-  position: sticky;
-  top: var(--nav-h);
-  height: calc(100vh - var(--nav-h));
-  display: flex; align-items: center; justify-content: center;
-  overflow: visible;
-  pointer-events: none;
-}
-
-/* TIMELINE TRACK (sticky) */
-.ao-tl-track { position: relative; }
-.ao-tl-sticky {
-  position: sticky;
-  top: calc(var(--nav-h) + 30px);
-  height: calc(100vh - var(--nav-h) - 30px);
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 0 0 0 10px;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   HERO AREA (inside left column)
-   ═══════════════════════════════════════════════════════════════════════ */
-.ao-hero-area {
-  min-height: calc(100vh - var(--nav-h));
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 40px 28px 52px 32px;
-}
-
-/* BADGE */
-.ao-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  width: fit-content; border: 1px solid rgba(148,163,184,0.18);
-  border-radius: 99px; padding: 5px 14px 5px 9px;
-  font-size: 9px; font-weight: 700; letter-spacing: 2.2px;
-  text-transform: uppercase; color: rgba(148,163,184,0.85);
-  margin-bottom: 26px; background: rgba(255,255,255,0.025);
-}
-.ao-dot {
-  width: 5.5px; height: 5.5px; border-radius: 50%;
-  background: var(--gold2); box-shadow: 0 0 8px rgba(255,230,0,.9);
-  animation: aoBlink 1.8s ease-in-out infinite; flex-shrink: 0;
-}
-@keyframes aoBlink {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%      { opacity:.25; transform:scale(.6); }
-}
-
-/* HEADLINE */
-.ao-h1 {
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(3.0rem, 4.8vw, 5.4rem);
-  font-weight: 900; line-height: 1.04;
-  letter-spacing: -0.038em; color: #fff;
-  margin: 0 0 18px 0;
-}
-.ao-h1-line { display: block; }
-.ao-vb {
-  background: linear-gradient(90deg,
-    #7c3aed 0%, #a855f7 26%, #c026d3 44%,
-    #f97316 64%, #fbbf24 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* SUBTITLE */
-.ao-sub {
-  font-size: 1.02rem; color: var(--dim);
-  line-height: 1.68; max-width: 390px; margin: 0 0 36px 0;
-}
-
-/* PORTAL CARDS */
-.ao-cards {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 13px; margin-bottom: 20px;
-}
-
-.ao-card {
-  border-radius: 18px; padding: 20px 17px 17px;
-  display: flex; flex-direction: column;
-  position: relative; overflow: hidden;
-  backdrop-filter: blur(26px) saturate(140%);
-  transition: transform .45s cubic-bezier(.25,.8,.25,1),
-              box-shadow .45s, border-color .45s;
-  transform-style: preserve-3d; cursor: pointer;
-}
-/* Top shimmer line */
-.ao-card::before {
-  content:''; position: absolute;
-  top:0; left:8%; right:8%; height:1px;
-  border-radius:99px;
-}
-/* ALUMED */
-.ao-card-a {
-  background: rgba(9,4,26,.90);
-  border: 1px solid rgba(124,58,237,.28);
-  box-shadow: 0 4px 24px rgba(0,0,0,.55), inset 0 1px 0 rgba(167,139,250,.06);
-}
-.ao-card-a::before { background: linear-gradient(90deg,transparent,rgba(167,139,250,.65),transparent); }
-.ao-card-a:hover {
-  transform: perspective(900px) rotateX(-1.2deg) translateY(-7px);
-  border-color: rgba(124,58,237,.65); box-shadow: 0 26px 58px rgba(124,58,237,.28);
-}
-/* CONECTA */
-.ao-card-c {
-  background: rgba(8,4,18,.92);
-  border: 1px solid rgba(251,191,36,.28);
-  box-shadow: 0 4px 24px rgba(0,0,0,.55), inset 0 1px 0 rgba(251,191,36,.05);
-}
-.ao-card-c::before { background: linear-gradient(90deg,transparent,rgba(251,191,36,.52),transparent); }
-.ao-card-c:hover {
-  transform: perspective(900px) rotateX(-1.2deg) translateY(-7px);
-  border-color: rgba(251,191,36,.6); box-shadow: 0 26px 58px rgba(251,191,36,.18);
-}
-
-/* Card label */
-.ao-lbl {
-  font-size: 8.5px; font-weight: 800; letter-spacing: 2.2px;
-  text-transform: uppercase; padding: 3px 9px; border-radius: 99px;
-  width: fit-content; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 5px;
-}
-.ao-card-a .ao-lbl { background: rgba(124,58,237,.16); color: #a78bfa; border:1px solid rgba(124,58,237,.22); }
-.ao-card-c .ao-lbl { background: rgba(251,191,36,.12); color: var(--gold); border:1px solid rgba(251,191,36,.2); }
-
-/* Card icon */
-.ao-ico {
-  position: absolute; top:17px; right:17px;
-  width:37px; height:37px; border-radius:9px;
-  display: flex; align-items: center; justify-content: center; font-size:.92rem;
-}
-.ao-card-a .ao-ico { background: rgba(124,58,237,.2); color: #a78bfa; box-shadow: 0 0 18px rgba(124,58,237,.38); }
-.ao-card-c .ao-ico { background: rgba(251,191,36,.14); color: var(--gold); box-shadow: 0 0 18px rgba(251,191,36,.30); }
-
-/* Card title */
-.ao-ctitle {
-  font-family: 'Outfit',sans-serif; font-size: 1.85rem;
-  font-weight: 900; letter-spacing: -.025em; line-height: 1; margin: 0 0 5px 0;
-}
-.ao-card-a .ao-ctitle { color: #fff; }
-.ao-card-c .ao-ctitle { color: var(--gold2); }
-.ao-cdesc { font-size: .78rem; color: var(--dim); margin: 0 0 13px 0; line-height: 1.55; }
-
-/* Feature list */
-.ao-list {
-  list-style: none; padding: 0; margin: 0 0 15px 0;
-  display: flex; flex-direction: column; gap: 7px; flex: 1;
-}
-.ao-list li {
-  font-size: .78rem; color: #b4c2d0;
-  display: flex; align-items: center;
-  transition: color .2s, transform .2s;
-}
-.ao-list li a {
-  color:inherit; text-decoration:none;
-  display:flex; align-items:center; gap:9px; width:100%;
-}
-.ao-list li:hover { color: #e2eaf4; transform: translateX(3px); }
-.ao-list li i { font-size: .67rem; width:13px; flex-shrink:0; }
-.ao-card-a .ao-list li i { color: #a78bfa; }
-.ao-card-c .ao-list li i { color: var(--gold); }
-
-/* CTA */
-.ao-cta {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  padding:12px; border-radius:10px;
-  font-family:'Outfit',sans-serif; font-size:.87rem; font-weight:800;
-  text-decoration:none; border:none; cursor:pointer; margin-top:auto;
-  transition: transform .25s, box-shadow .25s, filter .25s;
-  will-change: transform;
-}
-.ao-cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.ao-cta-a {
-  background: linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff;
-  box-shadow: 0 5px 22px rgba(124,58,237,.52);
-}
-.ao-cta-a:hover { box-shadow: 0 10px 32px rgba(124,58,237,.70); color:#fff; }
-.ao-cta-c {
-  background: linear-gradient(135deg,var(--gold2),#f59e0b); color:#07020e;
-  box-shadow: 0 5px 22px rgba(255,200,0,.40);
-}
-.ao-cta-c:hover { box-shadow: 0 10px 32px rgba(255,200,0,.60); color:#07020e; }
-
-/* STATS */
-.ao-stats {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:7px;
-  background: rgba(255,255,255,.016);
-  border: 1px solid rgba(255,255,255,.048);
-  border-radius:14px; padding:12px 10px;
-}
-.ao-stat { display:flex; align-items:center; gap:7px; }
-.ao-sico {
-  width:28px; height:28px; border-radius:7px;
-  background: rgba(124,58,237,.12); color:#a78bfa;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.68rem; flex-shrink:0;
-}
-.ao-stat-live .ao-sico { background:rgba(251,191,36,.1); color:var(--gold); }
-.ao-sval {
-  font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:800;
-  color:#fff; line-height:1.1;
-  display:flex; align-items:center; gap:4px;
-}
-.ao-live-dot {
-  width:4.5px; height:4.5px; border-radius:50%;
-  background:var(--gold2); box-shadow:0 0 7px rgba(255,230,0,.95);
-  display:inline-block;
-  animation: aoBlink 1.6s ease-in-out infinite;
-}
-.ao-slbl { font-size:.6rem; color:var(--dim); line-height:1.3; }
-
-/* ═══════════════════════════════════════════════════════════════════════
-   SPINE ENGINE
-   ═══════════════════════════════════════════════════════════════════════ */
-/* ── Atmosphere halos ── */
-.ao-halo-t {
-  position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-58%);
-  width:155%; height:78%; border-radius:50%;
-  background: radial-gradient(ellipse at center,
-    rgba(95,25,210,.32) 0%, rgba(80,18,180,.15) 35%, transparent 65%);
-  animation: aoHT 6.5s ease-in-out infinite; z-index:1;
-  pointer-events:none;
-}
-.ao-halo-b {
-  position:absolute; bottom:10%; left:50%;
-  transform:translateX(-50%);
-  width:110%; height:52%; border-radius:50%;
-  background: radial-gradient(ellipse at center bottom,
-    rgba(175,78,5,.26) 0%, rgba(190,88,5,.12) 38%, transparent 70%);
-  animation: aoHB 7.5s ease-in-out infinite; z-index:1;
-  pointer-events:none;
-}
-@keyframes aoHT {
-  0%,100% { opacity:.52; transform:translate(-50%,-58%) scale(1); }
-  50%      { opacity:1;   transform:translate(-50%,-58%) scale(1.18); }
-}
-@keyframes aoHB {
-  0%,100% { opacity:.55; transform:translateX(-50%) scaleX(1); }
-  50%      { opacity:1;   transform:translateX(-50%) scaleX(1.16); }
-}
-
-/*
-  ╔══════════════════════════════════════╗
-  ║  SPLINE SLOT — FUTURE 3D MODEL      ║
-  ║  Replace .ao-spine-img with:         ║
-  ║  <spline-viewer                      ║
-  ║    url="https://prod.spline.design/  ║
-  ║         YOUR_SCENE_ID/scene.        ║
-  ║         splinecode"                  ║
-  ║    class="ao-spine-img">             ║
-  ║  </spline-viewer>                    ║
-  ║  No other layout changes needed.     ║
-  ╚══════════════════════════════════════╝
-*/
-.ao-spine-img {
-  position: relative; z-index:5;
-  height: 88vh; max-height:880px;
-  width: auto; object-fit: contain;
-  display: block; pointer-events: none; user-select: none;
-  will-change: transform, filter;
-  opacity: 0; /* GSAP handles entry */
-}
-.ao-spine-img.alive {
-  animation:
-    aoBreath 5.5s ease-in-out infinite,
-    aoGlow   6s   ease-in-out infinite;
-}
-@keyframes aoBreath {
-  0%,100% { transform: scale(1) translateY(0); }
-  50%      { transform: scale(1.018) translateY(-6px); }
-}
-@keyframes aoGlow {
-  0%,100% {
-    filter:
-      drop-shadow(0 0 28px rgba(124,58,237,.70))
-      drop-shadow(0 0 70px rgba(124,58,237,.32))
-      drop-shadow(0 14px 28px rgba(170,80,0,.24));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 48px rgba(124,58,237,.95))
-      drop-shadow(0 0 110px rgba(124,58,237,.52))
-      drop-shadow(0 18px 42px rgba(200,100,0,.44));
-  }
-}
-
-/* ── HOVER FOCUS GLOW (CSS variable driven) ── */
-.ao-spine-img.ao-focus-0 { filter: drop-shadow(0 0 48px rgba(124,58,237,.95)) drop-shadow(0 -60px 60px rgba(168,85,247,.5)); }
-.ao-spine-img.ao-focus-1 { filter: drop-shadow(0 0 48px rgba(168,85,247,.95)) drop-shadow(0 -30px 50px rgba(200,60,255,.45)); }
-.ao-spine-img.ao-focus-2 { filter: drop-shadow(0 0 48px rgba(192,38,211,.95)) drop-shadow(0 10px 50px rgba(192,38,211,.45)); }
-.ao-spine-img.ao-focus-3 { filter: drop-shadow(0 0 48px rgba(217,70,239,.95)) drop-shadow(0 40px 50px rgba(249,115,22,.35)); }
-.ao-spine-img.ao-focus-4 { filter: drop-shadow(0 0 48px rgba(249,115,22,.95)) drop-shadow(0 60px 60px rgba(251,191,36,.45)); }
-.ao-spine-img.ao-focus-5 { filter: drop-shadow(0 0 48px rgba(251,191,36,.95)) drop-shadow(0 80px 60px rgba(255,230,0,.50)); }
-
-/* Energy SVG wrapper */
-.ao-energy-wrap {
-  position: absolute; z-index:6; pointer-events:none;
-  top:50%; left:50%; transform:translate(-50%,-50%);
-  height: 88vh; max-height:880px; width:64px;
-  overflow: visible;
-}
-.ao-energy-svg { width:100%; height:100%; overflow:visible; }
-
-/* Disc node pulse */
-.ao-nd { animation: aoNd 2.5s ease-in-out infinite; }
-@keyframes aoNd {
-  0%,100% { opacity:.6; }
-  50%      { opacity:1; }
-}
-
-/* Particle canvas — wider than spine to bleed into adjacent cols */
-.ao-ptcl {
-  position: absolute; z-index:4; pointer-events:none;
-  top:0; left:50%; transform:translateX(-50%);
-  width: 420px; height:100%;
-}
-
-/* Scroll hint */
-.ao-hint {
-  position:absolute; bottom:22px; left:50%;
-  transform:translateX(-50%);
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  z-index:8; pointer-events:none; opacity:.45;
-}
-.ao-mouse-icon {
-  width:19px; height:31px; border:1.5px solid rgba(255,255,255,.28);
-  border-radius:9px; position:relative;
-}
-.ao-mouse-ball {
-  position:absolute; top:4px; left:50%; transform:translateX(-50%);
-  width:3px; height:5.5px; background:rgba(255,255,255,.6); border-radius:2px;
-  animation: aoMouse 2s ease-in-out infinite;
-}
-@keyframes aoMouse {
-  0%   { opacity:1; transform:translateX(-50%) translateY(0); }
-  100% { opacity:0; transform:translateX(-50%) translateY(11px); }
-}
-.ao-hint-lbl { font-size:7.5px; letter-spacing:1.6px; text-transform:uppercase; color:rgba(255,255,255,.32); font-weight:600; }
-
-/* ═══════════════════════════════════════════════════════════════════════
-   TIMELINE — VERSÃO PREMIUM MÁXIMA
-   ═══════════════════════════════════════════════════════════════════════ */
-.ao-tl {
-  list-style:none; padding:0; margin:0;
-  display:flex; flex-direction:column; position:relative;
-  padding-left: 4px;
-}
-/* Vertical connecting line — forte e visível */
-.ao-tl::before {
-  content:''; position:absolute;
-  left:27px; top:28px; bottom:28px; width:2px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(124,58,237,.55) 6%,
-    rgba(124,58,237,.40) 55%,
-    rgba(251,191,36,.45) 80%,
-    rgba(251,191,36,.28) 92%,
-    transparent
-  );
-  z-index:0;
-  box-shadow: 0 0 8px rgba(124,58,237,.2);
-}
-/* Progress bar (active portion) animated separately */
-.ao-tl-progress {
-  position:absolute; left:27px; top:28px; width:2px;
-  background: linear-gradient(to bottom, #7c3aed, #a855f7, #f97316, #fbbf24);
-  box-shadow: 0 0 12px rgba(124,58,237,.6), 0 0 24px rgba(124,58,237,.3);
-  transition: height 0.7s cubic-bezier(.25,.8,.25,1);
-  z-index:1;
-}
-
-/* Timeline item — base visível (não invisível) */
-.ao-ti {
-  display:flex; align-items:flex-start; gap:14px; padding:12px 0 12px 4px;
-  position:relative; opacity:.38; transform:translateX(6px);
-  transition: opacity .55s cubic-bezier(.25,.8,.25,1),
-              transform .55s cubic-bezier(.25,.8,.25,1);
-  cursor:pointer;
-}
-/* ATIVO — totalmente visível */
-.ao-ti.on { opacity:1; transform:translateX(0); }
-
-/* HOVER em item inativo */
-.ao-ti:not(.on):hover { opacity:.75; transform:translateX(3px); }
-/* HOVER em item ativo */
-.ao-ti.on:hover { opacity:1; }
-
-/* Conector LEFT → spine — mais largo e brilhante */
-.ao-conn {
-  position:absolute; top:50%; left:4px;
-  transform:translateY(-50%) translateX(-100%);
-  width:0; height:2px; margin-left:-6px;
-  background: linear-gradient(to right, transparent, rgba(124,58,237,.8));
-  opacity:0;
-  transition: opacity .4s ease, width .5s cubic-bezier(.25,.8,.25,1), background .3s;
-  border-radius:2px;
-  z-index:1;
-  box-shadow: 0 0 6px rgba(124,58,237,.4);
-}
-/* Conector ativo (animado) */
-.ao-ti.on .ao-conn {
-  opacity:1; width:80px;
-  animation: aoConn 2.5s ease-in-out infinite;
-}
-/* Conector hover (mais largo + brilhante) */
-.ao-ti:hover .ao-conn {
-  opacity:1 !important; width:110px !important;
-  background: linear-gradient(to right, transparent, rgba(168,85,247,1)) !important;
-  box-shadow: 0 0 14px rgba(168,85,247,.7) !important;
-}
-/* Gold */
-.ao-gold .ao-conn {
-  background: linear-gradient(to right, transparent, rgba(251,191,36,.85));
-  box-shadow: 0 0 6px rgba(251,191,36,.4);
-}
-.ao-ti.ao-gold:hover .ao-conn {
-  background: linear-gradient(to right, transparent, rgba(255,230,0,1)) !important;
-  box-shadow: 0 0 16px rgba(255,230,0,.8) !important;
-}
-
-@keyframes aoConn {
-  0%,100% { opacity:.65; box-shadow: 0 0 6px rgba(124,58,237,.3); }
-  50%      { opacity:1;   box-shadow: 0 0 16px rgba(124,58,237,.7); }
-}
-
-/* Círculo — maior, mais nítido */
-.ao-circ {
-  width:52px; height:52px; border-radius:50%;
-  border:2px solid rgba(124,58,237,.25);
-  background: rgba(7,3,18,.96);
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.05rem; color:rgba(124,58,237,.35);
-  flex-shrink:0; position:relative; z-index:2;
-  transition: all .4s cubic-bezier(.25,.8,.25,1);
-  will-change: transform, box-shadow;
-}
-/* ATIVO */
-.ao-ti.on .ao-circ {
-  border-color: rgba(124,58,237,.9); color:#c4b5fd;
-  background: rgba(20,6,60,.98);
-  box-shadow:
-    0 0 0 3px rgba(124,58,237,.14),
-    0 0 0 6px rgba(124,58,237,.07),
-    0 0 30px rgba(124,58,237,.55),
-    0 0 55px rgba(124,58,237,.22),
-    inset 0 1px 0 rgba(167,139,250,.12);
-  animation: aoCircPulse 2.8s ease-in-out infinite;
-}
-@keyframes aoCircPulse {
-  0%,100% { box-shadow: 0 0 0 3px rgba(124,58,237,.14), 0 0 0 6px rgba(124,58,237,.07), 0 0 28px rgba(124,58,237,.50), 0 0 52px rgba(124,58,237,.18), inset 0 1px 0 rgba(167,139,250,.12); }
-  50%      { box-shadow: 0 0 0 4px rgba(124,58,237,.22), 0 0 0 9px rgba(124,58,237,.10), 0 0 42px rgba(124,58,237,.75), 0 0 80px rgba(124,58,237,.30), inset 0 1px 0 rgba(167,139,250,.18); }
-}
-/* HOVER (todos) — escala + glow explosivo */
-.ao-ti:hover .ao-circ {
-  transform: scale(1.14) !important;
-  border-color: rgba(168,85,247,1) !important;
-  color:#e9d5ff !important;
-  box-shadow:
-    0 0 0 4px rgba(124,58,237,.25),
-    0 0 0 10px rgba(124,58,237,.12),
-    0 0 45px rgba(124,58,237,.80),
-    0 0 90px rgba(124,58,237,.40) !important;
-  animation: none !important;
-}
-
-/* Gold overrides */
-.ao-gold .ao-circ { border-color:rgba(251,191,36,.28); color:rgba(251,191,36,.38); }
-.ao-ti.on.ao-gold .ao-circ {
-  border-color:rgba(251,191,36,.92); color:#fde68a;
-  background: rgba(24,14,2,.98);
-  box-shadow:
-    0 0 0 3px rgba(251,191,36,.16),
-    0 0 0 6px rgba(251,191,36,.08),
-    0 0 30px rgba(251,191,36,.55),
-    0 0 55px rgba(251,191,36,.22);
-  animation: aoCircGold 2.8s ease-in-out infinite;
-}
-@keyframes aoCircGold {
-  0%,100% { box-shadow: 0 0 0 3px rgba(251,191,36,.16), 0 0 0 6px rgba(251,191,36,.08), 0 0 28px rgba(251,191,36,.50), 0 0 52px rgba(251,191,36,.18); }
-  50%      { box-shadow: 0 0 0 4px rgba(251,191,36,.24), 0 0 0 9px rgba(251,191,36,.12), 0 0 42px rgba(251,191,36,.75), 0 0 80px rgba(251,191,36,.30); }
-}
-.ao-ti.ao-gold:hover .ao-circ {
-  transform: scale(1.14) !important;
-  border-color: rgba(255,230,0,1) !important;
-  color:#fff !important;
-  box-shadow:
-    0 0 0 4px rgba(251,191,36,.28),
-    0 0 0 10px rgba(251,191,36,.14),
-    0 0 48px rgba(251,191,36,.85),
-    0 0 96px rgba(255,230,0,.45) !important;
-  animation: none !important;
-}
-
-/* Texto — nome */
-.ao-ti-name {
-  font-family:'Outfit',sans-serif; font-size:.85rem; font-weight:800;
-  letter-spacing:.1em; text-transform:uppercase;
-  margin:0 0 4px 0;
-  color:rgba(167,139,250,.38);
-  transition: color .4s, text-shadow .4s;
-}
-.ao-ti.on .ao-ti-name {
-  color:#c4b5fd;
-  text-shadow: 0 0 20px rgba(167,139,250,.45);
-}
-.ao-ti:hover .ao-ti-name {
-  color:#e9d5ff !important;
-  text-shadow: 0 0 24px rgba(192,132,252,.7) !important;
-}
-/* Gold name */
-.ao-gold .ao-ti-name { color:rgba(251,191,36,.36); }
-.ao-ti.on.ao-gold .ao-ti-name {
-  color:#fde68a;
-  text-shadow: 0 0 20px rgba(251,191,36,.45);
-}
-.ao-ti.ao-gold:hover .ao-ti-name {
-  color:#fff !important;
-  text-shadow: 0 0 24px rgba(255,230,0,.8) !important;
-}
-
-/* Descrição */
-.ao-ti-desc {
-  font-size:.74rem;
-  color:rgba(148,163,184,.30);
-  line-height:1.55; margin:0; max-width:220px;
-  transition: color .4s;
-}
-.ao-ti.on .ao-ti-desc { color:rgba(203,213,225,.85); }
-.ao-ti:hover .ao-ti-desc { color:rgba(203,213,225,.92) !important; }
-
-/* ═══════════════════════════════════════════════════════════════════════
-   STORY SECTIONS (in left column, scroll under spine)
-   ═══════════════════════════════════════════════════════════════════════ */
-.ao-sec {
-  padding: 72px 28px 72px 32px;
-  border-top: 1px solid rgba(255,255,255,.048);
-  opacity:0; transform:translateY(28px);
-  transition: opacity .85s ease, transform .85s ease;
-}
-.ao-sec.vis { opacity:1; transform:translateY(0); }
-
-.ao-slabel {
-  font-size:9px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase;
-  color:#a78bfa; margin-bottom:13px; display:block;
-}
-.ao-stitle {
-  font-family:'Outfit',sans-serif;
-  font-size: clamp(1.75rem,2.8vw,2.3rem);
-  font-weight:900; color:#fff; margin:0 0 10px 0; letter-spacing:-.025em;
-}
-.ao-ssub { font-size:.93rem; color:var(--dim); margin:0 0 36px 0; line-height:1.6; }
-
-.ao-fgrid {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px;
-}
-.ao-fcard {
-  background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.055);
-  border-radius:16px; padding:22px; text-decoration:none; display:block;
-  transition: all .4s;
-}
-.ao-fcard:hover { background:rgba(255,255,255,.04); border-color:rgba(124,58,237,.3); transform:translateY(-4px); }
-.ao-fico { font-size:1.6rem; color:var(--purple); margin-bottom:13px; }
-.ao-ftitle { color:#fff; font-family:'Outfit',sans-serif; font-size:1rem; font-weight:700; margin:0 0 8px 0; }
-.ao-fdesc { font-size:.83rem; color:var(--dim); margin:0; line-height:1.55; }
-
-/* Plans */
-.ao-plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:22px; }
-.ao-plan {
-  background:rgba(255,255,255,.018); border:1px solid rgba(255,255,255,.065);
-  border-radius:18px; padding:28px; display:flex; flex-direction:column; transition:all .4s;
-}
-.ao-plan:hover { transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,.4); }
-.ao-plan-prem { border-color:rgba(251,191,36,.24); background:rgba(251,191,36,.018); }
-.ao-plan-name { font-family:'Outfit',sans-serif; font-size:1.35rem; font-weight:900; color:#fff; margin:0 0 7px 0; }
-.ao-plan-price { font-size:1.9rem; font-weight:900; color:#fff; margin:0 0 11px 0; }
-.ao-plan-prem .ao-plan-price { color:var(--gold); }
-.ao-plan-desc { font-size:.82rem; color:var(--dim); margin:0 0 18px 0; }
-.ao-plan-ul { list-style:none; padding:0; margin:0 0 22px 0; display:flex; flex-direction:column; gap:9px; flex:1; }
-.ao-plan-ul li { font-size:.82rem; color:#b4c2d0; display:flex; align-items:center; gap:8px; }
-
-/* Cartelera mock */
-.ao-mock {
-  background:#0d091e; border:1px solid rgba(255,255,255,.065);
-  border-radius:18px; overflow:hidden; box-shadow:0 18px 52px rgba(0,0,0,.5);
-}
-.ao-mock-hd {
-  background:#100c24; padding:10px 17px;
-  display:flex; align-items:center; gap:7px;
-  border-bottom:1px solid rgba(255,255,255,.048);
-}
-.ao-dot2 { width:8px; height:8px; border-radius:50%; }
-.ao-mock-url {
-  background:rgba(255,255,255,.04); border-radius:6px;
-  padding:4px 16px; font-size:10px; color:#64748b; font-family:monospace;
-  margin-left:12px; flex:1; max-width:260px;
-}
-.ao-mock-bd { padding:20px; display:flex; flex-direction:column; gap:10px; }
-.ao-notice {
-  background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.05);
-  border-radius:11px; padding:15px; display:flex; justify-content:space-between;
-  align-items:center; gap:14px; text-decoration:none; transition:all .2s;
-}
-.ao-notice:hover { background:rgba(255,255,255,.04); transform:translateX(4px); }
-.ao-notice-dept { font-size:8.5px; color:var(--gold); font-weight:800; letter-spacing:.8px; text-transform:uppercase; }
-.ao-notice-title { color:#fff; font-size:.88rem; font-weight:700; margin:4px 0 0 0; }
-.ao-notice-date { font-size:10.5px; color:var(--dim); font-weight:600; white-space:nowrap; }
-
-/* Chat */
-.ao-chat { display:flex; flex-direction:column; gap:15px; }
-.ao-bubble { max-width:85%; padding:13px 17px; border-radius:17px; font-size:.85rem; line-height:1.6; }
-.ao-bu { background:rgba(255,255,255,.05); color:#fff; margin-left:auto; border-bottom-right-radius:3px; border:1px solid rgba(255,255,255,.04); }
-.ao-bj { background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(79,70,229,.1)); border:1px solid rgba(124,58,237,.3); color:#f1f5f9; border-bottom-left-radius:3px; }
-
-/* ── FOOTER ─────────────────────────────────────────────────────────── */
-.ao-footer {
-  background:#030107; border-top:1px solid rgba(255,255,255,.048);
-  padding:32px 32px 20px; position:relative; z-index:15;
-}
-.ao-footer-inner {
-  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
-}
-.ao-flogo {
-  font-family:'Outfit',sans-serif; font-weight:900; font-size:1.1rem;
-  color:#fff; text-decoration:none; display:flex; align-items:center; gap:6px;
-}
-.ao-flogo .gp { color:var(--gold2); }
-.ao-flinks { display:flex; gap:20px; font-size:.8rem; color:var(--dim); }
-.ao-flinks a { color:inherit; text-decoration:none; transition:color .2s; }
-.ao-flinks a:hover { color:#c4b5fd; }
-.ao-fsocial { display:flex; gap:13px; }
-.ao-fsocial a { color:#475569; font-size:.95rem; text-decoration:none; transition:color .2s; }
-.ao-fsocial a:hover { color:#a78bfa; }
-.ao-fcopy { text-align:center; font-size:.68rem; color:#334155; margin-top:14px; }
-
-/* ═══════════════════════════════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════════════════════════════ */
-@media (max-width:1280px) {
-  :root { --content-w:44%; --spine-w:24%; --tl-w:32%; }
-  .ao-ti-desc { display:none; }
-}
-@media (max-width:1080px) {
-  :root { --content-w:52%; --spine-w:26%; --tl-w:22%; }
-  .ao-ti-name { font-size:.7rem; }
-}
-@media (max-width:900px) {
-  .ao-page { grid-template-columns: 55% 45%; }
-  .ao-tl-track { display:none; }
-}
-@media (max-width:768px) {
-  .ao-page { grid-template-columns:1fr; }
-  .ao-spine-track { order:1; }
-  .ao-spine-sticky {
-    position:relative; top:0; height:52vw; max-height:300px;
-  }
-  .ao-spine-img { height:100%; }
-  .ao-content { order:2; }
-  .ao-hero-area { min-height:auto; padding:24px 18px 36px; }
-  .ao-h1 { font-size:clamp(2.4rem,9vw,3.4rem); }
-  .ao-cards { grid-template-columns:1fr; }
-  .ao-stats { grid-template-columns:1fr 1fr; }
-  .ao-hint, .ao-ptcl, .ao-energy-wrap { display:none; }
-  .ao-sec { padding:52px 18px; }
-}
-@media (max-width:480px) {
-  .ao-stats { padding:10px 8px; gap:6px; }
-  .ao-slbl { font-size:.56rem; }
-}
-
-/* ── SECTION DECO ILLUSTRATIONS ────────────────────────────────── */
-.ao-sec {
-  overflow: visible !important; /* allow deco to bleed into spine area */
-  position: relative;
-}
-.ao-deco {
-  position: absolute;
-  right: -120px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.055;
-  will-change: transform;
-  line-height: 1;
-  filter: blur(0.5px);
-  transition: opacity 1s;
-}
-.ao-sec.vis .ao-deco { opacity: 0.065; }
-.ao-deco i {
-  display: block;
-  font-size: 220px;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #f97316 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: none;
-}
-.ao-deco-gold i {
-  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fff59d 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-/* sub-icon floating behind */
-.ao-deco-sub {
-  position: absolute;
-  font-size: 90px;
-  opacity: 0.6;
-  bottom: -30px;
-  right: -30px;
-  background: linear-gradient(135deg, #c026d3, #f97316);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-@media (max-width:900px) { .ao-deco { display:none; } }
-</style>
-
-<!-- ── ATMOSPHERE ──────────────────────────────────────────────────────── -->
-<div class="ao-atm"          aria-hidden="true"></div>
-<div class="ao-grid-pattern" aria-hidden="true"></div>
-
-<!-- ══════════════════════════════════════════════════════════════════════
-     PAGE LAYOUT — 3 sticky columns
-     ══════════════════════════════════════════════════════════════════════ -->
-<div class="ao-page" id="ao-page">
-
-  <!-- ══ COLUMN 1: CONTENT (scrolls) ══ -->
-  <div class="ao-content" id="ao-content">
-
-    <!-- HERO AREA -->
-    <div class="ao-hero-area" id="ao-hero">
-
-      <!-- LOGO ALUMED OS — posição estratégica acima do headline -->
-      <div class="ao-logo-wrap" id="j-logo" style="
-        display:flex; align-items:center; gap:14px;
-        margin-bottom:22px; opacity:0;
-      ">
-        <img
-          src="{% static 'img/alumed_logo.jpg' %}"
-          alt="Instituto ALUMED"
-          style="
-            width:62px; height:62px; border-radius:50%;
-            object-fit:cover;
-            box-shadow:
-              0 0 0 2px rgba(124,58,237,.5),
-              0 0 0 5px rgba(124,58,237,.14),
-              0 0 24px rgba(124,58,237,.55),
-              0 0 48px rgba(124,58,237,.22);
-            animation: aoLogoGlow 4s ease-in-out infinite;
-            flex-shrink:0;
-          "
-        >
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          <span style="font-family:'Outfit',sans-serif; font-size:.62rem; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:rgba(148,163,184,.6);">SISTEMA OPERACIONAL ACADÉMICO</span>
-          <span style="font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:900; color:#fff; letter-spacing:-.01em;">Instituto ALUMED <span style="color:#FFE600;">OS</span></span>
-        </div>
-      </div>
-      <style>
-        @keyframes aoLogoGlow {
-          0%,100% { box-shadow: 0 0 0 2px rgba(124,58,237,.5), 0 0 0 5px rgba(124,58,237,.14), 0 0 24px rgba(124,58,237,.55), 0 0 48px rgba(124,58,237,.22); }
-          50%      { box-shadow: 0 0 0 2px rgba(124,58,237,.8), 0 0 0 7px rgba(124,58,237,.22), 0 0 36px rgba(124,58,237,.80), 0 0 72px rgba(124,58,237,.36); }
+    .engine-layout-grid {
+        display: grid;
+        grid-template-columns: 55% 45%;
+        gap: 20px;
+        align-items: start;
+    }
+    @media (max-width: 1150px) {
+        .engine-layout-grid {
+            grid-template-columns: 1fr;
         }
-      </style>
+    }
 
-      <div class="ao-badge" id="j-badge">
-        <span class="ao-dot"></span>BIENVENIDO A ALUMED OS<span class="ao-dot"></span>
-      </div>
+    /* ── HERO BANNER ── */
+    .hero-engine-box {
+        margin-bottom: 48px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+    .experience-tag-neon {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.25);
+        color: #c4b5fd;
+        padding: 5px 14px;
+        border-radius: 99px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 20px;
+    }
+    .hero-title-engine {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        margin: 0 0 16px 0;
+        color: #fff;
+    }
+    .hero-title-engine span {
+        background: linear-gradient(135deg, var(--color-purple-neon) 0%, #c4b5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero-sub-engine {
+        font-size: 1.1rem;
+        color: var(--color-text-dim);
+        max-width: 580px;
+        line-height: 1.5;
+        margin: 0;
+    }
 
-      <h1 class="ao-h1" id="j-h1">
-        <span class="ao-h1-line">La columna</span>
-        <span class="ao-h1-line"><span class="ao-vb">vertebral</span></span>
-        <span class="ao-h1-line">de tu carrera</span>
-        <span class="ao-h1-line">médica.</span>
-      </h1>
+    /* ── TWO MAIN PORTALS (GRID) ── */
+    .portals-engine-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    @media (max-width: 680px) {
+        .portals-engine-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 
-      <p class="ao-sub" id="j-sub">
-        Estudiá, organizá y conectate con toda tu vida universitaria desde un único lugar.
-      </p>
+    .glass-portal-card-engine {
+        background: var(--color-panel);
+        border: 1px solid var(--color-border);
+        border-radius: 28px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(20px) saturate(120%);
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s, box-shadow 0.4s;
+        position: relative;
+        overflow: hidden;
+        will-change: transform, box-shadow;
+    }
+    .glass-portal-card-engine::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1.5px;
+        background: linear-gradient(135deg, rgba(124,58,237,0.25) 0%, transparent 60%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+    .glass-portal-card-engine:hover {
+        transform: translate3d(0, -6px, 0);
+        border-color: rgba(124, 58, 237, 0.4);
+        box-shadow: 0 20px 45px rgba(124, 58, 237, 0.2);
+    }
+    
+    .glass-portal-card-conecta-engine::before {
+        background: linear-gradient(135deg, rgba(255,230,0,0.25) 0%, transparent 60%);
+    }
+    .glass-portal-card-conecta-engine:hover {
+        border-color: rgba(255, 230, 0, 0.35);
+        box-shadow: 0 20px 45px rgba(255, 230, 0, 0.12);
+    }
 
-      <!-- PORTAL CARDS -->
-      <div class="ao-cards" id="j-cards">
+    .portal-icon-engine {
+        position: absolute;
+        top: 28px; right: 32px;
+        font-size: 2.2rem;
+    }
+    .glass-portal-card-alumed-engine .portal-icon-engine { color: #a78bfa; filter: drop-shadow(0 0 10px rgba(167,139,250,0.3)); }
+    .glass-portal-card-conecta-engine .portal-icon-engine { color: var(--color-gold-neon); filter: drop-shadow(0 0 10px rgba(255,230,0,0.3)); }
 
-        <div class="ao-card ao-card-a" id="ao-card-a">
-          <span class="ao-lbl">ESTUDIAR</span>
-          <div class="ao-ico"><i class="fas fa-brain"></i></div>
-          <h2 class="ao-ctitle">ALUMED</h2>
-          <p class="ao-cdesc">Todo lo que necesitás para aprender mejor.</p>
-          <ul class="ao-list">
-            <li><a href="{% url 'biblioteca' %}"><i class="fas fa-book-open"></i>Biblioteca</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-graduation-cap"></i>Cursos</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-wand-magic-sparkles"></i>IA Profe Joy</a></li>
-            <li><a href="{% url 'microscopio_virtual' %}"><i class="fas fa-microscope"></i>Microscopio Virtual</a></li>
-            <li><a href="{% url 'anatomia_3d' %}"><i class="fas fa-cube"></i>Anatomía 3D</a></li>
-            <li><a href="{% url 'courses:flashcards_dashboard' %}"><i class="fas fa-clone"></i>Flashcards</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-clipboard-list"></i>Simulacros</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-podcast"></i>Podcast</a></li>
-          </ul>
-          <a href="{% url 'student_dashboard' %}" class="ao-cta ao-cta-a">
-            Entrar al Campus &nbsp;<i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
+    .glass-portal-card-engine h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.7rem;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.02em;
+    }
+    .glass-portal-card-engine p {
+        font-size: 0.88rem;
+        color: var(--color-text-dim);
+        margin: 0 0 24px 0;
+        line-height: 1.5;
+    }
 
-        <div class="ao-card ao-card-c" id="ao-card-c">
-          <span class="ao-lbl"><i class="fas fa-signal" style="font-size:7px;"></i>ORGANIZAR</span>
-          <div class="ao-ico"><i class="fas fa-bell"></i></div>
-          <h2 class="ao-ctitle">CONECTA</h2>
-          <p class="ao-cdesc">Toda la información oficial de tu Facultad en tiempo real.</p>
-          <ul class="ao-list">
-            <li><a href="{% url 'cartelera_view' %}"><i class="fas fa-bullhorn"></i>Cartelera Oficial</a></li>
-            <li><a href="{% url 'comisiones' %}"><i class="fas fa-users"></i>Comisiones</a></li>
-            <li><a href="{% url 'cronograma_tps' %}"><i class="fas fa-clock"></i>Horarios y Aulas</a></li>
-            <li><a href="{% url 'cronograma_finales' %}?mode=parciales"><i class="fas fa-layer-group"></i>TPs, Parciales y Finales</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-bell"></i>Notificaciones</a></li>
-            <li><a href="https://wa.me/5492215448983" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i>WhatsApp y Email</a></li>
-            <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-calendar-alt"></i>Google Calendar</a></li>
-          </ul>
-          <a href="{% url 'conecta_fcm' %}" class="ao-cta ao-cta-c">
-            Abrir Conecta &nbsp;<i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
+    .portal-items-list {
+        list-style: none;
+        padding: 0; margin: 0 0 28px 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .portal-items-list li {
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        display: flex;
+        align-items: center;
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .portal-items-list li:hover {
+        transform: translateX(4px);
+    }
+    .portal-items-list li a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+    .glass-portal-card-alumed-engine .portal-items-list li:hover {
+        color: #c4b5fd;
+    }
+    .glass-portal-card-conecta-engine .portal-items-list li:hover {
+        color: var(--color-gold-neon);
+    }
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .portal-items-list li i {
+        font-size: 0.8rem;
+        width: 16px;
+    }
+    .glass-portal-card-alumed-engine .portal-items-list li i { color: #a78bfa; }
+    .glass-portal-card-conecta-engine .portal-items-list li i { color: var(--color-gold-neon); }
 
-      </div><!-- /cards -->
+    /* Buttons */
+    .magnetic-action-btn {
+        margin-top: auto;
+        width: 100%;
+        padding: 15px;
+        border-radius: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 800;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s;
+        border: none;
+        cursor: pointer;
+        will-change: transform;
+    }
+    .btn-alumed-portal {
+        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+        color: #ffffff;
+        box-shadow: 0 6px 18px rgba(124,58,237,0.3);
+    }
+    .btn-conecta-portal {
+        background: linear-gradient(135deg, var(--color-gold-neon) 0%, #d97706 100%);
+        color: #05020c;
+        box-shadow: 0 6px 18px rgba(255,230,0,0.25);
+    }
 
-      <!-- STATS -->
-      <div class="ao-stats" id="j-stats">
-        <div class="ao-stat">
-          <div class="ao-sico"><i class="fas fa-user-group"></i></div>
-          <div><div class="ao-sval">+50.000</div><div class="ao-slbl">Estudiantes</div></div>
-        </div>
-        <div class="ao-stat">
-          <div class="ao-sico"><i class="fas fa-book-open"></i></div>
-          <div><div class="ao-sval">+8.000</div><div class="ao-slbl">Recursos</div></div>
-        </div>
-        <div class="ao-stat ao-stat-live">
-          <div class="ao-sico"><i class="fas fa-rss"></i></div>
-          <div>
-            <div class="ao-sval">Cartelera<span class="ao-live-dot" style="margin-left:4px;"></span></div>
-            <div class="ao-slbl">en vivo</div>
-          </div>
-        </div>
-        <div class="ao-stat">
-          <div class="ao-sico"><i class="fas fa-shield-halved"></i></div>
-          <div><div class="ao-sval">100%</div><div class="ao-slbl">Información oficial</div></div>
-        </div>
-      </div>
+    /* ── STATS FOOTER ROW ── */
+    .stats-footer-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 60px;
+    }
+    @media (max-width: 600px) {
+        .stats-footer-row {
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+    }
+    .stat-footer-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .stat-footer-icon {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: rgba(124, 58, 237, 0.12);
+        color: #a78bfa;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.95rem;
+    }
+    .stat-footer-info {}
+    .stat-footer-val {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: #fff;
+        line-height: 1.1;
+    }
+    .stat-footer-lbl {
+        font-size: 0.72rem;
+        color: var(--color-text-dim);
+    }
 
-    </div><!-- /hero-area -->
+    /* ── SCROLL TRIGGER SECTIONS ── */
+    .active-story-section {
+        padding: 80px 0;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        opacity: 0.25;
+        transform: translate3d(0, 30px, 0);
+        transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        will-change: transform, opacity;
+    }
+    .active-story-section.in-viewport {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
 
-<!-- ═══════════════════════════════════════════════════════════
-     SECTIONS — FULL-WIDTH CINEMATOGRÁFICAS
-     Sem colunas rígidas · Parallax médico · Identidade ALUMED OS
-     ═══════════════════════════════════════════════════════════ -->
-<style>
-/* ── CINEMATIC SECTIONS BASE ─────────────────────────────────────── */
-.ao-sec {
-  position: relative;
-  overflow: hidden;
-}
+    .story-section-header {
+        margin-bottom: 40px;
+    }
+    .story-section-header h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 0 8px 0;
+    }
+    .story-section-header p {
+        color: var(--color-text-dim);
+        font-size: 0.95rem;
+        margin: 0;
+    }
 
-/* Parallax decorative icons — medical/educational atmosphere */
-.px-deco {
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  transition: transform .1s linear;
-}
-.px-deco i {
-  display: block;
-  font-size: inherit;
-  filter: blur(1.5px);
-  background: var(--px-grad, linear-gradient(135deg, rgba(124,58,237,.7), rgba(167,139,250,.4)));
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-  opacity: var(--px-op, .055);
-}
+    .immersive-feature-box {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 20px;
+        padding: 24px;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        will-change: transform, border-color;
+    }
+    .immersive-feature-box:hover {
+        background: rgba(255,255,255,0.04);
+        border-color: rgba(124, 58, 237, 0.3);
+        transform: translate3d(0, -5px, 0);
+    }
 
-/* Full-width section card grids */
-.fw-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 28px;
-}
-.fw-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 22px;
-}
-.fw-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 22px;
-}
+    /* ── MOCK BROWSER ── */
+    .browser-showcase-mock {
+        background: #0d091e;
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+    }
+    .showcase-mock-header {
+        background: #130d2a;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .showcase-mock-dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; }
+    .showcase-mock-dot:nth-child(2) { background: #fbbf24; }
+    .showcase-mock-dot:nth-child(3) { background: #10b981; }
+    .browser-mock-url {
+        background: rgba(255,255,255,0.04);
+        border-radius: 8px;
+        padding: 5px 20px;
+        font-size: 11px;
+        color: #94a3b8;
+        font-family: monospace;
+        margin-left: 20px;
+        flex: 1;
+        max-width: 320px;
+    }
+    .showcase-mock-body {
+        padding: 28px;
+        background: radial-gradient(circle at top, #140d2d, #05020c);
+    }
 
-/* Feature card — improved */
-.fw-card {
-  background: rgba(255,255,255,.024);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 18px;
-  padding: 22px 20px;
-  position: relative; overflow: hidden;
-  transition: all .35s ease;
-  cursor: default;
-  z-index: 1;
-}
-.fw-card::before {
-  content: ''; position: absolute;
-  inset: 0; border-radius: 18px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.12) 0%, transparent 70%);
-  opacity: 0; transition: opacity .35s;
-}
-.fw-card:hover { background: rgba(124,58,237,.07); border-color: rgba(124,58,237,.25); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(124,58,237,.12); }
-.fw-card:hover::before { opacity: 1; }
-.fw-card.gold:hover { background: rgba(251,191,36,.05); border-color: rgba(251,191,36,.22); box-shadow: 0 12px 40px rgba(251,191,36,.10); }
-.fw-card.gold::before { background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,.1) 0%, transparent 70%); }
-.fw-card-ico {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; margin-bottom: 14px;
-  background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.2);
-  color: #a78bfa;
-  transition: all .35s;
-}
-.fw-card.gold .fw-card-ico { background: rgba(251,191,36,.1); border-color: rgba(251,191,36,.2); color: #fbbf24; }
-.fw-card:hover .fw-card-ico { transform: scale(1.1); box-shadow: 0 0 18px rgba(124,58,237,.4); }
-.fw-card.gold:hover .fw-card-ico { box-shadow: 0 0 18px rgba(251,191,36,.4); }
-.fw-card h3 { font-family:'Outfit',sans-serif; font-size:.92rem; font-weight:800; color:#e2e8f0; margin:0 0 6px 0; }
-.fw-card p  { font-size:.76rem; color:rgba(148,163,184,.7); margin:0; line-height:1.5; }
+    /* Chat bubble */
+    .chat-bubble-engine {
+        max-width: 85%;
+        padding: 16px 20px;
+        border-radius: 20px;
+        margin-bottom: 18px;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    .bubble-user-style {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.03);
+    }
+    .bubble-joy-style {
+        background: linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(79,70,229,0.08) 100%);
+        border: 1px solid rgba(124,58,237,0.28);
+        color: #f1f5f9;
+        border-bottom-left-radius: 4px;
+    }
 
-/* CTA section button */
-.sec-cta-wrap {
-  margin-top: 32px;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.sec-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 26px; border-radius: 12px;
-  font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:800;
-  text-decoration: none; cursor: pointer;
-  transition: all .3s ease;
-  position: relative; overflow: hidden; z-index:1;
-}
-.sec-cta-primary {
-  background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(168,85,247,.8));
-  color: #fff;
-  border: 1px solid rgba(167,139,250,.4);
-  box-shadow: 0 0 24px rgba(124,58,237,.35), inset 0 1px 0 rgba(255,255,255,.12);
-}
-.sec-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 32px rgba(124,58,237,.55); }
-.sec-cta-gold {
-  background: linear-gradient(135deg, rgba(251,191,36,.9), rgba(245,158,11,.8));
-  color: #000;
-  border: 1px solid rgba(251,191,36,.5);
-  box-shadow: 0 0 24px rgba(251,191,36,.3);
-}
-.sec-cta-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 32px rgba(251,191,36,.5); }
-.sec-cta-ghost {
-  background: rgba(255,255,255,.05);
-  color: rgba(203,213,225,.75);
-  border: 1px solid rgba(255,255,255,.1);
-}
-.sec-cta-ghost:hover { background: rgba(255,255,255,.09); color: #fff; transform: translateY(-1px); }
-
-/* Stat ribbon */
-.stat-ribbon {
-  display: flex; gap: 0;
-  background: rgba(255,255,255,.018);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 16px;
-  margin-top: 28px;
-  overflow: hidden;
-}
-.stat-cell {
-  flex: 1; padding: 18px 20px; text-align: center;
-  border-right: 1px solid rgba(255,255,255,.06);
-  position: relative;
-}
-.stat-cell:last-child { border-right: none; }
-.stat-cell::after {
-  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 40%; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(124,58,237,.45), transparent);
-}
-.stat-num { font-family:'Outfit',sans-serif; font-size: 1.6rem; font-weight: 900; color: #fff; }
-.stat-lbl { font-size: .65rem; color: rgba(148,163,184,.55); margin-top: 3px; letter-spacing: .08em; text-transform: uppercase; }
-
-/* Live badge */
-.live-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25);
-  border-radius: 20px; padding: 3px 10px;
-  font-size: .62rem; font-weight: 800; letter-spacing: .08em;
-  color: #4ade80; text-transform: uppercase;
-  vertical-align: middle; margin-left: 10px;
-}
-.live-dot { width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 5px #4ade80; animation: sbBlink 1.6s ease-in-out infinite; }
-
-/* Conecta notice strip */
-.cn-notices {
-  margin-top: 22px;
-  background: rgba(4,2,18,.7);
-  border: 1px solid rgba(251,191,36,.15);
-  border-radius: 16px;
-  overflow: hidden;
-}
-.cn-notice-hd {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px;
-  background: rgba(0,0,0,.3);
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-  text-transform: uppercase; color: rgba(251,191,36,.7);
-}
-.cn-notice-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  transition: background .2s; cursor: pointer;
-}
-.cn-notice-row:last-child { border-bottom: none; }
-.cn-notice-row:hover { background: rgba(251,191,36,.03); }
-.cn-dept { font-size: .56rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(251,191,36,.6); margin-bottom: 2px; }
-.cn-title { font-size: .76rem; color: rgba(226,232,240,.82); line-height: 1.35; }
-.cn-date { font-size: .6rem; color: rgba(148,163,184,.4); margin-left: auto; white-space: nowrap; flex-shrink:0; }
-.cn-new { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: .52rem; font-weight: 800; background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.2); margin-left: 5px; vertical-align: middle; }
-
-/* Joy section photo card */
-.joy-photo-card {
-  position: absolute;
-  right: -20px; top: 50%;
-  transform: translateY(-50%);
-  width: 200px;
-  background: rgba(124,58,237,.06);
-  border: 1px solid rgba(167,139,250,.22);
-  border-radius: 24px;
-  padding: 20px 16px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 60px rgba(124,58,237,.2),
-    0 0 120px rgba(124,58,237,.08),
-    inset 0 1px 0 rgba(255,255,255,.07);
-  z-index: 1;
-}
-.joy-photo-card::before {
-  content: ''; position: absolute;
-  top: -1px; left: 20%; right: 20%; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(167,139,250,.6), transparent);
-  box-shadow: 0 0 16px rgba(167,139,250,.4);
-}
-.joy-avatar {
-  width: 96px; height: 96px; border-radius: 50%;
-  margin: 0 auto 12px auto;
-  border: 2px solid rgba(167,139,250,.4);
-  box-shadow: 0 0 28px rgba(124,58,237,.5), 0 0 60px rgba(124,58,237,.2);
-  overflow: hidden;
-  background: rgba(124,58,237,.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 3rem; color: #c4b5fd;
-  position: relative;
-}
-.joy-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.joy-avatar::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12) 0%, transparent 60%);
-}
-.joy-name {
-  font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 900;
-  color: #e2e8f0; margin-bottom: 3px;
-}
-.joy-sub { font-size: .7rem; color: rgba(196,181,253,.7); }
-.joy-badge-online {
-  display: inline-flex; align-items: center; gap: 4px;
-  margin-top: 10px; padding: 3px 9px; border-radius: 20px;
-  font-size: .6rem; font-weight: 800; color: #4ade80;
-  background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
-}
-
-/* Biblioteca floating items */
-.bib-float {
-  position: absolute;
-  pointer-events: none; z-index: 0;
-  animation: bibFloat 5s ease-in-out infinite;
-}
-@keyframes bibFloat {
-  0%,100% { transform: translateY(0) rotate(var(--rot,0deg)); }
-  50%      { transform: translateY(-10px) rotate(var(--rot,0deg)); }
-}
-
-@media(max-width:900px){
-  .fw-grid { grid-template-columns:1fr 1fr; }
-  .fw-grid-4 { grid-template-columns:1fr 1fr; }
-  .joy-photo-card { display:none; }
-}
-@media(max-width:600px){
-  .fw-grid, .fw-grid-2, .fw-grid-4 { grid-template-columns:1fr; }
-  .stat-ribbon { flex-wrap:wrap; }
-}
+    /* ── FOOTER ── */
+    .experience-footer {
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding: 80px 0 40px 0;
+        background: #030107;
+        position: relative;
+        z-index: 15;
+    }
 </style>
 
-    <!-- ════════════════════════════════════════════
-         SECTION 1 — ALUMED: Estudio Inteligente
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-a" aria-label="ALUMED">
+<div class="landing-bg-container"></div>
+<div class="grid-pattern-overlay"></div>
 
-      <!-- Parallax decos: brain, cells, neurons -->
-      <div class="px-deco" style="top:-40px; right:-60px; font-size:300px; --px-op:.04;" aria-hidden="true">
-        <i class="fas fa-brain"></i>
-      </div>
-      <div class="px-deco" style="bottom:20px; left:-30px; font-size:160px; --px-op:.035; --px-grad:linear-gradient(135deg,rgba(251,191,36,.7),rgba(245,158,11,.4));" aria-hidden="true">
-        <i class="fas fa-dna"></i>
-      </div>
-      <div class="px-deco" style="top:40%; right:30px; font-size:80px; --px-op:.05;" aria-hidden="true">
-        <i class="fas fa-atom"></i>
-      </div>
-
-      <span class="ao-slabel">UNIVERSO ALUMED</span>
-      <h2 class="ao-stitle">Estudio Inteligente de Medicina</h2>
-      <p class="ao-ssub">Asimila contenidos complejos con laboratorios virtuales, IA, flashcards y simulación clínica. Todo en un ecosistema diseñado para vos.</p>
-
-      <div class="fw-grid">
-        <a href="{% url 'anatomia_3d' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-cube"></i></div>
-          <h3>Anatomía 3D</h3>
-          <p>Modelos tridimensionales rotables y detallados para guiar tu estudio práctico.</p>
-        </a>
-        <a href="{% url 'microscopio_virtual' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-microscope"></i></div>
-          <h3>Microscopio Virtual</h3>
-          <p>Láminas histológicas reales escaneadas en alta resolución con marcadores educativos.</p>
-        </a>
-        <a href="{% url 'courses:flashcards_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-clone"></i></div>
-          <h3>Flashcards Inteligentes</h3>
-          <p>Algoritmo de repetición espaciada que optimiza tu memoria antes de los parciales.</p>
-        </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-wand-magic-sparkles"></i></div>
-          <h3>IA Profe Joy</h3>
-          <p>Tutora inteligente disponible 24/7 para responder tus dudas médicas con precisión.</p>
-        </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-podcast"></i></div>
-          <h3>Podcast Médico</h3>
-          <p>Audios cortos y densos para repasar mientras viajás o descansás.</p>
-        </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-clipboard-list"></i></div>
-          <h3>Simulacros</h3>
-          <p>Tests con preguntas reales de parciales anteriores para medir tu nivel real.</p>
-        </a>
-      </div>
-
-      <div class="stat-ribbon">
-        <div class="stat-cell">
-          <div class="stat-num">+8.000</div>
-          <div class="stat-lbl">Recursos digitales</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">+50k</div>
-          <div class="stat-lbl">Estudiantes activos</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">24/7</div>
-          <div class="stat-lbl">IA disponible</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">100%</div>
-          <div class="stat-lbl">Online & Gratuito</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 2 — CONECTA: Cartelera en Vivo
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-c" aria-label="Conecta">
-
-      <!-- Parallax decos: calendar, bell, notifications -->
-      <div class="px-deco" style="top:-30px; right:-50px; font-size:260px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-bell"></i>
-      </div>
-      <div class="px-deco" style="bottom:-20px; left:-40px; font-size:200px; --px-op:.035; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(255,255,255,.2));" aria-hidden="true">
-        <i class="fas fa-calendar-days"></i>
-      </div>
-      <div class="px-deco" style="top:30%; right:60px; font-size:60px; --px-op:.06; --px-grad:linear-gradient(135deg,rgba(34,197,94,.7),rgba(16,185,129,.4));" aria-hidden="true">
-        <i class="fab fa-whatsapp"></i>
-      </div>
-
-      <span class="ao-slabel" style="color:var(--gold);">UNIVERSO CONECTA</span>
-      <h2 class="ao-stitle">
-        Cartelera Oficial en Vivo
-        <span class="live-badge"><span class="live-dot"></span>En vivo</span>
-      </h2>
-      <p class="ao-ssub">Tu facultad en tiempo real. Avisos, cambios, cronograma y notificaciones en un solo lugar.</p>
-
-      <!-- 6 cards full-width -->
-      <div class="fw-grid-4" style="grid-template-columns:repeat(3,1fr);">
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-bullhorn"></i></div>
-          <h3>Cartelera Oficial</h3>
-          <p>Avisos y resoluciones de la Secretaría Académica scrapeados en tiempo real.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-users"></i></div>
-          <h3>Comisiones y Turnos</h3>
-          <p>Consultá tus comisiones asignadas, aulas y horarios de prácticas.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-calendar-check"></i></div>
-          <h3>Cronograma</h3>
-          <p>TPs, Parciales y Finales en un calendario unificado con Google Calendar.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fab fa-whatsapp" style="color:#25d366;"></i></div>
-          <h3>WhatsApp + Email</h3>
-          <p>Notificaciones urgentes directo a tu teléfono cuando haya novedades.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fab fa-google" style="color:#4285f4;"></i></div>
-          <h3>Google Calendar</h3>
-          <p>Exportá los eventos académicos automáticamente a tu agenda personal.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-layer-group"></i></div>
-          <h3>Materias Seleccionadas</h3>
-          <p>Seguí solo lo que te importa, sin ruido innecesario.</p>
-        </div>
-      </div>
-
-      <!-- Live cartelera preview strip -->
-      <div class="cn-notices">
-        <div class="cn-notice-hd">
-          <i class="fas fa-rss" style="color:var(--gold);"></i>
-          Últimos avisos
-          <span style="margin-left:auto; font-size:.58rem; color:rgba(148,163,184,.4);">actualizado automáticamente</span>
-        </div>
-        {% for notice in cartelera_notices %}
-        <a href="{{ notice.url }}" target="_blank" class="cn-notice-row" style="text-decoration:none;">
-          <div style="flex:1; min-width:0;">
-            <div class="cn-dept">{{ notice.dept }}</div>
-            <div class="cn-title">{{ notice.title }}</div>
-          </div>
-          <span class="cn-date"><i class="far fa-calendar" style="margin-right:3px;"></i>{{ notice.date }}</span>
-        </a>
-        {% endfor %}
-      </div>
-
-      <div class="sec-cta-wrap">
-        <a href="{% url 'conecta_fcm' %}" class="sec-cta sec-cta-gold">
-          <i class="fas fa-bolt"></i>
-          Entrar a Conecta FCM
-        </a>
-        <span style="font-size:.75rem; color:rgba(148,163,184,.5);">Tu facultad actualizada en tiempo real →</span>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 3 — BIBLIOTECA: Teaser
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-b" aria-label="Biblioteca">
-
-      <!-- Parallax decos: books, PDFs, pages -->
-      <div class="px-deco" style="top:-20px; right:-40px; font-size:280px; --px-op:.045; --px-grad:linear-gradient(135deg,rgba(124,58,237,.7),rgba(79,70,229,.4));" aria-hidden="true">
-        <i class="fas fa-book-open"></i>
-      </div>
-      <div class="px-deco" style="bottom:-10px; left:-30px; font-size:150px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(96,165,250,.6),rgba(59,130,246,.3));" aria-hidden="true">
-        <i class="fas fa-file-pdf"></i>
-      </div>
-      <div class="px-deco" style="top:35%; right:50px; font-size:90px; --px-op:.05;" aria-hidden="true">
-        <i class="fas fa-scroll"></i>
-      </div>
-      <div class="px-deco" style="top:60%; left:20px; font-size:70px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-bookmark"></i>
-      </div>
-
-      <span class="ao-slabel">BIBLIOTECA DIGITAL</span>
-      <h2 class="ao-stitle">Todo el Material Universitario</h2>
-      <p class="ao-ssub">Libros, atlas, guías de TPs y apuntes organizados por materia y unidad. Más de 8.000 recursos al alcance de tu mano.</p>
-
-      <div class="fw-grid">
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-book-medical"></i></div>
-          <h3>Libros de Cátedra</h3>
-          <p>Acceso directo a los libros recomendados por cada cátedra de la facultad.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-atlas"></i></div>
-          <h3>Atlas de Anatomía</h3>
-          <p>Netter, Rouvière y más. Imágenes de alta resolución con etiquetas interactivas.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-scroll"></i></div>
-          <h3>Guías de TPs</h3>
-          <p>Guías oficiales de trabajos prácticos ordenadas por comisión y fecha.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-file-pdf"></i></div>
-          <h3>Apuntes PDF</h3>
-          <p>Resúmenes y apuntes colaborativos revisados y validados por alumnos avanzados.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-images"></i></div>
-          <h3>Imágenes Histológicas</h3>
-          <p>Láminas escaneadas de prácticas de laboratorio organizadas por tema.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-graduation-cap"></i></div>
-          <h3>Material de Cátedras</h3>
-          <p>Presentaciones, videos y recursos subidos directamente por los docentes.</p>
-        </div>
-      </div>
-
-      <!-- Stats highlight -->
-      <div style="margin-top:28px; background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(79,70,229,.04)); border:1px solid rgba(124,58,237,.18); border-radius:20px; padding:28px 32px; display:flex; align-items:center; gap:28px; flex-wrap:wrap; position:relative; overflow:hidden;">
-        <div style="position:absolute; right:-40px; top:-20px; font-size:160px; opacity:.04; pointer-events:none;">
-          <i class="fas fa-books" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></i>
-        </div>
-        <div style="flex:1; min-width:160px; position:relative; z-index:1;">
-          <div style="font-family:'Outfit',sans-serif; font-size:2.4rem; font-weight:900; color:#fff; line-height:1; margin-bottom:6px;">+8.000</div>
-          <div style="font-size:.82rem; color:rgba(196,181,253,.7);">recursos disponibles ahora mismo</div>
-        </div>
-        <a href="{% url 'biblioteca' %}" class="sec-cta sec-cta-primary" style="position:relative; z-index:1;">
-          <i class="fas fa-book-open"></i>
-          Explorar Biblioteca
-        </a>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 4 — IA PROFE JOY
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-j" aria-label="IA Profe Joy" style="padding-right: 0;">
-
-      <!-- Parallax decos: neural, wand, stars -->
-      <div class="px-deco" style="top:-30px; right:40px; font-size:240px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(167,139,250,.8),rgba(124,58,237,.3));" aria-hidden="true">
-        <i class="fas fa-robot"></i>
-      </div>
-      <div class="px-deco" style="bottom:0; left:-20px; font-size:130px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(217,70,239,.6),rgba(192,38,211,.3));" aria-hidden="true">
-        <i class="fas fa-brain"></i>
-      </div>
-      <div class="px-deco" style="top:20%; right:220px; font-size:55px; --px-op:.07; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.5));" aria-hidden="true">
-        <i class="fas fa-wand-magic-sparkles"></i>
-      </div>
-
-      <div style="padding-right: 200px; position: relative; z-index:1;">
-        <span class="ao-slabel" style="color:#c4b5fd;">TUTORÍA IA</span>
-        <h2 class="ao-stitle">Profe Joy IA — Tu Inteligencia Académica</h2>
-        <p class="ao-ssub">Resuelve dudas médicas complejas con lenguaje preciso y ejemplos clínicos reales. Disponible 24 horas, 7 días.</p>
-
-        <div class="fw-grid-2">
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-comments"></i></div>
-            <h3>Chat 24/7</h3>
-            <p>Preguntá cualquier cosa sobre anatomía, fisiología, farmacología y más.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-diagram-project"></i></div>
-            <h3>Esquemas y Mapas</h3>
-            <p>Genera esquemas conceptuales y mapas mentales en segundos.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-flask"></i></div>
-            <h3>Casos Clínicos</h3>
-            <p>Practica el razonamiento clínico con casos reales guiados por IA.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-microphone"></i></div>
-            <h3>Modo Voz</h3>
-            <p>Preguntá por voz y escuchá las explicaciones mientras estudiás.</p>
-          </div>
-        </div>
-
-        <!-- Chat demo -->
-        <div class="ao-mock" style="margin-top:22px;">
-          <div class="ao-mock-hd">
-            <div class="ao-dot2" style="background:#ef4444;"></div>
-            <div class="ao-dot2" style="background:#fbbf24;"></div>
-            <div class="ao-dot2" style="background:#10b981;"></div>
-            <div class="ao-mock-url">alumed.online/joy-ia</div>
-          </div>
-          <div class="ao-mock-bd ao-chat">
-            <div class="ao-bubble ao-bu">¿Por qué la hiperpotasemia altera la conducción cardíaca en el ECG?</div>
-            <div class="ao-bubble ao-bj">
-              <strong>Profe Joy IA:</strong> Al aumentar el K⁺ extracelular, el potencial de membrana en reposo se despolariza parcialmente. Esto reduce la disponibilidad de canales de Na⁺ dependientes de voltaje, enlenteciendo la fase 0. En el ECG: ondas T picudas, ensanchamiento del QRS y aplanamiento de la onda P.
+<div class="portal-wrap-engine">
+    <div class="engine-layout-grid">
+        
+        <!-- Left content column -->
+        <div>
+            <!-- Hero -->
+            <div class="hero-engine-box" id="hero-section">
+                <div class="experience-tag-neon"><i class="fas fa-circle" style="font-size:6px; color:#FFE600; animation: blink 1.5s infinite;"></i> BIENVENIDO A ALUMED OS</div>
+                <h1 class="hero-title-engine">
+                    La columna <span>vertebral</span><br>de tu carrera médica.
+                </h1>
+                <p class="hero-sub-engine">
+                    Estudiá, organizá y conectate con toda tu vida universitaria desde un único lugar.
+                </p>
             </div>
-            <div class="ao-bubble ao-bu">Generame un esquema de eso</div>
-            <div class="ao-bubble ao-bj" style="font-size:.8rem;">
-              <strong>Profe Joy IA:</strong>
-              <div style="margin-top:8px; padding:10px; background:rgba(124,58,237,.1); border-radius:8px; border:1px solid rgba(167,139,250,.2); font-family:monospace; font-size:.75rem; line-height:1.7; color:#c4b5fd;">
-                K⁺↑ → Vm reposo ↑ (menos negativo)<br>
-                → Canales Nav: inactivados parcialmente<br>
-                → Fase 0 enlentecida → QRS ancho<br>
-                → Repolarización acelerada → T picuda<br>
-                → Onda P: conducción aurícula afectada
-              </div>
+
+            <!-- Two main Portals -->
+            <div class="portals-engine-grid">
+                <!-- Portal 1: ALUMED -->
+                <div class="glass-portal-card-engine glass-portal-card-alumed-engine" id="card-alumed">
+                    <span class="portal-badge badge-alumed">ESTUDIAR</span>
+                    <i class="fas fa-brain portal-icon-engine"></i>
+                    <h2>ALUMED</h2>
+                    <p>Todo lo que necesitás para aprender mejor.</p>
+                    <ul class="portal-items-list">
+                        <li><a href="{% url 'biblioteca' %}"><i class="fas fa-book"></i> Biblioteca</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-graduation-cap"></i> Cursos</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-wand-magic-sparkles"></i> IA Profe Joy</a></li>
+                        <li><a href="{% url 'microscopio_virtual' %}"><i class="fas fa-microscope"></i> Microscopio Virtual</a></li>
+                        <li><a href="{% url 'anatomia_3d' %}"><i class="fas fa-cube"></i> Anatomía 3D</a></li>
+                        <li><a href="{% url 'courses:flashcards_dashboard' %}"><i class="fas fa-clone"></i> Flashcards</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-clipboard-list"></i> Simulacros</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-podcast"></i> Podcast</a></li>
+                    </ul>
+                    <a href="{% url 'student_dashboard' %}" class="magnetic-action-btn btn-alumed-portal">
+                        Entrar al Campus <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Portal 2: CONECTA -->
+                <div class="glass-portal-card-engine glass-portal-card-conecta-engine" id="card-conecta">
+                    <span class="portal-badge badge-conecta">ORGANIZAR</span>
+                    <i class="fas fa-bell portal-icon-engine"></i>
+                    <h2>CONECTA</h2>
+                    <p>Toda la información oficial de tu Facultad en tiempo real.</p>
+                    <ul class="portal-items-list">
+                        <li><a href="{% url 'cartelera_view' %}"><i class="fas fa-bullhorn"></i> Cartelera Oficial</a></li>
+                        <li><a href="{% url 'cronograma_tps' %}"><i class="fas fa-clock"></i> Horarios y aulas</a></li>
+                        <li><a href="{% url 'comisiones' %}"><i class="fas fa-users"></i> Comisiones</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-bell"></i> Notificaciones</a></li>
+                        <li><a href="{% url 'student_dashboard' %}"><i class="fas fa-calendar-alt"></i> Google Calendar</a></li>
+                        <li><a href="https://wa.me/5492215448983?text=Hola!%20Estoy%20interesado%20en%20saber%20m%C3%A1s%20sobre%20los%20cursos" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp y Email</a></li>
+                    </ul>
+                    <a href="{% url 'conecta_fcm' %}" class="magnetic-action-btn btn-conecta-portal">
+                        Abrir Conecta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
-          </div>
+
+            <!-- Stats Row -->
+            <div class="stats-footer-row">
+                <div class="stat-footer-item">
+                    <div class="stat-footer-icon"><i class="fas fa-user-group"></i></div>
+                    <div class="stat-footer-info">
+                        <div class="stat-footer-val">+50.000</div>
+                        <div class="stat-footer-lbl">Estudiantes</div>
+                    </div>
+                </div>
+                <div class="stat-footer-item">
+                    <div class="stat-footer-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="stat-footer-info">
+                        <div class="stat-footer-val">+8.000</div>
+                        <div class="stat-footer-lbl">Recursos</div>
+                    </div>
+                </div>
+                <div class="stat-footer-item">
+                    <div class="stat-footer-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <div class="stat-footer-info">
+                        <div class="stat-footer-val">+15.000</div>
+                        <div class="stat-footer-lbl">Notificaciones</div>
+                    </div>
+                </div>
+                <div class="stat-footer-item">
+                    <div class="stat-footer-icon"><i class="fas fa-shield-halved"></i></div>
+                    <div class="stat-footer-info">
+                        <div class="stat-footer-val">100%</div>
+                        <div class="stat-footer-lbl">Oficial</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: ALUMED -->
+            <div class="active-story-section" id="alumed-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon" style="background:rgba(124,58,237,0.1); color:#c4b5fd;">UNIVERSO ALUMED</div>
+                    <h3>Estudio Inteligente de Medicina</h3>
+                    <p>Asimila contenidos complejos mediante laboratorios virtuales de anatomía y simulación clínica.</p>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:24px;">
+                    <a href="{% url 'anatomia_3d' %}" class="immersive-feature-box" style="text-decoration:none;">
+                        <i class="fas fa-cube" style="font-size:1.8rem; color:#7c3aed; margin-bottom:16px;"></i>
+                        <h4 style="color:#fff; margin-bottom:10px; font-family:'Outfit',sans-serif;">Anatomía 3D</h4>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin:0; line-height:1.5;">Modelos anatómicos tridimensionales rotables y detallados para guiar tu estudio práctico.</p>
+                    </a>
+                    <a href="{% url 'microscopio_virtual' %}" class="immersive-feature-box" style="text-decoration:none;">
+                        <i class="fas fa-microscope" style="font-size:1.8rem; color:#7c3aed; margin-bottom:16px;"></i>
+                        <h4 style="color:#fff; margin-bottom:10px; font-family:'Outfit',sans-serif;">Microscopio Virtual</h4>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin:0; line-height:1.5;">Láminas histológicas reales escaneadas en alta resolución con marcadores educativos.</p>
+                    </a>
+                    <a href="{% url 'courses:flashcards_dashboard' %}" class="immersive-feature-box" style="text-decoration:none;">
+                        <i class="fas fa-clone" style="font-size:1.8rem; color:#7c3aed; margin-bottom:16px;"></i>
+                        <h4 style="color:#fff; margin-bottom:10px; font-family:'Outfit',sans-serif;">Flashcards Inteligentes</h4>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin:0; line-height:1.5;">Algoritmo de repetición espaciada que optimiza la memoria antes de tus parciales.</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 3: CONECTA -->
+            <div class="active-story-section" id="conecta-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon" style="background:rgba(255,230,0,0.1); color:var(--color-gold-neon);">UNIVERSO CONECTA</div>
+                    <h3>Cartelera Oficial en Vivo</h3>
+                    <p>Scrapeo continuo de la facultad. Mantente al día con notificaciones inmediatas.</p>
+                </div>
+
+                <div class="browser-showcase-mock">
+                    <div class="showcase-mock-header">
+                        <div class="showcase-mock-dot"></div><div class="showcase-mock-dot"></div><div class="showcase-mock-dot"></div>
+                        <div class="browser-mock-url">alumed.online/conecta</div>
+                    </div>
+                    <div class="showcase-mock-body">
+                        <div style="display:grid; gap:16px;">
+                            {% for notice in cartelera_notices %}
+                            <a href="{{ notice.url }}" target="_blank" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px; display:flex; justify-content:space-between; align-items:center; gap:20px; transition:all 0.2s; text-decoration:none; transform:none;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='none'">
+                                <div style="flex:1;">
+                                    <span style="font-size:10px; color:var(--color-gold-neon); font-weight:800; text-transform:uppercase; letter-spacing:0.8px;">{{ notice.dept }}</span>
+                                    <h5 style="color:#fff; margin:6px 0 0 0; font-size:1rem; font-weight:700;">{{ notice.title }}</h5>
+                                </div>
+                                <div style="flex-shrink:0;">
+                                    <span style="font-size:12px; color:var(--color-text-dim); font-weight:600;"><i class="far fa-calendar" style="margin-right:6px;"></i> {{ notice.date }}</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Biblioteca -->
+            <div class="active-story-section" id="biblioteca-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon">BIBLIOTECA DIGITAL</div>
+                    <h3>Material Universitario Centralizado</h3>
+                    <p>Libros de texto, atlas anatómicos oficiales y guías de trabajos prácticos al alcance de un clic.</p>
+                </div>
+
+                <div style="background:linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%); border:1px solid rgba(255,255,255,0.06); border-radius:32px; padding:44px; text-align:center; backdrop-filter:blur(10px);">
+                    <i class="fas fa-book-open" style="font-size:3rem; color:#7c3aed; margin-bottom:20px; filter:drop-shadow(0 0 10px rgba(124,58,237,0.25));"></i>
+                    <h4 style="color:#fff; margin-bottom:14px; font-family:'Outfit',sans-serif; font-size:1.4rem;">Acceso Instantáneo a Guías y Libros</h4>
+                    <p style="color:var(--color-text-dim); font-size:0.95rem; max-width:520px; margin:0 auto 30px auto; line-height:1.6;">Todo el material obligatorio de las materias ordenado de forma lógica por unidad académica.</p>
+                    <a href="{% url 'biblioteca' %}" class="magnetic-action-btn btn-alumed-portal" style="display:inline-flex; width:auto; padding:14px 32px;">
+                        Abrir Biblioteca <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 5: IA Profe Joy -->
+            <div class="active-story-section" id="joy-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon" style="background:rgba(167,139,250,0.1); color:#c4b5fd;">TUTORÍA IA</div>
+                    <h3>Profe Joy IA — Tu Inteligencia Académica</h3>
+                    <p>Resuelve dudas médicas de forma simple con lenguaje preciso y explicaciones interactivas.</p>
+                </div>
+
+                <div class="browser-showcase-mock">
+                    <div class="showcase-mock-header">
+                        <div class="showcase-mock-dot"></div><div class="showcase-mock-dot"></div><div class="showcase-mock-dot"></div>
+                        <div class="browser-mock-url">alumed.online/joy-ia</div>
+                    </div>
+                    <div class="browser-mock-body">
+                        <div class="chat-bubble-engine bubble-user-style">
+                            ¿Por qué la hiperpotasemia altera la conducción cardíaca en el ECG?
+                        </div>
+                        <div class="mock-chat-bubble-engine bubble-joy-style">
+                            <strong>Profe Joy IA:</strong> Al aumentar el potasio extracelular, el potencial de membrana en reposo se vuelve menos negativo (se despolariza parcialmente). Esto reduce la disponibilidad de los canales de sodio dependientes de voltaje, lo que enlentece la velocidad de fase 0 del potencial de acción. En el ECG, se traduce como ondas T picudas, ensanchamiento del QRS y aplanamiento de la onda P.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Herramientas -->
+            <div class="active-story-section" id="herramientas-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon">HERRAMIENTAS DE EVALUACIÓN</div>
+                    <h3>Simulacros y Podcasts de Repaso</h3>
+                    <p>Refuerza lo aprendido mediante pruebas interactivas y material auditivo para optimizar tus tiempos.</p>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                    <div class="immersive-feature-box" style="text-align:center; padding:36px;">
+                        <i class="fas fa-clipboard-question" style="font-size:2.2rem; color:var(--color-gold-neon); margin-bottom:16px;"></i>
+                        <h4 style="color:#fff; margin-bottom:10px; font-family:'Outfit',sans-serif;">Simulacros Oficiales</h4>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin:0;">Tests aleatorios estructurados con preguntas reales de parciales anteriores.</p>
+                    </div>
+                    <div class="immersive-feature-box" style="text-align:center; padding:36px;">
+                        <i class="fas fa-podcast" style="font-size:2.2rem; color:var(--color-gold-neon); margin-bottom:16px;"></i>
+                        <h4 style="color:#fff; margin-bottom:10px; font-family:'Outfit',sans-serif;">Podcasts Médicos</h4>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin:0;">Audios explicativos rápidos para repasar concepts clave mientras viajas a la facultad.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Planes -->
+            <div class="active-story-section" id="planes-section">
+                <div class="story-section-header">
+                    <div class="experience-tag-neon" style="background:rgba(255,230,0,0.1); color:var(--color-gold-neon);">SUSCRIPCIÓN</div>
+                    <h3>Elige tu Plan de Estudios</h3>
+                    <p>Únete hoy para tener acceso ilimitado a todo el ecosistema académico interactivo.</p>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:28px;">
+                    <!-- Plan Básico -->
+                    <div class="glass-portal-card-engine" style="border-color:rgba(255,255,255,0.06); background:rgba(255,255,255,0.01);">
+                        <h3 style="color:#fff; font-family:'Outfit',sans-serif; margin-bottom:8px; font-size:1.4rem;">Acceso Básico</h3>
+                        <span style="font-size:2rem; color:#fff; font-weight:900; margin-bottom:14px;">Gratis</span>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin-bottom:24px;">Información académica y cartelera universitaria.</p>
+                        <ul class="portal-sub-list" style="grid-template-columns:1fr; margin-bottom:32px; gap:12px;">
+                            <li><i class="fas fa-check" style="color:#10b981;"></i> Carteleras UNLP / UBA</li>
+                            <li><i class="fas fa-check" style="color:#10b981;"></i> Cronogramas de TPs</li>
+                            <li><i class="fas fa-times" style="color:#ef4444;"></i> IA Profe Joy Ilimitada</li>
+                            <li><i class="fas fa-times" style="color:#ef4444;"></i> Flashcards Premium</li>
+                        </ul>
+                        <a href="{% url 'register' %}" class="magnetic-action-btn" style="background:rgba(255,255,255,0.06); color:#fff;">Crear Cuenta</a>
+                    </div>
+
+                    <!-- Plan Premium -->
+                    <div class="glass-portal-card-engine" style="border-color:rgba(245,197,66,0.25); background:rgba(245,197,66,0.02);">
+                        <span class="portal-badge badge-conecta" style="margin-bottom:10px;">RECOMENDADO</span>
+                        <h3 style="color:#fff; font-family:'Outfit',sans-serif; margin-bottom:8px; font-size:1.4rem;">Club ALUMED</h3>
+                        <span style="font-size:2rem; color:var(--color-gold-neon); font-weight:900; margin-bottom:14px;">Premium</span>
+                        <p style="font-size:0.88rem; color:var(--color-text-dim); margin-bottom:24px;">Acceso ilimitado a todo el ecosistema interactivo.</p>
+                        <ul class="portal-sub-list" style="grid-template-columns:1fr; margin-bottom:32px; gap:12px;">
+                            <li><i class="fas fa-check" style="color:var(--color-gold-neon);"></i> Todo el plan básico</li>
+                            <li><i class="fas fa-check" style="color:var(--color-gold-neon);"></i> IA Profe Joy Ilimitada 24/7</li>
+                            <li><i class="fas fa-check" style="color:var(--color-gold-neon);"></i> Anatomía 3D y Microscopio</li>
+                            <li><i class="fas fa-check" style="color:var(--color-gold-neon);"></i> Flashcards y Simulacros IA</li>
+                        </ul>
+                        <a href="{% url 'club' %}" class="magnetic-action-btn btn-conecta-portal">Suscribirse al Club</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="sec-cta-wrap">
-          <a href="{% url 'student_dashboard' %}" class="sec-cta sec-cta-primary" style="background:linear-gradient(135deg,rgba(124,58,237,.9),rgba(168,85,247,.8)); box-shadow:0 0 24px rgba(124,58,237,.4);">
-            <i class="fas fa-wand-magic-sparkles"></i>
-            Probar Profe Joy IA
-          </a>
-        </div>
-      </div>
+        <!-- Right column spacer for fixed Spine Engine -->
+        <div style="pointer-events:none;"></div>
 
-      <!-- Joy photo card (floating right) -->
-      <div class="joy-photo-card" id="joy-card">
-        <div class="joy-avatar" id="joy-avatar">
-          <i class="fas fa-robot"></i>
-          <!-- If user provides photo: <img src="..." alt="Profe Joy"> -->
-        </div>
-        <div class="joy-name">IA Profe Joy</div>
-        <div class="joy-sub">Tu profesora 24/7</div>
-        <div class="joy-badge-online">
-          <span class="live-dot"></span>
-          Disponible ahora
-        </div>
-        <!-- Floating sparkles around card -->
-        <div style="position:absolute; top:12px; right:14px; font-size:.7rem; color:rgba(167,139,250,.5); animation:matFloat 2.5s ease-in-out infinite;"><i class="fas fa-star"></i></div>
-        <div style="position:absolute; bottom:18px; left:10px; font-size:.55rem; color:rgba(251,191,36,.45); animation:matFloat 3s ease-in-out infinite reverse;"><i class="fas fa-star"></i></div>
-        <div style="position:absolute; top:45%; left:5px; font-size:.5rem; color:rgba(167,139,250,.35); animation:matFloat 4s ease-in-out infinite;"><i class="fas fa-sparkles"></i></div>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 5 — HERRAMIENTAS
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-h" aria-label="Herramientas">
-
-      <!-- Parallax decos: microscope, bone, cell -->
-      <div class="px-deco" style="top:-30px; right:-50px; font-size:270px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.7),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-microscope"></i>
-      </div>
-      <div class="px-deco" style="bottom:-10px; left:-20px; font-size:160px; --px-op:.04;" aria-hidden="true">
-        <i class="fas fa-bone"></i>
-      </div>
-      <div class="px-deco" style="top:40%; right:40px; font-size:80px; --px-op:.05; --px-grad:linear-gradient(135deg,rgba(239,68,68,.6),rgba(248,113,113,.3));" aria-hidden="true">
-        <i class="fas fa-heartbeat"></i>
-      </div>
-
-      <span class="ao-slabel">HERRAMIENTAS DE EVALUACIÓN</span>
-      <h2 class="ao-stitle">Laboratorio Virtual Completo</h2>
-      <p class="ao-ssub">Tecnología médica de vanguardia para un estudio profundo, visual e interactivo. Microscopio, anatomía 3D, simulacros y más.</p>
-
-      <div class="fw-grid">
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-clipboard-question"></i></div>
-          <h3>Simulacros Oficiales</h3>
-          <p>Tests aleatorios con preguntas reales de parciales anteriores. Cronometrados y con corrección automática.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-microscope"></i></div>
-          <h3>Microscopio Virtual</h3>
-          <p>Láminas histológicas reales con zoom infinito y anotaciones colaborativas entre estudiantes.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-cube"></i></div>
-          <h3>Anatomía 3D</h3>
-          <p>Modelos 3D del cuerpo humano rotables e interactivos. Sistema por sistemas con capas anatómicas.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-podcast"></i></div>
-          <h3>Podcasts Médicos</h3>
-          <p>Audios rápidos y densos para repasar conceptos clave mientras viajás o hacés deporte.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-vials"></i></div>
-          <h3>Laboratorio Clínico</h3>
-          <p>Simulación de interpretación de valores de laboratorio con casos clínicos integrados.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-heart-pulse"></i></div>
-          <h3>ECG Interactivo</h3>
-          <p>Interpretación guiada de electrocardiogramas con feedback instantáneo de IA.</p>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 6 — PLANES / CLUB ALUMED
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-p" aria-label="Planes">
-
-      <!-- Parallax decos: crown, medal, star -->
-      <div class="px-deco" style="top:-30px; right:-40px; font-size:260px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.4));" aria-hidden="true">
-        <i class="fas fa-crown"></i>
-      </div>
-      <div class="px-deco" style="bottom:-10px; left:-30px; font-size:140px; --px-op:.038; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(255,249,196,.3));" aria-hidden="true">
-        <i class="fas fa-medal"></i>
-      </div>
-
-      <span class="ao-slabel" style="color:var(--gold);">SUSCRIPCIÓN</span>
-      <h2 class="ao-stitle">Elegí tu Plan de Estudios</h2>
-      <p class="ao-ssub">Unite hoy para tener acceso ilimitado a todo el ecosistema académico de ALUMED OS.</p>
-
-      <div class="ao-plans">
-        <div class="ao-plan">
-          <h3 class="ao-plan-name">Acceso Básico</h3>
-          <div class="ao-plan-price">Gratis</div>
-          <p class="ao-plan-desc">Información académica y cartelera universitaria.</p>
-          <ul class="ao-plan-ul">
-            <li><i class="fas fa-check" style="color:#10b981;"></i>Carteleras UNLP / UBA</li>
-            <li><i class="fas fa-check" style="color:#10b981;"></i>Cronogramas de TPs</li>
-            <li><i class="fas fa-times" style="color:#ef4444;"></i>IA Profe Joy Ilimitada</li>
-            <li><i class="fas fa-times" style="color:#ef4444;"></i>Flashcards Premium</li>
-          </ul>
-          <a href="{% url 'register' %}" class="ao-cta" style="background:rgba(255,255,255,.06); color:#fff;">Crear Cuenta</a>
-        </div>
-        <div class="ao-plan ao-plan-prem">
-          <span class="ao-lbl" style="margin-bottom:10px; background:rgba(251,191,36,.12); color:var(--gold); border-color:rgba(251,191,36,.2);">RECOMENDADO</span>
-          <h3 class="ao-plan-name">Club ALUMED</h3>
-          <div class="ao-plan-price">Premium</div>
-          <p class="ao-plan-desc">Acceso ilimitado a todo el ecosistema interactivo.</p>
-          <ul class="ao-plan-ul">
-            <li><i class="fas fa-check" style="color:var(--gold);"></i>Todo el plan básico</li>
-            <li><i class="fas fa-check" style="color:var(--gold);"></i>IA Profe Joy 24/7</li>
-            <li><i class="fas fa-check" style="color:var(--gold);"></i>Anatomía 3D y Microscopio</li>
-            <li><i class="fas fa-check" style="color:var(--gold);"></i>Flashcards y Simulacros IA</li>
-          </ul>
-          <a href="{% url 'club' %}" class="ao-cta ao-cta-c">Suscribirse al Club</a>
-        </div>
-      </div>
-
-    </section>
-
-
-        <!-- FOOTER (inside content column) -->
-    <footer class="ao-footer">
-      <div class="ao-footer-inner">
-        <a href="{% url 'home' %}" class="ao-flogo">
-          <i class="fas fa-heartbeat" style="color:var(--purple); font-size:.9rem;"></i>
-          ALU<span class="gp">MED</span>
-        </a>
-        <nav class="ao-flinks">
-          <a href="{% url 'home' %}">Inicio</a>
-          <a href="{% url 'biblioteca' %}">Biblioteca</a>
-          <a href="{% url 'club' %}">Club ALUMED</a>
-          <a href="{% url 'conecta_fcm' %}">Conecta</a>
-        </nav>
-        <div class="ao-fsocial">
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-        </div>
-      </div>
-      <p class="ao-fcopy">© 2026 ALUMED OS. Todos los derechos reservados.</p>
-    </footer>
-
-  </div><!-- /content col -->
-
-  <!-- ══ COLUMN 2: SPINE (sticky) ══ -->
-  <div class="ao-spine-track">
-    <div class="ao-spine-sticky" id="ao-spine-sticky">
-
-      <!-- Atmosphere halos -->
-      <div class="ao-halo-t" aria-hidden="true"></div>
-      <div class="ao-halo-b" aria-hidden="true"></div>
-
-      <!-- Particle canvas -->
-      <canvas class="ao-ptcl" id="ao-ptcl" aria-hidden="true"></canvas>
-
-      <!--
-        ╔═══════════════════════════════════╗
-        ║  SPINE IMAGE                      ║
-        ║  To swap for Spline 3D model:    ║
-        ║  1. Remove this <img> tag         ║
-        ║  2. Add Spline viewer script      ║
-        ║  3. Replace with:                 ║
-        ║     <spline-viewer               ║
-        ║       url="YOUR_SPLINE_URL"      ║
-        ║       id="ao-spine-img"          ║
-        ║       class="ao-spine-img">      ║
-        ║     </spline-viewer>             ║
-        ║  All JS interactions preserved.  ║
-        ╚═══════════════════════════════════╝
-      -->
-      <img
-        src="{% static 'img/spine.png' %}"
-        alt="Columna vertebral — ALUMED OS"
-        class="ao-spine-img"
-        id="ao-spine-img"
-        draggable="false"
-      >
-
-      <!-- Energy SVG overlay (centered on spinal cord) -->
-      <div class="ao-energy-wrap" id="ao-energy-wrap" aria-hidden="true">
-        <svg class="ao-energy-svg" id="ao-esv"
-             viewBox="0 0 64 880" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="eCord" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="#a855f7" stop-opacity=".92"/>
-              <stop offset="36%"  stop-color="#c026d3" stop-opacity=".82"/>
-              <stop offset="58%"  stop-color="#f97316" stop-opacity=".88"/>
-              <stop offset="100%" stop-color="#fbbf24" stop-opacity=".92"/>
-            </linearGradient>
-            <filter id="eGlow" x="-200%" y="-10%" width="500%" height="120%">
-              <feGaussianBlur stdDeviation="4" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <filter id="dGlow"><feGaussianBlur stdDeviation="2.5"/></filter>
-          </defs>
-
-          <!-- Main spinal cord glow line -->
-          <line x1="32" y1="22" x2="32" y2="858"
-                stroke="url(#eCord)" stroke-width="1.8"
-                filter="url(#eGlow)" opacity=".88"/>
-
-          <!-- Vertebra disc nodes (indices 0-9 used by JS) -->
-          <circle id="nd0" class="ao-nd" cx="32" cy="70"  r="2.8" fill="#c4b5fd" filter="url(#eGlow)" style="animation-delay:0s"/>
-          <circle id="nd1" class="ao-nd" cx="32" cy="132" r="2.8" fill="#c4b5fd" filter="url(#eGlow)" style="animation-delay:.28s"/>
-          <circle id="nd2" class="ao-nd" cx="32" cy="205" r="2.9" fill="#d946ef" filter="url(#eGlow)" style="animation-delay:.56s"/>
-          <circle id="nd3" class="ao-nd" cx="32" cy="285" r="3.0" fill="#e879f9" filter="url(#eGlow)" style="animation-delay:.84s"/>
-          <circle id="nd4" class="ao-nd" cx="32" cy="370" r="3.2" fill="#f97316" filter="url(#eGlow)" style="animation-delay:1.12s"/>
-          <circle id="nd5" class="ao-nd" cx="32" cy="458" r="3.5" fill="#f97316" filter="url(#eGlow)" style="animation-delay:1.40s"/>
-          <circle id="nd6" class="ao-nd" cx="32" cy="545" r="3.5" fill="#fb923c" filter="url(#eGlow)" style="animation-delay:1.68s"/>
-          <circle id="nd7" class="ao-nd" cx="32" cy="630" r="3.8" fill="#fbbf24" filter="url(#eGlow)" style="animation-delay:1.96s"/>
-          <circle id="nd8" class="ao-nd" cx="32" cy="715" r="3.5" fill="#fbbf24" filter="url(#eGlow)" style="animation-delay:2.24s"/>
-          <circle id="nd9" class="ao-nd" cx="32" cy="798" r="3.0" fill="#fde68a" filter="url(#eGlow)" style="animation-delay:2.52s"/>
-
-          <!-- Traveling energy pulses -->
-          <circle r="5.5" fill="white" filter="url(#eGlow)">
-            <animate attributeName="cy"      values="22;858" dur="2.7s" repeatCount="indefinite" begin="0s" calcMode="ease-in"/>
-            <animate attributeName="opacity" values="1;.7;0"  dur="2.7s" repeatCount="indefinite" begin="0s"/>
-            <animate attributeName="r"       values="5.5;3;2" dur="2.7s" repeatCount="indefinite" begin="0s"/>
-          </circle>
-          <circle r="5" fill="rgba(192,38,211,.92)" filter="url(#eGlow)">
-            <animate attributeName="cy"      values="22;858" dur="2.7s" repeatCount="indefinite" begin=".9s" calcMode="ease-in"/>
-            <animate attributeName="opacity" values=".9;.65;0" dur="2.7s" repeatCount="indefinite" begin=".9s"/>
-            <animate attributeName="r"       values="5;3.2;1.8" dur="2.7s" repeatCount="indefinite" begin=".9s"/>
-          </circle>
-          <circle r="4.5" fill="rgba(251,191,36,.95)" filter="url(#eGlow)">
-            <animate attributeName="cy"      values="22;858" dur="3.2s" repeatCount="indefinite" begin="1.85s" calcMode="ease-in"/>
-            <animate attributeName="opacity" values=".88;.6;0" dur="3.2s" repeatCount="indefinite" begin="1.85s"/>
-            <animate attributeName="r"       values="4.5;3;1.5" dur="3.2s" repeatCount="indefinite" begin="1.85s"/>
-          </circle>
-
-          <!-- Focus beam (JS controlled) — hidden by default -->
-          <circle id="ao-focus-ring" cx="32" cy="0" r="0"
-                  fill="none" stroke="white" stroke-width="2"
-                  opacity="0" filter="url(#eGlow)"/>
-          <circle id="ao-focus-core" cx="32" cy="0" r="0"
-                  fill="white" opacity="0" filter="url(#eGlow)"/>
-        </svg>
-      </div>
-
-      <!-- Scroll indicator (hero only — hidden after first section) -->
-      <div class="ao-hint" id="ao-hint" aria-hidden="true">
-        <div class="ao-mouse-icon"><div class="ao-mouse-ball"></div></div>
-        <span class="ao-hint-lbl">Deslizá para explorar</span>
-      </div>
-
-    </div><!-- /spine-sticky -->
-  </div><!-- /spine-track -->
-
-  <!-- ══ COLUMN 3: TIMELINE (sticky) ══ -->
-  <div class="ao-tl-track">
-    <div class="ao-tl-sticky" id="ao-tl-sticky">
-      <ul class="ao-tl" id="ao-tl">
-        <div class="ao-tl-progress" id="ao-tl-prog" style="height:0;"></div>
-
-        <li class="ao-ti on" data-sec="ao-sec-a" data-idx="0" data-nd="0">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-brain"></i></div>
-          <div>
-            <p class="ao-ti-name">ALUMED</p>
-            <p class="ao-ti-desc">Aprendé a tu ritmo con los<br>mejores recursos y docentes.</p>
-          </div>
-        </li>
-
-        <li class="ao-ti" data-sec="ao-sec-c" data-idx="1" data-nd="2">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-bell"></i></div>
-          <div>
-            <p class="ao-ti-name">CONECTA</p>
-            <p class="ao-ti-desc">La cartelera de tu facultad<br>en tiempo real.</p>
-          </div>
-        </li>
-
-        <li class="ao-ti" data-sec="ao-sec-b" data-idx="2" data-nd="4">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-book-open"></i></div>
-          <div>
-            <p class="ao-ti-name">BIBLIOTECA</p>
-            <p class="ao-ti-desc">Todos los contenidos organizados<br>por materia y tema.</p>
-          </div>
-        </li>
-
-        <li class="ao-ti" data-sec="ao-sec-j" data-idx="3" data-nd="6">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-wand-magic-sparkles"></i></div>
-          <div>
-            <p class="ao-ti-name">IA PROFE JOY</p>
-            <p class="ao-ti-desc">Tu profesora 24/7.<br>Resuelve, explica, acompaña.</p>
-          </div>
-        </li>
-
-        <li class="ao-ti" data-sec="ao-sec-h" data-idx="4" data-nd="7">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-cube"></i></div>
-          <div>
-            <p class="ao-ti-name">HERRAMIENTAS</p>
-            <p class="ao-ti-desc">Microscopio, Anatomía 3D,<br>Simulacros y más.</p>
-          </div>
-        </li>
-
-        <li class="ao-ti ao-gold" data-sec="ao-sec-p" data-idx="5" data-nd="9">
-          <div class="ao-conn"></div>
-          <div class="ao-circ"><i class="fas fa-crown"></i></div>
-          <div>
-            <p class="ao-ti-name">PLANES</p>
-            <p class="ao-ti-desc">Elegí el plan que se adapta<br>a vos y empezá hoy.</p>
-          </div>
-        </li>
-
-      </ul>
     </div>
-  </div><!-- /tl-track -->
+</div>
 
-</div><!-- /ao-page -->
+<footer class="experience-footer">
+    <div style="max-width:1340px; margin:0 auto; padding:0 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+        <div style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.3rem; color:#fff;">
+            ALU<span style="color:var(--color-gold-neon);">MED</span>
+        </div>
+        <div style="display:flex; gap:24px; font-size:0.88rem; color:var(--color-text-dim);">
+            <a href="{% url 'home' %}#home" style="color:inherit; text-decoration:none;">Inicio</a>
+            <a href="{% url 'biblioteca' %}" style="color:inherit; text-decoration:none;">Biblioteca</a>
+            <a href="{% url 'club' %}" style="color:inherit; text-decoration:none;">Club ALUMED</a>
+        </div>
+    </div>
+    <div style="text-align:center; font-size:0.8rem; color:#475569; margin-top:40px;">
+        &copy; 2026 ALUMED OS. Todos los derechos reservados.
+    </div>
+</footer>
 
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   ALUMED OS — INTERACTION ENGINE v6
-   ══════════════════════════════════════════════════════════════════ */
-;(function(){
-  'use strict';
+    /* ────────────────────────────────────────────────────────────
+       ALUMED PORTAL CONTROLLER & INTERACTION TRIGGERS
+       ════════════════════════════════════════════════════════════ */
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // Register GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
 
-  var q  = function(s){ return document.querySelector(s); };
-  var qq = function(s){ return Array.from(document.querySelectorAll(s)); };
-  var raf = window.requestAnimationFrame;
+        const sections = [
+            { id: 'hero-section' },
+            { id: 'alumed-section' },
+            { id: 'conecta-section' },
+            { id: 'biblioteca-section' },
+            { id: 'joy-section' },
+            { id: 'herramientas-section' },
+            { id: 'planes-section' }
+        ];
 
-  /* ── 1. NAVBAR GLASS ──────────────────────────────────────────── */
-  var nav = q('nav.navbar');
-  function syncNav(){ if(nav) nav.classList.toggle('ao-glass', window.scrollY>30); }
-  window.addEventListener('scroll', syncNav, {passive:true});
-  syncNav();
-
-  /* ── 2. SCROLL TO SECTION ─────────────────────────────────────── */
-  function scrollTo(id){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if(typeof gsap!=='undefined' && typeof ScrollToPlugin!=='undefined'){
-      gsap.to(window, { scrollTo:{y:el, offsetY:72}, duration:1.25, ease:'power3.inOut' });
-    } else {
-      el.scrollIntoView({behavior:'smooth', block:'start'});
-    }
-  }
-
-  /* ── 3. NAV LINKS → SECTION SCROLL ───────────────────────────── */
-  var NAV = {
-    'INICIO':'ao-hero','ALUMED':'ao-sec-a','CONECTA':'ao-sec-c',
-    'BIBLIOTECA':'ao-sec-b','IA PROFE JOY':'ao-sec-j',
-    'HERRAMIENTAS':'ao-sec-h','PLANES':'ao-sec-p'
-  };
-  qq('.nav-links a').forEach(function(a){
-    a.addEventListener('click', function(e){
-      var k = a.textContent.trim().toUpperCase();
-      if(NAV[k]){ e.preventDefault(); scrollTo(NAV[k]); setNavActive(a); }
-    });
-  });
-
-  function setNavActive(el){
-    qq('.nav-links a').forEach(function(a){ a.classList.remove('ao-active'); });
-    if(el) el.classList.add('ao-active');
-  }
-
-  /* ── 4. TIMELINE → SECTION SCROLL ────────────────────────────── */
-  var tiItems = qq('#ao-tl .ao-ti');
-  tiItems.forEach(function(item){
-    item.addEventListener('click', function(){
-      var sec = item.getAttribute('data-sec');
-      if(sec) scrollTo(sec);
-    });
-  });
-
-  /* ── 5. SCROLL: TIMELINE ACTIVATION + NAV ACTIVE ─────────────── */
-  var secIds = ['ao-sec-a','ao-sec-c','ao-sec-b','ao-sec-j','ao-sec-h','ao-sec-p'];
-  var NAV_KEYS = ['ALUMED','CONECTA','BIBLIOTECA','IA PROFE JOY','HERRAMIENTAS','PLANES'];
-
-  function updateProgress(){
-    var active = -1;
-    secIds.forEach(function(id, i){
-      var el = document.getElementById(id);
-      if(!el) return;
-      if(el.getBoundingClientRect().top < window.innerHeight * 0.58) active = i;
-    });
-
-    tiItems.forEach(function(item, i){
-      item.classList.toggle('on', i <= Math.max(0, active));
-    });
-
-    // Update progress bar height (glowing line shows scroll depth)
-    var prog = q('#ao-tl-prog');
-    if(prog){
-      var tlEl = q('#ao-tl');
-      if(tlEl){
-        var tlH = tlEl.offsetHeight - 56;
-        var pct  = active < 0 ? 0 : (active + 1) / tiItems.length;
-        prog.style.height = Math.round(tlH * pct) + 'px';
-      }
-    }
-
-    // Section visibility (fade in)
-    secIds.forEach(function(id){
-      var el = document.getElementById(id);
-      if(el && el.getBoundingClientRect().top < window.innerHeight * 0.88){
-        el.classList.add('vis');
-      }
-    });
-
-    // Hide scroll hint after first scroll
-    var hint = q('#ao-hint');
-    if(hint) hint.style.opacity = window.scrollY > 80 ? '0' : '';
-
-    // Nav active
-    if(active < 0){
-      setNavActive(qq('.nav-links a').find(function(a){ return a.textContent.trim().toUpperCase()==='INICIO'; })||null);
-    } else {
-      var key = NAV_KEYS[active];
-      setNavActive(qq('.nav-links a').find(function(a){ return a.textContent.trim().toUpperCase()===key; })||null);
-    }
-  }
-  window.addEventListener('scroll', updateProgress, {passive:true});
-  updateProgress();
-
-  /* ── 6. TIMELINE HOVER → SPINE VERTEBRA REACTION ─────────────── */
-  var spineImg  = q('#ao-spine-img');
-  var focusRing = q('#ao-focus-ring');
-  var focusCore = q('#ao-focus-core');
-  var DISC_CY   = [70, 132, 205, 285, 370, 458, 545, 630, 715, 798]; // matches SVG cy values
-
-  function pulseVertebra(ndIdx, colorA, colorB){
-    if(!focusRing || !focusCore) return;
-    var cy = DISC_CY[ndIdx] || 400;
-    // Move focus indicators
-    gsap.to(focusRing, { attr:{ cy:cy, r:12 }, opacity:.8, duration:.4, ease:'power2.out' });
-    gsap.to(focusCore, { attr:{ cy:cy, r:5  }, opacity:1,  duration:.4, ease:'power2.out' });
-    // Spine glow focus
-    if(spineImg){
-      spineImg.classList.remove('alive');
-      void spineImg.offsetWidth; // reflow
-      spineImg.style.filter = 'drop-shadow(0 0 52px '+colorA+') drop-shadow(0 0 120px '+colorB+')';
-    }
-  }
-
-  function resetVertebra(){
-    if(!focusRing || !focusCore) return;
-    gsap.to(focusRing, { attr:{r:0}, opacity:0, duration:.6, ease:'power2.in' });
-    gsap.to(focusCore, { attr:{r:0}, opacity:0, duration:.6, ease:'power2.in' });
-    if(spineImg){
-      spineImg.style.filter = '';
-      spineImg.classList.add('alive');
-    }
-  }
-
-  var DISC_COLORS = [
-    ['rgba(168,85,247,.95)',  'rgba(124,58,237,.5)'],  // 0 ALUMED
-    ['rgba(192,38,211,.95)',  'rgba(168,85,247,.4)'],  // 1 CONECTA
-    ['rgba(217,70,239,.95)',  'rgba(192,38,211,.4)'],  // 2 BIBLIOTECA
-    ['rgba(249,115,22,.90)', 'rgba(209,50,180,.35)'],  // 3 IA PROFE JOY
-    ['rgba(249,115,22,.95)', 'rgba(251,146,60,.45)'],  // 4 HERRAMIENTAS
-    ['rgba(251,191,36,.95)', 'rgba(255,200,0,.55)'],   // 5 PLANES
-  ];
-
-  tiItems.forEach(function(item){
-    var idx   = parseInt(item.getAttribute('data-idx') || '0');
-    var ndIdx = parseInt(item.getAttribute('data-nd')  || '0');
-    var col   = DISC_COLORS[idx] || DISC_COLORS[0];
-
-    item.addEventListener('mouseenter', function(){
-      if(typeof gsap === 'undefined') return;
-      pulseVertebra(ndIdx, col[0], col[1]);
-    });
-    item.addEventListener('mouseleave', function(){
-      if(typeof gsap === 'undefined') return;
-      resetVertebra();
-    });
-  });
-
-  /* ── 7. GSAP ENTRANCE ANIMATIONS ─────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', function(){
-    if(typeof gsap === 'undefined') return;
-    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-    gsap.set(['#j-badge','#j-h1','#j-sub','#j-cards','#j-stats'],{opacity:0, y:30});
-    gsap.set('#j-logo',{opacity:0, scale:.88, y:18});
-    gsap.set('#ao-spine-img', {opacity:0, scale:.84, y:28});
-    gsap.set('#ao-tl .ao-ti', {opacity:.14, x:12});
-
-    var tl = gsap.timeline({delay:.08});
-    tl.to('#j-logo',  {opacity:1,scale:1,y:0,duration:.65,ease:'back.out(1.4)'})
-      .to('#j-badge', {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.28')
-      .to('#j-h1',    {opacity:1,y:0,duration:.80,ease:'power3.out'},'-=.28')
-      .to('#j-sub',   {opacity:1,y:0,duration:.65,ease:'power3.out'},'-=.42')
-      .to('#j-cards', {opacity:1,y:0,duration:.75,ease:'power3.out'},'-=.40')
-      .to('#j-stats', {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.40')
-      .to('#ao-spine-img', {
-          opacity:1, scale:1, y:0, duration:1.45, ease:'power3.out',
-          onComplete: function(){
-            var img = q('#ao-spine-img');
-            if(img) img.classList.add('alive');
-          }
-        }, '-=.85')
-      .to('#ao-tl .ao-ti', {
-          opacity:function(i,el){ return el.classList.contains('on')?1:.38; },
-          x:0, stagger:.1, duration:.58, ease:'power2.out'
-        }, '-=.95');
-
-    /* Inject ALUMED logo into navbar */
-    var navLogo = q('nav.navbar a.logo');
-    if(navLogo){
-      var logoImg = document.createElement('img');
-      logoImg.src = '/static/img/alumed_logo.jpg';
-      logoImg.alt = 'ALUMED OS';
-      logoImg.style.cssText = 'width:34px;height:34px;border-radius:50%;object-fit:cover;margin-right:6px;flex-shrink:0;box-shadow:0 0 12px rgba(124,58,237,.5),0 0 0 1.5px rgba(124,58,237,.4);transition:box-shadow .3s;';
-      logoImg.onmouseover = function(){ this.style.boxShadow='0 0 20px rgba(124,58,237,.9),0 0 0 2px rgba(168,85,247,.7)'; };
-      logoImg.onmouseout  = function(){ this.style.boxShadow='0 0 12px rgba(124,58,237,.5),0 0 0 1.5px rgba(124,58,237,.4)'; };
-      navLogo.style.display = 'flex';
-      navLogo.style.alignItems = 'center';
-      navLogo.insertBefore(logoImg, navLogo.firstChild);
-    }
-
-    /* ── PARALLAX ILLUSTRATIONS (decos) ─────────────────────────── */
-    var DECO_IDS = ['deco-a','deco-c','deco-b','deco-j','deco-h','deco-p'];
-    DECO_IDS.forEach(function(id){
-      var el = document.getElementById(id);
-      if(!el) return;
-      var sec = el.closest('.ao-sec');
-      if(!sec) return;
-      // Scroll parallax: deco moves slower than section (floats)
-      ScrollTrigger.create({
-        trigger: sec,
-        start: 'top bottom',
-        end:   'bottom top',
-        onUpdate: function(st){
-          var p = (st.progress - 0.5) * 180; // -90 to +90 px
-          gsap.to(el, { y: p, duration: 0.4, ease:'none', overwrite:'auto' });
-        }
-      });
-      // Mouse parallax: deco reacts subtly to cursor within section
-      sec.addEventListener('mousemove', function(e){
-        var r  = sec.getBoundingClientRect();
-        var mx = (e.clientX - r.left) / r.width  - 0.5;
-        var my = (e.clientY - r.top)  / r.height - 0.5;
-        gsap.to(el, { x: mx * 22, rotateY: mx * 6, duration: 1.2, ease:'power2.out', overwrite:'auto' });
-      });
-      sec.addEventListener('mouseleave', function(){
-        gsap.to(el, { x: 0, rotateY: 0, duration: 1.6, ease:'elastic.out(1,.42)', overwrite:'auto' });
-      });
-    });
-
-    /* ── 8. CARD 3D TILT ──────────────────────────────────────── */
-
-    qq('.ao-card').forEach(function(card){
-      card.addEventListener('mousemove', function(e){
-        var r = card.getBoundingClientRect();
-        var x = (e.clientX-r.left)/r.width  - .5;
-        var y = (e.clientY-r.top) /r.height - .5;
-        gsap.to(card,{rotateY:x*8, rotateX:-y*6, transformPerspective:900, duration:.35, ease:'power2.out', overwrite:'auto'});
-      });
-      card.addEventListener('mouseleave', function(){
-        gsap.to(card,{rotateY:0, rotateX:0, duration:.8, ease:'elastic.out(1,.5)', overwrite:'auto'});
-      });
-    });
-
-    /* ── 9. CTA MAGNETIC ─────────────────────────────────────── */
-    qq('.ao-cta').forEach(function(btn){
-      btn.addEventListener('mousemove', function(e){
-        var r=btn.getBoundingClientRect();
-        gsap.to(btn,{x:(e.clientX-r.left-r.width/2)*.25, y:(e.clientY-r.top-r.height/2)*.25, duration:.3, ease:'power2.out'});
-      });
-      btn.addEventListener('mouseleave', function(){
-        gsap.to(btn,{x:0,y:0, duration:.7, ease:'elastic.out(1.1,.42)'});
-      });
-    });
-
-    /* ── 10. SPINE MOUSE PARALLAX ────────────────────────────── */
-    var spine   = q('#ao-spine-img');
-    var eWrap   = q('#ao-energy-wrap');
-    var page    = q('#ao-page');
-    var rafP    = null;
-
-    if(spine && page){
-      page.addEventListener('mousemove', function(e){
-        if(rafP) return;
-        rafP = raf(function(){
-          var r  = page.getBoundingClientRect();
-          var mx = (e.clientX-r.left)/r.width  - .5;
-          var my = (e.clientY-r.top) /r.height - .5;
-          gsap.to([spine, eWrap],{x:mx*18, y:my*11, duration:1.5, ease:'power2.out', overwrite:'auto'});
-          rafP = null;
+        // ScrollTrigger for active section tracking
+        sections.forEach((sec) => {
+            ScrollTrigger.create({
+                trigger: `#${sec.id}`,
+                start: "top center+=120",
+                end: "bottom center-=120",
+                onToggle: self => {
+                    const sectionEl = document.getElementById(sec.id);
+                    if (self.isActive) {
+                        sectionEl.classList.add('in-viewport');
+                    } else {
+                        sectionEl.classList.remove('in-viewport');
+                    }
+                }
+            });
         });
-      });
-      page.addEventListener('mouseleave', function(){
-        gsap.to([spine, eWrap],{x:0,y:0, duration:1.85, ease:'elastic.out(1,.42)', overwrite:'auto'});
-      });
-    }
 
-    /* ── 11. SCROLL PARALLAX (spine slower than content) ─────── */
-    if(spine){
-      ScrollTrigger.create({
-        trigger:'#ao-page', start:'top top', end:'bottom top',
-        onUpdate:function(st){
-          gsap.to(spine,{y:st.progress*-75, duration:.35, ease:'none', overwrite:'auto'});
-        }
-      });
-    }
+        // Elastic Magnetic Button Interaction
+        document.querySelectorAll('.magnetic-action-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
 
-    /* ── 12. TIMELINE SCROLL TRACKING with GSAP ST ─────────── */
-    secIds.forEach(function(id, i){
-      var el = document.getElementById(id);
-      if(!el) return;
-      ScrollTrigger.create({
-        trigger:el, start:'top 60%',
-        onEnter:function(){
-          tiItems.forEach(function(t,j){ t.classList.toggle('on', j<=i); });
-        },
-        onLeaveBack:function(){
-          tiItems.forEach(function(t,j){ t.classList.toggle('on', j<i); });
-        }
-      });
+                gsap.to(btn, {
+                    x: x * 0.35,
+                    y: y * 0.35,
+                    scale: 1.02,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.6,
+                    ease: "elastic.out(1.1, 0.4)"
+                });
+            });
+        });
     });
-
-  }); // DOMContentLoaded
-
-  /* ── 13. PARTICLE SYSTEM ────────────────────────────────────── */
-  (function(){
-    var canvas = q('#ao-ptcl');
-    var scene  = q('#ao-spine-sticky');
-    if(!canvas||!scene) return;
-    if(window.matchMedia('(max-width:768px)').matches) return;
-
-    var ctx=canvas.getContext('2d'), W, H, pts=[];
-
-    function resize(){
-      var r=scene.getBoundingClientRect();
-      W=parseInt(canvas.style.width)||420;
-      H=r.height;
-      canvas.width=W; canvas.height=H;
-    }
-
-    function mkPt(){
-      return {
-        x:  W*(.22+Math.random()*.56),
-        y:  H*(.10+Math.random()*.80),
-        r:  Math.random()*1.7+.28,
-        a:  Math.random()*.55+.10,
-        vx: (Math.random()-.5)*.3,
-        vy: -(Math.random()*.58+.14),
-        col:Math.random()>.58 ? '190,90,8' : '120,45,225',
-        life:1, decay:Math.random()*.006+.0028
-      };
-    }
-
-    function draw(){
-      ctx.clearRect(0,0,W,H);
-      for(var i=0;i<pts.length;i++){
-        var p=pts[i];
-        p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
-        if(p.life<=0||p.y<-8){ pts[i]=mkPt(); pts[i].y=H*.88+Math.random()*22; continue; }
-        var al=(p.a*p.life).toFixed(3);
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.shadowBlur=5; ctx.shadowColor='rgba('+p.col+','+(p.a*.38).toFixed(3)+')';
-        ctx.fillStyle='rgba('+p.col+','+al+')'; ctx.fill(); ctx.shadowBlur=0;
-      }
-      raf(draw);
-    }
-
-    resize();
-    window.addEventListener('resize',resize,{passive:true});
-    for(var k=0;k<55;k++) pts.push(mkPt());
-    draw();
-  })();
-
-})(); // IIFE
 </script>
-
-<!-- ══════════════════════════════════════════════════════════════
-     TIMELINE ALIVE — Override: sempre visível + hover dourado
-     ══════════════════════════════════════════════════════════════ -->
-<style>
-/* ── TODOS OS ITENS SEMPRE VIVOS E VISÍVEIS ─────────────────────── */
-#ao-tl .ao-ti {
-  opacity: 0.82 !important;
-  transform: translateX(0) !important;
-}
-
-/* Linha vertical mais brilhante */
-#ao-tl::before {
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(124,58,237,.65) 5%,
-    rgba(167,139,250,.50) 40%,
-    rgba(249,115,22,.50) 70%,
-    rgba(251,191,36,.55) 88%,
-    transparent
-  ) !important;
-  box-shadow: 0 0 10px rgba(124,58,237,.28) !important;
-}
-
-/* Nomes sempre visíveis */
-#ao-tl .ao-ti .ao-ti-name {
-  color: rgba(196,181,253,.78) !important;
-  text-shadow: 0 0 12px rgba(167,139,250,.22) !important;
-}
-/* Ativo: nome brilhante */
-#ao-tl .ao-ti.on .ao-ti-name {
-  color: #ddd6fe !important;
-  text-shadow: 0 0 22px rgba(167,139,250,.55) !important;
-}
-/* Gold sempre visível */
-#ao-tl .ao-ti.ao-gold .ao-ti-name {
-  color: rgba(253,230,138,.72) !important;
-  text-shadow: 0 0 12px rgba(251,191,36,.22) !important;
-}
-#ao-tl .ao-ti.on.ao-gold .ao-ti-name {
-  color: #fde68a !important;
-  text-shadow: 0 0 22px rgba(251,191,36,.55) !important;
-}
-
-/* Descrições sempre legíveis */
-#ao-tl .ao-ti .ao-ti-desc {
-  color: rgba(148,163,184,.65) !important;
-}
-#ao-tl .ao-ti.on .ao-ti-desc {
-  color: rgba(203,213,225,.90) !important;
-}
-
-/* Círculos sempre visíveis */
-#ao-tl .ao-ti .ao-circ {
-  border-color: rgba(124,58,237,.48) !important;
-  color: rgba(167,139,250,.72) !important;
-}
-#ao-tl .ao-ti.ao-gold .ao-circ {
-  border-color: rgba(251,191,36,.45) !important;
-  color: rgba(253,230,138,.72) !important;
-}
-
-/* Conector sempre com opacidade mínima visível */
-#ao-tl .ao-ti .ao-conn {
-  opacity: 0.28 !important;
-  width: 55px !important;
-}
-#ao-tl .ao-ti.on .ao-conn {
-  opacity: 1 !important;
-  width: 80px !important;
-}
-
-/* ── HOVER: HALO DOURADO ATRÁS + GLOW TOTAL ────────────────────── */
-
-/* Pseudo-elemento: aura dourada radial atrás do círculo */
-#ao-tl .ao-ti::before {
-  content: '';
-  position: absolute;
-  left: 2px;   /* alinha com o centro do círculo (4px padding + 26px = centro) */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center,
-    rgba(251,191,36, 0)   0%,
-    rgba(251,191,36, 0)  30%,
-    transparent          70%);
-  pointer-events: none;
-  z-index: 0;
-  transition: background .38s ease, transform .38s ease;
-  will-change: background;
-}
-
-/* No hover: acende o halo dourado */
-#ao-tl .ao-ti:hover::before {
-  background: radial-gradient(ellipse at center,
-    rgba(251,191,36, 0.34)  0%,
-    rgba(251,191,36, 0.18) 35%,
-    rgba(251,191,36, 0.05) 60%,
-    transparent             78%) !important;
-  transform: translateY(-50%) scale(1.18) !important;
-}
-
-/* Linha vertical também reage ao hover (brilha na área) */
-#ao-tl .ao-ti:hover .ao-conn {
-  opacity: 1 !important;
-  width: 115px !important;
-  background: linear-gradient(to right,
-    transparent,
-    rgba(251,191,36, 1.0)) !important;
-  box-shadow: 0 0 18px rgba(251,191,36,.75) !important;
-  height: 2px !important;
-}
-
-/* Círculo hover: borda e ícone dourados */
-#ao-tl .ao-ti:hover .ao-circ {
-  border-color: rgba(251,191,36, .88) !important;
-  color: #fde68a !important;
-  transform: scale(1.16) !important;
-  box-shadow:
-    0 0 0  4px rgba(251,191,36,.22),
-    0 0 0  9px rgba(251,191,36,.10),
-    0 0  42px rgba(251,191,36,.75),
-    0 0  88px rgba(251,191,36,.38) !important;
-  animation: none !important;
-}
-
-/* Nome hover: dourado e brilhante */
-#ao-tl .ao-ti:hover .ao-ti-name {
-  color: #fff59d !important;
-  text-shadow: 0 0 28px rgba(255,230,0,.90) !important;
-}
-
-/* Descrição hover: mais visível */
-#ao-tl .ao-ti:hover .ao-ti-desc {
-  color: rgba(226,232,240,.95) !important;
-}
-
-/* Row hover: não escurece, fica totalmente vivo */
-#ao-tl .ao-ti:hover {
-  opacity: 1 !important;
-}
-
-/* ── ACTIVE PULSE (roxo) mantido para item ativo ─────────────────── */
-#ao-tl .ao-ti.on .ao-circ {
-  animation: aoCircPulse 2.8s ease-in-out infinite !important;
-}
-#ao-tl .ao-ti.on.ao-gold .ao-circ {
-  animation: aoCircGold 2.8s ease-in-out infinite !important;
-}
-/* Hover sobrescreve o pulse do ativo também */
-#ao-tl .ao-ti:hover .ao-circ {
-  animation: none !important;
-}
-</style>
-
 {% endblock %}
 
 

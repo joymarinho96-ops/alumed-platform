@@ -14,6 +14,11 @@ class Course(models.Model):
     duration_days = models.IntegerField(default=30)
     image = models.ImageField(upload_to='courses/images/', null=True, blank=True)
     is_free = models.BooleanField(default=False, verbose_name="Curso Gratuito")
+    wix_url = models.URLField(
+        blank=True, null=True,
+        verbose_name="URL do curso no Wix",
+        help_text="Se preenchido, Entrar al curso abre este link no Wix. Se vazio, mostra Acceso en configuracion."
+    )
 
     def __str__(self):
         return self.title

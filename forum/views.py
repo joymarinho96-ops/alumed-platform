@@ -5,7 +5,6 @@ from .forms import TopicForm, ReplyForm
 from django.contrib import messages
 from django.db.models import Count
 
-@student_auth_required
 def topic_list(request):
     active_subject = request.GET.get('materia')
     
@@ -40,7 +39,6 @@ def topic_list(request):
         'active_subject_name': active_subject_name
     })
 
-@student_auth_required
 def topic_detail(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
     replies = topic.replies.all().order_by('created_at')
@@ -63,8 +61,9 @@ def topic_detail(request, topic_id):
         'form': form
     })
 
-@student_auth_required
 def create_topic(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
     active_subject = request.GET.get('materia', 'histologia')
     if request.method == 'POST':
         form = TopicForm(request.POST, request.FILES)

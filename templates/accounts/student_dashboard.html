@@ -1,2035 +1,1549 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}Mi Panel - ALUMED{% endblock %}
+{% block title %}Mi Panel — ALUMED OS{% endblock %}
 
 {% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-    /* --- Premium Dashboard Styles --- */
-    .dashboard-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 24px;
-        padding-bottom: 50px;
-        background: transparent;
-    }
+/* ═══════════════════════════════════════════════════════
+   ALUMED OS — Dashboard v3.0
+   Tema: Roxo · Violeta · Tecnologia · Medicina
+   ═══════════════════════════════════════════════════════ */
 
-    /* Header Section (ALUMED PREMIUM GRADIENT) */
-    .dashboard-header-card {
-        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        padding: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
-    }
-    .dashboard-header-card::after {
-        content: '';
-        position: absolute;
-        width: 250px;
-        height: 250px;
-        background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0) 70%);
-        right: -50px;
-        top: -50px;
-        pointer-events: none;
-    }
-    .header-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(168, 85, 247, 0.15);
-        border: 1px solid rgba(168, 85, 247, 0.4);
-        color: #c084fc;
-        padding: 5px 12px;
-        border-radius: 99px;
-        font-size: 11.5px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 12px;
-        font-family: 'Orbitron', sans-serif;
-    }
+:root {
+  --al-purple:    #7c3aed;
+  --al-violet:    #6d28d9;
+  --al-neon:      #a855f7;
+  --al-gold:      #f5c842;
+  --al-gold2:     #fbbf24;
+  --al-dark:      #07030f;
+  --al-panel:     rgba(20, 10, 45, 0.75);
+  --al-panel2:    rgba(30, 15, 60, 0.6);
+  --al-border:    rgba(168, 85, 247, 0.18);
+  --al-border2:   rgba(255,255,255,0.06);
+  --al-text:      #f1eeff;
+  --al-muted:     rgba(200,180,255,0.55);
+  --al-green:     #4ade80;
+  --al-yellow:    #fde047;
+  --al-red:       #f87171;
+  --al-cyan:      #22d3ee;
+}
 
-    /* Dynamic Glassmorphic Cards Grid with Warm Golden Glow */
-    .dashboard-cards-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        position: relative;
-        background: radial-gradient(circle at center, rgba(245, 197, 66, 0.12) 0%, rgba(20, 10, 35, 0) 75%);
-        padding: 30px 24px;
-        border-radius: 24px;
-        border: 1px solid rgba(245, 197, 66, 0.08);
-        box-shadow: inset 0 0 40px rgba(245, 197, 66, 0.03);
-    }
-    @media (max-width: 968px) {
-        .dashboard-cards-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @media (max-width: 640px) {
-        .dashboard-cards-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+body {
+  background:
+    radial-gradient(ellipse 90% 60% at 15% 0%,    rgba(124,58,237,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 20%,   rgba(109,40,217,.14) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 50% 100%,  rgba(168,85,247,.10) 0%, transparent 60%),
+    linear-gradient(160deg, #0d0720 0%, #070310 60%, #0a0520 100%);
+}
 
-    @keyframes pulse {
-        0% { transform: scale(0.95); opacity: 0.5; }
-        50% { transform: scale(1.05); opacity: 0.85; }
-        100% { transform: scale(0.95); opacity: 0.5; }
-    }
+/* ── Partículas flutuantes de fundo ── */
+.al-particles {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.al-particle {
+  position: absolute; border-radius: 50%;
+  animation: al-float linear infinite;
+  opacity: 0;
+}
+@keyframes al-float {
+  0%   { transform: translateY(100vh) rotate(0deg);  opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+.al-atom {
+  position: absolute; opacity: 0.04;
+  animation: al-drift 18s ease-in-out infinite;
+}
+@keyframes al-drift {
+  0%,100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  33%  { transform: translate(40px,-30px) rotate(120deg) scale(1.05); }
+  66%  { transform: translate(-20px,25px) rotate(240deg) scale(.95); }
+}
 
-    .glass-card {
-        background: var(--branco);
-        border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 24px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 290px;
-        position: relative;
-        cursor: grab;
-        color: #475569;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    }
-    .glass-card.dragging {
-        opacity: 0.5;
-        cursor: grabbing;
-        border-color: var(--roxo-neon);
-    }
-    .glass-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        border-color: rgba(124, 58, 237, 0.25);
-    }
+/* ── Grid de fundo sutil ── */
+.al-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(168,85,247,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
 
-    /* Card sizes in CSS Grid */
-    .card-size-small {
-        grid-column: span 1;
-    }
-    .card-size-medium {
-        grid-column: span 2;
-    }
-    .card-size-large {
-        grid-column: span 3;
-    }
-    @media (max-width: 968px) {
-        .card-size-medium, .card-size-large {
-            grid-column: span 2;
-        }
-    }
-    @media (max-width: 640px) {
-        .card-size-small, .card-size-medium, .card-size-large {
-            grid-column: span 1;
-        }
-    }
+/* ── Wrapper principal ── */
+.al-wrap {
+  position: relative; z-index: 1;
+  max-width: 1260px; margin: 0 auto;
+  padding: 0 24px 60px;
+  display: flex; flex-direction: column; gap: 22px;
+}
 
-    /* Custom color borders and icons based on saved settings */
-    .accent-purple { border-color: rgba(168, 85, 247, 0.2); }
-    .accent-purple:hover { border-color: rgba(168, 85, 247, 0.6); }
-    .accent-purple .card-icon { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); color: #c084fc; }
-    
-    .accent-blue { border-color: rgba(59, 130, 246, 0.2); }
-    .accent-blue:hover { border-color: rgba(59, 130, 246, 0.6); }
-    .accent-blue .card-icon { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-    
-    .accent-green { border-color: rgba(16, 185, 129, 0.2); }
-    .accent-green:hover { border-color: rgba(16, 185, 129, 0.6); }
-    .accent-green .card-icon { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: #34d399; }
-    
-    .accent-red { border-color: rgba(239, 68, 68, 0.2); }
-    .accent-red:hover { border-color: rgba(239, 68, 68, 0.6); }
-    .accent-red .card-icon { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #f87171; }
-    
-    .accent-gold { border-color: rgba(245, 197, 66, 0.2); }
-    .accent-gold:hover { border-color: rgba(245, 197, 66, 0.6); }
-    .accent-gold .card-icon { background: rgba(245, 197, 66, 0.1); border-color: rgba(245, 197, 66, 0.2); color: #f5c542; }
+/* ══════════════════════════════════════════════════════
+   HERO HEADER
+   ══════════════════════════════════════════════════════ */
+.al-hero {
+  background: linear-gradient(135deg,
+    rgba(124,58,237,.28) 0%,
+    rgba(109,40,217,.18) 40%,
+    rgba(168,85,247,.12) 100%);
+  border: 1px solid rgba(168,85,247,.3);
+  border-radius: 22px; padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(124,58,237,.12);
+}
+.al-hero::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(245,200,66,.04), transparent 50%);
+  pointer-events:none;
+}
+.al-hero-shimmer {
+  position:absolute; top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent);
+  animation: shimmer 4s ease-in-out infinite 1s;
+}
+@keyframes shimmer { to { left: 160%; } }
 
-    .accent-pink { border-color: rgba(236, 72, 153, 0.2); }
-    .accent-pink:hover { border-color: rgba(236, 72, 153, 0.6); }
-    .accent-pink .card-icon { background: rgba(236, 72, 153, 0.1); border-color: rgba(236, 72, 153, 0.2); color: #f472b6; }
+.al-hero-left h1 {
+  font-family: 'Outfit',sans-serif; font-weight:900;
+  font-size: clamp(1.5rem,3vw,2.2rem); margin:0 0 6px; color:#fff;
+}
+.al-hero-left h1 .grad {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 40%, #f5c842 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter: drop-shadow(0 0 20px rgba(168,85,247,.5));
+}
+.al-hero-left p { font-size:.88rem; color:var(--al-muted); margin:0; }
+.al-hero-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 14px; border-radius:99px; margin-top:10px;
+  background:rgba(74,222,128,.07); border:1px solid rgba(74,222,128,.25);
+  font-size:.65rem; font-weight:800; letter-spacing:.08em; color:#4ade80;
+  text-transform:uppercase;
+}
+.al-hero-badge .dot {
+  width:5px; height:5px; border-radius:50%; background:#4ade80;
+  box-shadow:0 0 6px #4ade80; animation:blink 1.2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-    .accent-orange { border-color: rgba(249, 115, 22, 0.2); }
-    .accent-orange:hover { border-color: rgba(249, 115, 22, 0.6); }
-    .accent-orange .card-icon { background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.2); color: #fb923c; }
+.al-hero-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; flex-shrink:0; min-width:280px;
+}
+.al-hero-stat {
+  background:rgba(0,0,0,.3); border:1px solid rgba(168,85,247,.15);
+  border-radius:14px; padding:14px; text-align:center;
+}
+.al-hero-stat-n { font-size:1.7rem; font-weight:900; color:#c084fc; line-height:1; }
+.al-hero-stat-l { font-size:.6rem; color:var(--al-muted); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
 
-    .card-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        margin-bottom: 12px;
-    }
-    .card-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 14.5px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 6px 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .card-desc {
-        color: #475569;
-        font-size: 13.5px;
-        line-height: 1.5;
-        margin: 0 0 20px 0;
-        flex-grow: 1;
-    }
+/* ══════════════════════════════════════════════════════
+   LABELS
+   ══════════════════════════════════════════════════════ */
+.al-label {
+  font-size:.6rem; font-weight:900; letter-spacing:.2em;
+  text-transform:uppercase; display:block; margin-bottom:8px;
+}
+.lbl-purple { color:var(--al-neon); }
+.lbl-gold   { color:var(--al-gold); }
+.lbl-green  { color:var(--al-green); }
+.lbl-red    { color:var(--al-red); }
+.lbl-cyan   { color:var(--al-cyan); }
 
-    /* Customize overlay settings (visible in Edit Mode) */
-    .card-customize-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(10, 5, 20, 0.95);
-        border-radius: 16px;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 16px;
-        gap: 12px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-    }
-    .edit-mode-active .card-customize-overlay {
-        opacity: 1;
-        pointer-events: all;
-    }
-    .custom-label {
-        font-size: 11px;
-        font-family: 'Orbitron', sans-serif;
-        color: #a855f7;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-        display: block;
-    }
-    .size-btn-group {
-        display: flex;
-        gap: 6px;
-    }
-    .size-btn {
-        flex-grow: 1;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        color: #94a3b8;
-        font-size: 11px;
-        padding: 6px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-    }
-    .size-btn.active {
-        background: #a855f7;
-        color: white;
-        border-color: #a855f7;
-    }
-    .color-dot-group {
-        display: flex;
-        gap: 8px;
-    }
-    .color-dot {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.15s;
-    }
-    .color-dot:hover {
-        transform: scale(1.15);
-    }
-    .color-dot.active {
-        border-color: white;
-        box-shadow: 0 0 8px currentColor;
-    }
+.al-title { font-size:clamp(1.1rem,2vw,1.5rem); font-weight:900; color:#fff; margin:0 0 4px; }
+.al-sub   { font-size:.82rem; color:var(--al-muted); margin:0 0 18px; line-height:1.5; }
 
-    /* Goals Chronogram Section */
-    .goals-section {
-        background: rgba(15, 8, 25, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 20px;
-        padding: 30px;
-        backdrop-filter: blur(20px);
-    }
-    .goals-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-bottom: 25px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        padding-bottom: 15px;
-    }
-    .month-select {
-        background: #160d26;
-        border: 1px solid rgba(168, 85, 247, 0.4);
-        color: white;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        outline: none;
-        box-shadow: 0 0 10px rgba(168, 85, 247, 0.1);
-    }
+/* ══════════════════════════════════════════════════════
+   CARDS BASE
+   ══════════════════════════════════════════════════════ */
+.al-card {
+  background:var(--al-panel);
+  border:1px solid var(--al-border);
+  border-radius:20px;
+  backdrop-filter:blur(18px);
+  padding:24px 26px;
+  position:relative; overflow:hidden;
+  transition: border-color .3s, box-shadow .3s;
+  box-shadow: 0 4px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.al-card:hover {
+  border-color: rgba(168,85,247,.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 0 30px rgba(124,58,237,.1), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.al-card-glow {
+  position:absolute; inset:0; border-radius:20px; pointer-events:none;
+  background: radial-gradient(ellipse 70% 50% at 20% 0%, rgba(168,85,247,.06), transparent 60%);
+}
 
-    /* Target & Progress */
-    .target-wrapper {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 25px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-    .progress-container {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .progress-bar-bg {
-        flex-grow: 1;
-        height: 8px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 99px;
-        overflow: hidden;
-    }
-    .progress-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #a855f7 0%, #3b82f6 100%);
-        box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-        width: 0%;
-        transition: width 0.3s ease;
-    }
-    .progress-percent-selectors {
-        display: flex;
-        gap: 8px;
-    }
-    .pct-btn {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.06);
-        color: #94a3b8;
-        font-size: 11px;
-        font-family: 'Orbitron', sans-serif;
-        padding: 4px 8px;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-    .pct-btn.active {
-        background: #a855f7;
-        color: white;
-        border-color: #a855f7;
-        box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
-    }
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 1 — ALERTAS
+   ══════════════════════════════════════════════════════ */
+.al-alerts-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px;
+  margin-bottom:16px;
+}
+.al-alert-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:14px 16px; border-radius:14px;
+  background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.06);
+  transition: all .25s;
+}
+.al-alert-item:hover { transform:translateX(4px); }
+.al-alert-dot {
+  width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px;
+  box-shadow:0 0 8px currentColor;
+}
+.dot-green  { background:#4ade80; color:#4ade80; }
+.dot-yellow { background:#fde047; color:#fde047; }
+.dot-red    { background:#f87171; color:#f87171; animation:blink 1s infinite; }
 
-    /* Calendar Grid */
-    .calendar-days-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 8px;
-    }
-    @media (max-width: 768px) {
-        .calendar-days-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-    @media (max-width: 480px) {
-        .calendar-days-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
+.al-alert-info-title { font-size:.82rem; font-weight:700; color:#f1eeff; line-height:1.35; }
+.al-alert-info-sub   { font-size:.65rem; color:var(--al-muted); margin-top:3px; }
+.al-alert-badge {
+  margin-left:auto; flex-shrink:0; padding:2px 8px; border-radius:6px;
+  font-size:.55rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+}
+.badge-ok  { background:rgba(74,222,128,.1);  color:#4ade80; border:1px solid rgba(74,222,128,.2); }
+.badge-att { background:rgba(253,224,71,.1);  color:#fde047; border:1px solid rgba(253,224,71,.2); }
+.badge-urg { background:rgba(248,113,113,.12); color:#f87171; border:1px solid rgba(248,113,113,.25); }
 
-    .day-square {
-        aspect-ratio: 1;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        border-radius: 12px;
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        cursor: pointer;
-        transition: all 0.2s;
-        position: relative;
-        overflow: hidden;
-    }
-    .day-square:hover {
-        transform: scale(1.03);
-        border-color: rgba(168, 85, 247, 0.4);
-        background: rgba(255, 255, 255, 0.04);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    .day-number {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 11px;
-        color: #64748b;
-        font-weight: 700;
-    }
-    .day-goal-tag {
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        display: inline-block;
-        margin-top: 4px;
-        align-self: flex-start;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .day-goal-text {
-        font-size: 11.5px;
-        color: white;
-        line-height: 1.3;
-        margin-top: auto;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        font-weight: 500;
-    }
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 2+3 GRID — Calendário + Pomodoro
+   ══════════════════════════════════════════════════════ */
+.al-mid-grid {
+  display:grid; grid-template-columns:1fr 340px; gap:18px;
+}
+@media(max-width:900px){ .al-mid-grid{ grid-template-columns:1fr; } }
 
-    /* Meta Category Colors */
-    .color-violet { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); color: #c084fc; }
-    .color-blue { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; }
-    .color-red { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
-    .color-green { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; }
-    .color-yellow { background: rgba(245, 197, 66, 0.15); border: 1px solid rgba(245, 197, 66, 0.4); color: #fbbf24; }
-    .color-pink { background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.4); color: #f472b6; }
-    .color-gray { background: rgba(100, 116, 139, 0.15); border: 1px solid rgba(100, 116, 139, 0.4); color: #94a3b8; }
+/* Mini Calendar */
+.al-cal-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+}
+.al-cal-nav {
+  width:30px; height:30px; border-radius:8px;
+  background:rgba(168,85,247,.12); border:1px solid rgba(168,85,247,.25);
+  color:#c084fc; cursor:pointer; font-size:.8rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.al-cal-nav:hover { background:rgba(168,85,247,.25); }
+.al-cal-month { font-weight:800; color:#fff; font-size:.95rem; }
+.al-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.al-cal-day-name { text-align:center; font-size:.58rem; font-weight:700; color:var(--al-muted); padding:4px 0; letter-spacing:.05em; text-transform:uppercase; }
+.al-cal-cell {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  border-radius:8px; font-size:.72rem; font-weight:600; cursor:default;
+  color:rgba(200,180,255,.6); transition:all .2s; position:relative;
+}
+.al-cal-cell.other-month { opacity:.25; }
+.al-cal-cell.today { background:rgba(124,58,237,.35); color:#c084fc; border:1px solid rgba(168,85,247,.4); font-weight:900; }
+.al-cal-cell.has-event::after {
+  content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--al-gold);
+}
+.al-cal-cell.event-exam { background:rgba(248,113,113,.12); color:#f87171; }
+.al-cal-cell.event-parcial { background:rgba(253,224,71,.08); color:#fde047; }
+.al-cal-cell.event-tp { background:rgba(124,58,237,.15); color:#c084fc; }
+.al-cal-cell:not(.other-month):hover { background:rgba(168,85,247,.1); color:#fff; }
 
-    /* Modal Styles */
-    .goal-modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(10, 5, 20, 0.85);
-        backdrop-filter: blur(8px);
-        z-index: 1000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-    }
-    .goal-modal {
-        background: #140826;
-        border: 1px solid rgba(168, 85, 247, 0.35);
-        border-radius: 16px;
-        width: 90%;
-        max-width: 440px;
-        padding: 24px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-        animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes scaleUp {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    .modal-title {
-        font-family: 'Orbitron', sans-serif;
-        color: white;
-        font-size: 16px;
-        font-weight: 700;
-        margin: 0 0 15px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        padding-bottom: 10px;
-    }
+/* Event list */
+.al-event-list { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+.al-event-row {
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  border-radius:10px; background:rgba(0,0,0,.2);
+  border-left:3px solid transparent; transition:all .2s;
+}
+.al-event-row:hover { background:rgba(0,0,0,.3); transform:translateX(3px); }
+.al-event-row.ev-final   { border-color:#f87171; }
+.al-event-row.ev-parcial { border-color:#fde047; }
+.al-event-row.ev-tp      { border-color:#c084fc; }
+.al-event-date { font-size:.65rem; font-weight:900; color:var(--al-muted); min-width:40px; }
+.al-event-name { font-size:.78rem; font-weight:700; color:#f1eeff; }
+.al-event-badge { margin-left:auto; font-size:.55rem; font-weight:800; padding:2px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:.06em; }
 
-    /* Color picker row */
-    .category-picker {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin: 12px 0 20px 0;
-    }
-    .picker-btn {
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 11px;
-        cursor: pointer;
-        font-weight: 700;
-        transition: all 0.15s;
-    }
-    .picker-btn.selected {
-        outline: 2px solid white;
-        box-shadow: 0 0 10px rgba(255,255,255,0.2);
-    }
+/* ── POMODORO ── */
+.al-pomo { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.al-pomo-modes { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+.al-pomo-mode {
+  padding:5px 12px; border-radius:99px; font-size:.65rem; font-weight:800;
+  background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.2);
+  color:var(--al-muted); cursor:pointer; transition:all .2s; letter-spacing:.04em;
+}
+.al-pomo-mode.active, .al-pomo-mode:hover {
+  background:rgba(168,85,247,.25); border-color:rgba(168,85,247,.5); color:#c084fc;
+}
 
-    /* Pomodoro Timer Styling */
-    .pomodoro-section {
-        background: linear-gradient(135deg, rgba(20, 10, 35, 0.6) 0%, rgba(10, 5, 20, 0.8) 100%);
-        border: 1px solid rgba(168, 85, 247, 0.25);
-        border-radius: 20px;
-        padding: 24px;
-        backdrop-filter: blur(20px);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 20px;
-        position: relative;
-        overflow: hidden;
-    }
-    .pomo-clock {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 42px;
-        font-weight: 700;
-        color: white;
-        text-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-        margin: 0;
-    }
-    .pomo-btn {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .pomo-btn-main {
-        background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-        color: white;
-        border: none;
-        box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
-    }
-    .pomo-btn-option {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: #94a3b8;
-    }
-    .pomo-btn-option.active {
-        background: rgba(168, 85, 247, 0.15);
-        border-color: #a855f7;
-        color: white;
-        box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
-    }
-    .session-counter {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        margin-top: 6px;
-    }
-    .session-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    .session-dot.filled {
-        background: #f5c542;
-        border-color: #f5c542;
-        box-shadow: 0 0 8px rgba(245, 197, 66, 0.5);
-    }
+.al-pomo-ring {
+  position:relative; width:170px; height:170px;
+}
+.al-pomo-ring svg { transform:rotate(-90deg); }
+.al-pomo-track { fill:none; stroke:rgba(168,85,247,.12); stroke-width:8; }
+.al-pomo-fill  { fill:none; stroke:url(#pomoGrad); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
+.al-pomo-time {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.al-pomo-time-num {
+  font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:700;
+  color:#c084fc; line-height:1;
+  text-shadow:0 0 30px rgba(168,85,247,.8), 0 0 60px rgba(168,85,247,.4);
+}
+.al-pomo-time-label { font-size:.6rem; color:var(--al-muted); margin-top:4px; letter-spacing:.1em; text-transform:uppercase; }
 
-    /* Club Ribbon */
-    .club-ribbon {
-        background: radial-gradient(circle at top right, rgba(245, 197, 66, 0.12), transparent 60%), 
-                    linear-gradient(135deg, rgba(20, 5, 35, 0.75) 0%, rgba(10, 5, 20, 0.75) 100%);
-        border: 1px solid rgba(245, 197, 66, 0.3);
-        border-radius: 20px;
-        padding: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 25px;
-        box-shadow: 0 10px 35px rgba(245, 197, 66, 0.05);
-    }
+.al-pomo-btns { display:flex; gap:10px; }
+.al-pomo-btn {
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(168,85,247,.35); background:rgba(168,85,247,.12);
+  color:#c084fc; font-size:1rem; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.al-pomo-btn:hover { background:rgba(168,85,247,.28); box-shadow:0 0 20px rgba(168,85,247,.3); transform:scale(1.08); }
+.al-pomo-btn.play { width:56px; height:56px; font-size:1.2rem;
+  background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(168,85,247,.3));
+  border-color:rgba(168,85,247,.5);
+  box-shadow:0 0 20px rgba(124,58,237,.25);
+}
+.al-pomo-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:100%;
+}
+.al-pomo-stat {
+  background:rgba(0,0,0,.25); border:1px solid rgba(168,85,247,.1);
+  border-radius:10px; padding:10px 8px; text-align:center;
+}
+.al-pomo-stat-n { font-size:1.1rem; font-weight:900; color:#c084fc; }
+.al-pomo-stat-l { font-size:.58rem; color:var(--al-muted); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
 
-    /* --- Annual Academic Calendar Styles --- */
-    .annual-calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 20px;
-        margin-top: 10px;
-    }
-    .mini-month-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        transition: border-color 0.25s ease;
-    }
-    .mini-month-card:hover {
-        border-color: rgba(245, 197, 66, 0.25);
-    }
-    .mini-month-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 13.5px;
-        font-weight: 700;
-        color: #f5c542;
-        text-transform: uppercase;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        padding-bottom: 6px;
-        margin: 0;
-        display: flex;
-        justify-content: space-between;
-    }
-    .mini-month-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-    }
-    .mini-day-header {
-        font-size: 10px;
-        font-weight: 700;
-        color: #64748b;
-        text-align: center;
-        padding-bottom: 4px;
-    }
-    .mini-day-cell {
-        aspect-ratio: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: 600;
-        color: #cbd5e1;
-        border-radius: 4px;
-        cursor: pointer;
-        position: relative;
-        background: rgba(255,255,255,0.01);
-        transition: all 0.2s;
-    }
-    .mini-day-cell:hover {
-        background: rgba(245, 197, 66, 0.15);
-        color: white;
-    }
-    .mini-day-cell.empty {
-        background: transparent;
-        cursor: default;
-        pointer-events: none;
-    }
-    .mini-day-cell.has-events {
-        box-shadow: inset 0 0 0 1px rgba(245, 197, 66, 0.4);
-    }
-    .day-dots {
-        display: flex;
-        gap: 2px;
-        position: absolute;
-        bottom: 2px;
-    }
-    .day-dot {
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-    }
-    
-    /* Active year tab styling */
-    .pomo-btn-option.active-year {
-        border-color: #f5c542 !important;
-        background: rgba(245, 197, 66, 0.12) !important;
-        color: white !important;
-    }
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 4 — PROGRESSO + IA (grid)
+   ══════════════════════════════════════════════════════ */
+.al-bot-grid {
+  display:grid; grid-template-columns:1fr 320px; gap:18px;
+}
+@media(max-width:900px){ .al-bot-grid{ grid-template-columns:1fr; } }
 
-    /* --- Planes Club ALUMED Comparison grid --- */
-    .planes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
-        margin-top: 25px;
-    }
-    .plan-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        position: relative;
-        transition: all 0.3s ease;
-    }
-    .plan-card:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.03);
-    }
-    .active-plan-border {
-        border-color: rgba(16, 185, 129, 0.4) !important;
-        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.06);
-    }
-    .active-badge {
-        position: absolute;
-        top: -12px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #10b981;
-        color: #05050a;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 10px;
-        font-weight: 800;
-        padding: 4px 12px;
-        border-radius: 99px;
-        letter-spacing: 0.5px;
-    }
-    .recomended-label {
-        font-size: 9px;
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 800;
-        color: #f5c542;
-        letter-spacing: 1px;
-        margin-bottom: 2px;
-        text-transform: uppercase;
-    }
-    .plan-header h3 {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 18px;
-        color: white;
-        margin: 0 0 5px 0;
-    }
-    .plan-price {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 24px;
-        font-weight: 900;
-        color: white;
-    }
-    .plan-price span {
-        font-size: 12px;
-        color: #94a3b8;
-        font-weight: normal;
-        margin-left: 4px;
-    }
-    .plan-features {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        flex-grow: 1;
-    }
-    .plan-features li {
-        font-size: 13px;
-        color: #cbd5e1;
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        line-height: 1.4;
-    }
-    .plan-features li i {
-        margin-top: 3px;
-        font-size: 11px;
-    }
-    .plan-features li i.fa-check { color: #10b981; }
-    .plan-features li i.fa-times { color: #ef4444; }
-    .plan-upgrade-btn {
-        width: 100%;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: #94a3b8;
-        padding: 10px;
-        border-radius: 8px;
-        cursor: not-allowed;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 12px;
-        font-weight: 700;
-        transition: all 0.2s;
-    }
+/* Progress bars */
+.al-materia-row { margin-bottom:14px; }
+.al-materia-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+.al-materia-name { font-size:.82rem; font-weight:700; color:#f1eeff; }
+.al-materia-pct  { font-size:.75rem; font-weight:800; color:#c084fc; }
+.al-materia-bar  { height:7px; background:rgba(168,85,247,.12); border-radius:99px; overflow:hidden; }
+.al-materia-fill {
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
+  box-shadow:0 0 10px rgba(168,85,247,.4);
+  transition: width 1.2s cubic-bezier(.4,0,.2,1);
+  width:0%;
+}
+
+/* ── IA Profe Joy ── */
+.al-ia-card { text-align:center; }
+.al-ia-avatar {
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg, rgba(124,58,237,.3), rgba(168,85,247,.2));
+  border:2px solid rgba(168,85,247,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; margin:0 auto 14px;
+  box-shadow:0 0 30px rgba(124,58,237,.3), 0 0 60px rgba(124,58,237,.1);
+  animation:joyPulse 3s ease-in-out infinite;
+}
+@keyframes joyPulse {
+  0%,100% { box-shadow:0 0 30px rgba(124,58,237,.3), 0 0 60px rgba(124,58,237,.1); }
+  50% { box-shadow:0 0 50px rgba(168,85,247,.5), 0 0 90px rgba(124,58,237,.2); }
+}
+.al-ia-name { font-size:.6rem; font-weight:900; letter-spacing:.15em; color:var(--al-neon); text-transform:uppercase; margin-bottom:4px; }
+.al-ia-q { font-size:.95rem; font-weight:700; color:#f1eeff; margin:0 0 16px; }
+.al-ia-chips { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+.al-ia-chip {
+  padding:8px 14px; border-radius:10px;
+  background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.15);
+  color:var(--al-muted); font-size:.75rem; cursor:pointer; transition:all .2s;
+  text-align:left;
+}
+.al-ia-chip:hover {
+  background:rgba(168,85,247,.18); border-color:rgba(168,85,247,.35); color:#c084fc;
+  transform:translateX(4px);
+}
+.al-ia-btn {
+  display:block; width:100%; padding:12px 0; border-radius:12px; border:none;
+  background:linear-gradient(135deg, #7c3aed, #6d28d9);
+  color:#fff; font-weight:800; font-size:.85rem; cursor:pointer;
+  text-decoration:none; text-align:center; transition:all .25s;
+  box-shadow:0 4px 20px rgba(124,58,237,.35);
+}
+.al-ia-btn:hover { background:linear-gradient(135deg,#8b47ed,#7c3aed); transform:translateY(-2px); box-shadow:0 8px 30px rgba(124,58,237,.5); }
+
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 5 — CURSOS
+   ══════════════════════════════════════════════════════ */
+.al-courses-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+.al-course-card {
+  background:rgba(0,0,0,.3); border:1px solid rgba(168,85,247,.12);
+  border-radius:16px; padding:18px; transition:all .3s; position:relative; overflow:hidden;
+}
+.al-course-card:hover { transform:translateY(-4px); border-color:rgba(168,85,247,.3); box-shadow:0 12px 35px rgba(0,0,0,.4); }
+.al-course-tag {
+  display:inline-block; padding:3px 10px; border-radius:6px; font-size:.58rem;
+  font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px;
+  background:rgba(124,58,237,.15); border:1px solid rgba(168,85,247,.25); color:#c084fc;
+}
+.al-course-name { font-size:.9rem; font-weight:800; color:#f1eeff; margin:0 0 8px; }
+.al-course-sub  { font-size:.72rem; color:var(--al-muted); margin:0 0 12px; line-height:1.4; }
+.al-course-bar  { height:5px; background:rgba(168,85,247,.12); border-radius:99px; overflow:hidden; margin-bottom:14px; }
+.al-course-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7c3aed,#a855f7); }
+.al-course-meta { display:flex; justify-content:space-between; font-size:.62rem; color:var(--al-muted); margin-bottom:14px; }
+.al-course-btn {
+  display:block; text-align:center; padding:9px; border-radius:10px;
+  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(168,85,247,.2));
+  border:1px solid rgba(168,85,247,.35); color:#c084fc;
+  font-weight:800; font-size:.75rem; text-decoration:none; transition:all .2s;
+}
+.al-course-btn:hover { background:linear-gradient(135deg,rgba(124,58,237,.5),rgba(168,85,247,.35)); color:#fff; }
+
+/* Curso vazio */
+.al-no-courses {
+  text-align:center; padding:32px;
+  border:2px dashed rgba(168,85,247,.18); border-radius:16px; color:var(--al-muted);
+}
+
+/* ══════════════════════════════════════════════════════
+   BOTÃO PADRÃO
+   ══════════════════════════════════════════════════════ */
+.al-btn {
+  display:inline-flex; align-items:center; gap:8px; padding:10px 20px;
+  border-radius:12px; border:1px solid rgba(168,85,247,.35);
+  background:rgba(124,58,237,.15); color:#c084fc; font-weight:800; font-size:.78rem;
+  text-decoration:none; cursor:pointer; transition:all .25s;
+}
+.al-btn:hover { background:rgba(124,58,237,.3); box-shadow:0 4px 20px rgba(124,58,237,.25); transform:translateY(-2px); }
+.al-btn-gold { background:rgba(245,200,66,.1); border-color:rgba(245,200,66,.3); color:var(--al-gold); }
+.al-btn-gold:hover { background:rgba(245,200,66,.2); }
 </style>
 {% endblock %}
 
 {% block main_content %}
-<div class="dashboard-wrapper">
-    
-    <!-- 1. Custom Welcome Header -->
-    <div class="dashboard-header-card reveal-up">
-        <div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                <span class="header-badge" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.35); color: #10b981;">
-                    <i class="fas fa-check-circle"></i> Cuenta Gratuita (Plan Activo)
-                </span>
-                <span class="header-badge" style="background: rgba(245, 197, 66, 0.08); border-color: rgba(245, 197, 66, 0.2); color: #94a3b8;">
-                    <i class="fas fa-unlock"></i> Club Estudio (Upgrade disponible)
-                </span>
-            </div>
-            <h1 style="font-family: 'Outfit', sans-serif; font-size: clamp(26px, 4vw, 36px); color: white; margin: 0 0 10px 0; font-weight: 700;">
-                Hola, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %} 👋
-            </h1>
-            <p style="color: #cbd5e1; font-size: 14.5px; margin: 0; max-width: 600px; line-height: 1.6;">
-                Este es tu espacio para organizar materias, calendario anual personal, recursos y tu progreso en ALUMED.
-            </p>
-        </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <button id="toggleEditModeBtn" onclick="toggleEditMode()" class="pomo-btn pomo-btn-option" style="padding: 14px 24px; font-size: 12px; font-family:'Outfit', sans-serif;">
-                <i class="fas fa-palette"></i> Configurar mis materias
-            </button>
-            <button id="saveEditModeBtn" onclick="saveCustomLayout()" class="pomo-btn pomo-btn-main" style="padding: 14px 24px; font-size: 12px; font-family:'Outfit', sans-serif; display: none;">
-                <i class="fas fa-save"></i> Guardar Diseño
-            </button>
-        </div>
+
+<!-- ── Partículas ── -->
+<div class="al-particles" id="alParticles"></div>
+<div class="al-grid"></div>
+
+<!-- SVG atoms flutuantes -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <svg class="al-atom" style="width:220px;top:10%;right:8%;opacity:.035;" viewBox="0 0 200 200" fill="none">
+    <circle cx="100" cy="100" r="30" stroke="#a855f7" stroke-width="2"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" transform="rotate(60 100 100)" stroke-dasharray="4 3"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" transform="rotate(-60 100 100)" stroke-dasharray="4 3"/>
+  </svg>
+  <svg class="al-atom" style="width:160px;bottom:15%;left:5%;opacity:.03;animation-delay:-6s;" viewBox="0 0 100 100" fill="none">
+    <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" stroke="#f5c842" stroke-width="1.5" fill="none"/>
+    <circle cx="50" cy="50" r="15" stroke="#f5c842" stroke-width="1.5"/>
+  </svg>
+  <svg class="al-atom" style="width:140px;top:55%;right:3%;opacity:.025;animation-delay:-3s;" viewBox="0 0 100 100" fill="none">
+    <circle cx="50" cy="50" r="40" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <circle cx="50" cy="50" r="20" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="10" y1="50" x2="90" y2="50" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="50" y1="10" x2="50" y2="90" stroke="#22d3ee" stroke-width="1"/>
+  </svg>
+</div>
+
+<div class="al-wrap">
+
+  <!-- ════════════════════════════════════
+       HERO
+       ════════════════════════════════════ -->
+  <div class="al-hero">
+    <div class="al-hero-shimmer"></div>
+    <div class="al-card-glow"></div>
+    <div class="al-hero-left">
+      <div class="al-label lbl-purple" style="margin-bottom:6px;">🟣 ALUMED OS · Centro Acadêmico</div>
+      <h1>Bienvenido, <span class="grad">{{ user.first_name|default:user.username }}</span> 👋</h1>
+      <p>Tu espacio personal de medicina. Estudia, revisa y progresa.</p>
+      <div class="al-hero-badge">
+        <span class="dot"></span>
+        Sistema activo · ALUMED Premium
+      </div>
+    </div>
+    <div class="al-hero-stats">
+      <div class="al-hero-stat">
+        <div class="al-hero-stat-n">{{ active_courses_count }}</div>
+        <div class="al-hero-stat-l">Cursos</div>
+      </div>
+      <div class="al-hero-stat">
+        <div class="al-hero-stat-n">{{ total_lessons_completed }}</div>
+        <div class="al-hero-stat-l">Clases vistas</div>
+      </div>
+      <div class="al-hero-stat">
+        <div class="al-hero-stat-n">{{ estimated_study_hours }}h</div>
+        <div class="al-hero-stat-l">Estudiadas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SEÇÃO 1 — ALERTAS ACADÊMICOS
+       ════════════════════════════════════ -->
+  <div class="al-card">
+    <div class="al-card-glow"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div>
+        <span class="al-label lbl-red">🚨 Alertas</span>
+        <h2 class="al-title">Próximos eventos académicos</h2>
+      </div>
+      <a href="/cronograma-finales/" class="al-btn">
+        <i class="fas fa-calendar-check"></i> Ver cronograma completo
+      </a>
     </div>
 
-    <!-- 1.5 Modern Pomodoro Timer Module (Highly Visible at the Top) -->
-    <div class="pomodoro-section reveal-up" style="border: 1px solid #e2e8f0; box-shadow: var(--sombra-suave); background: var(--branco); margin-bottom: 10px;">
-        <div style="max-width: 400px;">
-            <span style="background: rgba(124, 58, 237, 0.1); color: var(--roxo-neon); border: 1px solid rgba(124, 58, 237, 0.2); padding: 4px 10px; border-radius: 99px; font-size: 11px; font-family:'Outfit', sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:inline-block;">
-                <i class="fas fa-brain"></i> Enfoque Activo
+    <div class="al-alerts-grid">
+      {% if upcoming_exams %}
+        {% for exam in upcoming_exams|slice:":4" %}
+          {% with days_left=exam.start_date|timeuntil %}
+          <div class="al-alert-item">
+            <div class="al-alert-dot {% if '1 day' in days_left or '2 days' in days_left or '3 days' in days_left %}dot-red{% elif '1 week' in days_left or '2 weeks' in days_left %}dot-yellow{% else %}dot-green{% endif %}"></div>
+            <div class="al-alert-info">
+              <div class="al-alert-info-title">{{ exam.title }}</div>
+              <div class="al-alert-info-sub">📅 {{ exam.start_date|date:"d/m/Y" }} · Faltan {{ days_left }}</div>
+            </div>
+            <span class="al-alert-badge {% if '1 day' in days_left or '2 days' in days_left or '3 days' in days_left %}badge-urg{% elif '1 week' in days_left or '2 weeks' in days_left %}badge-att{% else %}badge-ok{% endif %}">
+              {% if '1 day' in days_left or '2 days' in days_left or '3 days' in days_left %}URGENTE{% elif '1 week' in days_left or '2 weeks' in days_left %}ATENCIÓN{% else %}OK{% endif %}
             </span>
-            <h3 style="font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0; display: flex; align-items: center; gap: 8px;">
-                <i class="far fa-clock" style="color: var(--roxo-neon);"></i> Reloj Pomodoro
-            </h3>
-            <p id="pomoMessage" style="color: #64748b; font-size: 13px; margin: 0 0 10px 0;">Elegí un bloque de tiempo de estudio e iniciá tu sesión.</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="font-size: 11px; font-family:'Outfit', sans-serif; color: #64748b; font-weight: 700; text-transform: uppercase;">Ciclo de estudio (Meta: 3 Sesiones)</span>
-                <div class="session-counter" id="sessionCounter">
-                    <div class="session-dot" id="dot-1"></div>
-                    <div class="session-dot" id="dot-2"></div>
-                    <div class="session-dot" id="dot-3"></div>
-                </div>
-            </div>
+          </div>
+          {% endwith %}
+        {% endfor %}
+      {% else %}
+        <div class="al-alert-item">
+          <div class="al-alert-dot dot-green"></div>
+          <div class="al-alert-info">
+            <div class="al-alert-info-title">Parcial de Histología</div>
+            <div class="al-alert-info-sub">📅 18/07/2026 · Faltan 2 días</div>
+          </div>
+          <span class="al-alert-badge badge-urg">URGENTE</span>
         </div>
+        <div class="al-alert-item">
+          <div class="al-alert-dot dot-yellow"></div>
+          <div class="al-alert-info">
+            <div class="al-alert-info-title">TP de Biología</div>
+            <div class="al-alert-info-sub">📅 23/07/2026 · Faltan 7 días</div>
+          </div>
+          <span class="al-alert-badge badge-att">ATENCIÓN</span>
+        </div>
+        <div class="al-alert-item">
+          <div class="al-alert-dot dot-green"></div>
+          <div class="al-alert-info">
+            <div class="al-alert-info-title">Final de Anatomía</div>
+            <div class="al-alert-info-sub">📅 01/08/2026 · Faltan 15 días</div>
+          </div>
+          <span class="al-alert-badge badge-ok">TRANQUILO</span>
+        </div>
+        <div class="al-alert-item">
+          <div class="al-alert-dot dot-green"></div>
+          <div class="al-alert-info">
+            <div class="al-alert-info-title">Trabajo práctico Fisiología</div>
+            <div class="al-alert-info-sub">📅 10/08/2026 · Faltan 25 días</div>
+          </div>
+          <span class="al-alert-badge badge-ok">TRANQUILO</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
-        <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
-            <div style="display: flex; gap: 8px;">
-                <button onclick="selectPomoTime(45)" class="pomo-btn pomo-btn-option active" id="pomo-opt-45" style="border-color: #cbd5e1; font-family:'Outfit', sans-serif;">45m</button>
-                <button onclick="selectPomoTime(60)" class="pomo-btn pomo-btn-option" id="pomo-opt-60" style="border-color: #cbd5e1; font-family:'Outfit', sans-serif;">1h</button>
-                <button onclick="selectPomoTime(90)" class="pomo-btn pomo-btn-option" id="pomo-opt-90" style="border-color: #cbd5e1; font-family:'Outfit', sans-serif;">1h 30m</button>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <h4 id="pomoDisplay" class="pomo-clock" style="color: #0f172a; text-shadow: none;">45:00</h4>
-                <button id="pomoPlayBtn" onclick="togglePomoTimer()" class="pomo-btn pomo-btn-main" style="width: 50px; height: 50px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); border: none;">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button onclick="resetPomoTimer()" class="pomo-btn pomo-btn-option" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; border-color: #cbd5e1; color: #475569;">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-            </div>
-        </div>
+  <!-- ════════════════════════════════════
+       SEÇÃO 2+3 — CALENDÁRIO + POMODORO
+       ════════════════════════════════════ -->
+  <div class="al-mid-grid">
+
+    <!-- Calendário -->
+    <div class="al-card">
+      <div class="al-card-glow"></div>
+      <span class="al-label lbl-cyan">📅 Planejamento</span>
+      <h2 class="al-title">Planejamento Académico</h2>
+
+      <div class="al-cal-header">
+        <button class="al-cal-nav" id="calPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="al-cal-month" id="calMonthLabel"></span>
+        <button class="al-cal-nav" id="calNext"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <div class="al-cal-grid" id="calDayNames"></div>
+      <div class="al-cal-grid" id="calCells" style="margin-top:4px;"></div>
+
+      <div class="al-event-list" id="calEvents"></div>
+
+      <div style="margin-top:16px;text-align:center;">
+        <a href="https://calendar.google.com/calendar/r" target="_blank" class="al-btn al-btn-gold" style="justify-content:center;width:100%;box-sizing:border-box;">
+          <i class="fab fa-google"></i> Sincronizar con Google Calendar
+        </a>
+      </div>
     </div>
 
-    <!-- 2. Dynamic Glassmorphic Cards Grid -->
-    <div id="dashboardCardsGrid" class="dashboard-cards-grid reveal-up">
-        <!-- Rendered dynamically by JS to allow draggable reordering -->
+    <!-- Pomodoro -->
+    <div class="al-card" style="display:flex;flex-direction:column;">
+      <div class="al-card-glow"></div>
+      <span class="al-label lbl-purple" style="text-align:center;">🍅 Timer</span>
+      <h2 class="al-title" style="text-align:center;">Pomodoro ALUMED</h2>
+
+      <div class="al-pomo">
+        <div class="al-pomo-modes">
+          <button class="al-pomo-mode active" data-work="25" data-rest="5">25 / 5</button>
+          <button class="al-pomo-mode" data-work="50" data-rest="10">50 / 10</button>
+          <button class="al-pomo-mode" data-work="45" data-rest="15">Modo Final</button>
+          <button class="al-pomo-mode" data-work="15" data-rest="5">Revisión</button>
+        </div>
+
+        <div class="al-pomo-ring">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <defs>
+              <linearGradient id="pomoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#7c3aed"/>
+                <stop offset="100%" style="stop-color:#c084fc"/>
+              </linearGradient>
+            </defs>
+            <circle class="al-pomo-track" cx="85" cy="85" r="75"/>
+            <circle class="al-pomo-fill" id="pomoCircle" cx="85" cy="85" r="75"
+              stroke-dasharray="471" stroke-dashoffset="0"/>
+          </svg>
+          <div class="al-pomo-time">
+            <div class="al-pomo-time-num" id="pomoDisplay">25:00</div>
+            <div class="al-pomo-time-label" id="pomoLabel">FOCO</div>
+          </div>
+        </div>
+
+        <div class="al-pomo-btns">
+          <button class="al-pomo-btn" id="pomoReset" title="Reiniciar"><i class="fas fa-redo"></i></button>
+          <button class="al-pomo-btn play" id="pomoPlay" title="Play/Pausa"><i class="fas fa-play"></i></button>
+          <button class="al-pomo-btn" id="pomoSkip" title="Pular"><i class="fas fa-forward"></i></button>
+        </div>
+
+        <div class="al-pomo-stats">
+          <div class="al-pomo-stat">
+            <div class="al-pomo-stat-n" id="pomoSessions">0</div>
+            <div class="al-pomo-stat-l">Sesiones</div>
+          </div>
+          <div class="al-pomo-stat">
+            <div class="al-pomo-stat-n" id="pomoHours">0h</div>
+            <div class="al-pomo-stat-l">Estudiadas</div>
+          </div>
+          <div class="al-pomo-stat">
+            <div class="al-pomo-stat-n" id="pomoStreak">0🔥</div>
+            <div class="al-pomo-stat-l">Racha</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- 3. Calendario Académico Personal por Año (12 meses completos o vista mensual) -->
-    <div class="goals-section reveal-up" style="background: var(--branco); border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; box-shadow: var(--sombra-suave); position: relative; z-index: 5;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">
-            <div>
-                <h2 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: #0f172a; margin: 0 0 5px 0; display: flex; align-items: center; gap: 8px;">
-                    <i class="far fa-calendar-alt" style="color: var(--roxo-neon);"></i> Calendario Académico Personal
-                </h2>
-                <p style="color: #64748b; font-size: 13px; margin: 0;">Organizá tus parciales, finales e inscripciones.</p>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <!-- Toggle Mode Button -->
-                <button onclick="toggleCalendarView()" id="toggleCalendarViewBtn" class="pomo-btn pomo-btn-main" style="font-size:11px; padding: 6px 14px; font-family:'Outfit', sans-serif; background: linear-gradient(135deg, #7c3aed, #4f46e5); border: none; color: white;">Ver Calendario Anual</button>
-                
-                <!-- Year Selector Tabs -->
-                <div style="display: flex; gap: 6px; overflow-x: auto; max-width: 100%; padding-bottom: 4px;" class="tabs-scroll">
-                    <button onclick="changeAcademicYear('1')" class="pomo-btn pomo-btn-option active-year" id="year-tab-1" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">1ro Año</button>
-                    <button onclick="changeAcademicYear('2')" class="pomo-btn pomo-btn-option" id="year-tab-2" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">2do Año</button>
-                    <button onclick="changeAcademicYear('3')" class="pomo-btn pomo-btn-option" id="year-tab-3" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">3ro Año</button>
-                    <button onclick="changeAcademicYear('4')" class="pomo-btn pomo-btn-option" id="year-tab-4" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">4to Año</button>
-                    <button onclick="changeAcademicYear('5')" class="pomo-btn pomo-btn-option" id="year-tab-5" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">5to Año</button>
-                    <button onclick="changeAcademicYear('PFO')" class="pomo-btn pomo-btn-option" id="year-tab-PFO" style="font-size:11.5px; padding: 6px 12px; font-family:'Outfit', sans-serif; border-color: #cbd5e1;">PFO</button>
-                </div>
-            </div>
-        </div>
+  </div>
 
-        <!-- Months Grid Container -->
-        <div id="annualCalendarContainer" class="annual-calendar-grid">
-            <!-- Rendered dynamically by JS -->
+  <!-- ════════════════════════════════════
+       FRECUENCIAS ALUMED
+       ════════════════════════════════════ -->
+  <div class="al-card" style="margin-top:0;">
+    <div class="al-card-glow"></div>
+
+    <style>
+    /* ── Frecuencias ALUMED ─────────────────────────────── */
+    .frq-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+    .frq-badge  { display:flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:rgba(168,85,247,.12); border:1px solid rgba(168,85,247,.25); font-size:.65rem; font-weight:900; color:#a855f7; letter-spacing:.08em; }
+    .frq-badge .frq-dot { width:6px; height:6px; border-radius:50%; background:#a855f7; box-shadow:0 0 6px #a855f7; animation:frqBlink 1.4s infinite; }
+    @keyframes frqBlink { 0%,100%{opacity:1;} 50%{opacity:.2;} }
+    .frq-title  { font-size:1.05rem; font-weight:900; color:#f1eeff; margin-bottom:4px; }
+    .frq-sub    { font-size:.78rem; color:var(--al-muted); line-height:1.5; }
+
+    /* Tabs */
+    .frq-tabs   { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+    .frq-tab    { padding:8px 16px; border-radius:10px; font-size:.72rem; font-weight:800; cursor:pointer; border:1px solid rgba(168,85,247,.18); background:rgba(168,85,247,.06); color:rgba(200,180,255,.55); transition:all .2s; }
+    .frq-tab:hover  { background:rgba(168,85,247,.12); color:rgba(200,180,255,.8); }
+    .frq-tab.active { background:rgba(168,85,247,.22); border-color:rgba(168,85,247,.45); color:#c084fc; box-shadow:0 0 14px rgba(168,85,247,.15); }
+    .frq-tab[data-cat="repasar"].active   { background:rgba(34,211,238,.12); border-color:rgba(34,211,238,.35); color:#22d3ee; }
+    .frq-tab[data-cat="memorizar"].active { background:rgba(74,222,128,.1);  border-color:rgba(74,222,128,.3);  color:#4ade80; }
+    .frq-tab[data-cat="final"].active     { background:rgba(245,200,66,.1);  border-color:rgba(245,200,66,.3);  color:#f5c842; }
+    .frq-tab[data-cat="despues"].active   { background:rgba(99,102,241,.12); border-color:rgba(99,102,241,.35); color:#818cf8; }
+
+    /* Panels */
+    .frq-panel  { display:none; flex-direction:column; gap:10px; }
+    .frq-panel.active { display:flex; animation:frqIn .3s ease; }
+    @keyframes frqIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+    /* Item */
+    .frq-item {
+      display:grid; grid-template-columns:52px 1fr auto; gap:14px; align-items:start;
+      padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,.05);
+      background:rgba(0,0,0,.2); transition:all .25s; position:relative; overflow:hidden;
+    }
+    .frq-item:hover { border-color:rgba(168,85,247,.2); background:rgba(168,85,247,.04); }
+    .frq-item.playing { border-color:rgba(168,85,247,.35); background:rgba(168,85,247,.08); box-shadow:0 0 20px rgba(168,85,247,.1); }
+
+    .frq-icon-wrap {
+      width:52px; height:52px; border-radius:14px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .frq-info { min-width:0; }
+    .frq-name { font-size:.88rem; font-weight:900; color:#f1eeff; margin-bottom:3px; }
+    .frq-desc { font-size:.7rem; color:var(--al-muted); line-height:1.55; margin-bottom:6px; }
+    .frq-tags { display:flex; flex-wrap:wrap; gap:4px; }
+    .frq-tag  { padding:2px 8px; border-radius:5px; font-size:.58rem; font-weight:700; }
+
+    /* Controls */
+    .frq-controls { display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; width:80px; }
+    .frq-hz       { font-size:.68rem; font-weight:900; color:var(--al-muted); letter-spacing:.05em; }
+    .frq-play-btn {
+      width:36px; height:36px; border-radius:50%; border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:.8rem;
+      transition:all .22s; flex-shrink:0;
+    }
+    .frq-play-btn:hover { transform:scale(1.12); }
+    .frq-vol {
+      -webkit-appearance:none; appearance:none;
+      width:72px; height:4px; border-radius:99px; outline:none; cursor:pointer;
+      background:rgba(168,85,247,.25);
+    }
+    .frq-vol::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:#a855f7; box-shadow:0 0 6px #a855f7; cursor:pointer; }
+    </style>
+
+    <!-- Header -->
+    <div class="frq-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-size:1rem;">🎵</span>
+          <h2 class="frq-title">Frecuencias ALUMED</h2>
         </div>
+        <p class="frq-sub">Elegí el estado mental que necesitás para estudiar, repasar o preparar un final.</p>
+      </div>
+      <div class="frq-badge"><span class="frq-dot"></span><span id="frqCurrentHz">—</span></div>
     </div>
 
-</div>
-
-<!-- 6. Edit Goal Modal -->
-<!-- 6. New Interactive Event Modal -->
-<div id="eventModalOverlay" class="goal-modal-overlay" onclick="closeEventModal(event)">
-    <div class="goal-modal" onclick="event.stopPropagation()" style="max-width: 500px; width: min(480px, 95vw); border: 1px solid #cbd5e1; box-shadow: 0 20px 50px rgba(0,0,0,0.15); background: var(--branco);">
-        <h4 id="modalHeaderDate" class="modal-title" style="font-family:'Outfit', sans-serif; color: #0f172a; border-bottom: 1px solid #e2e8f0; font-size: 15px; margin-bottom: 12px;">Fecha seleccionada</h4>
-        
-        <!-- List of Scheduled Events for the Day -->
-        <label style="font-size: 11px; font-family:'Orbitron', sans-serif; color: #a78bfa; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; display: block;">Eventos de hoy</label>
-        <div id="dayEventsList" style="max-height: 140px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
-            <!-- Rendered dynamically by JS -->
-        </div>
-
-        <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 12px;">
-            <label style="font-size: 11px; font-family:'Outfit', sans-serif; color: var(--roxo-neon); font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: block;">Agregar Nuevo Evento</label>
-            
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <div style="flex: 1;">
-                    <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Tipo</label>
-                    <select id="eventTypeSelect" onchange="onEventTypeChange()" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12.5px;">
-                        <option value="Estudio">Estudio</option>
-                        <option value="Parcial">Parcial</option>
-                        <option value="Final">Final</option>
-                        <option value="Recuperatorio">Recuperatorio</option>
-                        <option value="Inscripción">Inscripción</option>
-                        <option value="Cursada">Cursada</option>
-                        <option value="Entrega">Entrega</option>
-                        <option value="Recordatorio personal">Recordatorio personal</option>
-                    </select>
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Materia</label>
-                    <input type="text" id="eventSubjectInput" placeholder="Ej: Histología" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12.5px;">
-                </div>
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Título del Evento</label>
-                <input type="text" id="eventTitleInput" placeholder="Ej: Repasar preparado o Examen" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12.5px;">
-            </div>
-
-            <!-- Conditional fields for Parcial -->
-            <div id="parcialFields" style="display: none; gap: 8px; margin-bottom: 10px;">
-                <div style="flex: 1;">
-                    <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Hora</label>
-                    <input type="text" id="eventTimeInput" placeholder="08:30" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12px;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Aula</label>
-                    <input type="text" id="eventRoomInput" placeholder="Aula 4" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12px;">
-                </div>
-                <div style="flex: 1.5;">
-                    <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Temas</label>
-                    <input type="text" id="eventTopicsInput" placeholder="Tejido Óseo" style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12px;">
-                </div>
-            </div>
-
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 4px;">Descripción (opcional)</label>
-                <textarea id="eventDescInput" rows="2" placeholder="Detalles adicionales..." style="width: 100%; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; padding: 8px; outline: none; font-size: 12px; resize: none;"></textarea>
-            </div>
-
-            <!-- Color Palette selection -->
-            <label style="font-size: 10px; color: #475569; display: block; margin-bottom: 6px;">Color del Evento</label>
-            <div class="category-picker" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
-                <button type="button" onclick="selectEventColor('red')" class="picker-btn color-red" id="eventcol-red">Rojo (Final)</button>
-                <button type="button" onclick="selectEventColor('blue')" class="picker-btn color-blue" id="eventcol-blue">Azul (Parcial)</button>
-                <button type="button" onclick="selectEventColor('yellow')" class="picker-btn color-yellow" id="eventcol-yellow">Amarillo (Inscrip.)</button>
-                <button type="button" onclick="selectEventColor('green')" class="picker-btn color-green" id="eventcol-green">Verde (Cursada)</button>
-                <button type="button" onclick="selectEventColor('violet')" class="picker-btn color-violet" id="eventcol-violet">Violeta (Estudio)</button>
-                <button type="button" onclick="selectEventColor('pink')" class="picker-btn color-pink" id="eventcol-pink">Rosa (Repaso)</button>
-                <button type="button" onclick="selectEventColor('gray')" class="picker-btn color-gray" id="eventcol-gray">Gris (Descanso)</button>
-            </div>
-        </div>
-
-        <div style="display: flex; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-            <button onclick="saveEvent()" class="action-btn-primary" style="flex-grow: 1; padding: 10px; font-size: 12.5px; font-family:'Outfit', sans-serif; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; border: none; font-weight: 800; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);">
-                Guardar Evento
-            </button>
-            <button onclick="closeEventModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; font-size: 12.5px; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-family:'Outfit', sans-serif; font-weight: 600;">
-                Cerrar
-            </button>
-        </div>
+    <!-- Tabs -->
+    <div class="frq-tabs">
+      <button class="frq-tab active" data-cat="repasar">📚 Repasar</button>
+      <button class="frq-tab" data-cat="memorizar">📝 Memorizar</button>
+      <button class="frq-tab" data-cat="final">🔥 Modo Final</button>
+      <button class="frq-tab" data-cat="despues">🌙 Después de estudiar</button>
     </div>
-</div>
+
+    <!-- ── REPASAR ── -->
+    <div class="frq-panel active" id="frq-repasar">
+      <!-- 40 Hz Gamma -->
+      <div class="frq-item" data-hz="40" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.2);">🧠</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#22d3ee;">40 Hz Gamma</div>
+          <div class="frq-desc">Concentración máxima · Atención sostenida · Integración de conceptos complejos.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Anatomía</span>
+            <span class="frq-tag" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Histología</span>
+            <span class="frq-tag" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Simulacros</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">40 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(34,211,238,.15);color:#22d3ee;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+      <!-- 20 Hz Beta -->
+      <div class="frq-item" data-hz="20" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.2);">🧬</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#fb923c;">20 Hz Beta</div>
+          <div class="frq-desc">Estado mental activo · Resolución de problemas · Energía para estudiar varias horas.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);">Choices</span>
+            <span class="frq-tag" style="background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);">Parciales</span>
+            <span class="frq-tag" style="background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);">Finales</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">20 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(251,146,60,.15);color:#fb923c;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MEMORIZAR ── -->
+    <div class="frq-panel" id="frq-memorizar">
+      <!-- 10 Hz Alpha -->
+      <div class="frq-item" data-hz="10" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.2);">💡</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#4ade80;">10 Hz Alpha</div>
+          <div class="frq-desc">Calma mental sin perder atención · Ayuda a ordenar la información · Sensación de fluidez.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Leer apuntes</span>
+            <span class="frq-tag" style="background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Resumir</span>
+            <span class="frq-tag" style="background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Mapas mentales</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">10 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(74,222,128,.12);color:#4ade80;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+      <!-- 8 Hz Alpha baja -->
+      <div class="frq-item" data-hz="8" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.2);">🎓</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#34d399;">8 Hz Alpha baja</div>
+          <div class="frq-desc">Repaso tranquilo · Asociaciones y creatividad · Conexión entre temas.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);">Embriología</span>
+            <span class="frq-tag" style="background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);">Fisiología</span>
+            <span class="frq-tag" style="background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);">Conexiones</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">8 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(52,211,153,.12);color:#34d399;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODO FINAL ── -->
+    <div class="frq-panel" id="frq-final">
+      <div class="frq-item" data-hz="40" data-type="sine" style="border-color:rgba(245,200,66,.15);background:rgba(245,200,66,.04);">
+        <div class="frq-icon-wrap" style="background:rgba(245,200,66,.12);border-color:rgba(245,200,66,.25);">⚡</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#f5c842;">40 Hz + Pomodoro</div>
+          <div class="frq-desc">Sensación de foco intenso · Menos distracciones · Mayor atención en períodos cortos · Mejor rendimiento en tareas exigentes.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">⚡ Foco total</span>
+            <span class="frq-tag" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">🍅 Pomodoro</span>
+            <span class="frq-tag" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">🔥 Alta exigencia</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">40 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(245,200,66,.15);color:#f5c842;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.5" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+      <p style="font-size:.72rem;color:var(--al-muted);text-align:center;padding:6px 0;">💡 Activá el <strong style="color:#f5c842;">Pomodoro de arriba</strong> junto con esta frecuencia para el máximo rendimiento.</p>
+    </div>
+
+    <!-- ── DESPUÉS DE ESTUDIAR ── -->
+    <div class="frq-panel" id="frq-despues">
+      <!-- 7.83 Hz Schumann -->
+      <div class="frq-item" data-hz="7.83" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.2);">🌊</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#818cf8;">7.83 Hz — Schumann</div>
+          <div class="frq-desc">Descanso mental · Sensación de tranquilidad · Resonancia natural de la Tierra.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(99,102,241,.1);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Descanso</span>
+            <span class="frq-tag" style="background:rgba(99,102,241,.1);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Post-estudio</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">7.83 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(99,102,241,.12);color:#818cf8;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.3" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+      <!-- 2 Hz Delta -->
+      <div class="frq-item" data-hz="2" data-type="sine">
+        <div class="frq-icon-wrap" style="background:rgba(55,48,163,.15);border-color:rgba(55,48,163,.3);">🌙</div>
+        <div class="frq-info">
+          <div class="frq-name" style="color:#6366f1;">2–4 Hz Delta</div>
+          <div class="frq-desc">Relajación profunda · Preparación para dormir · Recuperación mental después de estudiar.</div>
+          <div class="frq-tags">
+            <span class="frq-tag" style="background:rgba(55,48,163,.12);color:#6366f1;border:1px solid rgba(55,48,163,.25);">Relajación</span>
+            <span class="frq-tag" style="background:rgba(55,48,163,.12);color:#6366f1;border:1px solid rgba(55,48,163,.25);">Dormir</span>
+          </div>
+        </div>
+        <div class="frq-controls">
+          <span class="frq-hz">2 Hz</span>
+          <button class="frq-play-btn" style="background:rgba(55,48,163,.15);color:#6366f1;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+          <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.3" oninput="FRQ.vol(this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer tip -->
+    <p style="font-size:.65rem;color:rgba(200,180,255,.35);text-align:center;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
+      <i class="fas fa-headphones"></i> Usá auriculares para mayor efectividad · Las frecuencias bajas son binaural beats
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SEÇÃO 4+5 — PROGRESSO + IA
+       ════════════════════════════════════ -->
+  <div class="al-bot-grid">
+
+    <!-- Progresso por matéria -->
+    <div class="al-card">
+      <div class="al-card-glow"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+        <div>
+          <span class="al-label lbl-green">📊 Rendimiento</span>
+          <h2 class="al-title">Progreso académico</h2>
+        </div>
+        <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" class="al-btn">
+          <i class="fas fa-graduation-cap"></i> Ver mis cursos
+        </a>
+      </div>
+
+      {% if courses_with_progress %}
+        {% for item in courses_with_progress %}
+        <div class="al-materia-row">
+          <div class="al-materia-header">
+            <span class="al-materia-name">{{ item.course.title }}</span>
+            <span class="al-materia-pct">{{ item.progress }}%</span>
+          </div>
+          <div class="al-materia-bar">
+            <div class="al-materia-fill" data-w="{{ item.progress }}"></div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="al-materia-row">
+          <div class="al-materia-header"><span class="al-materia-name">Histología</span><span class="al-materia-pct">80%</span></div>
+          <div class="al-materia-bar"><div class="al-materia-fill" data-w="80"></div></div>
+        </div>
+        <div class="al-materia-row">
+          <div class="al-materia-header"><span class="al-materia-name">Biología Celular</span><span class="al-materia-pct">60%</span></div>
+          <div class="al-materia-bar"><div class="al-materia-fill" data-w="60"></div></div>
+        </div>
+        <div class="al-materia-row">
+          <div class="al-materia-header"><span class="al-materia-name">Anatomía</span><span class="al-materia-pct">50%</span></div>
+          <div class="al-materia-bar"><div class="al-materia-fill" data-w="50"></div></div>
+        </div>
+        <div class="al-materia-row">
+          <div class="al-materia-header"><span class="al-materia-name">Fisiología</span><span class="al-materia-pct">35%</span></div>
+          <div class="al-materia-bar"><div class="al-materia-fill" data-w="35"></div></div>
+        </div>
+        <p style="font-size:.75rem;color:var(--al-muted);margin-top:16px;text-align:center;">
+          Matricúlate en un curso para ver tu progreso real.
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- IA Profe Joy -->
+    <div class="al-card al-ia-card">
+      <div class="al-card-glow"></div>
+      <span class="al-label lbl-purple">🧠 Inteligencia artificial</span>
+      <div class="al-ia-avatar">🤖</div>
+      <div class="al-ia-name">IA Profe Joy</div>
+      <p class="al-ia-q">"¿Qué vas a estudiar hoy?"</p>
+      <div class="al-ia-chips">
+        <div class="al-ia-chip">💬 Explicar un concepto de anatomía</div>
+        <div class="al-ia-chip">🔁 Revisar histología con flashcards</div>
+        <div class="al-ia-chip">📋 Crear un plan de estudio</div>
+        <div class="al-ia-chip">🗓 Organizar cronograma de repaso</div>
+      </div>
+      <a href="/cursos/9/" class="al-ia-btn">
+        <i class="fas fa-robot"></i> Abrir IA Profe Joy
+      </a>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SEÇÃO 6 — CURSOS
+       ════════════════════════════════════ -->
+  <div class="al-card">
+    <div class="al-card-glow"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+      <div>
+        <span class="al-label lbl-gold">🎓 ALUMED Campus</span>
+        <h2 class="al-title">Mis cursos activos</h2>
+      </div>
+      <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" class="al-btn al-btn-gold">
+        <i class="fas fa-external-link-alt"></i> Entrar al ALUMED Campus (Wix)
+      </a>
+    </div>
+
+    {% if courses_with_progress %}
+    <div class="al-courses-grid">
+      {% for item in courses_with_progress %}
+      <div class="al-course-card">
+        <span class="al-course-tag">📚 Curso activo</span>
+        <div class="al-course-name">{{ item.course.title }}</div>
+        <div class="al-course-sub">{{ item.course.description|truncatewords:12 }}</div>
+        <div class="al-course-bar"><div class="al-course-fill" style="width:{{ item.progress }}%;"></div></div>
+        <div class="al-course-meta">
+          <span>{{ item.completed_lessons }} / {{ item.total_lessons }} clases</span>
+          <span>{{ item.progress }}% completado</span>
+        </div>
+        {% if item.course.wix_url %}
+          <a href="{{ item.course.wix_url }}" target="_blank" class="al-course-btn">
+            <i class="fas fa-play-circle"></i> Entrar al curso
+          </a>
+        {% else %}
+          <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" class="al-course-btn">
+            <i class="fas fa-external-link-alt"></i> Ver en Wix
+          </a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="al-no-courses">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🎓</div>
+      <div style="font-size:.9rem;font-weight:700;color:#f1eeff;margin-bottom:8px;">Aún no tienes cursos activos</div>
+      <div style="font-size:.78rem;color:var(--al-muted);margin-bottom:18px;">Explora el catálogo de ALUMED y comienza tu camino en medicina.</div>
+      <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" class="al-btn al-btn-gold" style="justify-content:center;">
+        <i class="fas fa-graduation-cap"></i> Explorar cursos en Wix
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+</div><!-- /al-wrap -->
 
 <script>
-    var currentUsername = "{{ user.username }}";
-    var selectedDay = null;
-    var selectedColor = 'violet';
-    var editMode = false;
+(function(){
+'use strict';
 
-    // Default Cards Data (to allow customization and drag reordering)
-    var defaultCards = [
-        { id: 'mi_panel', title: 'Mi Panel del Alumno', desc: 'Ingresá a tu panel oficial de Wix para ver tus cursos, progresos y compras.', icon: 'fa-user-cog', url: '{{ WIX_URLS.mi_panel }}', buttonText: 'Ir a mi panel (Wix)', size: 'medium', color: 'purple', isExternal: true },
-        { id: 'mis_clases', title: 'Mis Clases y Cursos', desc: 'Accedé al reproductor oficial de clases y contenidos de tus cursos adquiridos.', icon: 'fa-play-circle', url: '{{ WIX_URLS.mis_clases }}', buttonText: 'Ver mis clases (Wix)', size: 'medium', color: 'gold', isExternal: true },
-        { id: 'mi_biblioteca', title: 'Mi Biblioteca', desc: 'Accedé a tus archivos, apuntes y libros que adquiriste oficialmente.', icon: 'fa-folder-open', url: '{{ WIX_URLS.mi_biblioteca_adquirida }}', buttonText: 'Ver mis archivos (Wix)', size: 'small', color: 'gold', isExternal: true },
-        { id: 'biblioteca', title: 'Biblioteca Pública', desc: 'Accedé a apuntes, libros y recursos organizados por carrera, año y materia.', icon: 'fa-book', url: '/biblioteca/', buttonText: 'Explorar Biblioteca', size: 'small', color: 'purple' },
-        { id: 'microscopio', title: 'Microscopio Virtual', desc: 'Estudiá preparados histológicos interactivos con aumentos y guías.', icon: 'fa-microscope', url: '/microscopio-virtual/', buttonText: 'Abrir Microscopio', size: 'small', color: 'blue' },
-        { id: 'anatomia_3d', title: 'Atlas 3D', desc: 'Visualizá relaciones anatómicas en tres dimensiones de forma interactiva.', icon: 'fa-cubes', url: '/anatomia-3d/', buttonText: 'Explorar Atlas 3D', size: 'small', color: 'green' },
-        { id: 'foro', title: 'Foro / Testimonios', desc: 'Compartí experiencias, dudas y testimonios para romper el filtro.', icon: 'fa-comments', url: '/foro/', buttonText: 'Entrar al foro', size: 'small', color: 'pink' },
-        { id: 'academico', title: 'Académico', desc: 'Consultá carteleras, cursadas, parciales, finales e inscripciones.', icon: 'fa-graduation-cap', url: '/cronograma-finales/', buttonText: 'Ver académico', size: 'small', color: 'green' }
-    ];
+// ── FRQ — Frecuencias ALUMED (Web Audio API) ─────────────────────────
+var FRQ = (function(){
+  var ctx = null;
+  var _osc = null, _gain = null, _osc2 = null, _activeBtn = null;
 
-    // Categories mapping for tags
-    var categoryLabels = {
-        'violet': 'Estudio',
-        'blue': 'Parcial',
-        'red': 'Final',
-        'green': 'Cursada',
-        'yellow': 'Inscrip.',
-        'pink': 'Repaso',
-        'gray': 'Descanso'
-    };
+  function getCtx(){
+    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
 
-    // Load custom cards config from LocalStorage
-    function loadCustomCards() {
-        var storeKey = 'alumed_cards_' + currentUsername;
-        var saved = localStorage.getItem(storeKey);
-        if (saved) {
-            var parsed = JSON.parse(saved);
-            // Verify if all default cards are present, if not, reset or merge them!
-            var parsedIds = parsed.map(c => c.id);
-            var missing = defaultCards.filter(dc => !parsedIds.includes(dc.id));
-            if (missing.length > 0) {
-                localStorage.setItem(storeKey, JSON.stringify(defaultCards));
-                return JSON.parse(JSON.stringify(defaultCards));
-            }
-            return parsed;
-        }
-        return JSON.parse(JSON.stringify(defaultCards)); // clone default
+  function stop(){
+    if(_osc){ try{ _osc.stop(); }catch(e){} _osc=null; }
+    if(_osc2){ try{ _osc2.stop(); }catch(e){} _osc2=null; }
+    if(_gain){ _gain.disconnect(); _gain=null; }
+    if(_activeBtn){
+      _activeBtn.innerHTML = '<i class="fas fa-play"></i>';
+      _activeBtn.closest('.frq-item').classList.remove('playing');
+      _activeBtn = null;
+    }
+    document.getElementById('frqCurrentHz').textContent = '—';
+  }
+
+  function play(btn, hz, vol){
+    var ac = getCtx();
+    _gain = ac.createGain();
+    _gain.gain.value = parseFloat(vol)||0.4;
+    _gain.connect(ac.destination);
+
+    // For very low hz (binaural), use two slightly offset oscillators
+    if(hz < 20){
+      // Left channel: 200Hz base
+      _osc = ac.createOscillator();
+      _osc.type = 'sine';
+      _osc.frequency.value = 200;
+      // Right channel: 200 + hz
+      _osc2 = ac.createOscillator();
+      _osc2.type = 'sine';
+      _osc2.frequency.value = 200 + parseFloat(hz);
+      var merger = ac.createChannelMerger(2);
+      var g1 = ac.createGain(); g1.gain.value = 0.5; _osc.connect(g1); g1.connect(merger, 0, 0);
+      var g2 = ac.createGain(); g2.gain.value = 0.5; _osc2.connect(g2); g2.connect(merger, 0, 1);
+      merger.connect(_gain);
+      _osc.start(); _osc2.start();
+    } else {
+      _osc = ac.createOscillator();
+      _osc.type = 'sine';
+      _osc.frequency.value = parseFloat(hz);
+      _osc.connect(_gain);
+      _osc.start();
     }
 
-    // Save customized card layout to LocalStorage
-    function saveCustomLayout() {
-        var cards = loadCustomCards();
-        var elements = document.querySelectorAll('#dashboardCardsGrid .glass-card');
-        var newOrderedCards = [];
-        
-        elements.forEach(el => {
-            var cId = el.getAttribute('data-id');
-            var matchedCard = cards.find(c => c.id === cId);
-            if (matchedCard) {
-                // Update size and color accent from DOM inputs
-                var sizeActive = el.querySelector('.size-btn.active');
-                if (sizeActive) {
-                    matchedCard.size = sizeActive.getAttribute('data-size');
-                }
-                var colorActive = el.querySelector('.color-dot.active');
-                if (colorActive) {
-                    matchedCard.color = colorActive.getAttribute('data-color');
-                }
-                newOrderedCards.push(matchedCard);
-            }
-        });
-        
-        localStorage.setItem('alumed_cards_' + currentUsername, JSON.stringify(newOrderedCards));
-        toggleEditMode(false);
-        renderCardsGrid();
+    _activeBtn = btn;
+    btn.innerHTML = '<i class="fas fa-pause"></i>';
+    btn.closest('.frq-item').classList.add('playing');
+    document.getElementById('frqCurrentHz').textContent = hz + ' Hz';
+  }
+
+  return {
+    toggle: function(btn){
+      var item = btn.closest('.frq-item');
+      var hz   = item.dataset.hz;
+      var vol  = item.querySelector('.frq-vol').value;
+      if(_activeBtn === btn){ stop(); return; }
+      stop();
+      play(btn, hz, vol);
+    },
+    vol: function(slider){
+      var vol = parseFloat(slider.value);
+      if(_gain) _gain.gain.setTargetAtTime(vol, ctx.currentTime, 0.015);
     }
-
-    // Toggle Edit Mode UI overlay
-    function toggleEditMode(forceState) {
-        if (forceState !== undefined) {
-            editMode = forceState;
-        } else {
-            editMode = !editMode;
-        }
-        
-        var grid = document.getElementById('dashboardCardsGrid');
-        var toggleBtn = document.getElementById('toggleEditModeBtn');
-        var saveBtn = document.getElementById('saveEditModeBtn');
-        
-        if (editMode) {
-            grid.classList.add('edit-mode-active');
-            toggleBtn.innerHTML = '<i class="fas fa-times"></i> Cancelar';
-            toggleBtn.classList.remove('pomo-btn-option');
-            toggleBtn.classList.add('pomo-btn-main');
-            toggleBtn.style.background = 'rgba(239, 68, 68, 0.2)';
-            toggleBtn.style.borderColor = '#ef4444';
-            toggleBtn.style.color = '#ef4444';
-            saveBtn.style.display = 'block';
-            
-            // Allow drag and drop sorting handles
-            initDragAndDrop();
-        } else {
-            grid.classList.remove('edit-mode-active');
-            toggleBtn.innerHTML = '<i class="fas fa-palette"></i> Configurar mis materias';
-            toggleBtn.classList.add('pomo-btn-option');
-            toggleBtn.classList.remove('pomo-btn-main');
-            toggleBtn.style.background = '';
-            toggleBtn.style.borderColor = '';
-            toggleBtn.style.color = '';
-            saveBtn.style.display = 'none';
-        }
-    }
-
-    // Drag and Drop Grid Reorder engine
-    function initDragAndDrop() {
-        const cards = document.querySelectorAll('#dashboardCardsGrid .glass-card');
-        const container = document.getElementById('dashboardCardsGrid');
-
-        cards.forEach(card => {
-            card.setAttribute('draggable', 'true');
-            card.addEventListener('dragstart', () => {
-                card.classList.add('dragging');
-            });
-            card.addEventListener('dragend', () => {
-                card.classList.remove('dragging');
-            });
-        });
-
-        container.addEventListener('dragover', e => {
-            e.preventDefault();
-            const draggingCard = document.querySelector('.dragging');
-            const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
-            if (afterElement == null) {
-                container.appendChild(draggingCard);
-            } else {
-                container.insertBefore(draggingCard, afterElement);
-            }
-        });
-    }
-
-    function getDragAfterElement(container, x, y) {
-        const draggableElements = [...container.querySelectorAll('.glass-card:not(.dragging)')];
-
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            // Calculate distance to box center
-            const offset = y - box.top - box.height / 2;
-            const offsetX = x - box.left - box.width / 2;
-            
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    // Render Cards in DOM based on configuration array
-    function renderCardsGrid() {
-        var cards = loadCustomCards();
-        var grid = document.getElementById('dashboardCardsGrid');
-        grid.innerHTML = '';
-        
-        cards.forEach(c => {
-            var cardEl = document.createElement('div');
-            cardEl.className = 'glass-card card-size-' + c.size + ' accent-' + c.color;
-            cardEl.setAttribute('data-id', c.id);
-            
-            // Inside Content (Structured with graphic visualization at the top, title at the bottom)
-            var topDiv = document.createElement('div');
-            topDiv.style.display = 'flex';
-            topDiv.style.flexDirection = 'column';
-            topDiv.style.height = '100%';
-            
-            // 1. Render Graphic Widget Block at the top
-            var widgetDiv = document.createElement('div');
-            widgetDiv.style.flexGrow = '1';
-            widgetDiv.style.minHeight = '90px';
-            widgetDiv.style.display = 'flex';
-            widgetDiv.style.flexDirection = 'column';
-            widgetDiv.style.justifyContent = 'center';
-            
-            if (c.id === 'biblioteca') {
-                // Large Terminal style: "APIs for everything" code editor mock
-                var term = document.createElement('div');
-                term.style.background = '#050308';
-                term.style.border = '1px solid rgba(255,255,255,0.06)';
-                term.style.borderRadius = '8px';
-                term.style.padding = '10px';
-                term.style.fontFamily = 'monospace';
-                term.style.fontSize = '10px';
-                term.style.color = '#c084fc';
-                term.style.textAlign = 'left';
-                term.style.boxShadow = 'inset 0 2px 8px rgba(0,0,0,0.9)';
-                term.innerHTML = `
-                    <span style="color: #60a5fa;">const</span> alumed = <span style="color: #f5c542;">require</span>(<span style="color: #34d399;">'ALUMED-Libros'</span>);<br>
-                    <span style="color: #60a5fa;">await</span> alumed.<span style="color: #fb923c;">buscar</span>(<span style="color: #34d399;">'Anatomía'</span>);<br>
-                    <span style="color: #94a3b8;">// 48 tomos catalogados</span>
-                `;
-                widgetDiv.appendChild(term);
-            } 
-            else if (c.id === 'favoritos') {
-                // Auto-retry style: Pulse concentric radar and toggle
-                var radar = document.createElement('div');
-                radar.style.height = '80px';
-                radar.style.display = 'flex';
-                radar.style.alignItems = 'center';
-                radar.style.justifyContent = 'center';
-                radar.style.position = 'relative';
-                radar.style.overflow = 'hidden';
-                radar.innerHTML = `
-                    <div style="position: absolute; width: 70px; height: 70px; border-radius: 50%; border: 1px dashed rgba(245, 197, 66, 0.2); animation: pulse 3s infinite linear;"></div>
-                    <div style="position: absolute; width: 45px; height: 45px; border-radius: 50%; border: 1px dashed rgba(245, 197, 66, 0.35); animation: pulse 2s infinite linear;"></div>
-                    <div style="background: rgba(245,197,66,0.12); border: 1px solid #f5c542; color: #f5c542; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-family:'Orbitron', sans-serif; font-weight:700; text-transform:uppercase; z-index:1;">ACTIVO</div>
-                `;
-                widgetDiv.appendChild(radar);
-            }
-            else if (c.id === 'academico') {
-                // Big request count style: "1,600 Requests per second"
-                var metric = document.createElement('div');
-                metric.style.display = 'flex';
-                metric.style.flexDirection = 'column';
-                metric.style.alignItems = 'center';
-                metric.style.justifyContent = 'center';
-                metric.style.background = 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%)';
-                metric.style.height = '80px';
-                metric.innerHTML = `
-                    <span style="font-size: 28px; font-weight: 800; font-family:'Orbitron', sans-serif; color: #34d399; text-shadow: 0 0 15px rgba(16,185,129,0.35);">100%</span>
-                    <span style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-family:'Orbitron', sans-serif; letter-spacing: 0.5px;">CURSADA COMPLETA</span>
-                `;
-                widgetDiv.appendChild(metric);
-            }
-            else if (c.id === 'facultad') {
-                // Managed webhook triggers style: row of app badges
-                var badges = document.createElement('div');
-                badges.style.display = 'flex';
-                badges.style.gap = '8px';
-                badges.style.justifyContent = 'center';
-                badges.style.alignItems = 'center';
-                badges.style.height = '80px';
-                badges.innerHTML = `
-                    <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; color: #60a5fa; font-size: 11px;"><i class="fas fa-university"></i></span>
-                    <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: center; color: #f87171; font-size: 11px;"><i class="fas fa-envelope"></i></span>
-                    <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; color: #34d399; font-size: 11px;"><i class="fab fa-whatsapp"></i></span>
-                    <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(245, 197, 66, 0.15); border: 1px solid rgba(245, 197, 66, 0.3); display: flex; align-items: center; justify-content: center; color: #f5c542; font-size: 11px;"><i class="fas fa-map-marked-alt"></i></span>
-                `;
-                widgetDiv.appendChild(badges);
-            }
-            else if (c.id === 'foro') {
-                // Large data size count style: "2TB Data per day"
-                var data = document.createElement('div');
-                data.style.display = 'flex';
-                data.style.flexDirection = 'column';
-                data.style.alignItems = 'center';
-                data.style.justifyContent = 'center';
-                data.style.background = 'radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%)';
-                data.style.height = '80px';
-                data.innerHTML = `
-                    <span style="font-size: 28px; font-weight: 800; font-family:'Orbitron', sans-serif; color: #f472b6; text-shadow: 0 0 15px rgba(236,72,153,0.35);">+120</span>
-                    <span style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-family:'Orbitron', sans-serif; letter-spacing: 0.5px;">COMENTARIOS ACTIVOS</span>
-                `;
-                widgetDiv.appendChild(data);
-            }
-            else if (c.id === 'mi_panel') {
-                var panelW = document.createElement('div');
-                panelW.style.display = 'flex';
-                panelW.style.alignItems = 'center';
-                panelW.style.justifyContent = 'center';
-                panelW.style.height = '80px';
-                panelW.innerHTML = `
-                    <div style="font-size: 32px; color: #a855f7; filter: drop-shadow(0 0 8px rgba(168,85,247,0.4)); animation: pulse 2s infinite ease-in-out;">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                `;
-                widgetDiv.appendChild(panelW);
-            }
-            else if (c.id === 'mis_clases') {
-                var classesW = document.createElement('div');
-                classesW.style.display = 'flex';
-                classesW.style.flexDirection = 'column';
-                classesW.style.justifyContent = 'center';
-                classesW.style.alignItems = 'center';
-                classesW.style.height = '80px';
-                classesW.innerHTML = `
-                    <div style="font-size: 28px; color: #f5c542; margin-bottom: 5px;"><i class="fas fa-play-circle"></i></div>
-                    <div style="width: 80px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px;">
-                        <div style="width: 70%; height: 100%; background: #f5c542; border-radius: 2px; box-shadow: 0 0 6px #f5c542;"></div>
-                    </div>
-                `;
-                widgetDiv.appendChild(classesW);
-            }
-            else if (c.id === 'microscopio') {
-                var microW = document.createElement('div');
-                microW.style.display = 'flex';
-                microW.style.alignItems = 'center';
-                microW.style.justifyContent = 'center';
-                microW.style.height = '80px';
-                microW.innerHTML = `
-                    <div style="position: relative; width: 50px; height: 50px; border-radius: 50%; border: 2px solid #60a5fa; display: flex; align-items: center; justify-content: center; background: rgba(96,165,250,0.08);">
-                        <i class="fas fa-search" style="color: #60a5fa; font-size: 18px;"></i>
-                        <div style="position: absolute; width: 8px; height: 8px; background: #34d399; border-radius: 50%; top: 10px; right: 10px; box-shadow: 0 0 8px #34d399;"></div>
-                    </div>
-                `;
-                widgetDiv.appendChild(microW);
-            }
-            else if (c.id === 'anatomia_3d') {
-                var anatW = document.createElement('div');
-                anatW.style.display = 'flex';
-                anatW.style.alignItems = 'center';
-                anatW.style.justifyContent = 'center';
-                anatW.style.height = '80px';
-                anatW.innerHTML = `
-                    <div style="font-size: 32px; color: #10b981; animation: spin 6s infinite linear;">
-                        <i class="fas fa-cubes"></i>
-                    </div>
-                `;
-                widgetDiv.appendChild(anatW);
-            }
-            else if (c.id === 'mi_biblioteca') {
-                var bibW = document.createElement('div');
-                bibW.style.display = 'flex';
-                bibW.style.alignItems = 'center';
-                bibW.style.justifyContent = 'center';
-                bibW.style.height = '80px';
-                bibW.innerHTML = `
-                    <div style="font-size: 32px; color: #f5c542; filter: drop-shadow(0 0 8px rgba(245,197,66,0.35));">
-                        <i class="fas fa-folder-open"></i>
-                    </div>
-                `;
-                widgetDiv.appendChild(bibW);
-            }
-            
-            topDiv.appendChild(widgetDiv);
-            
-            // 2. Render Text Title & Desc container at the bottom
-            var infoDiv = document.createElement('div');
-            infoDiv.style.marginTop = '15px';
-            
-            var iconDiv = document.createElement('div');
-            iconDiv.className = 'card-icon';
-            iconDiv.innerHTML = '<i class="fas ' + c.icon + '"></i>';
-            infoDiv.appendChild(iconDiv);
-            
-            var titleH3 = document.createElement('h3');
-            titleH3.className = 'card-title';
-            titleH3.textContent = c.title;
-            infoDiv.appendChild(titleH3);
-            
-            var descP = document.createElement('p');
-            descP.className = 'card-desc';
-            descP.textContent = c.desc;
-            infoDiv.appendChild(descP);
-            
-            topDiv.appendChild(infoDiv);
-            cardEl.appendChild(topDiv);
-            
-            // 3. Action button link
-            var btnA = document.createElement('a');
-            btnA.href = c.url;
-            btnA.className = 'subject-btn';
-            btnA.style.textDecoration = 'none';
-            if (c.isExternal) {
-                btnA.target = '_blank';
-                btnA.innerHTML = c.buttonText + ' <i class="fas fa-external-link-alt" style="font-size:10px; margin-left:4px;"></i>';
-            } else {
-                btnA.textContent = c.buttonText;
-            }
-            cardEl.appendChild(btnA);
-            
-            // Customization Overlay (only visible in edit mode)
-            var overlay = document.createElement('div');
-            overlay.className = 'card-customize-overlay';
-            
-            // Size Selection Row
-            var sizeLabel = document.createElement('label');
-            sizeLabel.className = 'custom-label';
-            sizeLabel.textContent = 'Tamaño de Tarjeta';
-            overlay.appendChild(sizeLabel);
-            
-            var sizeGroup = document.createElement('div');
-            sizeGroup.className = 'size-btn-group';
-            
-            var sizes = ['small', 'medium', 'large'];
-            sizes.forEach(sz => {
-                var szBtn = document.createElement('button');
-                szBtn.className = 'size-btn' + (c.size === sz ? ' active' : '');
-                szBtn.setAttribute('data-size', sz);
-                szBtn.textContent = sz === 'small' ? '1x' : (sz === 'medium' ? '2x' : '3x');
-                szBtn.onclick = function() {
-                    sizeGroup.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-                    szBtn.classList.add('active');
-                    // Preview size dynamically
-                    cardEl.className = 'glass-card card-size-' + sz + ' accent-' + getSelectedColor(colorGroup);
-                };
-                sizeGroup.appendChild(szBtn);
-            });
-            overlay.appendChild(sizeGroup);
-            
-            // Color Selection Row
-            var colorLabel = document.createElement('label');
-            colorLabel.className = 'custom-label';
-            colorLabel.style.marginTop = '8px';
-            colorLabel.textContent = 'Color de Brillo';
-            overlay.appendChild(colorLabel);
-            
-            var colorGroup = document.createElement('div');
-            colorGroup.className = 'color-dot-group';
-            
-            var colors = [
-                { name: 'purple', hex: '#a855f7' },
-                { name: 'blue', hex: '#3b82f6' },
-                { name: 'green', hex: '#10b981' },
-                { name: 'red', hex: '#ef4444' },
-                { name: 'gold', hex: '#f5c542' },
-                { name: 'pink', hex: '#ec4899' },
-                { name: 'orange', hex: '#f97316' }
-            ];
-            
-            colors.forEach(col => {
-                var dot = document.createElement('div');
-                dot.className = 'color-dot' + (c.color === col.name ? ' active' : '');
-                dot.style.backgroundColor = col.hex;
-                dot.style.color = col.hex;
-                dot.setAttribute('data-color', col.name);
-                dot.onclick = function() {
-                    colorGroup.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-                    dot.classList.add('active');
-                    // Preview color accent dynamically
-                    var activeSize = sizeGroup.querySelector('.size-btn.active').getAttribute('data-size');
-                    cardEl.className = 'glass-card card-size-' + activeSize + ' accent-' + col.name;
-                };
-                colorGroup.appendChild(dot);
-            });
-            overlay.appendChild(colorGroup);
-            
-            cardEl.appendChild(overlay);
-            grid.appendChild(cardEl);
-        });
-    }
-
-    function getSelectedColor(groupEl) {
-        var activeDot = groupEl.querySelector('.color-dot.active');
-        return activeDot ? activeDot.getAttribute('data-color') : 'purple';
-    }
-
-
-    /* --- INTERACTIVE ANNUAL CALENDAR SYSTEM --- */
-    var selectedAcademicYear = "1";
-    var currentYearNum = 2026;
-    var selectedEventColor = "violet";
-    var selectedDateStr = "";
-
-    var monthNames = [
-        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
-
-    var dayNamesCompact = ["L", "M", "M", "J", "V", "S", "D"];
-
-    var colorHexMapping = {
-        red: '#ef4444',
-        blue: '#3b82f6',
-        yellow: '#f5c542',
-        green: '#10b981',
-        violet: '#8b5cf6',
-        pink: '#ec4899',
-        gray: '#64748b'
-    };
-
-    function changeAcademicYear(year) {
-        selectedAcademicYear = year;
-        
-        // Update active year tab style
-        var tabs = document.querySelectorAll('[id^="year-tab-"]');
-        tabs.forEach(tab => {
-            if (tab.id === 'year-tab-' + year) {
-                tab.classList.add('active-year');
-            } else {
-                tab.classList.remove('active-year');
-            }
-        });
-        
-        renderAnnualCalendar();
-    }
-
-    function getDaysInMonth(year, month) {
-        return new Date(year, month + 1, 0).getDate();
-    }
-
-    function getFirstDayIndex(year, month) {
-        // Returns 0 for Monday, 1 for Tuesday ... 6 for Sunday
-        var day = new Date(year, month, 1).getDay();
-        return day === 0 ? 6 : day - 1;
-    }
-    
-    var calendarViewMode = 'monthly';
-    var currentDisplayMonth = new Date().getMonth();
-
-    function prevMonth() {
-        currentDisplayMonth--;
-        if (currentDisplayMonth < 0) {
-            currentDisplayMonth = 11;
-            currentYearNum--;
-        }
-        renderAnnualCalendar();
-    }
-
-    function nextMonth() {
-        currentDisplayMonth++;
-        if (currentDisplayMonth > 11) {
-            currentDisplayMonth = 0;
-            currentYearNum++;
-        }
-        renderAnnualCalendar();
-    }
-
-    function toggleCalendarView() {
-        var btn = document.getElementById('toggleCalendarViewBtn');
-        if (calendarViewMode === 'monthly') {
-            calendarViewMode = 'annual';
-            btn.textContent = 'Ver Calendario Mensual';
-        } else {
-            calendarViewMode = 'monthly';
-            btn.textContent = 'Ver Calendario Anual';
-        }
-        renderAnnualCalendar();
-    }
-
-    function renderAnnualCalendar() {
-        var container = document.getElementById('annualCalendarContainer');
-        if (!container) return;
-        container.innerHTML = '';
-
-        var allEvents = JSON.parse(localStorage.getItem('alumed_academic_events_' + currentUsername) || '[]');
-
-        if (calendarViewMode === 'monthly') {
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            
-            var monthCard = document.createElement('div');
-            monthCard.className = 'mini-month-card';
-            monthCard.style.width = '100%';
-            monthCard.style.maxWidth = '450px';
-            monthCard.style.margin = '0 auto';
-
-            var title = document.createElement('h3');
-            title.className = 'mini-month-title';
-            title.style.display = 'flex';
-            title.style.justifyContent = 'space-between';
-            title.style.alignItems = 'center';
-            title.innerHTML = `
-                <button onclick="prevMonth(); event.stopPropagation();" class="pomo-btn pomo-btn-option" style="padding: 2px 8px; font-size: 11px;"><i class="fas fa-chevron-left"></i></button>
-                <span>${monthNames[currentDisplayMonth]} ${currentYearNum}</span>
-                <button onclick="nextMonth(); event.stopPropagation();" class="pomo-btn pomo-btn-option" style="padding: 2px 8px; font-size: 11px;"><i class="fas fa-chevron-right"></i></button>
-            `;
-            monthCard.appendChild(title);
-
-            var grid = document.createElement('div');
-            grid.className = 'mini-month-grid';
-
-            dayNamesCompact.forEach(d => {
-                var h = document.createElement('div');
-                h.className = 'mini-day-header';
-                h.textContent = d;
-                grid.appendChild(h);
-            });
-
-            var firstDayIdx = getFirstDayIndex(currentYearNum, currentDisplayMonth);
-            var totalDays = getDaysInMonth(currentYearNum, currentDisplayMonth);
-
-            for (var e = 0; e < firstDayIdx; e++) {
-                var cell = document.createElement('div');
-                cell.className = 'mini-day-cell empty';
-                grid.appendChild(cell);
-            }
-
-            for (var dNum = 1; dNum <= totalDays; dNum++) {
-                var dayCell = document.createElement('div');
-                dayCell.className = 'mini-day-cell';
-                dayCell.textContent = dNum.toString();
-
-                var dateStr = `${currentYearNum}-${String(currentDisplayMonth + 1).padStart(2, '0')}-${String(dNum).padStart(2, '0')}`;
-                dayCell.setAttribute('data-date', dateStr);
-
-                var dayEvents = allEvents.filter(ev => ev.date === dateStr && ev.academicYear === selectedAcademicYear);
-
-                if (dayEvents.length > 0) {
-                    dayCell.classList.add('has-events');
-                    var dotsDiv = document.createElement('div');
-                    dotsDiv.className = 'day-dots';
-                    dayEvents.slice(0, 3).forEach(ev => {
-                        var dot = document.createElement('div');
-                        dot.className = 'day-dot';
-                        dot.style.background = colorHexMapping[ev.color] || '#dfc393';
-                        dotsDiv.appendChild(dot);
-                    });
-                    dayCell.appendChild(dotsDiv);
-                    var tooltipText = dayEvents.map(ev => `[${ev.type}] ${ev.title}`).join('\n');
-                    dayCell.setAttribute('title', tooltipText);
-                }
-
-                dayCell.onclick = (function(ds) {
-                    return function() { openEventModal(ds); };
-                })(dateStr);
-
-                grid.appendChild(dayCell);
-            }
-
-            monthCard.appendChild(grid);
-            container.appendChild(monthCard);
-        } else {
-            container.style.display = 'grid';
-            
-            for (var monthIdx = 0; monthIdx < 12; monthIdx++) {
-                var monthCard = document.createElement('div');
-                monthCard.className = 'mini-month-card';
-
-                var title = document.createElement('h3');
-                title.className = 'mini-month-title';
-                title.innerHTML = `<span>${monthNames[monthIdx]}</span> <span style="font-size:10px; opacity:0.5;">${currentYearNum}</span>`;
-                monthCard.appendChild(title);
-
-                var grid = document.createElement('div');
-                grid.className = 'mini-month-grid';
-
-                dayNamesCompact.forEach(d => {
-                    var h = document.createElement('div');
-                    h.className = 'mini-day-header';
-                    h.textContent = d;
-                    grid.appendChild(h);
-                });
-
-                var firstDayIdx = getFirstDayIndex(currentYearNum, monthIdx);
-                var totalDays = getDaysInMonth(currentYearNum, monthIdx);
-
-                for (var e = 0; e < firstDayIdx; e++) {
-                    var cell = document.createElement('div');
-                    cell.className = 'mini-day-cell empty';
-                    grid.appendChild(cell);
-                }
-
-                for (var dNum = 1; dNum <= totalDays; dNum++) {
-                    var dayCell = document.createElement('div');
-                    dayCell.className = 'mini-day-cell';
-                    dayCell.textContent = dNum.toString();
-
-                    var dateStr = `${currentYearNum}-${String(monthIdx + 1).padStart(2, '0')}-${String(dNum).padStart(2, '0')}`;
-                    dayCell.setAttribute('data-date', dateStr);
-
-                    var dayEvents = allEvents.filter(ev => ev.date === dateStr && ev.academicYear === selectedAcademicYear);
-
-                    if (dayEvents.length > 0) {
-                        dayCell.classList.add('has-events');
-                        var dotsDiv = document.createElement('div');
-                        dotsDiv.className = 'day-dots';
-                        dayEvents.slice(0, 3).forEach(ev => {
-                            var dot = document.createElement('div');
-                            dot.className = 'day-dot';
-                            dot.style.background = colorHexMapping[ev.color] || '#dfc393';
-                            dotsDiv.appendChild(dot);
-                        });
-                        dayCell.appendChild(dotsDiv);
-                        var tooltipText = dayEvents.map(ev => `[${ev.type}] ${ev.title}`).join('\n');
-                        dayCell.setAttribute('title', tooltipText);
-                    }
-
-                    dayCell.onclick = (function(ds) {
-                        return function() { openEventModal(ds); };
-                    })(dateStr);
-
-                    grid.appendChild(dayCell);
-                }
-
-                monthCard.appendChild(grid);
-                container.appendChild(monthCard);
-            }
-        }
-    }
-
-    function openEventModal(dateStr) {
-        selectedDateStr = dateStr;
-        
-        var dateParts = dateStr.split('-');
-        var year = dateParts[0];
-        var month = parseInt(dateParts[1]) - 1;
-        var day = parseInt(dateParts[2]);
-        
-        document.getElementById('modalHeaderDate').textContent = `${day} de ${monthNames[month]} de ${year}`;
-        
-        // Reset form inputs
-        document.getElementById('eventTypeSelect').value = 'Estudio';
-        document.getElementById('eventSubjectInput').value = '';
-        document.getElementById('eventTitleInput').value = '';
-        document.getElementById('eventDescInput').value = '';
-        document.getElementById('eventTimeInput').value = '';
-        document.getElementById('eventRoomInput').value = '';
-        document.getElementById('eventTopicsInput').value = '';
-        
-        document.getElementById('parcialFields').style.display = 'none';
-        
-        selectEventColor('violet');
-        
-        // Render events list
-        renderModalEventsList();
-        
-        document.getElementById('eventModalOverlay').style.display = 'flex';
-    }
-
-    function closeEventModal(event) {
-        document.getElementById('eventModalOverlay').style.display = 'none';
-    }
-
-    function onEventTypeChange() {
-        var type = document.getElementById('eventTypeSelect').value;
-        
-        // Show/hide conditional fields for Parcial
-        if (type === 'Parcial') {
-            document.getElementById('parcialFields').style.display = 'flex';
-            selectEventColor('blue');
-        } else if (type === 'Final') {
-            document.getElementById('parcialFields').style.display = 'none';
-            selectEventColor('red');
-        } else if (type === 'Inscripción') {
-            document.getElementById('parcialFields').style.display = 'none';
-            selectEventColor('yellow');
-        } else if (type === 'Cursada') {
-            document.getElementById('parcialFields').style.display = 'none';
-            selectEventColor('green');
-        } else if (type === 'Recordatorio personal') {
-            document.getElementById('parcialFields').style.display = 'none';
-            selectEventColor('gray');
-        } else {
-            document.getElementById('parcialFields').style.display = 'none';
-        }
-    }
-
-    function selectEventColor(col) {
-        selectedEventColor = col;
-        var btns = document.querySelectorAll('.category-picker .picker-btn');
-        btns.forEach(btn => {
-            if (btn.id === 'eventcol-' + col) {
-                btn.classList.add('selected');
-            } else {
-                btn.classList.remove('selected');
-            }
-        });
-    }
-
-    function renderModalEventsList() {
-        var listContainer = document.getElementById('dayEventsList');
-        listContainer.innerHTML = '';
-        
-        var allEvents = JSON.parse(localStorage.getItem('alumed_academic_events_' + currentUsername) || '[]');
-        var dayEvents = allEvents.filter(ev => ev.date === selectedDateStr && ev.academicYear === selectedAcademicYear);
-        
-        if (dayEvents.length === 0) {
-            listContainer.innerHTML = '<p style="color:#64748b; font-size:12px; margin:0; font-style:italic;">No hay eventos agendados para este día.</p>';
-            return;
-        }
-        
-        dayEvents.forEach(ev => {
-            var item = document.createElement('div');
-            item.style.background = 'rgba(255,255,255,0.03)';
-            item.style.border = `1px solid ${colorHexMapping[ev.color]}`;
-            item.style.borderRadius = '8px';
-            item.style.padding = '8px 12px';
-            item.style.display = 'flex';
-            item.style.justifyContent = 'space-between';
-            item.style.alignItems = 'center';
-            item.style.gap = '10px';
-            
-            var textWrap = document.createElement('div');
-            textWrap.style.flexGrow = '1';
-            
-            var badgeText = ev.type;
-            if (ev.isAutoEnrollment) badgeText += ' (Automática)';
-            
-            var header = document.createElement('div');
-            header.style.display = 'flex';
-            header.style.alignItems = 'center';
-            header.style.gap = '6px';
-            header.innerHTML = `
-                <span class="header-badge" style="background:${colorHexMapping[ev.color]}1a; border-color:${colorHexMapping[ev.color]}50; color:${colorHexMapping[ev.color]}; font-size:10px; padding:2px 6px;">${badgeText}</span>
-                <strong style="color:white; font-size:12.5px;">${ev.subject || ''}</strong>
-            `;
-            textWrap.appendChild(header);
-            
-            var title = document.createElement('p');
-            title.style.margin = '4px 0 0 0';
-            title.style.fontSize = '12px';
-            title.style.color = '#cbd5e1';
-            title.textContent = ev.title;
-            textWrap.appendChild(title);
-            
-            // Additional info for Parcial
-            if (ev.type === 'Parcial' && (ev.time || ev.room || ev.topics)) {
-                var subDetails = document.createElement('p');
-                subDetails.style.margin = '2px 0 0 0';
-                subDetails.style.fontSize = '10.5px';
-                subDetails.style.color = '#94a3b8';
-                
-                var detailsParts = [];
-                if (ev.time) detailsParts.push(`Hora: ${ev.time}`);
-                if (ev.room) detailsParts.push(`Aula: ${ev.room}`);
-                if (ev.topics) detailsParts.push(`Temas: ${ev.topics}`);
-                
-                subDetails.textContent = detailsParts.join(' • ');
-                textWrap.appendChild(subDetails);
-            }
-            
-            if (ev.desc) {
-                var desc = document.createElement('p');
-                desc.style.margin = '2px 0 0 0';
-                desc.style.fontSize = '11px';
-                desc.style.color = '#94a3b8';
-                desc.style.fontStyle = 'italic';
-                desc.textContent = ev.desc;
-                textWrap.appendChild(desc);
-            }
-            
-            item.appendChild(textWrap);
-            
-            var delBtn = document.createElement('button');
-            delBtn.style.background = 'transparent';
-            delBtn.style.border = 'none';
-            delBtn.style.color = '#ef4444';
-            delBtn.style.cursor = 'pointer';
-            delBtn.style.padding = '4px 8px';
-            delBtn.style.fontSize = '13px';
-            delBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
-            delBtn.onclick = (function(id) {
-                return function() { deleteEvent(id); };
-            })(ev.id);
-            
-            item.appendChild(delBtn);
-            listContainer.appendChild(item);
-        });
-    }
-
-    function saveEvent() {
-        var type = document.getElementById('eventTypeSelect').value;
-        var subject = document.getElementById('eventSubjectInput').value.trim();
-        var title = document.getElementById('eventTitleInput').value.trim();
-        var desc = document.getElementById('eventDescInput').value.trim();
-        var timeVal = document.getElementById('eventTimeInput').value.trim();
-        var roomVal = document.getElementById('eventRoomInput').value.trim();
-        var topicsVal = document.getElementById('eventTopicsInput').value.trim();
-        
-        if (!title) {
-            alert('Por favor, ingresá un título para el evento.');
-            return;
-        }
-        
-        var allEvents = JSON.parse(localStorage.getItem('alumed_academic_events_' + currentUsername) || '[]');
-        var eventId = "ev_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-        
-        var newEvent = {
-            id: eventId,
-            date: selectedDateStr,
-            type: type,
-            subject: subject,
-            title: title,
-            desc: desc,
-            color: selectedEventColor,
-            academicYear: selectedAcademicYear
-        };
-        
-        if (type === 'Parcial') {
-            newEvent.time = timeVal;
-            newEvent.room = roomVal;
-            newEvent.topics = topicsVal;
-        }
-        
-        allEvents.push(newEvent);
-        
-        // RULE FOR FINALES: Auto-create related SIU registration event 10 days before
-        if (type === 'Final') {
-            try {
-                var finalDate = new Date(selectedDateStr + 'T00:00:00');
-                var enrollDate = new Date(finalDate.getTime() - 10 * 24 * 60 * 60 * 1000);
-                
-                var enrollYear = enrollDate.getFullYear();
-                var enrollMonth = String(enrollDate.getMonth() + 1).padStart(2, '0');
-                var enrollDay = String(enrollDate.getDate()).padStart(2, '0');
-                var enrollDateStr = `${enrollYear}-${enrollMonth}-${enrollDay}`;
-                
-                var enrollEvent = {
-                    id: "enroll_" + eventId,
-                    date: enrollDateStr,
-                    type: "Inscripción",
-                    subject: subject,
-                    title: "Inscribirse en SIU Guaraní para Final de " + (subject || "Materia"),
-                    desc: "Inscripción automática relacionada con tu examen final.",
-                    color: "yellow",
-                    academicYear: selectedAcademicYear,
-                    isAutoEnrollment: true,
-                    linkedFinalId: eventId
-                };
-                
-                allEvents.push(enrollEvent);
-            } catch (err) {
-                console.error("Error creating auto-enrollment event", err);
-            }
-        }
-        
-        localStorage.setItem('alumed_academic_events_' + currentUsername, JSON.stringify(allEvents));
-        renderModalEventsList();
-        renderAnnualCalendar();
-        
-        // Clear input title/desc for consecutive entries
-        document.getElementById('eventTitleInput').value = '';
-        document.getElementById('eventDescInput').value = '';
-    }
-
-    function deleteEvent(eventId) {
-        var allEvents = JSON.parse(localStorage.getItem('alumed_academic_events_' + currentUsername) || '[]');
-        
-        // Remove the event, and also any linked auto-enrollment events
-        allEvents = allEvents.filter(ev => ev.id !== eventId && ev.linkedFinalId !== eventId);
-        
-        localStorage.setItem('alumed_academic_events_' + currentUsername, JSON.stringify(allEvents));
-        renderModalEventsList();
-        renderAnnualCalendar();
-    }
-
-
-    /* --- POMODORO TIMER SYSTEM --- */
-    var pomoTimer = null;
-    var pomoDuration = 45 * 60; // 45 minutes default
-    var pomoTimeRemaining = pomoDuration;
-    var pomoIsRunning = false;
-    var completedSessionsCount = 0;
-    var audioAlarmContext = null;
-
-    // Choose Pomodoro time option
-    function selectPomoTime(minutes) {
-        if (pomoIsRunning) {
-            if (!confirm("Se reiniciará el temporizador activo. ¿Deseas continuar?")) return;
-            pausePomoTimer();
-        }
-        pomoDuration = minutes * 60;
-        pomoTimeRemaining = pomoDuration;
-        updatePomoClock();
-        
-        // Highlight active duration option button
-        document.querySelectorAll('.pomodoro-section .pomo-btn-option').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.getElementById('pomo-opt-' + minutes).classList.add('active');
-        document.getElementById('pomoMessage').textContent = "Sesión de " + minutes + " minutos configurada. ¡Listo para estudiar!";
-    }
-
-    // Update Clock Interface (MM:SS)
-    function updatePomoClock() {
-        var minutes = Math.floor(pomoTimeRemaining / 60);
-        var seconds = pomoTimeRemaining % 60;
-        document.getElementById('pomoDisplay').textContent = 
-            (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-    }
-
-    // Toggle Play/Pause state
-    function togglePomoTimer() {
-        if (pomoIsRunning) {
-            pausePomoTimer();
-        } else {
-            startPomoTimer();
-        }
-    }
-
-    function startPomoTimer() {
-        pomoIsRunning = true;
-        document.getElementById('pomoPlayBtn').innerHTML = '<i class="fas fa-pause"></i>';
-        document.getElementById('pomoMessage').textContent = "Concentración activa... ¡Buen estudio! 📝";
-        
-        pomoTimer = setInterval(function() {
-            if (pomoTimeRemaining > 0) {
-                pomoTimeRemaining--;
-                updatePomoClock();
-            } else {
-                clearInterval(pomoTimer);
-                pomoIsRunning = false;
-                handlePomoCompletion();
-            }
-        }, 1000);
-    }
-
-    function pausePomoTimer() {
-        pomoIsRunning = false;
-        clearInterval(pomoTimer);
-        document.getElementById('pomoPlayBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('pomoMessage').textContent = "Temporizador pausado.";
-    }
-
-    function resetPomoTimer() {
-        pausePomoTimer();
-        pomoTimeRemaining = pomoDuration;
-        updatePomoClock();
-        document.getElementById('pomoMessage').textContent = "Temporizador restablecido.";
-    }
-
-    // Handle Pomodoro session completion with a 15-second silent count buffer
-    function handlePomoCompletion() {
-        document.getElementById('pomoMessage').textContent = "¡Sesión finalizada! Iniciando 15 segundos de silencio...";
-        pomoTimeRemaining = 15;
-        updatePomoClock();
-        
-        pomoTimer = setInterval(function() {
-            if (pomoTimeRemaining > 0) {
-                pomoTimeRemaining--;
-                updatePomoClock();
-            } else {
-                clearInterval(pomoTimer);
-                triggerPomoAlarm();
-            }
-        }, 1000);
-    }
-
-    // Trigger synthetic Audio Beep Alarm (using Web Audio API for 100% reliability)
-    function triggerPomoAlarm() {
-        completedSessionsCount++;
-        updateSessionDots();
-        
-        document.getElementById('pomoMessage').textContent = "¡Tiempo completado! Sesiones realizadas: " + completedSessionsCount;
-        
-        // Custom synthesizer melody chime alarm
-        try {
-            audioAlarmContext = new (window.AudioContext || window.webkitAudioContext)();
-            var playNote = function(freq, start, duration) {
-                var osc = audioAlarmContext.createOscillator();
-                var gainNode = audioAlarmContext.createGain();
-                osc.connect(gainNode);
-                gainNode.connect(audioAlarmContext.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, start);
-                gainNode.gain.setValueAtTime(0.3, start);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, start + duration);
-                osc.start(start);
-                osc.stop(start + duration);
-            };
-
-            var now = audioAlarmContext.currentTime;
-            // 3 rising glowing notes melody
-            playNote(523.25, now, 0.4);      // C5
-            playNote(659.25, now + 0.3, 0.4);  // E5
-            playNote(783.99, now + 0.6, 0.7);  // G5
-        } catch(e) {
-            console.error("Audio Context failed:", e);
-        }
-
-        // If completed 3 sessions, alert special achievement
-        if (completedSessionsCount >= 3) {
-            setTimeout(function() {
-                alert("¡Felicidades! Completaste 3 sesiones de estudio seguidas. ¡Es hora de un descanso más largo! 🏆");
-                completedSessionsCount = 0;
-                updateSessionDots();
-            }, 1000);
-        } else {
-            setTimeout(function() {
-                alert("¡Sesión de estudio terminada! Tomá un descanso de 5 minutos.");
-                resetPomoTimer();
-            }, 1000);
-        }
-    }
-
-    function updateSessionDots() {
-        for (var i = 1; i <= 3; i++) {
-            var dot = document.getElementById('dot-' + i);
-            if (i <= completedSessionsCount) {
-                dot.classList.add('filled');
-            } else {
-                dot.classList.remove('filled');
-            }
-        }
-    }
-
-
-    /* --- INITIALIZATION ON PAGE LOAD --- */
-    window.addEventListener('DOMContentLoaded', () => {
-        renderCardsGrid();
-        renderAnnualCalendar();
+  };
+})();
+window.FRQ = FRQ;
+
+// ── FRQ Tab switcher ─────────────────────────────────────────────────
+document.querySelectorAll('.frq-tab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.frq-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.frq-panel').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('frq-' + tab.dataset.cat);
+    if(panel) panel.classList.add('active');
+  });
+});
+
+// ── Partículas ──────────────────────────────────────────
+(function spawnParticles(){
+  var container = document.getElementById('alParticles');
+  var colors = ['rgba(168,85,247,.5)','rgba(245,200,66,.4)','rgba(34,211,238,.3)','rgba(192,132,252,.4)'];
+  for(var i=0;i<25;i++){
+    var p = document.createElement('div');
+    p.className = 'al-particle';
+    var size = Math.random()*3+1;
+    p.style.cssText = [
+      'width:'+size+'px','height:'+size+'px',
+      'left:'+Math.random()*100+'%',
+      'background:'+colors[Math.floor(Math.random()*colors.length)],
+      'border-radius:50%',
+      'animation-duration:'+(15+Math.random()*20)+'s',
+      'animation-delay:'+(-Math.random()*20)+'s',
+      'box-shadow:0 0 '+(size*3)+'px currentColor'
+    ].join(';');
+    container.appendChild(p);
+  }
+})();
+
+// ── Calendário ─────────────────────────────────────────
+// ── MODAL de anotações ──────────────────────────────────────────────
+var NOTES_KEY = 'alumed_cal_notes';
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem(NOTES_KEY)||'{}'); }catch(e){ return {}; } }
+function saveNotes(n){ localStorage.setItem(NOTES_KEY, JSON.stringify(n)); }
+
+// Inject modal HTML once
+(function injectModal(){
+  if(document.getElementById('calModal')) return;
+  var html = `
+  <style>
+  .cal-modal-overlay{
+    position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  }
+  .cal-modal-overlay.open{display:flex;}
+  .cal-modal{
+    background:linear-gradient(135deg,rgba(20,10,45,.98),rgba(15,8,35,.98));
+    border:1px solid rgba(168,85,247,.35);border-radius:22px;padding:28px;
+    width:100%;max-width:420px;position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 60px rgba(124,58,237,.15);
+    animation:modalIn .25s ease;
+  }
+  @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:none;}}
+  .cal-modal-date{font-size:.65rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:#a855f7;margin-bottom:12px;}
+  .cal-modal-title{font-size:1.1rem;font-weight:900;color:#f1eeff;margin-bottom:20px;}
+  .cal-modal-close{
+    position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:8px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:rgba(200,180,255,.6);cursor:pointer;font-size:.9rem;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .cal-modal-close:hover{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.3);color:#f87171;}
+  .cal-modal label{display:block;font-size:.65rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:rgba(200,180,255,.6);margin-bottom:6px;}
+  .cal-modal-types{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .cal-type-btn{
+    padding:7px 14px;border-radius:9px;font-size:.72rem;font-weight:800;cursor:pointer;
+    background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.18);
+    color:rgba(200,180,255,.6);transition:all .2s;
+  }
+  .cal-type-btn.sel,.cal-type-btn:hover{background:rgba(168,85,247,.22);border-color:rgba(168,85,247,.5);color:#c084fc;}
+  .cal-type-btn[data-t="final"].sel{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.4);color:#f87171;}
+  .cal-type-btn[data-t="parcial"].sel{background:rgba(253,224,71,.1);border-color:rgba(253,224,71,.35);color:#fde047;}
+  .cal-type-btn[data-t="tp"].sel{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.45);color:#c084fc;}
+  .cal-type-btn[data-t="nota"].sel{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35);color:#22d3ee;}
+  .cal-input{
+    width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(168,85,247,.2);
+    border-radius:10px;padding:10px 14px;color:#f1eeff;font-family:'Outfit',sans-serif;
+    font-size:.85rem;outline:none;transition:border-color .2s;margin-bottom:14px;box-sizing:border-box;
+  }
+  .cal-input:focus{border-color:rgba(168,85,247,.5);box-shadow:0 0 0 2px rgba(168,85,247,.08);}
+  .cal-input::placeholder{color:rgba(200,180,255,.35);}
+  textarea.cal-input{resize:vertical;min-height:80px;font-size:.82rem;line-height:1.5;}
+  .cal-modal-footer{display:flex;gap:10px;margin-top:4px;}
+  .cal-save-btn{
+    flex:1;padding:11px;border-radius:11px;border:none;cursor:pointer;font-weight:800;font-size:.82rem;
+    background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;
+    box-shadow:0 4px 16px rgba(124,58,237,.35);transition:all .2s;
+  }
+  .cal-save-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+  .cal-del-btn{
+    padding:11px 16px;border-radius:11px;border:1px solid rgba(248,113,113,.25);
+    background:rgba(248,113,113,.06);color:#f87171;cursor:pointer;font-size:.82rem;
+    font-weight:700;transition:all .2s;
+  }
+  .cal-del-btn:hover{background:rgba(248,113,113,.15);}
+  /* saved events list */
+  .cal-notes-list{margin-top:14px;display:flex;flex-direction:column;gap:6px;max-height:130px;overflow-y:auto;}
+  .cal-note-item{
+    display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;
+    background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);font-size:.73rem;
+  }
+  .cal-note-badge{padding:2px 8px;border-radius:5px;font-size:.55rem;font-weight:900;text-transform:uppercase;flex-shrink:0;}
+  .cnb-final  {background:rgba(248,113,113,.15);color:#f87171;}
+  .cnb-parcial{background:rgba(253,224,71,.1);color:#fde047;}
+  .cnb-tp     {background:rgba(168,85,247,.15);color:#c084fc;}
+  .cnb-nota   {background:rgba(34,211,238,.1);color:#22d3ee;}
+  .cal-note-text{color:#f1eeff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cal-note-time{color:rgba(200,180,255,.5);flex-shrink:0;}
+  .cal-note-del{color:rgba(248,113,113,.5);cursor:pointer;flex-shrink:0;padding:2px 5px;border-radius:4px;transition:all .2s;}
+  .cal-note-del:hover{color:#f87171;background:rgba(248,113,113,.1);}
+  </style>
+
+  <div class="cal-modal-overlay" id="calModal">
+    <div class="cal-modal">
+      <button class="cal-modal-close" id="calModalClose">✕</button>
+      <div class="cal-modal-date" id="calModalDate"></div>
+      <div class="cal-modal-title">📌 Agregar evento</div>
+
+      <label>Tipo</label>
+      <div class="cal-modal-types">
+        <button class="cal-type-btn sel" data-t="final">🔴 Final</button>
+        <button class="cal-type-btn" data-t="parcial">🟡 Parcial</button>
+        <button class="cal-type-btn" data-t="tp">🟣 TP</button>
+        <button class="cal-type-btn" data-t="nota">🔵 Nota</button>
+      </div>
+
+      <label>Materia / Descripción</label>
+      <input class="cal-input" id="calEvTitle" type="text" placeholder="Ej: Anatomía, Histología...">
+
+      <label>Hora (opcional)</label>
+      <input class="cal-input" id="calEvTime" type="time">
+
+      <label>Anotaciones</label>
+      <textarea class="cal-input" id="calEvNotes" placeholder="Sala, tema a estudiar, recordatorios..."></textarea>
+
+      <div id="calNotesList" class="cal-notes-list" style="display:none;"></div>
+
+      <div class="cal-modal-footer">
+        <button class="cal-save-btn" id="calSaveBtn"><i class="fas fa-check"></i> Guardar</button>
+        <button class="cal-del-btn" id="calDelBtn" style="display:none;"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // Close modal
+  document.getElementById('calModalClose').addEventListener('click', closeModal);
+  document.getElementById('calModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+  // Type selector
+  document.querySelectorAll('.cal-type-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.cal-type-btn').forEach(function(b){ b.classList.remove('sel'); });
+      btn.classList.add('sel');
     });
+  });
+})();
+
+var _openDate = null;
+function openModal(dateStr){
+  _openDate = dateStr;
+  var parts = dateStr.split('-');
+  var weekDay = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'][new Date(dateStr+'T12:00').getDay()];
+  document.getElementById('calModalDate').textContent = weekDay + ' · ' + parts[2] + '/' + parts[1] + '/' + parts[0];
+  document.getElementById('calEvTitle').value = '';
+  document.getElementById('calEvTime').value  = '';
+  document.getElementById('calEvNotes').value = '';
+
+  // Type reset
+  document.querySelectorAll('.cal-type-btn').forEach(function(b,i){ b.classList.toggle('sel', i===0); });
+
+  // Show existing notes for this date
+  renderNotesList(dateStr);
+  document.getElementById('calModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('calEvTitle').focus(); }, 150);
+}
+function closeModal(){
+  document.getElementById('calModal').classList.remove('open');
+  _openDate = null;
+}
+
+function renderNotesList(dateStr){
+  var notes = loadNotes();
+  var dayNotes = notes[dateStr] || [];
+  var listEl = document.getElementById('calNotesList');
+  var delBtn  = document.getElementById('calDelBtn');
+  if(dayNotes.length === 0){
+    listEl.style.display = 'none';
+    delBtn.style.display = 'none';
+    return;
+  }
+  listEl.style.display = 'flex';
+  delBtn.style.display = 'block';
+  listEl.innerHTML = dayNotes.map(function(n, i){
+    return '<div class="cal-note-item">'
+      +'<span class="cal-note-badge cnb-'+n.type+'">'+n.type.toUpperCase()+'</span>'
+      +'<span class="cal-note-text">'+n.title+'</span>'
+      +(n.time ? '<span class="cal-note-time">'+n.time+'</span>' : '')
+      +'<span class="cal-note-del" data-i="'+i+'">✕</span>'
+      +'</div>';
+  }).join('');
+
+  listEl.querySelectorAll('.cal-note-del').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var idx = parseInt(btn.dataset.i);
+      var notes = loadNotes();
+      notes[dateStr].splice(idx, 1);
+      if(notes[dateStr].length === 0) delete notes[dateStr];
+      saveNotes(notes);
+      renderNotesList(dateStr);
+      render();
+    });
+  });
+}
+
+// Save button
+document.getElementById('calSaveBtn').addEventListener('click', function(){
+  var title = document.getElementById('calEvTitle').value.trim();
+  if(!title || !_openDate) return;
+  var type  = document.querySelector('.cal-type-btn.sel').dataset.t;
+  var time  = document.getElementById('calEvTime').value;
+  var note  = document.getElementById('calEvNotes').value.trim();
+  var notes = loadNotes();
+  if(!notes[_openDate]) notes[_openDate] = [];
+  notes[_openDate].push({type:type, title:title, time:time, note:note});
+  saveNotes(notes);
+  renderNotesList(_openDate);
+  document.getElementById('calEvTitle').value = '';
+  document.getElementById('calEvTime').value  = '';
+  document.getElementById('calEvNotes').value = '';
+  render(); // refresh calendar dots
+});
+
+// Delete all for date
+document.getElementById('calDelBtn').addEventListener('click', function(){
+  if(!_openDate) return;
+  var notes = loadNotes();
+  delete notes[_openDate];
+  saveNotes(notes);
+  renderNotesList(_openDate);
+  render();
+});
+
+// ── CALENDAR RENDER ──────────────────────────────────────────────────
+var CAL = (function(){
+  var now = new Date();
+  var year = now.getFullYear(), month = now.getMonth();
+  var rawEvents = {{ events_json|safe }};
+  var dayNames=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  var monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function render(){
+    var label = document.getElementById('calMonthLabel');
+    var daysEl = document.getElementById('calDayNames');
+    var cellsEl = document.getElementById('calCells');
+    var eventsEl = document.getElementById('calEvents');
+
+    label.textContent = monthNames[month] + ' ' + year;
+
+    if(!daysEl.hasChildNodes()){
+      dayNames.forEach(function(d){
+        var el = document.createElement('div');
+        el.className='al-cal-day-name';
+        el.textContent=d;
+        daysEl.appendChild(el);
+      });
+    }
+
+    cellsEl.innerHTML='';
+    var first = new Date(year, month, 1).getDay();
+    var days  = new Date(year, month+1, 0).getDate();
+    var todayStr = now.toISOString().slice(0,10);
+    var userNotes = loadNotes();
+
+    // Build event map
+    var evMap={};
+    rawEvents.forEach(function(e){
+      if(!evMap[e.start]) evMap[e.start]=[];
+      evMap[e.start].push(e);
+    });
+
+    for(var i=0;i<first;i++){
+      var d=document.createElement('div'); d.className='al-cal-cell other-month'; cellsEl.appendChild(d);
+    }
+    for(var d=1;d<=days;d++){
+      var cell=document.createElement('div'); cell.className='al-cal-cell';
+      var dateStr=year+'-'+(month<9?'0':'')+(month+1)+'-'+(d<10?'0':'')+d;
+      cell.textContent=d;
+      cell.style.cursor='pointer';
+      cell.title='Clicá para agregar evento';
+      if(dateStr===todayStr) cell.classList.add('today');
+
+      // Server events
+      if(evMap[dateStr]){
+        var evType=evMap[dateStr][0].type;
+        if(evType==='exam') cell.classList.add('event-exam','has-event');
+        else if(evType==='parcial') cell.classList.add('event-parcial','has-event');
+        else cell.classList.add('event-tp','has-event');
+      }
+
+      // User personal notes — show colored dot(s)
+      if(userNotes[dateStr] && userNotes[dateStr].length){
+        cell.classList.add('has-event');
+        var firstType = userNotes[dateStr][0].type;
+        if(firstType==='final') cell.classList.add('event-exam');
+        else if(firstType==='parcial') cell.classList.add('event-parcial');
+        var dotBar = document.createElement('div');
+        dotBar.style.cssText='position:absolute;bottom:2px;left:50%;transform:translateX(-50%);display:flex;gap:2px;';
+        userNotes[dateStr].slice(0,3).forEach(function(n){
+          var dot=document.createElement('div');
+          var clr=n.type==='final'?'#f87171':n.type==='parcial'?'#fde047':n.type==='tp'?'#c084fc':'#22d3ee';
+          dot.style.cssText='width:4px;height:4px;border-radius:50%;background:'+clr+';box-shadow:0 0 4px '+clr+';';
+          dotBar.appendChild(dot);
+        });
+        cell.style.position='relative';
+        cell.appendChild(dotBar);
+        cell.title = userNotes[dateStr].map(function(n){ return n.type.toUpperCase()+': '+n.title+(n.time?' '+n.time:''); }).join(' | ');
+      }
+
+      // Click → open modal
+      (function(ds){ cell.addEventListener('click', function(){ openModal(ds); }); })(dateStr);
+
+      cellsEl.appendChild(cell);
+    }
+
+    // Event list
+    eventsEl.innerHTML='';
+    var upcoming = rawEvents.filter(function(e){ return e.start >= todayStr; })
+      .sort(function(a,b){ return a.start.localeCompare(b.start); }).slice(0,5);
+
+    if(upcoming.length===0){
+      var placeholder=[
+        {title:'Final Anatomía', start:'2026-08-01', type:'exam'},
+        {title:'Parcial Histología', start:'2026-07-18', type:'parcial'},
+        {title:'TP Biología', start:'2026-07-23', type:'tp'}
+      ];
+      placeholder.forEach(function(e){
+        var row=document.createElement('div');
+        row.className='al-event-row ev-'+(e.type==='exam'?'final':e.type==='parcial'?'parcial':'tp');
+        var parts=e.start.split('-');
+        var icon=e.type==='exam'?'🔴':e.type==='parcial'?'🟡':'🟣';
+        row.innerHTML='<span class="al-event-date">'+parts[2]+'/'+parts[1]+'</span>'
+          +'<span class="al-event-name">'+icon+' '+e.title+'</span>'
+          +'<span class="al-event-badge" style="background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25);">'+(e.type==='exam'?'FINAL':e.type==='parcial'?'PARCIAL':'TP')+'</span>';
+        eventsEl.appendChild(row);
+      });
+    } else {
+      upcoming.forEach(function(e){
+        var row=document.createElement('div');
+        row.className='al-event-row ev-'+(e.type==='exam'?'final':e.type==='parcial'?'parcial':'tp');
+        var parts=e.start.split('-');
+        var icon=e.type==='exam'?'🔴':e.type==='parcial'?'🟡':'🟣';
+        row.innerHTML='<span class="al-event-date">'+parts[2]+'/'+parts[1]+'</span>'
+          +'<span class="al-event-name">'+icon+' '+e.title+'</span>'
+          +'<span class="al-event-badge" style="background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25);">'+(e.type==='exam'?'FINAL':e.type==='parcial'?'PARCIAL':'TP')+'</span>';
+        eventsEl.appendChild(row);
+      });
+    }
+  }
+
+  document.getElementById('calPrev').addEventListener('click',function(){
+    month--; if(month<0){month=11;year--;} render();
+  });
+  document.getElementById('calNext').addEventListener('click',function(){
+    month++; if(month>11){month=0;year++;} render();
+  });
+  render();
+})();
+
+// ── Pomodoro ───────────────────────────────────────────
+(function(){
+  var CIRCUMFERENCE = 2 * Math.PI * 75; // 471
+  var circle = document.getElementById('pomoCircle');
+  circle.style.strokeDasharray = CIRCUMFERENCE;
+
+  var workMin=25, restMin=5;
+  var totalSecs=workMin*60, remainSecs=totalSecs;
+  var isRunning=false, isRest=false, timer=null;
+  var sessions=0, totalStudyMins=0;
+  var pomoDates=JSON.parse(localStorage.getItem('pomoDates')||'[]');
+
+  function today(){ return new Date().toDateString(); }
+  function updateStreak(){
+    var d=today();
+    if(!pomoDates.includes(d)){ pomoDates.push(d); localStorage.setItem('pomoDates',JSON.stringify(pomoDates)); }
+    var streak=1;
+    for(var i=pomoDates.length-2;i>=0;i--){
+      var a=new Date(pomoDates[i]), b=new Date(pomoDates[i+1]);
+      b.setDate(b.getDate()-1);
+      if(a.toDateString()===b.toDateString()) streak++;
+      else break;
+    }
+    document.getElementById('pomoStreak').textContent=streak+'🔥';
+  }
+
+  function fmt(s){ var m=Math.floor(s/60),sec=s%60; return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec; }
+
+  function updateUI(){
+    document.getElementById('pomoDisplay').textContent=fmt(remainSecs);
+    document.getElementById('pomoLabel').textContent=isRest?'DESCANSO':'FOCO';
+    var progress=(remainSecs/totalSecs);
+    var offset=CIRCUMFERENCE*(1-progress);
+    circle.style.strokeDashoffset=offset;
+    document.getElementById('pomoSessions').textContent=sessions;
+    document.getElementById('pomoHours').textContent=Math.floor(totalStudyMins/60)+'h '+Math.floor(totalStudyMins%60)+'m';
+  }
+
+  function startRest(){
+    isRest=true; totalSecs=restMin*60; remainSecs=totalSecs;
+    circle.style.stroke='#4ade80'; updateUI();
+  }
+  function startWork(){
+    isRest=false; totalSecs=workMin*60; remainSecs=totalSecs;
+    circle.style.stroke='url(#pomoGrad)'; updateUI();
+  }
+
+  document.getElementById('pomoPlay').addEventListener('click',function(){
+    var icon=this.querySelector('i');
+    if(isRunning){
+      clearInterval(timer); isRunning=false;
+      icon.className='fas fa-play';
+    } else {
+      isRunning=true; icon.className='fas fa-pause';
+      timer=setInterval(function(){
+        remainSecs--;
+        if(!isRest) totalStudyMins+=1/60;
+        if(remainSecs<=0){
+          if(!isRest){ sessions++; updateStreak(); startRest(); }
+          else { startWork(); }
+        }
+        updateUI();
+      },1000);
+    }
+  });
+
+  document.getElementById('pomoReset').addEventListener('click',function(){
+    clearInterval(timer); isRunning=false;
+    document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+    startWork();
+  });
+  document.getElementById('pomoSkip').addEventListener('click',function(){
+    clearInterval(timer); isRunning=false;
+    document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+    if(isRest) startWork(); else { sessions++; updateStreak(); startRest(); }
+  });
+
+  document.querySelectorAll('.al-pomo-mode').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.al-pomo-mode').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      workMin=parseInt(btn.dataset.work); restMin=parseInt(btn.dataset.rest);
+      clearInterval(timer); isRunning=false;
+      document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+      startWork();
+    });
+  });
+
+  updateUI();
+})();
+
+// ── Animate progress bars ─────────────────────────────
+setTimeout(function(){
+  document.querySelectorAll('.al-materia-fill').forEach(function(el){
+    el.style.width = (el.dataset.w||0)+'%';
+  });
+},400);
+
+})();
 </script>
 {% endblock %}

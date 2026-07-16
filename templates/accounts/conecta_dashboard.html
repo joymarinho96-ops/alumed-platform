@@ -1,0 +1,1034 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Conecta FCM — ALUMED OS{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   CONECTA FCM — Dashboard v1.0
+   Tema: Dourado · Branco · Roxo Escuro · Glass · Institucional
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Sobrescreve as variáveis base para o tema Conecta ── */
+:root {
+  --cx-gold:      #f5c842;
+  --cx-gold2:     #e8a020;
+  --cx-gold3:     #fbbf24;
+  --cx-cream:     #fdf8ee;
+  --cx-white:     #ffffff;
+  --cx-dark:      #0a0510;
+  --cx-dark2:     #110822;
+  --cx-purple:    #2d1060;
+  --cx-glass:     rgba(255,255,255,.04);
+  --cx-glass2:    rgba(255,248,230,.05);
+  --cx-border:    rgba(245,200,66,.14);
+  --cx-border2:   rgba(255,255,255,.07);
+  --cx-muted:     rgba(220,200,160,.55);
+  --cx-text:      #f0e8d0;
+
+  /* Sobrescreve o tema roxo do dashboard_base */
+  --bg: #08040f;
+  --panel: rgba(20,10,45,.9);
+  --border: rgba(245,200,66,.12);
+  --text: #f0e8d0;
+  --muted: rgba(200,180,120,.6);
+  --accent: #f5c842;
+  --accent-hover: #fde047;
+  --dourado: #f5c842;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(90,55,10,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 30%, rgba(245,200,66,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(45,16,96,.3) 0%, transparent 70%),
+    linear-gradient(160deg, #100810 0%, #080410 60%, #120a06 100%);
+}
+
+/* ── Ambient glow layers ── */
+.cx-ambient {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.cx-glow-1 {
+  position: absolute; width: 600px; height: 600px;
+  top: -200px; left: -100px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,200,66,.1) 0%, transparent 65%);
+  animation: gFloat 10s ease-in-out infinite;
+}
+.cx-glow-2 {
+  position: absolute; width: 500px; height: 500px;
+  top: 40%; right: -150px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,200,66,.06) 0%, transparent 65%);
+  animation: gFloat 13s ease-in-out infinite reverse;
+}
+.cx-glow-3 {
+  position: absolute; width: 400px; height: 400px;
+  bottom: -100px; left: 40%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(120,60,200,.12) 0%, transparent 65%);
+  animation: gFloat 9s ease-in-out infinite 2s;
+}
+@keyframes gFloat {
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(30px,20px) scale(1.1); }
+}
+.cx-grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(245,200,66,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* ── MAIN WRAPPER ── */
+.cx-main {
+  position: relative; z-index: 1;
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 24px 60px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+/* ── TOP STATUS BAR ── */
+.cx-statusbar {
+  display: flex; align-items: center; gap: 0;
+  background: linear-gradient(90deg, rgba(245,200,66,.08), rgba(245,200,66,.04), rgba(245,200,66,.08));
+  border-bottom: 1px solid rgba(245,200,66,.18);
+  padding: 8px 24px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+  color: rgba(245,200,66,.75);
+  flex-wrap: wrap; gap: 16px;
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(20px);
+  margin: 0 -24px;
+}
+.cx-sb-item { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.cx-sb-sep { width: 1px; height: 12px; background: rgba(245,200,66,.2); }
+.cx-sb-live { display: flex; align-items: center; gap: 5px; }
+.cx-sb-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: blink 1.4s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── HERO STRIP ── */
+.cx-hero {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  background:
+    linear-gradient(135deg, rgba(245,200,66,.07) 0%, rgba(245,200,66,.02) 50%, rgba(120,60,200,.06) 100%);
+  border: 1px solid rgba(245,200,66,.2);
+  border-radius: 22px; padding: 30px 32px;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 20px 50px rgba(0,0,0,.35);
+}
+.cx-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(245,200,66,.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cx-hero-left h1 {
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  font-weight: 900; color: #fff; margin: 0 0 8px;
+}
+.cx-hero-left h1 .gold {
+  background: linear-gradient(135deg, #f5c842 0%, #fde047 50%, #f59e0b 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 14px rgba(245,200,66,.4));
+}
+.cx-hero-left p {
+  font-size: .9rem; color: rgba(220,200,150,.7); margin: 0 0 20px; line-height: 1.55;
+}
+.cx-hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.25);
+  border-radius: 999px; padding: 6px 14px;
+  font-size: .7rem; font-weight: 800; letter-spacing: .08em;
+  color: #4ade80; text-transform: uppercase;
+}
+.cx-hero-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: blink 1.2s infinite; }
+
+.cx-hero-right {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-shrink: 0; min-width: 280px;
+}
+.cx-hero-stat {
+  background: rgba(0,0,0,.3); border: 1px solid rgba(245,200,66,.14);
+  border-radius: 14px; padding: 14px 16px; text-align: center;
+}
+.cx-hero-stat-num { font-size: 1.6rem; font-weight: 900; color: #f5c842; line-height: 1; }
+.cx-hero-stat-lbl { font-size: .64rem; color: rgba(220,200,150,.5); margin-top: 4px; text-transform: uppercase; letter-spacing: .07em; }
+
+/* ── SECTION LABELS ── */
+.cx-label {
+  font-size: .62rem; font-weight: 900; letter-spacing: .2em;
+  text-transform: uppercase; display: block; margin-bottom: 10px;
+}
+.lbl-gold   { color: var(--cx-gold); }
+.lbl-cyan   { color: #22d3ee; }
+.lbl-lime   { color: #a3e635; }
+.lbl-rose   { color: #f43f5e; }
+.lbl-blue   { color: #60a5fa; }
+.lbl-green  { color: #4ade80; }
+.lbl-purple { color: #c084fc; }
+.lbl-orange { color: #fb923c; }
+
+.cx-section-title {
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-weight: 900; color: #fff; margin: 0 0 6px;
+}
+.cx-section-sub {
+  font-size: .84rem; color: var(--cx-muted); margin: 0 0 20px; line-height: 1.55;
+}
+
+/* ── CARTELERA GRID ── */
+.cx-cartelera-filters {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.cx-filter-btn {
+  padding: 5px 14px; border-radius: 999px;
+  font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; cursor: pointer; transition: all .2s;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  color: rgba(220,200,150,.55);
+}
+.cx-filter-btn:hover, .cx-filter-btn.active {
+  background: rgba(245,200,66,.12);
+  border-color: rgba(245,200,66,.35);
+  color: var(--cx-gold);
+}
+
+.cx-notices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.cx-notice-card {
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(245,200,66,.1);
+  border-radius: 16px; padding: 18px 18px 14px;
+  cursor: pointer; text-decoration: none;
+  transition: all .3s; display: block; position: relative; overflow: hidden;
+}
+.cx-notice-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(245,200,66,.04), transparent 60%);
+  pointer-events: none;
+}
+.cx-notice-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245,200,66,.3);
+  box-shadow: 0 12px 30px rgba(0,0,0,.4), 0 0 20px rgba(245,200,66,.07);
+}
+.cx-notice-card.high  { border-left: 3px solid #f43f5e; }
+.cx-notice-card.med   { border-left: 3px solid #f5c842; }
+.cx-notice-card.low   { border-left: 3px solid #22d3ee; }
+.cx-notice-card.info  { border-left: 3px solid #4ade80; }
+
+.cx-notice-prio {
+  display: inline-block; padding: 2px 8px; border-radius: 5px;
+  font-size: .56rem; font-weight: 900; letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.prio-high  { background: rgba(244,63,94,.12);  color: #f87171; border: 1px solid rgba(244,63,94,.25); }
+.prio-med   { background: rgba(245,200,66,.1);   color: #f5c842; border: 1px solid rgba(245,200,66,.25); }
+.prio-low   { background: rgba(34,211,238,.08);  color: #22d3ee; border: 1px solid rgba(34,211,238,.2); }
+.prio-info  { background: rgba(74,222,128,.06);  color: #4ade80; border: 1px solid rgba(74,222,128,.2); }
+
+.cx-notice-dept { font-size: .58rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: rgba(96,165,250,.65); margin-bottom: 5px; }
+.cx-notice-title { font-size: .86rem; font-weight: 700; color: #f0e8d0; line-height: 1.4; margin-bottom: 8px; }
+.cx-notice-meta { font-size: .64rem; color: rgba(200,180,120,.4); display: flex; align-items: center; gap: 6px; }
+
+/* ── TIMELINE ── */
+.cx-timeline-bar {
+  display: flex; gap: 0; overflow-x: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(245,200,66,.2) transparent;
+  padding-bottom: 8px;
+}
+.cx-tl-item {
+  flex-shrink: 0; min-width: 160px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(245,200,66,.1);
+  border-radius: 14px; padding: 16px;
+  margin-right: 10px; transition: all .25s;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.cx-tl-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245,200,66,.3);
+}
+.cx-tl-item.today {
+  border-color: rgba(245,200,66,.4);
+  background: rgba(245,200,66,.06);
+}
+.cx-tl-item.today::before {
+  content: 'HOY';
+  position: absolute; top: 7px; right: 10px;
+  font-size: .52rem; font-weight: 900; letter-spacing: .1em;
+  color: var(--cx-gold); opacity: .7;
+}
+.cx-tl-date { font-size: .72rem; font-weight: 900; color: var(--cx-gold); margin-bottom: 4px; }
+.cx-tl-type-badge {
+  font-size: .56rem; font-weight: 900; letter-spacing: .08em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+  display: inline-block; margin-bottom: 6px;
+}
+.cx-tl-text { font-size: .8rem; font-weight: 700; color: #f0e8d0; line-height: 1.35; }
+
+/* ── MATERIAS ── */
+.cx-materias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+}
+.cx-materia-card {
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(245,200,66,.1);
+  border-radius: 18px; padding: 20px;
+  transition: all .3s; position: relative; overflow: hidden;
+}
+.cx-materia-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245,200,66,.28);
+  box-shadow: 0 14px 35px rgba(0,0,0,.4);
+}
+.cx-materia-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.cx-materia-ico {
+  width: 40px; height: 40px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.cx-materia-name { font-size: .95rem; font-weight: 800; color: #f0e8d0; }
+.cx-materia-prof { font-size: .7rem; color: var(--cx-muted); margin-top: 2px; }
+.cx-materia-info { font-size: .73rem; color: rgba(200,180,120,.6); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.cx-materia-progress-bar {
+  height: 4px; background: rgba(255,255,255,.06);
+  border-radius: 99px; margin-top: 12px; overflow: hidden;
+}
+.cx-materia-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cx-gold), #fb923c);
+  border-radius: 99px;
+  box-shadow: 0 0 8px rgba(245,200,66,.4);
+  transition: width .6s ease;
+}
+
+/* ── INTEGRATIONS ── */
+.cx-integ-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+}
+@media(max-width:768px){ .cx-integ-grid{ grid-template-columns:1fr 1fr; } }
+.cx-integ-card {
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px; padding: 20px 16px;
+  text-align: center; cursor: pointer; text-decoration: none;
+  display: block; transition: all .3s;
+}
+.cx-integ-card:hover { transform: translateY(-4px); }
+.cx-integ-card:nth-child(1) { border-top: 3px solid rgba(66,133,244,.5); }
+.cx-integ-card:nth-child(2) { border-top: 3px solid rgba(37,211,102,.5); }
+.cx-integ-card:nth-child(3) { border-top: 3px solid rgba(234,67,53,.5); }
+.cx-integ-card:nth-child(4) { border-top: 3px solid rgba(245,200,66,.5); }
+.cx-integ-ico { font-size: 1.8rem; margin-bottom: 10px; }
+.cx-integ-name { font-size: .82rem; font-weight: 800; color: #e2e8f0; margin-bottom: 4px; }
+.cx-integ-desc { font-size: .68rem; color: rgba(148,163,184,.55); line-height: 1.45; }
+.cx-integ-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 10px; padding: 3px 9px; border-radius: 99px;
+  font-size: .58rem; font-weight: 900; letter-spacing: .07em;
+  background: rgba(74,222,128,.08); color: #4ade80;
+  border: 1px solid rgba(74,222,128,.2);
+}
+
+/* ── QUICK TOOLS ── */
+.cx-tools-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+}
+@media(max-width:900px){ .cx-tools-grid{ grid-template-columns:repeat(2,1fr); } }
+.cx-tool-card {
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(245,200,66,.1);
+  border-radius: 16px; padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  cursor: pointer; text-decoration: none;
+  transition: all .25s;
+}
+.cx-tool-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245,200,66,.28);
+  background: rgba(245,200,66,.04);
+}
+.cx-tool-ico {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem;
+}
+.cx-tool-name { font-size: .84rem; font-weight: 800; color: #e2e8f0; }
+.cx-tool-desc { font-size: .7rem; color: var(--cx-muted); line-height: 1.4; }
+
+/* ── STATS PANEL ── */
+.cx-stats-wrap {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.cx-stat-block {
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(245,200,66,.1);
+  border-radius: 16px; padding: 20px;
+}
+.cx-stat-block-title {
+  font-size: .68rem; font-weight: 900; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--cx-gold); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cx-stat-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+  font-size: .8rem;
+}
+.cx-stat-row:last-child { border-bottom: none; }
+.cx-stat-name { color: rgba(220,200,150,.7); }
+.cx-stat-val { font-weight: 900; color: #f0e8d0; }
+.cx-stat-val.high { color: #f43f5e; }
+.cx-stat-val.ok   { color: #4ade80; }
+.cx-stat-val.gold { color: var(--cx-gold); }
+
+/* ── CTA ── */
+.cx-cta-block {
+  background:
+    linear-gradient(135deg, rgba(245,200,66,.1) 0%, rgba(120,60,200,.08) 100%);
+  border: 1px solid rgba(245,200,66,.22);
+  border-radius: 22px; padding: 36px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  position: relative; overflow: hidden;
+}
+.cx-cta-block::before {
+  content: ''; position: absolute;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,200,66,.1) 0%, transparent 70%);
+  right: -60px; top: -80px; pointer-events: none;
+}
+.cx-cta-title { font-size: clamp(1.2rem,3vw,2rem); font-weight: 900; color: #fff; margin: 0 0 8px; }
+.cx-cta-sub { font-size: .9rem; color: var(--cx-muted); margin: 0; }
+
+/* ── BUTTONS ── */
+.cx-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px; border-radius: 12px;
+  font-size: .84rem; font-weight: 900; text-decoration: none;
+  transition: all .3s; cursor: pointer; border: none; letter-spacing: .02em;
+}
+.cx-btn-gold {
+  background: linear-gradient(135deg, var(--cx-gold), #fb923c);
+  color: #000;
+  box-shadow: 0 0 24px rgba(245,200,66,.4), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.cx-btn-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 44px rgba(245,200,66,.6), 0 8px 20px rgba(0,0,0,.4);
+}
+.cx-btn-outline {
+  background: rgba(255,255,255,.04);
+  color: rgba(240,232,208,.85);
+  border: 1px solid rgba(245,200,66,.22);
+}
+.cx-btn-outline:hover {
+  background: rgba(245,200,66,.06);
+  border-color: rgba(245,200,66,.4);
+  color: var(--cx-gold);
+}
+.cx-btn-switch {
+  background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(79,70,229,.25));
+  color: #c084fc;
+  border: 1px solid rgba(124,58,237,.35);
+}
+.cx-btn-switch:hover {
+  background: linear-gradient(135deg, rgba(124,58,237,.5), rgba(79,70,229,.4));
+  box-shadow: 0 0 20px rgba(124,58,237,.3);
+}
+
+/* ── SIDEBAR overrides for Conecta ── */
+.sidebar { border-right-color: rgba(245,200,66,.15) !important; }
+.sidebar-brand .brand-row i { color: var(--cx-gold) !important; }
+.sidebar-premium { background: rgba(245,200,66,.1) !important; border-color: var(--cx-gold) !important; color: var(--cx-gold) !important; }
+.sidebar nav a.active { background: rgba(245,200,66,.12) !important; border-color: rgba(245,200,66,.25) !important; color: var(--cx-gold) !important; }
+.sidebar nav a.active i { color: var(--cx-gold) !important; }
+.sidebar nav a:hover { color: var(--cx-gold) !important; }
+
+@media(max-width:768px){
+  .cx-hero { flex-direction: column; }
+  .cx-hero-right { grid-template-columns: repeat(4,1fr); min-width: unset; }
+  .cx-notices-grid { grid-template-columns: 1fr; }
+  .cx-tools-grid { grid-template-columns: 1fr 1fr; }
+  .cx-stats-wrap { grid-template-columns: 1fr; }
+}
+@media(max-width:480px){
+  .cx-hero-right { grid-template-columns: 1fr 1fr; }
+  .cx-integ-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block sidebar_content %}
+    <div class="sidebar-brand">
+        <div class="brand-row">
+            <span style="font-size:1.1rem;">⚡</span>
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #f5c842;">CONECTA FCM</span>
+        </div>
+        <div class="sidebar-premium" style="color: #f5c842; border-color: rgba(245,200,66,0.3);">
+            <i class="fas fa-university"></i> Institucional
+        </div>
+    </div>
+
+    <!-- User Profile -->
+    <div class="sidebar-profile">
+        <div class="avatar-circle">
+            {% if user.profile.photo %}
+                <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
+            {% else %}
+                {{ user.username|first|upper }}
+            {% endif %}
+        </div>
+        <div class="sidebar-profile-info">
+            <span class="sidebar-profile-name" style="font-family: 'Outfit', sans-serif;">{{ user.first_name }} {{ user.last_name }}</span>
+            <span class="sidebar-profile-role">@{{ user.username }}</span>
+        </div>
+    </div>
+
+    <!-- Volver a ALUMED Premium -->
+    <a href="/dashboard/" style="
+        display:flex; align-items:center; gap:10px;
+        padding: 12px 14px; border-radius: 12px; margin-bottom: 14px;
+        background: linear-gradient(135deg, rgba(124,58,237,.18), rgba(124,58,237,.08));
+        border: 1px solid rgba(124,58,237,.35);
+        color: #c4b5fd; font-weight: 900; font-size: 13px; letter-spacing: .03em;
+        text-decoration: none; transition: all .25s;
+        box-shadow: 0 0 16px rgba(124,58,237,.1), inset 0 1px 0 rgba(255,255,255,.06);
+    " onmouseover="this.style.background='linear-gradient(135deg,rgba(124,58,237,.28),rgba(124,58,237,.15))';"
+       onmouseout="this.style.background='linear-gradient(135deg,rgba(124,58,237,.18),rgba(124,58,237,.08))';">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🟣</span>
+        <span>ALUMED Premium</span>
+        <span style="margin-left:auto;font-size:10px;opacity:.6;">→</span>
+    </a>
+
+    <nav>
+        <!-- CONECTA FCM: Institucional -->
+        <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,200,66,.4);padding:0 4px 8px;margin-bottom:4px;border-bottom:1px solid rgba(245,200,66,.08);">
+            ⚡ CONECTA FCM · Institucional
+        </div>
+
+        <a href="/conecta/dashboard/" class="{% if request.path == '/conecta/dashboard/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-home"></i> Resumen
+        </a>
+        <a href="/cartelera/" class="{% if request.path == '/cartelera/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-bullhorn"></i> Cartelera en Vivo
+        </a>
+        <a href="/cronograma-finales/" class="{% if request.path == '/cronograma-finales/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-calendar-check"></i> Parciales y Finales
+        </a>
+        <a href="/plan-estudios/" class="{% if request.path == '/plan-estudios/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-book-open"></i> Plan de Estudios
+        </a>
+        <a href="/comisiones/" class="{% if request.path == '/comisiones/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-users"></i> Comisiones
+        </a>
+        <a href="/cronograma-tps/" class="{% if request.path == '/cronograma-tps/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-tasks"></i> Cronograma de TPs
+        </a>
+        <a href="/facultad/" class="{% if request.path == '/facultad/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-map-marked-alt"></i> Mapa de Facultad
+        </a>
+        <a href="/apoyo-psicologico/" class="{% if request.path == '/apoyo-psicologico/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-heart"></i> Apoyo Psicologico
+        </a>
+        <a href="/info-util/" class="{% if request.path == '/info-util/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-info-circle"></i> Info Util
+        </a>
+
+        <!-- Separator -->
+        <div style="height:1px;background:rgba(245,200,66,.08);margin:10px 0;"></div>
+
+        <a href="https://wa.me/5492215448983?text=Hola!%20Necesito%20soporte" target="_blank" style="color: #f0e8d0;">
+            <i class="fab fa-whatsapp"></i> Soporte
+        </a>
+        <a href="{% url 'logout' %}" style="color: #f87171; margin-top: auto; border-top: 1px solid rgba(245,200,66,0.08); padding-top: 15px;">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </nav>
+</aside>
+{% endblock %}
+
+{% block main_content %}
+
+<!-- Ambient glow -->
+<div class="cx-ambient">
+  <div class="cx-glow-1"></div>
+  <div class="cx-glow-2"></div>
+  <div class="cx-glow-3"></div>
+</div>
+<div class="cx-grid-bg"></div>
+
+<div class="cx-main">
+
+  <!-- ── STATUS BAR ── -->
+  <div class="cx-statusbar">
+    <div class="cx-sb-item"><i class="fas fa-map-marker-alt" style="color:var(--cx-gold);"></i> La Plata, Buenos Aires</div>
+    <div class="cx-sb-sep"></div>
+    <div class="cx-sb-item"><i class="fas fa-thermometer-half" style="color:#fb923c;"></i> <span id="cx-temp">--°C</span></div>
+    <div class="cx-sb-sep"></div>
+    <div class="cx-sb-item"><i class="fas fa-wind" style="color:#60a5fa;"></i> <span id="cx-wind">-- km/h</span></div>
+    <div class="cx-sb-sep"></div>
+    <div class="cx-sb-item" id="cx-datetime"><i class="far fa-calendar" style="color:var(--cx-gold);"></i> <span>--</span></div>
+    <div class="cx-sb-sep"></div>
+    <div class="cx-sb-live"><div class="cx-sb-dot"></div> Sistema activo — ALUMED OS v2.0</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
+      <a href="{% url 'student_dashboard' %}" class="cx-btn cx-btn-switch" style="padding:5px 14px;font-size:.68rem;">
+        <i class="fas fa-graduation-cap"></i> ALUMED OS
+      </a>
+    </div>
+  </div>
+
+  <!-- ── HERO STRIP ── -->
+  <div class="cx-hero">
+    <div class="cx-hero-left">
+      <div class="cx-hero-badge" style="margin-bottom:14px;display:inline-flex;">
+        <span class="dot"></span> Centro de Control Académico
+      </div>
+      <h1>Buenas, <span class="gold">{{ request.user.first_name|default:request.user.username }}</span> 👋</h1>
+      <p>
+        {% if new_notices_count > 0 %}
+          Hay <strong style="color:var(--cx-gold);">{{ new_notices_count }} avisos</strong> en la cartelera
+          {% if upcoming_exams %}y <strong style="color:#f87171;">{{ upcoming_exams|length }} examen(es)</strong> próximo(s).{% endif %}
+        {% else %}
+          Todo en orden. Sin nuevos avisos por el momento.
+        {% endif %}
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="{% url 'cartelera_view' %}" class="cx-btn cx-btn-gold">
+          <i class="fas fa-rss"></i> Ver cartelera completa
+        </a>
+        <a href="{% url 'conecta_fcm' %}" class="cx-btn cx-btn-outline">
+          <i class="fas fa-info-circle"></i> Sobre Conecta
+        </a>
+      </div>
+    </div>
+
+    <div class="cx-hero-right">
+      <div class="cx-hero-stat">
+        <div class="cx-hero-stat-num">{{ new_notices_count }}</div>
+        <div class="cx-hero-stat-lbl">Avisos hoy</div>
+      </div>
+      <div class="cx-hero-stat">
+        <div class="cx-hero-stat-num" style="color:#4ade80;">
+          <i class="fas fa-circle" style="font-size:.8rem;"></i>
+        </div>
+        <div class="cx-hero-stat-lbl">Sistema activo</div>
+      </div>
+      <div class="cx-hero-stat">
+        <div class="cx-hero-stat-num" style="color:#f87171;">{{ upcoming_exams|length }}</div>
+        <div class="cx-hero-stat-lbl">Exámenes próximos</div>
+      </div>
+      <div class="cx-hero-stat">
+        <div class="cx-hero-stat-num" style="color:#c084fc;">5</div>
+        <div class="cx-hero-stat-lbl">Materias activas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CARTELERA EN VIVO ── -->
+  <section>
+    <span class="cx-label lbl-gold">📡 En vivo</span>
+    <h2 class="cx-section-title">Cartelera Oficial FCM · UNLP</h2>
+    <p class="cx-section-sub">Avisos scrapeados directamente del sitio oficial. Actualizados automáticamente cada 10 minutos.</p>
+
+    <div class="cx-cartelera-filters" id="cxFilters">
+      <button class="cx-filter-btn active" data-filter="all">Todos</button>
+      <button class="cx-filter-btn" data-filter="high">Alta prioridad</button>
+      <button class="cx-filter-btn" data-filter="secretaria">Secretaría</button>
+      <button class="cx-filter-btn" data-filter="comisiones">Comisiones</button>
+      <button class="cx-filter-btn" data-filter="examenes">Exámenes</button>
+    </div>
+
+    <div class="cx-notices-grid" id="cxNoticesGrid">
+      <!-- Static urgent notice -->
+      <a href="#" class="cx-notice-card high cx-notice-all">
+        <span class="cx-notice-prio prio-high">🔴 URGENTE</span>
+        <div class="cx-notice-dept">DIRECCIÓN DE ENSEÑANZA</div>
+        <div class="cx-notice-title">Suspensión de clases — paro docente nacional</div>
+        <div class="cx-notice-meta"><i class="far fa-clock" style="font-size:.58rem;"></i>hace 40 min · Todas las materias</div>
+      </a>
+
+      {% for notice in cartelera_notices %}
+      <a href="{{ notice.url }}" target="_blank" class="cx-notice-card med cx-notice-all cx-notice-secretaria">
+        <span class="cx-notice-prio prio-med">📋 OFICIAL</span>
+        <div class="cx-notice-dept">{{ notice.dept|upper }}</div>
+        <div class="cx-notice-title">{{ notice.title }}</div>
+        <div class="cx-notice-meta"><i class="far fa-calendar" style="font-size:.58rem;"></i>{{ notice.date }}</div>
+      </a>
+      {% endfor %}
+
+      <a href="#" class="cx-notice-card med cx-notice-all cx-notice-examenes" style="text-decoration:none;">
+        <span class="cx-notice-prio prio-med">📅 AVISO</span>
+        <div class="cx-notice-dept">SEC. ACADÉMICA</div>
+        <div class="cx-notice-title">Apertura inscripciones finales — Turno Agosto 2026</div>
+        <div class="cx-notice-meta"><i class="far fa-clock" style="font-size:.58rem;"></i>hace 3h · Todos los años</div>
+      </a>
+
+      <a href="#" class="cx-notice-card low cx-notice-all cx-notice-comisiones" style="text-decoration:none;">
+        <span class="cx-notice-prio prio-low">🔵 INFO</span>
+        <div class="cx-notice-dept">COMISIONES</div>
+        <div class="cx-notice-title">Cambio de aula — Bioquímica B3 → Aula 15, Piso 2</div>
+        <div class="cx-notice-meta"><i class="far fa-clock" style="font-size:.58rem;"></i>hace 1h · Bioquímica</div>
+      </a>
+
+      <a href="#" class="cx-notice-card info cx-notice-all cx-notice-secretaria" style="text-decoration:none;">
+        <span class="cx-notice-prio prio-info">🟢 NUEVO</span>
+        <div class="cx-notice-dept">BIBLIOTECA CENTRAL</div>
+        <div class="cx-notice-title">Nuevos recursos digitales disponibles en la plataforma</div>
+        <div class="cx-notice-meta"><i class="far fa-clock" style="font-size:.58rem;"></i>hace 2 días · Todos</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── TIMELINE ── -->
+  <section>
+    <span class="cx-label lbl-cyan">📅 Timeline</span>
+    <h2 class="cx-section-title">Calendario académico</h2>
+    <p class="cx-section-sub">Tus próximas fechas importantes de un vistazo.</p>
+
+    <div class="cx-timeline-bar">
+      {% if upcoming_exams %}
+        {% for exam in upcoming_exams %}
+        <div class="cx-tl-item">
+          <div class="cx-tl-date">{{ exam.start_date|date:"d/m" }}</div>
+          <span class="cx-tl-type-badge" style="background:rgba(244,63,94,.12);color:#f87171;border:1px solid rgba(244,63,94,.25);">EXAMEN</span>
+          <div class="cx-tl-text">{{ exam.title }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="cx-tl-item today">
+        <div class="cx-tl-date">12/07</div>
+        <span class="cx-tl-type-badge" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">TP</span>
+        <div class="cx-tl-text">Entrega TP Anatomía</div>
+      </div>
+      <div class="cx-tl-item">
+        <div class="cx-tl-date">15/07</div>
+        <span class="cx-tl-type-badge" style="background:rgba(244,63,94,.1);color:#f87171;border:1px solid rgba(244,63,94,.25);">PARCIAL</span>
+        <div class="cx-tl-text">Parcial Histología</div>
+      </div>
+      <div class="cx-tl-item">
+        <div class="cx-tl-date">19/07</div>
+        <span class="cx-tl-type-badge" style="background:rgba(244,63,94,.12);color:#f87171;border:1px solid rgba(244,63,94,.25);">FINAL</span>
+        <div class="cx-tl-text">Final Patología</div>
+      </div>
+      <div class="cx-tl-item">
+        <div class="cx-tl-date">24/07</div>
+        <span class="cx-tl-type-badge" style="background:rgba(96,165,250,.08);color:#60a5fa;border:1px solid rgba(96,165,250,.2);">RECESO</span>
+        <div class="cx-tl-text">Inicio férias de invierno</div>
+      </div>
+      <div class="cx-tl-item">
+        <div class="cx-tl-date">04/08</div>
+        <span class="cx-tl-type-badge" style="background:rgba(74,222,128,.06);color:#4ade80;border:1px solid rgba(74,222,128,.2);">INICIO</span>
+        <div class="cx-tl-text">2° Cuatrimestre</div>
+      </div>
+      <div class="cx-tl-item">
+        <div class="cx-tl-date">10/08</div>
+        <span class="cx-tl-type-badge" style="background:rgba(244,63,94,.1);color:#f87171;border:1px solid rgba(244,63,94,.25);">PARCIAL</span>
+        <div class="cx-tl-text">Parcial Fisiología</div>
+      </div>
+      {% endif %}
+    </div>
+    <div style="margin-top:14px;">
+      <a href="#" class="cx-btn cx-btn-outline" style="font-size:.78rem;">
+        <i class="far fa-calendar-alt"></i> Ver calendario completo
+      </a>
+    </div>
+  </section>
+
+  <!-- ── MIS MATERIAS ── -->
+  <section>
+    <span class="cx-label lbl-lime">📚 Mis materias</span>
+    <h2 class="cx-section-title">Materias acompañadas</h2>
+    <p class="cx-section-sub">Seguí el estado de cada materia: próxima clase, examen, comisión y profesor.</p>
+
+    <div class="cx-materias-grid">
+      {% with materias='' %}
+      <!-- Anatomy -->
+      <div class="cx-materia-card">
+        <div class="cx-materia-header">
+          <div class="cx-materia-ico" style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2);color:#f87171;">🦴</div>
+          <div>
+            <div class="cx-materia-name">Anatomía</div>
+            <div class="cx-materia-prof">Dr. García · Comisión A2</div>
+          </div>
+        </div>
+        <div class="cx-materia-info"><i class="fas fa-clock" style="color:var(--cx-gold);width:14px;"></i>Próx. clase: Lunes 14/07 · 08:00 hs</div>
+        <div class="cx-materia-info"><i class="fas fa-exclamation-circle" style="color:#f87171;width:14px;"></i>Parcial: 15/07 · Aula 3</div>
+        <div class="cx-materia-info"><i class="fas fa-map-marker-alt" style="color:#60a5fa;width:14px;"></i>Aula 12, Edificio Central</div>
+        <div class="cx-materia-progress-bar"><div class="cx-materia-progress-fill" style="width:68%;"></div></div>
+        <div style="font-size:.62rem;color:var(--cx-muted);margin-top:4px;">68% de acompañamiento</div>
+      </div>
+
+      <!-- Histología -->
+      <div class="cx-materia-card">
+        <div class="cx-materia-header">
+          <div class="cx-materia-ico" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.2);color:#c084fc;">🔬</div>
+          <div>
+            <div class="cx-materia-name">Histología</div>
+            <div class="cx-materia-prof">Dra. López · Comisión B1</div>
+          </div>
+        </div>
+        <div class="cx-materia-info"><i class="fas fa-clock" style="color:var(--cx-gold);width:14px;"></i>Próx. clase: Martes 15/07 · 10:00 hs</div>
+        <div class="cx-materia-info"><i class="fas fa-file-alt" style="color:#fbbf24;width:14px;"></i>TP N°4 · entrega 22/07</div>
+        <div class="cx-materia-info"><i class="fas fa-map-marker-alt" style="color:#60a5fa;width:14px;"></i>Lab. Micro, Piso 1</div>
+        <div class="cx-materia-progress-bar"><div class="cx-materia-progress-fill" style="width:82%;"></div></div>
+        <div style="font-size:.62rem;color:var(--cx-muted);margin-top:4px;">82% de acompañamiento</div>
+      </div>
+
+      <!-- Bioquímica -->
+      <div class="cx-materia-card">
+        <div class="cx-materia-header">
+          <div class="cx-materia-ico" style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);color:#22d3ee;">⚗️</div>
+          <div>
+            <div class="cx-materia-name">Bioquímica</div>
+            <div class="cx-materia-prof">Dr. Martínez · Comisión B3</div>
+          </div>
+        </div>
+        <div class="cx-materia-info"><i class="fas fa-clock" style="color:var(--cx-gold);width:14px;"></i>Próx. clase: Miérc. 16/07 · 14:00 hs</div>
+        <div class="cx-materia-info" style="color:#f43f5e;"><i class="fas fa-exclamation-triangle" style="width:14px;"></i>Aula cambiada → Aula 15</div>
+        <div class="cx-materia-info"><i class="fas fa-map-marker-alt" style="color:#60a5fa;width:14px;"></i>Aula 15, Piso 2</div>
+        <div class="cx-materia-progress-bar"><div class="cx-materia-progress-fill" style="width:55%;"></div></div>
+        <div style="font-size:.62rem;color:var(--cx-muted);margin-top:4px;">55% de acompañamiento</div>
+      </div>
+
+      <!-- Patología -->
+      <div class="cx-materia-card">
+        <div class="cx-materia-header">
+          <div class="cx-materia-ico" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c;">🧬</div>
+          <div>
+            <div class="cx-materia-name">Patología</div>
+            <div class="cx-materia-prof">Dr. Pérez · Comisión C1</div>
+          </div>
+        </div>
+        <div class="cx-materia-info"><i class="fas fa-clock" style="color:var(--cx-gold);width:14px;"></i>Próx. clase: Jueves 17/07 · 08:00 hs</div>
+        <div class="cx-materia-info" style="color:#f87171;"><i class="fas fa-graduation-cap" style="width:14px;"></i>Final: 19/07 · Turno Agosto</div>
+        <div class="cx-materia-info"><i class="fas fa-map-marker-alt" style="color:#60a5fa;width:14px;"></i>Aula 8, Planta Baja</div>
+        <div class="cx-materia-progress-bar"><div class="cx-materia-progress-fill" style="width:90%;background:linear-gradient(90deg,#f87171,#fb923c);"></div></div>
+        <div style="font-size:.62rem;color:var(--cx-muted);margin-top:4px;">90% de acompañamiento</div>
+      </div>
+
+      <!-- Fisiología -->
+      <div class="cx-materia-card">
+        <div class="cx-materia-header">
+          <div class="cx-materia-ico" style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ade80;">❤️</div>
+          <div>
+            <div class="cx-materia-name">Fisiología</div>
+            <div class="cx-materia-prof">Dra. Fernández · Comisión A3</div>
+          </div>
+        </div>
+        <div class="cx-materia-info"><i class="fas fa-clock" style="color:var(--cx-gold);width:14px;"></i>Próx. clase: Viern. 18/07 · 08:00 hs</div>
+        <div class="cx-materia-info"><i class="fas fa-file-alt" style="color:#fbbf24;width:14px;"></i>Nuevo TP: Reg. Cardiovascular</div>
+        <div class="cx-materia-info"><i class="fas fa-map-marker-alt" style="color:#60a5fa;width:14px;"></i>Aula 5, Edificio Norte</div>
+        <div class="cx-materia-progress-bar"><div class="cx-materia-progress-fill" style="width:74%;background:linear-gradient(90deg,#4ade80,#22d3ee);"></div></div>
+        <div style="font-size:.62rem;color:var(--cx-muted);margin-top:4px;">74% de acompañamiento</div>
+      </div>
+      {% endwith %}
+    </div>
+  </section>
+
+  <!-- ── INTEGRACIONES ── -->
+  <section>
+    <span class="cx-label lbl-blue">🔗 Integraciones</span>
+    <h2 class="cx-section-title">Tu información en todos lados</h2>
+    <p class="cx-section-sub">Sincronizá el sistema con las herramientas que ya usás cada día.</p>
+    <div class="cx-integ-grid">
+      <a href="#" class="cx-integ-card">
+        <div class="cx-integ-ico">📅</div>
+        <div class="cx-integ-name">Google Calendar</div>
+        <div class="cx-integ-desc">Parciales, TPs y finales en tu agenda automáticamente.</div>
+        <div class="cx-integ-status"><i class="fas fa-check" style="font-size:.55rem;"></i> Activo</div>
+      </a>
+      <a href="#" class="cx-integ-card">
+        <div class="cx-integ-ico">💬</div>
+        <div class="cx-integ-name">WhatsApp</div>
+        <div class="cx-integ-desc">Alertas instantáneas para cambios urgentes y nuevos avisos.</div>
+        <div class="cx-integ-status"><i class="fas fa-check" style="font-size:.55rem;"></i> Activo</div>
+      </a>
+      <a href="#" class="cx-integ-card">
+        <div class="cx-integ-ico">📧</div>
+        <div class="cx-integ-name">Email</div>
+        <div class="cx-integ-desc">Resumen semanal con todo lo importante de tu carrera.</div>
+        <div class="cx-integ-status"><i class="fas fa-check" style="font-size:.55rem;"></i> Activo</div>
+      </a>
+      <a href="#" class="cx-integ-card">
+        <div class="cx-integ-ico">🔔</div>
+        <div class="cx-integ-name">Notificaciones IA</div>
+        <div class="cx-integ-desc">Alertas inteligentes basadas en tu perfil académico.</div>
+        <div class="cx-integ-status"><i class="fas fa-check" style="font-size:.55rem;"></i> Activo</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── HERRAMIENTAS ── -->
+  <section>
+    <span class="cx-label lbl-orange">🏛️ Herramientas Conecta</span>
+    <h2 class="cx-section-title">Todo lo académico en un clic</h2>
+    <div class="cx-tools-grid">
+      <a href="{% url 'plan_estudios' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);"><i class="fas fa-list-ol"></i></div>
+        <div class="cx-tool-name">Plan de Estudios</div>
+        <div class="cx-tool-desc">Tu hoja de ruta con correlatividades.</div>
+      </a>
+      <a href="{% url 'cronograma_tps' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);color:#60a5fa;"><i class="fas fa-calendar-check"></i></div>
+        <div class="cx-tool-name">Cronograma de TPs</div>
+        <div class="cx-tool-desc">Todas las entregas del cuatrimestre.</div>
+      </a>
+      <a href="{% url 'comisiones' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.2);color:#c084fc;"><i class="fas fa-users"></i></div>
+        <div class="cx-tool-name">Comisiones</div>
+        <div class="cx-tool-desc">Aulas, docentes y horarios.</div>
+      </a>
+      <a href="{% url 'cronograma_finales' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2);color:#f87171;"><i class="fas fa-graduation-cap"></i></div>
+        <div class="cx-tool-name">Finales</div>
+        <div class="cx-tool-desc">Turnos, fechas e inscripciones.</div>
+      </a>
+      <a href="{% url 'cartelera_view' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:#fbbf24;"><i class="fas fa-bullhorn"></i></div>
+        <div class="cx-tool-name">Cartelera Oficial</div>
+        <div class="cx-tool-desc">Avisos oficiales en tiempo real.</div>
+      </a>
+      <a href="{% url 'facultad' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);color:#22d3ee;"><i class="fas fa-university"></i></div>
+        <div class="cx-tool-name">Mapa Facultad</div>
+        <div class="cx-tool-desc">Aulas, labs y dependencias.</div>
+      </a>
+      <a href="{% url 'apoyo_psicologico' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ade80;"><i class="fas fa-heartbeat"></i></div>
+        <div class="cx-tool-name">Apoyo Psicológico</div>
+        <div class="cx-tool-desc">Acompañamiento y bienestar estudiantil.</div>
+      </a>
+      <a href="#" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c;"><i class="fas fa-link"></i></div>
+        <div class="cx-tool-name">Links Oficiales</div>
+        <div class="cx-tool-desc">SIU, Guaraní, Mesa Virtual y más.</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <section>
+    <span class="cx-label lbl-green">📊 Estadísticas rápidas</span>
+    <h2 class="cx-section-title">Tu semana de un vistazo</h2>
+
+    <div class="cx-stats-wrap">
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-title"><i class="far fa-calendar-alt"></i> HOY</div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Avisos nuevos</span><span class="cx-stat-val gold">{{ new_notices_count }}</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Clases programadas</span><span class="cx-stat-val ok">2</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Exámenes próximos</span><span class="cx-stat-val high">{{ upcoming_exams|length }}</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Integración activa</span><span class="cx-stat-val ok">✓ Activo</span></div>
+      </div>
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-title"><i class="fas fa-chart-bar"></i> ESTA SEMANA</div>
+        <div class="cx-stat-row"><span class="cx-stat-name">TPs pendientes</span><span class="cx-stat-val gold">4</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Finales a anotarse</span><span class="cx-stat-val high">2</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Notificaciones IA</span><span class="cx-stat-val ok">8</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Cartelera actualizada</span><span class="cx-stat-val ok">✓ Sí</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <div class="cx-cta-block">
+    <div>
+      <h2 class="cx-cta-title">Organizá tu carrera<br>en un solo lugar.</h2>
+      <p class="cx-cta-sub">Conectá tus herramientas y recibí todo donde estés.</p>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <a href="#" class="cx-btn cx-btn-gold">
+        <i class="fab fa-google"></i> Sync Google Calendar
+      </a>
+      <a href="#" class="cx-btn cx-btn-outline">
+        <i class="fab fa-whatsapp"></i> Activar WhatsApp
+      </a>
+      <a href="{% url 'student_dashboard' %}" class="cx-btn cx-btn-switch">
+        <i class="fas fa-graduation-cap"></i> Ir a ALUMED OS
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  /* Live clock + date */
+  function updateClock(){
+    var now = new Date();
+    var days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    var str = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' · ' +
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0');
+    var el = document.querySelector('#cx-datetime span');
+    if(el) el.textContent = str;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  /* Filter buttons */
+  var filterBtns = document.querySelectorAll('.cx-filter-btn');
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      filterBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var f = btn.getAttribute('data-filter');
+      var cards = document.querySelectorAll('#cxNoticesGrid a');
+      cards.forEach(function(c){
+        if(f === 'all'){
+          c.style.display = 'block';
+        } else {
+          c.style.display = c.classList.contains('cx-notice-' + f) ? 'block' : 'none';
+        }
+      });
+    });
+  });
+
+  /* Animate progress bars on scroll */
+  var fills = document.querySelectorAll('.cx-materia-progress-fill');
+  fills.forEach(function(fill){
+    var w = fill.style.width;
+    fill.style.width = '0%';
+    setTimeout(function(){ fill.style.width = w; }, 400);
+  });
+
+  /* Animate hero stats */
+  document.querySelectorAll('.cx-hero-stat-num').forEach(function(el, i){
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(function(){
+      el.style.transition = 'all .5s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 200 + i * 100);
+  });
+
+  /* Smooth hover on notice cards */
+  document.querySelectorAll('.cx-notice-card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - .5;
+      var y = (e.clientY - r.top) / r.height - .5;
+      card.style.transform = 'translateY(-3px) rotateX('+(-y*4)+'deg) rotateY('+(x*4)+'deg)';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+    });
+  });
+})();
+</script>
+
+{% endblock %}

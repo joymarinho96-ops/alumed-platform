@@ -7,357 +7,718 @@
 
 {% block main_content %}
 <!-- Tech Grid Background -->
-<div class="courses-tech-grid" style="position: absolute; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; z-index: 1;"></div>
+<div class="courses-tech-grid" style="position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none;z-index:1;"></div>
 
-<div style="position: relative; z-index: 5; padding: 40px 20px;">
-    <!-- Section Header -->
-    <div class="section-header reveal-up" style="margin-bottom: 30px; text-align: center;">
-        <span class="hero-badge animate__animated animate__fadeInDown" style="background: rgba(245, 197, 66, 0.12); border-color: rgba(245, 197, 66, 0.4); color: #f5c542; box-shadow: 0 0 25px rgba(245, 197, 66, 0.15); font-family: 'Orbitron', sans-serif; font-size: 11px; padding: 6px 16px; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-flex; align-items: center; gap: 8px;">
-            <i class="fas fa-satellite-dish" style="animation: pulse 2s infinite;"></i> CARTELERA EN VIVO UNLP
-        </span>
-        <h2 class="animate__animated animate__fadeInLeft" style="font-family: 'Orbitron', sans-serif; font-size: clamp(32px, 4vw, 52px); margin-top: 15px; color: white; font-weight: 800;">Novedades <span class="home-hero-highlight" style="background: linear-gradient(135deg, #f5c542 0%, #ff8c00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Oficiales</span></h2>
-        <p class="animate__animated animate__fadeInLeft" style="opacity:0.8; max-width: 800px; margin-left: auto; margin-right: auto; color: #cbd5e1; font-size: 15px; line-height: 1.6;">
-            Accedé en tiempo real a las carteleras de la Facultad de Ciencias Médicas. Filtrá por materia, activá alertas en tu celular y no te pierdas nada.
-        </p>
-    </div>
+<div style="position:relative;z-index:5;padding:40px 20px 120px;">
 
-    <!-- Alert Configuration & Preference Settings -->
-    <div style="max-width: 1200px; margin: 0 auto 35px; background: rgba(245, 197, 66, 0.03); border: 1px solid rgba(245, 197, 66, 0.2); border-radius: 20px; padding: 25px 30px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.55); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;" class="reveal-up">
-        <!-- Subscriptions Checkboxes -->
-        <div>
-            <h3 style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #f5c542; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-check-double"></i> Mis Suscripciones
-            </h3>
-            <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Seleccioná qué departamentos o cátedras querés ver en tu feed y recibir en tus dispositivos:</p>
-            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="pref-estudiantiles" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
-                    Asuntos Estudiantiles / Cursadas
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="pref-ensenanza" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
-                    Dirección de Enseñanza / Trámites
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="pref-academica" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
-                    Secretaría Académica
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 13px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="pref-catedras" checked onchange="filterCartelera()" style="accent-color: #f5c542; width: 17px; height: 17px;">
-                    Cátedras y Materias (Anato, Histo, Biolo)
-                </label>
-            </div>
-        </div>
+  <!-- ═══ HEADER ═══════════════════════════════════════════════════════ -->
+  <div class="section-header reveal-up" style="margin-bottom:30px;text-align:center;">
+    <span class="hero-badge animate__animated animate__fadeInDown" style="background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.4);color:#f5c542;box-shadow:0 0 25px rgba(245,197,66,.15);font-family:'Orbitron',sans-serif;font-size:11px;padding:6px 16px;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;display:inline-flex;align-items:center;gap:8px;">
+      <i class="fas fa-satellite-dish" style="animation:pulse 2s infinite;"></i> CARTELERA EN VIVO UNLP
+    </span>
+    <h2 class="animate__animated animate__fadeInLeft" style="font-family:'Orbitron',sans-serif;font-size:clamp(28px,4vw,48px);margin-top:15px;color:white;font-weight:800;">
+      Novedades <span class="home-hero-highlight" style="background:linear-gradient(135deg,#f5c542 0%,#ff8c00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Oficiales</span>
+    </h2>
+    <p style="opacity:.8;max-width:700px;margin:0 auto;color:#cbd5e1;font-size:15px;line-height:1.6;">
+      Accedé en tiempo real a las carteleras de la Facultad de Ciencias Médicas.<br>Filtrá por materia, activá alertas y no te pierdas nada.
+    </p>
+  </div>
 
-        <!-- Devices Alert Setup -->
-        <div>
-            <h3 style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #f5c542; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-mobile-alt"></i> Alertas en tu Dispositivo
-            </h3>
-            <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 15px 0; line-height: 1.5;">Configurá tus alertas para recibir avisos automáticos al instante:</p>
-            
-            <div style="margin-bottom: 12px;">
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="alert-whatsapp" placeholder="WhatsApp: +54 9 221 1234567" style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(245, 197, 66, 0.25); border-radius: 8px; color: white; font-size: 13px; outline: none;" onfocus="this.style.borderColor='#f5c542';">
-                    <button onclick="saveAlertSettings('whatsapp')" class="pomo-btn pomo-btn-main" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px; background: rgba(245,197,66,0.15); border-color: rgba(245,197,66,0.4); color: #f5c542;">
-                        <i class="fab fa-whatsapp"></i> Activar
-                    </button>
-                </div>
-            </div>
+  <!-- ═══ MIS SUSCRIPCIONES ══════════════════════════════════════════════════ -->
+  <style>
+  /* ── Suscripciones ───────────────────────────────────────────────── */
+  .sub-wrap    { max-width:1200px;margin:0 auto 30px;display:grid;grid-template-columns:1fr 1fr 340px;gap:20px; }
+  @media(max-width:1100px){ .sub-wrap{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:700px) { .sub-wrap{ grid-template-columns:1fr; } }
 
-            <div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="alert-email" value="{{ user.email }}" readonly style="flex-grow: 1; padding: 8px 12px; background: rgba(8, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; color: #94a3b8; font-size: 13px; outline: none;">
-                    <button onclick="saveAlertSettings('email')" class="pomo-btn pomo-btn-option" id="btn-email-alert" style="font-size: 11.5px; padding: 8px 14px; font-family:'Orbitron', sans-serif; display: flex; align-items: center; gap: 6px; border-color: rgba(245,197,66,0.3); background: rgba(245,197,66,0.05); color: #cbd5e1;">
-                        <i class="far fa-envelope"></i> Activar Email
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+  .sub-card    { background:rgba(245,197,66,.03);border:1px solid rgba(245,197,66,.18);border-radius:18px;padding:22px;backdrop-filter:blur(12px);box-shadow:0 10px 40px rgba(0,0,0,.45); }
+  .sub-title   { font-family:'Orbitron',sans-serif;font-size:13px;color:#f5c542;margin:0 0 4px;display:flex;align-items:center;gap:7px; }
+  .sub-desc    { color:#94a3b8;font-size:12px;margin:0 0 14px;line-height:1.5; }
 
-    <!-- Search & Quick Filters Panel -->
-    <div style="max-width: 1200px; margin: 0 auto 30px; padding: 0 10px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center;" class="reveal-up">
-        <!-- Search Input -->
-        <div style="position: relative; width: 100%; max-width: 450px;">
-            <input type="text" id="cartelera-search" placeholder="Buscar por materia o palabra clave..." oninput="filterCartelera()" style="width: 100%; padding: 12px 16px 12px 42px; background: rgba(8, 10, 20, 0.7); border: 1px solid rgba(245, 197, 66, 0.3); border-radius: 10px; color: white; outline: none; font-size: 14px; transition: all 0.3s;" onfocus="this.style.borderColor='#f5c542'; this.style.boxShadow='0 0 10px rgba(245,197,66,0.2)';" onblur="this.style.borderColor='rgba(245, 197, 66, 0.3)'; this.style.boxShadow='none';">
-            <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(245, 197, 66, 0.6); font-size: 14px;"></i>
-        </div>
+  /* Checkboxes */
+  .sub-chk     { display:flex;align-items:center;gap:9px;color:#cbd5e1;font-size:12.5px;cursor:pointer;user-select:none;padding:5px 0;border-radius:6px;transition:color .15s; }
+  .sub-chk:hover { color:white; }
+  .sub-chk input[type=checkbox] { accent-color:#f5c542;width:16px;height:16px;flex-shrink:0;cursor:pointer; }
 
-        <!-- Quick Subject Filters Tags -->
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="quick-filters">
-            <button onclick="setQuickFilter('Todos')" class="pomo-btn pomo-btn-option active-tag" id="tag-Todos" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Todos</button>
-            <button onclick="setQuickFilter('Anatomía')" class="pomo-btn pomo-btn-option" id="tag-Anatomía" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Anatomía</button>
-            <button onclick="setQuickFilter('Histología')" class="pomo-btn pomo-btn-option" id="tag-Histología" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Histología</button>
-            <button onclick="setQuickFilter('Biología')" class="pomo-btn pomo-btn-option" id="tag-Biología" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Biología</button>
-            <button onclick="setQuickFilter('Trámites')" class="pomo-btn pomo-btn-option" id="tag-Trámites" style="font-size: 11px; padding: 6px 12px; font-family:'Orbitron', sans-serif;">Trámites / Cupos</button>
-        </div>
-    </div>
+  /* Counter badges */
+  .sub-counter { display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.2);color:#f5c542;font-size:11px;font-weight:800;font-family:'Orbitron',sans-serif;margin-bottom:12px; }
 
-    <!-- Live Notices Feed Grid (Yellow Highlight Theme) -->
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 10px;">
-        <div id="cartelera-notices-feed" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
-            <!-- Loaded dynamically in JavaScript -->
-        </div>
+  /* Ctrl buttons */
+  .sub-ctrl    { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px; }
+  .sub-btn-sm  { padding:4px 11px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(245,197,66,.22);background:rgba(245,197,66,.06);color:rgba(245,197,66,.7);font-family:'Orbitron',sans-serif;transition:all .18s; }
+  .sub-btn-sm:hover { background:rgba(245,197,66,.14);color:#f5c542; }
 
-        <!-- No notices fallback -->
-        <div id="cartelera-no-results" style="display: none; text-align: center; padding: 80px 20px; color: #94a3b8;">
-            <i class="fas fa-satellite-dish" style="font-size: 48px; color: #f5c542; margin-bottom: 20px; animation: pulse 2s infinite;"></i>
-            <h4 style="font-family: 'Orbitron', sans-serif; color: white; font-size: 20px; font-weight: 700;">No se encontraron avisos</h4>
-            <p style="font-size: 14.5px; margin-top: 8px; color: #94a3b8;">Modificá tus filtros, búsqueda o suscripciones.</p>
-        </div>
-    </div>
-</div>
+  /* Acordeones */
+  .acc-wrap    { display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;padding-right:4px; }
+  .acc-wrap::-webkit-scrollbar { width:3px; }
+  .acc-wrap::-webkit-scrollbar-thumb { background:rgba(245,197,66,.2);border-radius:99px; }
+  .acc-item    { border:1px solid rgba(245,197,66,.12);border-radius:12px;overflow:hidden; }
+  .acc-head    { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(245,197,66,.05);cursor:pointer;user-select:none;transition:background .2s; }
+  .acc-head:hover { background:rgba(245,197,66,.1); }
+  .acc-head-left { display:flex;align-items:center;gap:9px; }
+  .acc-year    { font-size:11px;font-weight:900;font-family:'Orbitron',sans-serif;color:#f5c542;padding:2px 10px;border-radius:5px;background:rgba(245,197,66,.12);white-space:nowrap; }
+  .acc-year-count { font-size:10px;color:#94a3b8; }
+  .acc-arrow   { color:rgba(245,197,66,.5);font-size:10px;transition:transform .2s; }
+  .acc-body    { display:none;padding:10px 14px 12px;display:flex;flex-direction:column;gap:3px; }
+  .acc-body.open { display:flex; }
+  .acc-yr-ctrl { display:flex;gap:6px;margin-bottom:8px; }
+  .acc-ctrl-btn { font-size:10px;padding:2px 9px;border-radius:5px;cursor:pointer;border:1px solid rgba(245,197,66,.2);background:transparent;color:rgba(245,197,66,.6);font-family:'Outfit',sans-serif;font-weight:700;transition:all .15s; }
+  .acc-ctrl-btn:hover { background:rgba(245,197,66,.1);color:#f5c542; }
 
-<!-- Toast Alert Container -->
-<div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); border: 1px solid #f5c542; box-shadow: 0 0 15px rgba(245, 197, 66, 0.3); border-radius: 8px; padding: 12px 20px; color: white; font-family:'Orbitron', sans-serif; font-size: 13px; display: flex; align-items: center; gap: 8px; transform: translateY(150px); transition: transform 0.3s ease; z-index: 9999;">
-    <i class="fas fa-check-circle" style="color: #f5c542;"></i>
-    <span id="toast-message">Guardado</span>
-</div>
+  /* Alertas */
+  .alert-field { width:100%;padding:8px 12px;background:rgba(8,10,20,.7);border:1px solid rgba(245,197,66,.2);border-radius:9px;color:white;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;font-family:'Outfit',sans-serif; }
+  .alert-field:focus { border-color:#f5c542; }
+  .alert-field::placeholder { color:rgba(148,163,184,.5); }
+  .alert-toggle { display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.2);margin-bottom:7px; }
+  .alert-toggle-label { font-size:12.5px;color:#cbd5e1;display:flex;align-items:center;gap:7px; }
+  .toggle-sw { position:relative;width:36px;height:20px;flex-shrink:0; }
+  .toggle-sw input { opacity:0;width:0;height:0; }
+  .toggle-slider { position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.1);cursor:pointer;transition:background .2s; }
+  .toggle-slider:before { content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:white;transition:transform .2s; }
+  .toggle-sw input:checked + .toggle-slider { background:#f5c542; }
+  .toggle-sw input:checked + .toggle-slider:before { transform:translateX(16px); }
 
-<script>
-    // Injected notices from backend scraper
-    const carteleraNoticesData = [
-        {% for notice in cartelera_notices %}
-        {
-            id: "{{ notice.id }}",
-            title: "{{ notice.title|escapejs }}",
-            date: "{{ notice.date }}",
-            url: "{{ notice.url }}",
-            subtitle: "{{ notice.subtitle|escapejs }}",
-            dept: "{{ notice.dept|escapejs }}"
-        }{% if not forloop.last %},{% endif %}
+  .official-note { font-size:11px;color:rgba(148,163,184,.6);padding:7px 10px;border-radius:7px;background:rgba(245,197,66,.04);border:1px solid rgba(245,197,66,.08);line-height:1.5;margin-bottom:8px; }
+  .consent-row   { display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:9px;border:1px solid rgba(245,197,66,.15);background:rgba(245,197,66,.03);margin-top:4px; }
+  .consent-row label { font-size:11.5px;color:#cbd5e1;cursor:pointer;line-height:1.5; }
+
+  /* Save button */
+  .sub-save-btn { width:100%;padding:12px;border:none;border-radius:11px;background:linear-gradient(135deg,#f5c542,#ff8c00);color:#0a0305;font-size:13px;font-weight:900;font-family:'Orbitron',sans-serif;cursor:pointer;letter-spacing:.05em;transition:all .22s;box-shadow:0 0 20px rgba(245,197,66,.2);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px; }
+  .sub-save-btn:hover { transform:translateY(-2px);box-shadow:0 0 30px rgba(245,197,66,.35); }
+  .sub-save-btn:active { transform:scale(.98); }
+
+  /* Mobile sticky save */
+  @media(max-width:700px){
+    .sub-save-sticky { position:fixed;bottom:0;left:0;right:0;z-index:200;padding:12px 16px;background:rgba(8,4,20,.95);border-top:1px solid rgba(245,197,66,.2);backdrop-filter:blur(12px); }
+  }
+  </style>
+
+  <div class="sub-wrap reveal-up">
+
+    <!-- ── PANEL 1: INFORMACIÓN INSTITUCIONAL ── -->
+    <div class="sub-card">
+      <h3 class="sub-title"><i class="fas fa-landmark"></i> Información Institucional</h3>
+      <p class="sub-desc">Seleccioná qué departamentos y secretarías querés seguir en tu feed:</p>
+
+      <div class="sub-ctrl">
+        <button class="sub-btn-sm" onclick="SUB.selAllInst()">✓ Todas</button>
+        <button class="sub-btn-sm" onclick="SUB.clrInst()">✗ Ninguna</button>
+      </div>
+      <div class="sub-counter"><i class="fas fa-check-circle"></i> <span id="instCount">0</span> categorías</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;" id="instGrid">
+        {% for cat in institutional_cats %}
+        <label class="sub-chk">
+          <input type="checkbox" class="inst-chk" data-key="{{ cat.key }}" data-label="{{ cat.label }}" onchange="SUB.updateCounters()">
+          {{ cat.label }}
+        </label>
+        {% empty %}
+        <!-- Default categories rendered by JS -->
         {% endfor %}
-    ];
+      </div>
+    </div>
 
-    let activeQuickFilter = 'Todos';
+    <!-- ── PANEL 2: MATERIAS DE MEDICINA ── -->
+    <div class="sub-card">
+      <h3 class="sub-title"><i class="fas fa-stethoscope"></i> Materias de Medicina</h3>
+      <p class="sub-desc">Seleccioná las materias que estás cursando o querés seguir:</p>
 
-    function setQuickFilter(val) {
-        activeQuickFilter = val;
-        
-        // Toggle active tags
-        const tags = document.querySelectorAll('#quick-filters button');
-        tags.forEach(t => {
-            if (t.id === 'tag-' + val) {
-                t.classList.add('active-tag');
-                t.style.background = 'rgba(245, 197, 66, 0.15)';
-                t.style.borderColor = '#f5c542';
-                t.style.color = 'white';
-            } else {
-                t.classList.remove('active-tag');
-                t.style.background = '';
-                t.style.borderColor = '';
-                t.style.color = '';
-            }
-        });
-        
-        filterCartelera();
-    }
+      <div class="sub-ctrl">
+        <button class="sub-btn-sm" onclick="SUB.selAllSub()">✓ Todas las materias</button>
+        <button class="sub-btn-sm" onclick="SUB.clrSub()">✗ Quitar todas</button>
+      </div>
+      <div class="sub-counter"><i class="fas fa-book-medical"></i> <span id="subCount">0</span> materias</div>
 
-    function saveAlertSettings(type) {
-        let msg = "";
-        if (type === 'whatsapp') {
-            const num = document.getElementById('alert-whatsapp').value.trim();
-            if (!num) {
-                alert("Por favor, ingresá un número de WhatsApp válido.");
-                return;
-            }
-            localStorage.setItem('alumed_alert_whatsapp', num);
-            msg = "¡Alertas de WhatsApp activadas con éxito!";
-        } else {
-            localStorage.setItem('alumed_alert_email', 'true');
-            msg = "¡Alertas de Email activadas con éxito!";
-        }
-        
-        // Show toast
-        const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-message');
-        if (toast && toastMsg) {
-            toastMsg.textContent = msg;
-            toast.style.transform = 'translateY(0)';
-            setTimeout(() => {
-                toast.style.transform = 'translateY(150px)';
-            }, 3000);
-        }
-    }
+      <div class="acc-wrap" id="accWrap"></div>
+    </div>
 
-    function markAsRead(id) {
-        let readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
-        if (!readList.includes(id)) {
-            readList.push(id);
-            localStorage.setItem('alumed_read_notices', JSON.stringify(readList));
-        }
-        renderCarteleraFeed();
-    }
+    <!-- ── PANEL 3: ALERTAS ── -->
+    <div class="sub-card">
+      <h3 class="sub-title"><i class="fas fa-bell"></i> Alertas en tu Dispositivo</h3>
+      <p class="sub-desc">Configurá cómo recibir los avisos:</p>
 
-    function filterCartelera() {
-        renderCarteleraFeed();
-    }
+      <!-- WhatsApp -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> Tu número de WhatsApp</label>
+        <input class="alert-field" type="tel" id="alertWA" placeholder="+54 9 221 1234567">
+      </div>
 
-    function renderCarteleraFeed() {
-        const feed = document.getElementById('cartelera-notices-feed');
-        if (!feed) return;
-        feed.innerHTML = '';
+      <div class="alert-toggle">
+        <span class="alert-toggle-label"><i class="fab fa-whatsapp" style="color:#25d366;"></i> Alertas por WhatsApp</span>
+        <label class="toggle-sw"><input type="checkbox" id="toggleWA"><span class="toggle-slider"></span></label>
+      </div>
 
-        const showEstudiantiles = document.getElementById('pref-estudiantiles').checked;
-        const showEnsenanza = document.getElementById('pref-ensenanza').checked;
-        const showAcademica = document.getElementById('pref-academica').checked;
-        const showCatedras = document.getElementById('pref-catedras').checked;
-        const searchQuery = document.getElementById('cartelera-search').value.toLowerCase().trim();
+      <!-- Email -->
+      <div style="margin-bottom:12px;margin-top:10px;">
+        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;"><i class="far fa-envelope" style="color:#60a5fa;"></i> Tu correo electrónico</label>
+        <input class="alert-field" type="email" id="alertEmail" value="{{ user.email }}" placeholder="tucorreo@gmail.com">
+      </div>
 
-        const readList = JSON.parse(localStorage.getItem('alumed_read_notices') || '[]');
-        
-        let filtered = carteleraNoticesData.filter(function(notice) {
-            const deptLower = notice.dept.toLowerCase();
-            const titleLower = notice.title.toLowerCase();
-            const subLower = notice.subtitle.toLowerCase();
-            
-            // Check mappings
-            const isEst = deptLower.includes('estudiant') || titleLower.includes('cupo') || titleLower.includes('relevamiento');
-            const isEns = deptLower.includes('enseñ') || deptLower.includes('ensen') || titleLower.includes('documentac') || titleLower.includes('trámite');
-            const isAcad = deptLower.includes('académ') || deptLower.includes('academ') || titleLower.includes('inscripc');
-            const isCatedra = !isEst && !isEns && !isAcad;
+      <div class="alert-toggle">
+        <span class="alert-toggle-label"><i class="far fa-envelope" style="color:#60a5fa;"></i> Alertas por Email</span>
+        <label class="toggle-sw"><input type="checkbox" id="toggleEmail"><span class="toggle-slider"></span></label>
+      </div>
 
-            if (isEst && !showEstudiantiles) return false;
-            if (isEns && !showEnsenanza) return false;
-            if (isAcad && !showAcademica) return false;
-            if (isCatedra && !showCatedras) return false;
-            
-            // Search filter
-            if (searchQuery) {
-                const matchesSearch = titleLower.includes(searchQuery) || 
-                                      subLower.includes(searchQuery) || 
-                                      deptLower.includes(searchQuery);
-                if (!matchesSearch) return false;
-            }
+      <!-- Google Calendar -->
+      <div class="alert-toggle" style="margin-top:7px;">
+        <span class="alert-toggle-label"><i class="fab fa-google" style="color:#ea4335;"></i> Sincronizar Google Calendar</span>
+        <label class="toggle-sw"><input type="checkbox" id="toggleCal"><span class="toggle-slider"></span></label>
+      </div>
 
-            // Quick Filters (Anatomía, Histología, Biología, Trámites)
-            if (activeQuickFilter !== 'Todos') {
-                if (activeQuickFilter === 'Anatomía') {
-                    if (!titleLower.includes('anato') && !deptLower.includes('anato')) return false;
-                } else if (activeQuickFilter === 'Histología') {
-                    if (!titleLower.includes('histo') && !deptLower.includes('histo')) return false;
-                } else if (activeQuickFilter === 'Biología') {
-                    if (!titleLower.includes('biolo') && !deptLower.includes('biolo')) return false;
-                } else if (activeQuickFilter === 'Trámites') {
-                    if (!isEns && !titleLower.includes('cupo') && !titleLower.includes('relevamiento')) return false;
-                }
-            }
-            
-            return true;
-        });
+      <!-- Official channels note -->
+      <div class="official-note" style="margin-top:12px;">
+        <i class="fas fa-shield-alt" style="color:#f5c542;"></i>
+        Los emails se enviarán desde <strong style="color:#f5c542;">institutoalumed@gmail.com</strong><br>
+        Los WhatsApp desde <strong style="color:#25d366;">+54 9 221 544-8983</strong>
+      </div>
 
-        if (filtered.length === 0) {
-            document.getElementById('cartelera-no-results').style.display = 'block';
-            feed.style.display = 'none';
-            return;
-        }
+      <!-- Consent -->
+      <div class="consent-row">
+        <input type="checkbox" id="consentChk" style="accent-color:#f5c542;width:16px;height:16px;flex-shrink:0;margin-top:2px;cursor:pointer;">
+        <label for="consentChk">Autorizo recibir notificaciones académicas por WhatsApp y correo electrónico según las preferencias seleccionadas. (<em>versión v1</em>)</label>
+      </div>
 
-        document.getElementById('cartelera-no-results').style.display = 'none';
-        feed.style.display = 'grid';
+      <!-- Save -->
+      <button class="sub-save-btn" onclick="SUB.save()">
+        <i class="fas fa-save"></i> Guardar y activar alertas
+      </button>
+    </div>
+  </div>
 
-        filtered.forEach(function(notice) {
-            const isUnread = !readList.includes(notice.id);
-            const card = document.createElement('div');
-            card.className = 'glass-card';
-            
-            // Premium Yellow Glow background on unread cards as requested!
-            card.style.background = isUnread ? 'rgba(245, 197, 66, 0.04)' : 'rgba(255, 255, 255, 0.02)';
-            card.style.border = isUnread ? '1px solid rgba(245, 197, 66, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)';
-            card.style.padding = '24px';
-            card.style.borderRadius = '16px';
-            card.style.display = 'flex';
-            card.style.flexDirection = 'column';
-            card.style.justifyContent = 'space-between';
-            card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-            card.style.minHeight = '190px';
-            
-            if (isUnread) {
-                card.style.boxShadow = '0 0 20px rgba(245, 197, 66, 0.08)';
-            }
+  <!-- ═══ SEARCH + DYNAMIC FILTERS ═══════════════════════════════════════════ -->
+  <div style="max-width:1200px;margin:0 auto 30px;padding:0 10px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;" class="reveal-up">
+    <!-- Search -->
+    <div style="position:relative;flex:1;min-width:220px;max-width:420px;">
+      <input type="text" id="cartelera-search" placeholder="Buscar por materia, secretaría, palabra clave..."
+             oninput="filterCartelera()"
+             style="width:100%;padding:11px 16px 11px 40px;background:rgba(8,10,20,.7);border:1px solid rgba(245,197,66,.3);border-radius:10px;color:white;outline:none;font-size:13.5px;box-sizing:border-box;transition:all .3s;"
+             onfocus="this.style.borderColor='#f5c542';this.style.boxShadow='0 0 10px rgba(245,197,66,.2)';"
+             onblur="this.style.borderColor='rgba(245,197,66,.3)';this.style.boxShadow='none';">
+      <i class="fas fa-search" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(245,197,66,.6);"></i>
+    </div>
+    <!-- Dynamic filter tags -->
+    <div style="display:flex;gap:7px;flex-wrap:wrap;" id="quick-filters">
+      <button onclick="setQuickFilter('Todos')" class="pomo-btn pomo-btn-option active-tag" id="tag-Todos"
+              style="font-size:10.5px;padding:5px 12px;font-family:'Orbitron',sans-serif;">Todos</button>
+    </div>
+  </div>
 
-            // Quick mapping for subject badge
-            let badgeHtml = '';
-            const tLower = notice.title.toLowerCase();
-            const dLower = notice.dept.toLowerCase();
-            if (tLower.includes('anato') || dLower.includes('anato')) {
-                badgeHtml = '<span style="font-size:10px; color:#f5c542; background:rgba(245,197,66,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Anatomía</span>';
-            } else if (tLower.includes('histo') || dLower.includes('histo')) {
-                badgeHtml = '<span style="font-size:10px; color:#a78bfa; background:rgba(167,139,250,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Histología</span>';
-            } else if (tLower.includes('biolo') || dLower.includes('biolo')) {
-                badgeHtml = '<span style="font-size:10px; color:#3b82f6; background:rgba(59,130,246,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Biología</span>';
-            } else if (isEns || tLower.includes('trámite') || tLower.includes('cupo')) {
-                badgeHtml = '<span style="font-size:10px; color:#10b981; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:4px; font-weight:700; font-family:\'Orbitron\', sans-serif;">Trámites</span>';
-            }
+  <!-- ═══ FEED ══════════════════════════════════════════════════════════════ -->
+  <div style="max-width:1200px;margin:0 auto;padding:0 10px;">
+    <div id="cartelera-notices-feed" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px;"></div>
+    <div id="cartelera-no-results" style="display:none;text-align:center;padding:80px 20px;color:#94a3b8;">
+      <i class="fas fa-satellite-dish" style="font-size:48px;color:#f5c542;margin-bottom:20px;animation:pulse 2s infinite;"></i>
+      <h4 style="font-family:'Orbitron',sans-serif;color:white;font-size:20px;font-weight:700;">No se encontraron avisos</h4>
+      <p style="font-size:14px;margin-top:8px;">Modificá tus filtros, búsqueda o suscripciones.</p>
+    </div>
+  </div>
+</div>
 
-            const textContent = `
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 11px; color: #f5c542; font-weight: 600; background: rgba(245, 197, 66, 0.08); padding: 3px 10px; border-radius: 99px;">${notice.date}</span>
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            ${badgeHtml}
-                            ${isUnread ? '<span style="font-size: 9px; color: #0B0B0B; font-weight: 800; background: #facc15; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-family: \'Orbitron\', sans-serif; box-shadow: 0 0 10px rgba(250,204,21,0.4);">Nuevo</span>' : ''}
-                        </div>
-                    </div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: white; margin: 0 0 8px 0; line-height: 1.4; font-family: 'Outfit', sans-serif;">${notice.title}</h3>
-                    ${notice.subtitle ? `<p style="font-size: 13px; color: #94a3b8; margin: 0 0 12px 0; line-height: 1.4;">${notice.subtitle}</p>` : ''}
-                </div>
-                <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 11px; color: #94a3b8; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${notice.dept}"><i class="far fa-building" style="margin-right: 4px;"></i> ${notice.dept}</span>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *Nuevo aviso en la Cartelera de Medicina UNLP!*\n\n*' + notice.title + '*\n_' + notice.dept + '_\nFecha: ' + notice.date + '\n\nVer noticia original: ' + notice.url)}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #25d366; font-size: 15px; transition: transform 0.2s;" title="Enviar a WhatsApp">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                        <a href="${notice.url}" target="_blank" onclick="markAsRead('${notice.id}')" style="color: #f5c542; font-size: 12.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
-                            Ver Noticia <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
-                        </a>
-                    </div>
-                </div>
-            `;
-            card.innerHTML = textContent;
-            
-            // Hover effects
-            card.onmouseenter = () => {
-                card.style.transform = 'translateY(-4px)';
-                card.style.borderColor = 'rgba(245, 197, 66, 0.6)';
-                card.style.boxShadow = '0 10px 30px rgba(245, 197, 66, 0.15)';
-            };
-            card.onmouseleave = () => {
-                card.style.transform = 'none';
-                card.style.borderColor = isUnread ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.06)';
-                card.style.boxShadow = isUnread ? '0 0 20px rgba(245, 197, 66, 0.08)' : 'none';
-            };
-            
-            feed.appendChild(card);
-        });
-    }
+<!-- Mobile sticky save button -->
+<div class="sub-save-sticky" style="display:none;" id="mobileSave">
+  <button class="sub-save-btn" onclick="SUB.save()" style="margin-top:0;">
+    <i class="fas fa-save"></i> Guardar y activar alertas
+  </button>
+</div>
 
-    // Load defaults on start
-    window.onload = function() {
-        const savedWa = localStorage.getItem('alumed_alert_whatsapp');
-        if (savedWa) {
-            document.getElementById('alert-whatsapp').value = savedWa;
-        }
-        
-        const savedEmail = localStorage.getItem('alumed_alert_email');
-        if (savedEmail) {
-            const btn = document.getElementById('btn-email-alert');
-            btn.innerHTML = '<i class="fas fa-check"></i> Activo';
-            btn.style.borderColor = '#10b981';
-            btn.style.background = 'rgba(16,185,129,0.1)';
-            btn.style.color = '#10b981';
-        }
-
-        renderCarteleraFeed();
-    };
-</script>
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:rgba(10,3,20,.97);border:1px solid #f5c542;box-shadow:0 0 18px rgba(245,197,66,.25);border-radius:10px;padding:12px 20px;color:white;font-family:'Orbitron',sans-serif;font-size:12.5px;display:flex;align-items:center;gap:9px;transform:translateY(150px);transition:transform .3s;z-index:9999;">
+  <i class="fas fa-check-circle" style="color:#f5c542;"></i>
+  <span id="toast-message">Guardado</span>
+</div>
 
 <style>
-    .active-tag {
-        background: rgba(245, 197, 66, 0.15) !important;
-        border-color: #f5c542 !important;
-        color: white !important;
-        font-weight: 700 !important;
-    }
+.active-tag { background:rgba(245,197,66,.15)!important;border-color:#f5c542!important;color:white!important;font-weight:700!important; }
 </style>
+
+<script>
+// ═══ DATA ═══════════════════════════════════════════════════════════════════
+const carteleraNoticesData = [
+  {% for notice in cartelera_notices %}
+  { id:"{{ notice.id }}", title:"{{ notice.title|escapejs }}", date:"{{ notice.date }}", url:"{{ notice.url }}", subtitle:"{{ notice.subtitle|escapejs }}", dept:"{{ notice.dept|escapejs }}" }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+
+// ═══ CATALOG ════════════════════════════════════════════════════════════════
+const INST_CATS = [
+  {key:'estudiantiles',  label:'Asuntos Estudiantiles'},
+  {key:'ensenanza',      label:'Dirección de Enseñanza'},
+  {key:'academica',      label:'Secretaría Académica'},
+  {key:'tramites',       label:'Trámites e Inscripciones'},
+  {key:'becas',          label:'Becas'},
+  {key:'biblioteca',     label:'Biblioteca'},
+  {key:'extension',      label:'Extensión'},
+  {key:'investigacion',  label:'Investigación'},
+  {key:'bienestar',      label:'Bienestar Universitario'},
+  {key:'paros',          label:'Paros y Suspensiones'},
+  {key:'cambio-aula',    label:'Cambios de Aula'},
+  {key:'cambio-comision',label:'Cambios de Comisión'},
+];
+
+const MEDICINE_YEARS = [
+  { year:1, label:'1° Año', subjects:[
+    {key:'anatomia',          label:'Anatomía'},
+    {key:'biologia',          label:'Biología'},
+    {key:'citologia-histo',   label:'Citología, Histología y Embriología'},
+    {key:'cs-sociales-med',   label:'Ciencias Sociales y Medicina'},
+    {key:'cs-exactas',        label:'Ciencias Exactas'},
+    {key:'informatica-basica',label:'Informática Básica'},
+    {key:'seminario-inv',     label:'Seminario en Investigación Científica'},
+  ]},
+  { year:2, label:'2° Año', subjects:[
+    {key:'bioquimica-mol',    label:'Bioquímica y Biología Molecular'},
+    {key:'fisiologia-fisica', label:'Fisiología y Física Biológica'},
+    {key:'epidemiologia',     label:'Epidemiología'},
+    {key:'psicologia-med',    label:'Psicología Médica'},
+    {key:'ecologia-humana',   label:'Ecología Humana y Promoción de la Salud'},
+    {key:'historia-medicina', label:'Historia de la Medicina'},
+  ]},
+  { year:3, label:'3° Año', subjects:[
+    {key:'farmacologia-basica',   label:'Farmacología Básica'},
+    {key:'microbiologia-para',    label:'Microbiología y Parasitología'},
+    {key:'patologia',             label:'Patología'},
+    {key:'semiologia',            label:'Semiología'},
+    {key:'salud-comunitaria',     label:'Salud y Medicina Comunitaria'},
+    {key:'genetica',              label:'Genética'},
+    {key:'inmunologia',           label:'Inmunología'},
+    {key:'ingles-medico',         label:'Inglés Médico'},
+    {key:'informatica-medica',    label:'Informática Médica'},
+    {key:'salud-ambiental',       label:'Salud Ambiental'},
+    {key:'estadistica-salud',     label:'Estadística Aplicada a Ciencias de la Salud'},
+    {key:'neuroanatomia-semi',    label:'Neuroanatomía Semiológica'},
+  ]},
+  { year:4, label:'4° Año', subjects:[
+    {key:'medicina-interna-1',    label:'Medicina Interna I'},
+    {key:'cirugia-1',             label:'Cirugía I'},
+    {key:'farmacologia-aplic',    label:'Farmacología Aplicada'},
+    {key:'infectologia',          label:'Infectología'},
+    {key:'neurologia',            label:'Neurología'},
+    {key:'dermatologia',          label:'Dermatología'},
+    {key:'oftalmologia',          label:'Oftalmología'},
+    {key:'otorrino',              label:'Otorrinolaringología'},
+    {key:'ortopedia',             label:'Ortopedia y Traumatología'},
+    {key:'urologia',              label:'Urología'},
+    {key:'imagenes-1',            label:'Diagnóstico y Terapéutica por Imágenes I'},
+    {key:'psiquiatria-1',         label:'Psiquiatría I'},
+    {key:'salud-publica-1',       label:'Salud Pública I'},
+    {key:'bioquimica-clinica-1',  label:'Bioquímica Clínica I'},
+    {key:'filosofia-med',         label:'Filosofía Médica'},
+    {key:'nutricion-clinica',     label:'Nutrición Clínica'},
+  ]},
+  { year:5, label:'5° Año', subjects:[
+    {key:'medicina-interna-2',    label:'Medicina Interna II'},
+    {key:'cirugia-2',             label:'Cirugía II'},
+    {key:'pediatria',             label:'Pediatría'},
+    {key:'ginecologia',           label:'Ginecología'},
+    {key:'obstetricia',           label:'Obstetricia'},
+    {key:'psiquiatria-2',         label:'Psiquiatría II'},
+    {key:'salud-publica-2',       label:'Salud Pública II'},
+    {key:'imagenes-2',            label:'Diagnóstico y Terapéutica por Imágenes II'},
+    {key:'deontologia-legal',     label:'Deontología y Medicina Legal'},
+    {key:'terapia-intensiva',     label:'Terapia Intensiva'},
+    {key:'toxicologia',           label:'Toxicología'},
+    {key:'bioetica',              label:'Bioética'},
+    {key:'bioquimica-clinica-2',  label:'Bioquímica Clínica II'},
+    {key:'cirugia-torax',         label:'Cirugía de Tórax'},
+    {key:'calidad-atencion',      label:'Calidad de la Atención Médica'},
+    {key:'trasplante',            label:'Trasplante de Órganos'},
+    {key:'enf-poco-frecuentes',   label:'Enfermedades Poco Frecuentes'},
+    {key:'discapacidad-intelectual',label:'Discapacidad Intelectual'},
+  ]},
+  { year:6, label:'6° Año', subjects:[
+    {key:'practica-final',        label:'Práctica Final Obligatoria'},
+  ]},
+];
+
+// ═══ STORAGE (localStorage = cache; backend = fuente de verdad) ═══════════════════
+const LS_KEY = 'alumed_conecta_prefs_v3';
+function loadPrefsLS(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ return {}; } }
+function savePrefsLS(p){ localStorage.setItem(LS_KEY, JSON.stringify(p)); }
+
+// ═══ SUB ENGINE ═════════════════════════════════════════════════════════════
+var SUB = (function(){
+
+  // ─ Render institutional checkboxes
+  function renderInst(p){
+    var grid = document.getElementById('instGrid');
+    grid.innerHTML = '';
+    p = p || loadPrefsLS();
+    var sel = p.institutional || [];
+    INST_CATS.forEach(function(cat){
+      var chk = document.createElement('label');
+      chk.className = 'sub-chk';
+      chk.innerHTML = '<input type="checkbox" class="inst-chk" data-key="'+cat.key+'" data-label="'+cat.label+'"'
+        + (sel.includes(cat.key) ? ' checked' : '')
+        + ' onchange="SUB.updateCounters()"> ' + cat.label;
+      grid.appendChild(chk);
+    });
+    updateCounters();
+  }
+
+  // ─ Render medicine subject accordions
+  function renderAcc(p){
+    var wrap = document.getElementById('accWrap');
+    wrap.innerHTML = '';
+    p = p || loadPrefsLS();
+    var sel = p.subjects || [];
+
+    MEDICINE_YEARS.forEach(function(yr){
+      var yearSel = sel.filter(function(k){ return yr.subjects.some(function(s){ return s.key===k; }); });
+      var item = document.createElement('div');
+      item.className = 'acc-item';
+
+      var headId = 'acc-body-' + yr.year;
+      item.innerHTML = '<div class="acc-head" onclick="SUB.toggleAcc(\''+headId+'\')">'
+        + '<div class="acc-head-left">'
+        + '<span class="acc-year">'+yr.label+'</span>'
+        + '<span class="acc-year-count" id="acc-count-'+yr.year+'">'+yearSel.length+'/'+yr.subjects.length+'</span>'
+        + '</div>'
+        + '<i class="fas fa-chevron-down acc-arrow" id="acc-arrow-'+yr.year+'"></i>'
+        + '</div>'
+        + '<div class="acc-body" id="'+headId+'">'
+        + '<div class="acc-yr-ctrl">'
+        + '<button class="acc-ctrl-btn" onclick="SUB.selYear('+yr.year+',event)">✓ Todo el año</button>'
+        + '<button class="acc-ctrl-btn" onclick="SUB.clrYear('+yr.year+',event)">✗ Quitar</button>'
+        + '</div>'
+        + yr.subjects.map(function(s){
+            return '<label class="sub-chk"><input type="checkbox" class="subj-chk" data-key="'+s.key+'" data-label="'+s.label+'" data-year="'+yr.year+'"'+(sel.includes(s.key)?' checked':'')+' onchange="SUB.updateCounters()"> '+s.label+'</label>';
+          }).join('')
+        + '</div>';
+      wrap.appendChild(item);
+    });
+    updateCounters();
+  }
+
+  function toggleAcc(id){
+    var body = document.getElementById(id);
+    var yr   = id.replace('acc-body-','');
+    var arr  = document.getElementById('acc-arrow-'+yr);
+    body.classList.toggle('open');
+    if(arr) arr.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  function updateCounters(){
+    var instChks = document.querySelectorAll('.inst-chk:checked');
+    var subjChks = document.querySelectorAll('.subj-chk:checked');
+    document.getElementById('instCount').textContent = instChks.length;
+    document.getElementById('subCount').textContent  = subjChks.length;
+    // Per-year counters
+    MEDICINE_YEARS.forEach(function(yr){
+      var c  = document.querySelectorAll('.subj-chk[data-year="'+yr.year+'"]:checked').length;
+      var el = document.getElementById('acc-count-'+yr.year);
+      if(el) el.textContent = c+'/'+yr.subjects.length;
+    });
+    rebuildFilters();
+  }
+
+  function selAllInst(){ document.querySelectorAll('.inst-chk').forEach(function(c){ c.checked=true; }); updateCounters(); }
+  function clrInst()   { document.querySelectorAll('.inst-chk').forEach(function(c){ c.checked=false;}); updateCounters(); }
+  function selAllSub() { document.querySelectorAll('.subj-chk').forEach(function(c){ c.checked=true; }); updateCounters(); }
+  function clrSub()    { document.querySelectorAll('.subj-chk').forEach(function(c){ c.checked=false;}); updateCounters(); }
+
+  function selYear(yr, e){ if(e) e.stopPropagation(); document.querySelectorAll('.subj-chk[data-year="'+yr+'"]').forEach(function(c){ c.checked=true; }); updateCounters(); }
+  function clrYear(yr, e){ if(e) e.stopPropagation(); document.querySelectorAll('.subj-chk[data-year="'+yr+'"]').forEach(function(c){ c.checked=false;}); updateCounters(); }
+
+  // ─ Save: envia solo slugs al backend
+  function save(){
+    var consent = document.getElementById('consentChk').checked;
+    var wa      = document.getElementById('alertWA').value.trim();
+    var em      = document.getElementById('alertEmail').value.trim();
+    var waOn    = document.getElementById('toggleWA').checked;
+    var emOn    = document.getElementById('toggleEmail').checked;
+    var calOn   = document.getElementById('toggleCal').checked;
+
+    if((waOn || emOn) && !consent){
+      showToast('⚠️ Debés aceptar el consentimiento para activar alertas.', '#f59e0b');
+      document.getElementById('consentChk').style.outline='2px solid #f59e0b';
+      setTimeout(function(){ document.getElementById('consentChk').style.outline=''; }, 2500);
+      return;
+    }
+
+    // Recolectar solo slugs
+    var instSlugs = [];
+    document.querySelectorAll('.inst-chk:checked').forEach(function(c){ instSlugs.push(c.dataset.key); });
+    var subjSlugs = [];
+    document.querySelectorAll('.subj-chk:checked').forEach(function(c){ subjSlugs.push(c.dataset.key); });
+
+    var prefs = {
+      institutional: instSlugs, subjects: subjSlugs,
+      whatsapp_number: wa, alert_email: em,
+      whatsapp_active: waOn, email_active: emOn, calendar_active: calOn,
+      consent_granted: consent, saved_at: new Date().toISOString()
+    };
+    // 1. Guardar en localStorage como cache inmediato
+    savePrefsLS(prefs);
+
+    // 2. Persistir en backend (fuente de verdad)
+    var csrfEl = document.querySelector('[name=csrfmiddlewaretoken]');
+    var csrf   = csrfEl ? csrfEl.value : getCookie('csrftoken');
+    var payload = {
+      institutional: instSlugs,
+      subjects:      subjSlugs,
+      whatsapp_number: wa,
+      alert_email:     em,
+      whatsapp_active: waOn,
+      email_active:    emOn,
+      calendar_active: calOn,
+      consent_granted: consent
+    };
+    fetch('/conecta/api/preferences/', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok){
+        showToast('✅ Preferencias guardadas correctamente.');
+      } else {
+        var errs = d.errors ? JSON.stringify(d.errors) : 'Error desconocido';
+        showToast('❌ ' + errs, '#ef4444');
+      }
+    })
+    .catch(function(){ showToast('⚠️ Guardado local OK. Sin conexión al servidor.', '#f59e0b'); });
+
+    rebuildFilters();
+    filterCartelera();
+  }
+
+  // ─ Init: carga preferencias desde backend; localStorage como fallback inmediato
+  function init(){
+    // 1. Render inmediato desde localStorage (cache)
+    var cached = loadPrefsLS();
+    applyPrefsToUI(cached);
+
+    // 2. Fetch desde backend (fuente de verdad) y sincronizar
+    fetch('/conecta/api/preferences/', {method:'GET', headers:{'X-Requested-With':'XMLHttpRequest'}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok) return;
+      var p = {
+        institutional:   (d.subscriptions && d.subscriptions.institutional) || [],
+        subjects:        (d.subscriptions && d.subscriptions.subjects)      || [],
+        whatsapp_number: (d.preferences && d.preferences.whatsapp_number)  || '',
+        alert_email:     (d.preferences && d.preferences.alert_email)      || '',
+        whatsapp_active: (d.preferences && d.preferences.whatsapp_active)  || false,
+        email_active:    (d.preferences && d.preferences.email_active)     || false,
+        calendar_active: (d.preferences && d.preferences.calendar_active)  || false,
+        consent_granted: (d.preferences && d.preferences.consent_granted)  || false,
+      };
+      // Actualizar cache local con la verdad del backend
+      savePrefsLS(p);
+      applyPrefsToUI(p);
+    })
+    .catch(function(){ /* offline: usar cache */ });
+
+    // Mobile sticky
+    if(window.innerWidth <= 700){
+      document.getElementById('mobileSave').style.display = 'block';
+    }
+  }
+
+  // Aplica un objeto de prefs a la UI
+  function applyPrefsToUI(p){
+    renderInst(p);
+    renderAcc(p);
+    if(p.whatsapp_number) document.getElementById('alertWA').value      = p.whatsapp_number;
+    if(p.alert_email)     document.getElementById('alertEmail').value   = p.alert_email;
+    document.getElementById('toggleWA').checked    = !!p.whatsapp_active;
+    document.getElementById('toggleEmail').checked = !!p.email_active;
+    document.getElementById('toggleCal').checked   = !!p.calendar_active;
+    document.getElementById('consentChk').checked  = !!p.consent_granted;
+    rebuildFilters();
+    filterCartelera();
+  }
+
+  return { save:save, init:init, toggleAcc:toggleAcc, updateCounters:updateCounters,
+           selAllInst:selAllInst, clrInst:clrInst, selAllSub:selAllSub, clrSub:clrSub,
+           selYear:selYear, clrYear:clrYear };
+})();
+
+// ═══ DYNAMIC FILTERS ════════════════════════════════════════════════════════
+var activeQuickFilter = 'Todos';
+
+function rebuildFilters(){
+  var p        = loadPrefsLS();
+  var instKeys = p.institutional || [];
+  var subjKeys = p.subjects || [];
+
+  var qf = document.getElementById('quick-filters');
+  qf.innerHTML = '<button onclick="setQuickFilter(\'Todos\')" class="pomo-btn pomo-btn-option active-tag" id="tag-Todos" style="font-size:10.5px;padding:5px 12px;font-family:\'Orbitron\',sans-serif;">Todos</button>';
+
+  // Add subject filters from selection
+  var addedSubj = {};
+  MEDICINE_YEARS.forEach(function(yr){
+    yr.subjects.forEach(function(s){
+      if(subjKeys.includes(s.key) && !addedSubj[s.key]){
+        addedSubj[s.key] = true;
+        var shortLabel = s.label.split(' ')[0];
+        qf.innerHTML += '<button onclick="setQuickFilter(\''+s.key+'\')" class="pomo-btn pomo-btn-option" id="tag-'+s.key+'" style="font-size:10.5px;padding:5px 12px;font-family:\'Orbitron\',sans-serif;">'+shortLabel+'</button>';
+      }
+    });
+  });
+
+  // Always add institutional shortcuts
+  [{k:'paros',lbl:'Paros'},{k:'tramites',lbl:'Trámites'},{k:'cambio-aula',lbl:'Cambios Aula'},{k:'becas',lbl:'Becas'}].forEach(function(it){
+    if(instKeys.includes(it.k)){
+      qf.innerHTML += '<button onclick="setQuickFilter(\''+it.k+'\')" class="pomo-btn pomo-btn-option" id="tag-'+it.k+'" style="font-size:10.5px;padding:5px 12px;font-family:\'Orbitron\',sans-serif;">'+it.lbl+'</button>';
+    }
+  });
+
+  setQuickFilter('Todos');
+}
+
+function setQuickFilter(val){
+  activeQuickFilter = val;
+  document.querySelectorAll('#quick-filters button').forEach(function(t){
+    var active = (t.id === 'tag-'+val || (val==='Todos' && t.id==='tag-Todos'));
+    t.classList.toggle('active-tag', active);
+    t.style.background   = active ? 'rgba(245,197,66,.15)' : '';
+    t.style.borderColor  = active ? '#f5c542' : '';
+    t.style.color        = active ? 'white' : '';
+  });
+  filterCartelera();
+}
+
+// ═══ FILTER + RENDER FEED ═══════════════════════════════════════════════════
+function filterCartelera(){ renderCarteleraFeed(); }
+
+function renderCarteleraFeed(){
+  var feed = document.getElementById('cartelera-notices-feed');
+  if(!feed) return;
+  feed.innerHTML = '';
+
+  var p        = loadPrefsLS();
+  var instKeys = p.institutional || INST_CATS.map(function(c){ return c.key; }); // default: all
+  var subjKeys = p.subjects      || [];
+  var search   = (document.getElementById('cartelera-search').value||'').toLowerCase().trim();
+  var readList = JSON.parse(localStorage.getItem('alumed_read_notices')||'[]');
+
+  // Build keyword sets for matching
+  var instLabels = instKeys.map(function(k){
+    var c = INST_CATS.find(function(x){ return x.key===k; });
+    return c ? c.label.toLowerCase() : k;
+  });
+  var subjLabels = subjKeys.map(function(k){
+    var found = null;
+    MEDICINE_YEARS.forEach(function(yr){ yr.subjects.forEach(function(s){ if(s.key===k) found=s.label.toLowerCase(); }); });
+    return found || k;
+  });
+
+  var filtered = carteleraNoticesData.filter(function(n){
+    var tl = n.title.toLowerCase();
+    var dl = n.dept.toLowerCase();
+    var sl = n.subtitle.toLowerCase();
+
+    // If no prefs saved → show everything
+    if(instKeys.length===0 && subjKeys.length===0) return true;
+
+    var matchInst = instLabels.some(function(lbl){ return dl.includes(lbl)||tl.includes(lbl)||sl.includes(lbl); });
+    var matchSubj = subjLabels.some(function(lbl){ return dl.includes(lbl)||tl.includes(lbl)||sl.includes(lbl); });
+    var matchAny  = (instKeys.length > 0 && matchInst) || (subjKeys.length > 0 && matchSubj) || subjKeys.length===0;
+
+    if(!matchInst && !matchSubj && (instKeys.length>0 || subjKeys.length>0)){
+      // Always show paros / cambios even if not subscribed
+      var isGlobal = tl.includes('paro')||tl.includes('suspens')||tl.includes('cambio')||tl.includes('aula');
+      if(!isGlobal) return false;
+    }
+
+    // Search
+    if(search && !tl.includes(search) && !sl.includes(search) && !dl.includes(search)) return false;
+
+    // Quick filter
+    if(activeQuickFilter !== 'Todos'){
+      var qKey = activeQuickFilter;
+      // Check if it's a subject key
+      var subjMatch = false;
+      MEDICINE_YEARS.forEach(function(yr){ yr.subjects.forEach(function(s){ if(s.key===qKey){ var lbl=s.label.toLowerCase().split(' ')[0]; if(tl.includes(lbl)||dl.includes(lbl)) subjMatch=true; } }); });
+      // Check if institutional
+      var instCat = INST_CATS.find(function(c){ return c.key===qKey; });
+      var instMatch = instCat && (tl.includes(instCat.label.toLowerCase())||dl.includes(instCat.label.toLowerCase()));
+      if(!subjMatch && !instMatch) return false;
+    }
+
+    return true;
+  });
+
+  if(filtered.length === 0){
+    document.getElementById('cartelera-no-results').style.display = 'block';
+    feed.style.display = 'none';
+    return;
+  }
+
+  document.getElementById('cartelera-no-results').style.display = 'none';
+  feed.style.display = 'grid';
+
+  filtered.forEach(function(n){
+    var isUnread = !readList.includes(n.id);
+    var card = document.createElement('div');
+    card.className = 'glass-card';
+    card.style.cssText = 'background:'+(isUnread?'rgba(245,197,66,.04)':'rgba(255,255,255,.02)')
+      +';border:1px solid '+(isUnread?'rgba(245,197,66,.35)':'rgba(255,255,255,.06)')
+      +';padding:22px;border-radius:16px;display:flex;flex-direction:column;justify-content:space-between;transition:all .3s cubic-bezier(.16,1,.3,1);min-height:185px;'
+      +(isUnread?'box-shadow:0 0 20px rgba(245,197,66,.08);':'');
+
+    // Badge
+    var tl = n.title.toLowerCase(), dl = n.dept.toLowerCase();
+    var badge = '';
+    var matchedSubjLabel = '';
+    MEDICINE_YEARS.forEach(function(yr){ yr.subjects.forEach(function(s){
+      var kw = s.key.replace(/-[0-9]+$/,'').split('-')[0];
+      if(!matchedSubjLabel && (tl.includes(kw)||dl.includes(kw))) matchedSubjLabel = s.label;
+    });});
+    if(matchedSubjLabel) badge = '<span style="font-size:9.5px;color:#f5c542;background:rgba(245,197,66,.12);padding:2px 8px;border-radius:4px;font-weight:700;font-family:\'Orbitron\',sans-serif;">'+matchedSubjLabel.split(' ')[0]+'</span>';
+    else if(tl.includes('paro')||tl.includes('suspens')) badge = '<span style="font-size:9.5px;color:#f87171;background:rgba(248,113,113,.12);padding:2px 8px;border-radius:4px;font-weight:700;font-family:\'Orbitron\',sans-serif;">⚠️ Urgente</span>';
+    else if(tl.includes('trámite')||tl.includes('cupo')||tl.includes('inscripc')) badge = '<span style="font-size:9.5px;color:#10b981;background:rgba(16,185,129,.12);padding:2px 8px;border-radius:4px;font-weight:700;font-family:\'Orbitron\',sans-serif;">Trámites</span>';
+    else if(dl.includes('beca')) badge = '<span style="font-size:9.5px;color:#60a5fa;background:rgba(96,165,250,.12);padding:2px 8px;border-radius:4px;font-weight:700;font-family:\'Orbitron\',sans-serif;">Becas</span>';
+
+    card.innerHTML = '<div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;">'
+      +'<span style="font-size:10.5px;color:#f5c542;font-weight:600;background:rgba(245,197,66,.08);padding:3px 10px;border-radius:99px;">'+n.date+'</span>'
+      +'<div style="display:flex;gap:5px;align-items:center;">'
+      +badge
+      +(isUnread?'<span style="font-size:9px;color:#0B0B0B;font-weight:800;background:#facc15;padding:2px 7px;border-radius:4px;text-transform:uppercase;font-family:\'Orbitron\',sans-serif;box-shadow:0 0 10px rgba(250,204,21,.4);">Nuevo</span>':'')
+      +'</div></div>'
+      +'<h3 style="font-size:15px;font-weight:700;color:white;margin:0 0 7px;line-height:1.4;font-family:\'Outfit\',sans-serif;">'+n.title+'</h3>'
+      +(n.subtitle?'<p style="font-size:12.5px;color:#94a3b8;margin:0 0 10px;line-height:1.4;">'+n.subtitle+'</p>':'')
+      +'</div>'
+      +'<div style="margin-top:13px;border-top:1px solid rgba(255,255,255,.04);padding-top:11px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<span style="font-size:10.5px;color:#94a3b8;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+n.dept+'"><i class="far fa-building" style="margin-right:4px;"></i>'+n.dept+'</span>'
+      +'<div style="display:flex;gap:12px;align-items:center;">'
+      +'<a href="https://api.whatsapp.com/send?text='+encodeURIComponent('📢 *Nuevo aviso en la Cartelera de Medicina UNLP!*\n\n*'+n.title+'*\n_'+n.dept+'_\nFecha: '+n.date+'\n\nVer: '+n.url)+'" target="_blank" onclick="markAsRead(\''+n.id+'\')" style="color:#25d366;font-size:15px;" title="Compartir WhatsApp"><i class="fab fa-whatsapp"></i></a>'
+      +'<a href="'+n.url+'" target="_blank" onclick="markAsRead(\''+n.id+'\')" style="color:#f5c542;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">Ver <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>'
+      +'</div></div>';
+
+    card.onmouseenter = function(){ card.style.transform='translateY(-4px)';card.style.borderColor='rgba(245,197,66,.6)';card.style.boxShadow='0 10px 30px rgba(245,197,66,.15)'; };
+    card.onmouseleave = function(){ card.style.transform='';card.style.borderColor=isUnread?'rgba(245,197,66,.35)':'rgba(255,255,255,.06)';card.style.boxShadow=isUnread?'0 0 20px rgba(245,197,66,.08)':''; };
+
+    feed.appendChild(card);
+  });
+}
+
+function markAsRead(id){
+  var r = JSON.parse(localStorage.getItem('alumed_read_notices')||'[]');
+  if(!r.includes(id)){ r.push(id); localStorage.setItem('alumed_read_notices', JSON.stringify(r)); }
+  renderCarteleraFeed();
+}
+
+// ═══ UTILS ══════════════════════════════════════════════════════════════════
+function showToast(msg, color){
+  var t = document.getElementById('toast');
+  var m = document.getElementById('toast-message');
+  if(!t||!m) return;
+  m.textContent = msg;
+  if(color) t.style.borderColor = color;
+  t.style.transform = 'translateY(0)';
+  setTimeout(function(){ t.style.transform='translateY(150px)'; t.style.borderColor='#f5c542'; }, 3500);
+}
+
+function getCookie(name){
+  var v = document.cookie.match('(^|;) ?'+name+'=([^;]*)(;|$)');
+  return v ? v[2] : null;
+}
+
+// ═══ INIT ════════════════════════════════════════════════════════════════════
+window.onload = function(){ SUB.init(); };
+</script>
 {% endblock %}

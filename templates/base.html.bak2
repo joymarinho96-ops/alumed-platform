@@ -4121,59 +4121,8 @@
             }
         }
 
-
-    /* ── CONECTA FCM NAV BUTTON — Premium Gold ──────────────────── */
-    .nav-conecta-btn {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px !important;
-        border-radius: 20px !important;
-        font-size: 12.5px !important;
-        font-weight: 800 !important;
-        letter-spacing: .03em;
-        color: #000 !important;
-        text-decoration: none;
-        background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24) !important;
-        background-size: 200% 200% !important;
-        border: 1px solid rgba(251,191,36,.6) !important;
-        box-shadow:
-            0 0 12px rgba(251,191,36,.45),
-            0 0 28px rgba(251,191,36,.2),
-            inset 0 1px 0 rgba(255,255,255,.3) !important;
-        animation: conectaGlow 2.5s ease-in-out infinite, conectaShift 3s ease infinite !important;
-        transition: all .25s ease !important;
-        position: relative;
-        overflow: hidden;
-    }
-    .nav-conecta-btn::before {
-        content: '';
-        position: absolute; inset: 0; border-radius: 20px;
-        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
-        transform: translateX(-100%);
-        transition: transform .5s ease;
-    }
-    .nav-conecta-btn:hover::before { transform: translateX(100%); }
-    .nav-conecta-btn:hover {
-        transform: translateY(-2px) scale(1.04) !important;
-        box-shadow:
-            0 0 20px rgba(251,191,36,.7),
-            0 0 50px rgba(251,191,36,.3),
-            0 4px 20px rgba(0,0,0,.3) !important;
-        color: #000 !important;
-    }
-    @keyframes conectaGlow {
-        0%,100% { box-shadow: 0 0 10px rgba(251,191,36,.4), 0 0 24px rgba(251,191,36,.15), inset 0 1px 0 rgba(255,255,255,.3); }
-        50%      { box-shadow: 0 0 18px rgba(251,191,36,.7), 0 0 40px rgba(251,191,36,.3), inset 0 1px 0 rgba(255,255,255,.3); }
-    }
-    @keyframes conectaShift {
-        0%,100% { background-position: 0% 50%; }
-        50%      { background-position: 100% 50%; }
-    }
-
     {% block extra_head %}{% endblock %}
 </style>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const photo = document.querySelector(".photo-reveal");
@@ -4264,12 +4213,9 @@
     
     <div class="nav-links">
         <a href="{% url 'home' %}#home">Inicio</a>
-        <a href="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" target="_blank" rel="noopener noreferrer">Biblioteca</a>
+        <a href="{% url 'biblioteca' %}">Biblioteca</a>
         <a href="{% url 'microscopio_virtual' %}">Microscopio</a>
         <a href="{% url 'anatomia_3d' %}">Anatomía 3D</a>
-        
-        <a href="/cronograma-finales/?mode=finales">Finales</a>
-        <a href="/cronograma-finales/?mode=parciales">Parciales</a>
         
         <!-- Académico Dropdown -->
         <div class="nav-dropdown">
@@ -4287,12 +4233,6 @@
 
         <a href="{% url 'facultad' %}">Facultad</a>
         <a href="{% url 'club' %}">Club</a>
-
-        <!-- ⭐ CONECTA FCM — Botão premium dourado -->
-        <a href="{% url 'conecta_fcm' %}" class="nav-conecta-btn" id="nav-conecta-btn">
-            <i class="fas fa-bolt" style="font-size:11px;"></i>
-            Conecta FCM
-        </a>
         
         {% if user.is_authenticated %}
             <a href="{% url 'student_dashboard' %}">Mi Panel</a>
@@ -5496,664 +5436,524 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
 
     </div><!-- /hero-area -->
 
-<!-- ═══════════════════════════════════════════════════════════
-     SECTIONS — FULL-WIDTH CINEMATOGRÁFICAS
-     Sem colunas rígidas · Parallax médico · Identidade ALUMED OS
-     ═══════════════════════════════════════════════════════════ -->
-<style>
-/* ── CINEMATIC SECTIONS BASE ─────────────────────────────────────── */
-.ao-sec {
-  position: relative;
-  overflow: hidden;
-}
-
-/* Parallax decorative icons — medical/educational atmosphere */
-.px-deco {
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  transition: transform .1s linear;
-}
-.px-deco i {
-  display: block;
-  font-size: inherit;
-  filter: blur(1.5px);
-  background: var(--px-grad, linear-gradient(135deg, rgba(124,58,237,.7), rgba(167,139,250,.4)));
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-  opacity: var(--px-op, .055);
-}
-
-/* Full-width section card grids */
-.fw-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 28px;
-}
-.fw-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 22px;
-}
-.fw-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 22px;
-}
-
-/* Feature card — improved */
-.fw-card {
-  background: rgba(255,255,255,.024);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 18px;
-  padding: 22px 20px;
-  position: relative; overflow: hidden;
-  transition: all .35s ease;
-  cursor: default;
-  z-index: 1;
-}
-.fw-card::before {
-  content: ''; position: absolute;
-  inset: 0; border-radius: 18px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.12) 0%, transparent 70%);
-  opacity: 0; transition: opacity .35s;
-}
-.fw-card:hover { background: rgba(124,58,237,.07); border-color: rgba(124,58,237,.25); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(124,58,237,.12); }
-.fw-card:hover::before { opacity: 1; }
-.fw-card.gold:hover { background: rgba(251,191,36,.05); border-color: rgba(251,191,36,.22); box-shadow: 0 12px 40px rgba(251,191,36,.10); }
-.fw-card.gold::before { background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,.1) 0%, transparent 70%); }
-.fw-card-ico {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; margin-bottom: 14px;
-  background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.2);
-  color: #a78bfa;
-  transition: all .35s;
-}
-.fw-card.gold .fw-card-ico { background: rgba(251,191,36,.1); border-color: rgba(251,191,36,.2); color: #fbbf24; }
-.fw-card:hover .fw-card-ico { transform: scale(1.1); box-shadow: 0 0 18px rgba(124,58,237,.4); }
-.fw-card.gold:hover .fw-card-ico { box-shadow: 0 0 18px rgba(251,191,36,.4); }
-.fw-card h3 { font-family:'Outfit',sans-serif; font-size:.92rem; font-weight:800; color:#e2e8f0; margin:0 0 6px 0; }
-.fw-card p  { font-size:.76rem; color:rgba(148,163,184,.7); margin:0; line-height:1.5; }
-
-/* CTA section button */
-.sec-cta-wrap {
-  margin-top: 32px;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.sec-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 26px; border-radius: 12px;
-  font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:800;
-  text-decoration: none; cursor: pointer;
-  transition: all .3s ease;
-  position: relative; overflow: hidden; z-index:1;
-}
-.sec-cta-primary {
-  background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(168,85,247,.8));
-  color: #fff;
-  border: 1px solid rgba(167,139,250,.4);
-  box-shadow: 0 0 24px rgba(124,58,237,.35), inset 0 1px 0 rgba(255,255,255,.12);
-}
-.sec-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 32px rgba(124,58,237,.55); }
-.sec-cta-gold {
-  background: linear-gradient(135deg, rgba(251,191,36,.9), rgba(245,158,11,.8));
-  color: #000;
-  border: 1px solid rgba(251,191,36,.5);
-  box-shadow: 0 0 24px rgba(251,191,36,.3);
-}
-.sec-cta-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 32px rgba(251,191,36,.5); }
-.sec-cta-ghost {
-  background: rgba(255,255,255,.05);
-  color: rgba(203,213,225,.75);
-  border: 1px solid rgba(255,255,255,.1);
-}
-.sec-cta-ghost:hover { background: rgba(255,255,255,.09); color: #fff; transform: translateY(-1px); }
-
-/* Stat ribbon */
-.stat-ribbon {
-  display: flex; gap: 0;
-  background: rgba(255,255,255,.018);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 16px;
-  margin-top: 28px;
-  overflow: hidden;
-}
-.stat-cell {
-  flex: 1; padding: 18px 20px; text-align: center;
-  border-right: 1px solid rgba(255,255,255,.06);
-  position: relative;
-}
-.stat-cell:last-child { border-right: none; }
-.stat-cell::after {
-  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 40%; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(124,58,237,.45), transparent);
-}
-.stat-num { font-family:'Outfit',sans-serif; font-size: 1.6rem; font-weight: 900; color: #fff; }
-.stat-lbl { font-size: .65rem; color: rgba(148,163,184,.55); margin-top: 3px; letter-spacing: .08em; text-transform: uppercase; }
-
-/* Live badge */
-.live-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25);
-  border-radius: 20px; padding: 3px 10px;
-  font-size: .62rem; font-weight: 800; letter-spacing: .08em;
-  color: #4ade80; text-transform: uppercase;
-  vertical-align: middle; margin-left: 10px;
-}
-.live-dot { width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 5px #4ade80; animation: sbBlink 1.6s ease-in-out infinite; }
-
-/* Conecta notice strip */
-.cn-notices {
-  margin-top: 22px;
-  background: rgba(4,2,18,.7);
-  border: 1px solid rgba(251,191,36,.15);
-  border-radius: 16px;
-  overflow: hidden;
-}
-.cn-notice-hd {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px;
-  background: rgba(0,0,0,.3);
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-  text-transform: uppercase; color: rgba(251,191,36,.7);
-}
-.cn-notice-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  transition: background .2s; cursor: pointer;
-}
-.cn-notice-row:last-child { border-bottom: none; }
-.cn-notice-row:hover { background: rgba(251,191,36,.03); }
-.cn-dept { font-size: .56rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(251,191,36,.6); margin-bottom: 2px; }
-.cn-title { font-size: .76rem; color: rgba(226,232,240,.82); line-height: 1.35; }
-.cn-date { font-size: .6rem; color: rgba(148,163,184,.4); margin-left: auto; white-space: nowrap; flex-shrink:0; }
-.cn-new { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: .52rem; font-weight: 800; background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.2); margin-left: 5px; vertical-align: middle; }
-
-/* Joy section photo card */
-.joy-photo-card {
-  position: absolute;
-  right: -20px; top: 50%;
-  transform: translateY(-50%);
-  width: 200px;
-  background: rgba(124,58,237,.06);
-  border: 1px solid rgba(167,139,250,.22);
-  border-radius: 24px;
-  padding: 20px 16px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 60px rgba(124,58,237,.2),
-    0 0 120px rgba(124,58,237,.08),
-    inset 0 1px 0 rgba(255,255,255,.07);
-  z-index: 1;
-}
-.joy-photo-card::before {
-  content: ''; position: absolute;
-  top: -1px; left: 20%; right: 20%; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(167,139,250,.6), transparent);
-  box-shadow: 0 0 16px rgba(167,139,250,.4);
-}
-.joy-avatar {
-  width: 96px; height: 96px; border-radius: 50%;
-  margin: 0 auto 12px auto;
-  border: 2px solid rgba(167,139,250,.4);
-  box-shadow: 0 0 28px rgba(124,58,237,.5), 0 0 60px rgba(124,58,237,.2);
-  overflow: hidden;
-  background: rgba(124,58,237,.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 3rem; color: #c4b5fd;
-  position: relative;
-}
-.joy-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.joy-avatar::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12) 0%, transparent 60%);
-}
-.joy-name {
-  font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 900;
-  color: #e2e8f0; margin-bottom: 3px;
-}
-.joy-sub { font-size: .7rem; color: rgba(196,181,253,.7); }
-.joy-badge-online {
-  display: inline-flex; align-items: center; gap: 4px;
-  margin-top: 10px; padding: 3px 9px; border-radius: 20px;
-  font-size: .6rem; font-weight: 800; color: #4ade80;
-  background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
-}
-
-/* Biblioteca floating items */
-.bib-float {
-  position: absolute;
-  pointer-events: none; z-index: 0;
-  animation: bibFloat 5s ease-in-out infinite;
-}
-@keyframes bibFloat {
-  0%,100% { transform: translateY(0) rotate(var(--rot,0deg)); }
-  50%      { transform: translateY(-10px) rotate(var(--rot,0deg)); }
-}
-
-@media(max-width:900px){
-  .fw-grid { grid-template-columns:1fr 1fr; }
-  .fw-grid-4 { grid-template-columns:1fr 1fr; }
-  .joy-photo-card { display:none; }
-}
-@media(max-width:600px){
-  .fw-grid, .fw-grid-2, .fw-grid-4 { grid-template-columns:1fr; }
-  .stat-ribbon { flex-wrap:wrap; }
-}
-</style>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 1 — ALUMED: Estudio Inteligente
-         ════════════════════════════════════════════ -->
+    <!-- SECTION: ALUMED -->
     <section class="ao-sec" id="ao-sec-a" aria-label="ALUMED">
-
-      <!-- Parallax decos: brain, cells, neurons -->
-      <div class="px-deco" style="top:-40px; right:-60px; font-size:300px; --px-op:.04;" aria-hidden="true">
+      <!-- Parallax illustration: brain -->
+      <div class="ao-deco" id="deco-a" aria-hidden="true">
         <i class="fas fa-brain"></i>
-      </div>
-      <div class="px-deco" style="bottom:20px; left:-30px; font-size:160px; --px-op:.035; --px-grad:linear-gradient(135deg,rgba(251,191,36,.7),rgba(245,158,11,.4));" aria-hidden="true">
-        <i class="fas fa-dna"></i>
-      </div>
-      <div class="px-deco" style="top:40%; right:30px; font-size:80px; --px-op:.05;" aria-hidden="true">
-        <i class="fas fa-atom"></i>
+        <i class="fas fa-graduation-cap ao-deco-sub"></i>
       </div>
 
       <span class="ao-slabel">UNIVERSO ALUMED</span>
       <h2 class="ao-stitle">Estudio Inteligente de Medicina</h2>
-      <p class="ao-ssub">Asimila contenidos complejos con laboratorios virtuales, IA, flashcards y simulación clínica. Todo en un ecosistema diseñado para vos.</p>
+      <p class="ao-ssub">Asimila contenidos complejos mediante laboratorios virtuales de anatomía y simulación clínica.</p>
 
-      <div class="fw-grid">
-        <a href="{% url 'anatomia_3d' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-cube"></i></div>
-          <h3>Anatomía 3D</h3>
-          <p>Modelos tridimensionales rotables y detallados para guiar tu estudio práctico.</p>
+      <div class="ao-fgrid">
+        <a href="{% url 'anatomia_3d' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-cube"></i></div>
+          <h3 class="ao-ftitle">Anatomía 3D</h3>
+          <p class="ao-fdesc">Modelos tridimensionales rotables y detallados para guiar tu estudio práctico.</p>
         </a>
-        <a href="{% url 'microscopio_virtual' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-microscope"></i></div>
-          <h3>Microscopio Virtual</h3>
-          <p>Láminas histológicas reales escaneadas en alta resolución con marcadores educativos.</p>
+        <a href="{% url 'microscopio_virtual' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-microscope"></i></div>
+          <h3 class="ao-ftitle">Microscopio Virtual</h3>
+          <p class="ao-fdesc">Láminas histológicas reales escaneadas en alta resolución con marcadores educativos.</p>
         </a>
-        <a href="{% url 'courses:flashcards_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-clone"></i></div>
-          <h3>Flashcards Inteligentes</h3>
-          <p>Algoritmo de repetición espaciada que optimiza tu memoria antes de los parciales.</p>
+        <a href="{% url 'courses:flashcards_dashboard' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-clone"></i></div>
+          <h3 class="ao-ftitle">Flashcards Inteligentes</h3>
+          <p class="ao-fdesc">Algoritmo de repetición espaciada que optimiza tu memoria antes de los parciales.</p>
         </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-wand-magic-sparkles"></i></div>
-          <h3>IA Profe Joy</h3>
-          <p>Tutora inteligente disponible 24/7 para responder tus dudas médicas con precisión.</p>
+        <a href="{% url 'student_dashboard' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-wand-magic-sparkles"></i></div>
+          <h3 class="ao-ftitle">IA Profe Joy</h3>
+          <p class="ao-fdesc">Tutora inteligente disponible 24/7 para responder tus dudas médicas con precisión.</p>
         </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-podcast"></i></div>
-          <h3>Podcast Médico</h3>
-          <p>Audios cortos y densos para repasar mientras viajás o descansás.</p>
+        <a href="{% url 'student_dashboard' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-podcast"></i></div>
+          <h3 class="ao-ftitle">Podcast Médico</h3>
+          <p class="ao-fdesc">Audios cortos y densos para repasar mientras viajás o descansás.</p>
         </a>
-        <a href="{% url 'student_dashboard' %}" class="fw-card" style="text-decoration:none;">
-          <div class="fw-card-ico"><i class="fas fa-clipboard-list"></i></div>
-          <h3>Simulacros</h3>
-          <p>Tests con preguntas reales de parciales anteriores para medir tu nivel real.</p>
+        <a href="{% url 'student_dashboard' %}" class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-clipboard-list"></i></div>
+          <h3 class="ao-ftitle">Simulacros</h3>
+          <p class="ao-fdesc">Tests con preguntas reales de parciales anteriores para medir tu nivel real.</p>
         </a>
       </div>
-
-      <div class="stat-ribbon">
-        <div class="stat-cell">
-          <div class="stat-num">+8.000</div>
-          <div class="stat-lbl">Recursos digitales</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">+50k</div>
-          <div class="stat-lbl">Estudiantes activos</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">24/7</div>
-          <div class="stat-lbl">IA disponible</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-num">100%</div>
-          <div class="stat-lbl">Online & Gratuito</div>
-        </div>
-      </div>
-
     </section>
 
-    <!-- ════════════════════════════════════════════
-         SECTION 2 — CONECTA: Cartelera en Vivo
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-c" aria-label="Conecta">
+    <!-- SECTION: CONECTA — Full width, 2 columns -->
+    <section class="ao-sec" id="ao-sec-c" aria-label="Conecta" style="padding-right:0;">
+      <!-- Parallax illustration hidden (replaced by live panel) -->
 
-      <!-- Parallax decos: calendar, bell, notifications -->
-      <div class="px-deco" style="top:-30px; right:-50px; font-size:260px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-bell"></i>
-      </div>
-      <div class="px-deco" style="bottom:-20px; left:-40px; font-size:200px; --px-op:.035; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(255,255,255,.2));" aria-hidden="true">
-        <i class="fas fa-calendar-days"></i>
-      </div>
-      <div class="px-deco" style="top:30%; right:60px; font-size:60px; --px-op:.06; --px-grad:linear-gradient(135deg,rgba(34,197,94,.7),rgba(16,185,129,.4));" aria-hidden="true">
-        <i class="fab fa-whatsapp"></i>
-      </div>
+      <style>
+      /* ── CONECTA FULL-WIDTH LAYOUT ────────────────────────────── */
+      #ao-sec-c {
+        overflow: visible !important;
+        padding-right: 0 !important;
+      }
+      .con-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        align-items: start;
+        margin-top: 28px;
+      }
+      /* Right panel: live activity */
+      .con-live-panel {
+        background: rgba(255,255,255,.016);
+        border: 1px solid rgba(255,255,255,.068);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+      .con-live-hd {
+        display: flex; align-items: center; gap:10px;
+        padding: 14px 18px;
+        background: rgba(4,2,12,.6);
+        border-bottom: 1px solid rgba(255,255,255,.055);
+        backdrop-filter: blur(8px);
+      }
+      .con-live-title {
+        font-family:'Outfit',sans-serif; font-size:.8rem; font-weight:800;
+        letter-spacing:.1em; text-transform:uppercase;
+        color: rgba(251,191,36,.9);
+        flex:1;
+      }
+      .con-live-indicator {
+        display: flex; align-items:center; gap:5px;
+        font-size:.68rem; font-weight:700; letter-spacing:.08em;
+        color: #22c55e;
+        text-transform:uppercase;
+      }
+      .con-live-dot {
+        width:6px; height:6px; border-radius:50%;
+        background:#22c55e;
+        box-shadow: 0 0 8px #22c55e;
+        animation: sbBlink 1.6s ease-in-out infinite;
+      }
+      /* Activity feed */
+      .con-feed {
+        max-height: 340px;
+        overflow: hidden;
+        position: relative;
+      }
+      .con-feed::after {
+        content:''; position:absolute; bottom:0; left:0; right:0; height:64px;
+        background: linear-gradient(transparent, rgba(7,3,18,.98));
+        pointer-events:none; z-index:2;
+      }
+      .con-feed-item {
+        display:flex; align-items:flex-start; gap:12px;
+        padding: 12px 18px;
+        border-bottom: 1px solid rgba(255,255,255,.04);
+        animation: conFeedIn .5s ease both;
+        position: relative;
+      }
+      .con-feed-item::before {
+        content:''; position:absolute;
+        left:0; top:0; bottom:0; width:2px;
+        background: linear-gradient(to bottom, transparent, rgba(251,191,36,.5), transparent);
+        opacity:0; transition: opacity .3s;
+      }
+      .con-feed-item:hover::before { opacity:1; }
+      .con-feed-item:hover { background: rgba(251,191,36,.03); }
+      @keyframes conFeedIn {
+        from { opacity:0; transform: translateY(-10px); }
+        to   { opacity:1; transform: translateY(0); }
+      }
+      .con-feed-icon {
+        width:32px; height:32px; border-radius:8px; flex-shrink:0;
+        display:flex; align-items:center; justify-content:center;
+        font-size:.75rem;
+        background: rgba(251,191,36,.08);
+        border: 1px solid rgba(251,191,36,.15);
+        color: rgba(251,191,36,.8);
+      }
+      .con-feed-icon.purple {
+        background: rgba(124,58,237,.08);
+        border-color: rgba(124,58,237,.18);
+        color: rgba(167,139,250,.85);
+      }
+      .con-feed-icon.green {
+        background: rgba(34,197,94,.08);
+        border-color: rgba(34,197,94,.18);
+        color: rgba(74,222,128,.85);
+      }
+      .con-feed-dept {
+        font-size:.6rem; font-weight:800; letter-spacing:.1em;
+        text-transform:uppercase; color:rgba(251,191,36,.6); margin-bottom:2px;
+      }
+      .con-feed-text {
+        font-size:.78rem; color:rgba(226,232,240,.85); line-height:1.4;
+        margin:0; font-weight:500;
+      }
+      .con-feed-time {
+        font-size:.62rem; color:rgba(148,163,184,.45); margin-top:3px;
+        font-variant-numeric:tabular-nums;
+      }
 
+      /* Connection visualization SVG */
+      .con-pulse-line {
+        stroke-dasharray: 4 8;
+        animation: conDash 2s linear infinite;
+      }
+      @keyframes conDash { to { stroke-dashoffset: -48; } }
+
+      /* Stats row */
+      .con-stats-row {
+        display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+        border-top: 1px solid rgba(255,255,255,.055);
+      }
+      .con-stat {
+        padding: 14px 18px; text-align:center;
+        border-right: 1px solid rgba(255,255,255,.055);
+        position:relative; overflow:hidden;
+      }
+      .con-stat:last-child { border-right:none; }
+      .con-stat::after {
+        content:''; position:absolute;
+        bottom:0; left:50%; transform:translateX(-50%);
+        width:40%; height:1px;
+        background: linear-gradient(to right, transparent, rgba(251,191,36,.4), transparent);
+      }
+      .con-stat-num {
+        font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:900;
+        color:#fff; line-height:1.1;
+      }
+      .con-stat-lbl { font-size:.65rem; color:rgba(148,163,184,.6); margin-top:2px; letter-spacing:.06em; }
+
+      @media(max-width:900px){ .con-grid { grid-template-columns:1fr; } }
+      </style>
+
+      <!-- Header -->
       <span class="ao-slabel" style="color:var(--gold);">UNIVERSO CONECTA</span>
-      <h2 class="ao-stitle">
-        Cartelera Oficial en Vivo
-        <span class="live-badge"><span class="live-dot"></span>En vivo</span>
-      </h2>
-      <p class="ao-ssub">Tu facultad en tiempo real. Avisos, cambios, cronograma y notificaciones en un solo lugar.</p>
+      <h2 class="ao-stitle">Cartelera Oficial en Vivo</h2>
+      <p class="ao-ssub">Scrapeo continuo de la facultad. Información en tiempo real cuando más la necesitás.</p>
 
-      <!-- 6 cards full-width -->
-      <div class="fw-grid-4" style="grid-template-columns:repeat(3,1fr);">
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-bullhorn"></i></div>
-          <h3>Cartelera Oficial</h3>
-          <p>Avisos y resoluciones de la Secretaría Académica scrapeados en tiempo real.</p>
+      <!-- Feature cards (small, 4 cols) -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
+        <div class="ao-fcard" style="border-color:rgba(251,191,36,.12); padding:16px; text-align:center;">
+          <div style="font-size:1.4rem; color:var(--gold); margin-bottom:8px;"><i class="fas fa-bullhorn"></i></div>
+          <div style="font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; color:#fff; margin-bottom:4px;">Cartelera</div>
+          <div style="font-size:.68rem; color:var(--dim);">Avisos oficiales en tiempo real</div>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-users"></i></div>
-          <h3>Comisiones y Turnos</h3>
-          <p>Consultá tus comisiones asignadas, aulas y horarios de prácticas.</p>
+        <div class="ao-fcard" style="border-color:rgba(251,191,36,.12); padding:16px; text-align:center;">
+          <div style="font-size:1.4rem; color:var(--gold); margin-bottom:8px;"><i class="fas fa-calendar-check"></i></div>
+          <div style="font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; color:#fff; margin-bottom:4px;">Cronograma</div>
+          <div style="font-size:.68rem; color:var(--dim);">TPs, Parciales y Finales</div>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-calendar-check"></i></div>
-          <h3>Cronograma</h3>
-          <p>TPs, Parciales y Finales en un calendario unificado con Google Calendar.</p>
+        <div class="ao-fcard" style="border-color:rgba(251,191,36,.12); padding:16px; text-align:center;">
+          <div style="font-size:1.4rem; color:var(--gold); margin-bottom:8px;"><i class="fab fa-whatsapp"></i></div>
+          <div style="font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; color:#fff; margin-bottom:4px;">WhatsApp</div>
+          <div style="font-size:.68rem; color:var(--dim);">Alertas instantáneas</div>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fab fa-whatsapp" style="color:#25d366;"></i></div>
-          <h3>WhatsApp + Email</h3>
-          <p>Notificaciones urgentes directo a tu teléfono cuando haya novedades.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fab fa-google" style="color:#4285f4;"></i></div>
-          <h3>Google Calendar</h3>
-          <p>Exportá los eventos académicos automáticamente a tu agenda personal.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-layer-group"></i></div>
-          <h3>Materias Seleccionadas</h3>
-          <p>Seguí solo lo que te importa, sin ruido innecesario.</p>
+        <div class="ao-fcard" style="border-color:rgba(251,191,36,.12); padding:16px; text-align:center;">
+          <div style="font-size:1.4rem; color:var(--gold); margin-bottom:8px;"><i class="fas fa-users"></i></div>
+          <div style="font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; color:#fff; margin-bottom:4px;">Comisiones</div>
+          <div style="font-size:.68rem; color:var(--dim);">Aulas y horarios</div>
         </div>
       </div>
 
-      <!-- Live cartelera preview strip -->
-      <div class="cn-notices">
-        <div class="cn-notice-hd">
-          <i class="fas fa-rss" style="color:var(--gold);"></i>
-          Últimos avisos
-          <span style="margin-left:auto; font-size:.58rem; color:rgba(148,163,184,.4);">actualizado automáticamente</span>
-        </div>
-        {% for notice in cartelera_notices %}
-        <a href="{{ notice.url }}" target="_blank" class="cn-notice-row" style="text-decoration:none;">
-          <div style="flex:1; min-width:0;">
-            <div class="cn-dept">{{ notice.dept }}</div>
-            <div class="cn-title">{{ notice.title }}</div>
-          </div>
-          <span class="cn-date"><i class="far fa-calendar" style="margin-right:3px;"></i>{{ notice.date }}</span>
-        </a>
-        {% endfor %}
-      </div>
+      <!-- 2-col: Cartelera mock + Live feed -->
+      <div class="con-grid">
 
-      <div class="sec-cta-wrap">
-        <a href="{% url 'conecta_fcm' %}" class="sec-cta sec-cta-gold">
-          <i class="fas fa-bolt"></i>
-          Entrar a Conecta FCM
-        </a>
-        <span style="font-size:.75rem; color:rgba(148,163,184,.5);">Tu facultad actualizada en tiempo real →</span>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 3 — BIBLIOTECA: Teaser
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-b" aria-label="Biblioteca">
-
-      <!-- Parallax decos: books, PDFs, pages -->
-      <div class="px-deco" style="top:-20px; right:-40px; font-size:280px; --px-op:.045; --px-grad:linear-gradient(135deg,rgba(124,58,237,.7),rgba(79,70,229,.4));" aria-hidden="true">
-        <i class="fas fa-book-open"></i>
-      </div>
-      <div class="px-deco" style="bottom:-10px; left:-30px; font-size:150px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(96,165,250,.6),rgba(59,130,246,.3));" aria-hidden="true">
-        <i class="fas fa-file-pdf"></i>
-      </div>
-      <div class="px-deco" style="top:35%; right:50px; font-size:90px; --px-op:.05;" aria-hidden="true">
-        <i class="fas fa-scroll"></i>
-      </div>
-      <div class="px-deco" style="top:60%; left:20px; font-size:70px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-bookmark"></i>
-      </div>
-
-      <span class="ao-slabel">BIBLIOTECA DIGITAL</span>
-      <h2 class="ao-stitle">Todo el Material Universitario</h2>
-      <p class="ao-ssub">Libros, atlas, guías de TPs y apuntes organizados por materia y unidad. Más de 8.000 recursos al alcance de tu mano.</p>
-
-      <div class="fw-grid">
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-book-medical"></i></div>
-          <h3>Libros de Cátedra</h3>
-          <p>Acceso directo a los libros recomendados por cada cátedra de la facultad.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-atlas"></i></div>
-          <h3>Atlas de Anatomía</h3>
-          <p>Netter, Rouvière y más. Imágenes de alta resolución con etiquetas interactivas.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-scroll"></i></div>
-          <h3>Guías de TPs</h3>
-          <p>Guías oficiales de trabajos prácticos ordenadas por comisión y fecha.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-file-pdf"></i></div>
-          <h3>Apuntes PDF</h3>
-          <p>Resúmenes y apuntes colaborativos revisados y validados por alumnos avanzados.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-images"></i></div>
-          <h3>Imágenes Histológicas</h3>
-          <p>Láminas escaneadas de prácticas de laboratorio organizadas por tema.</p>
-        </div>
-        <div class="fw-card">
-          <div class="fw-card-ico"><i class="fas fa-graduation-cap"></i></div>
-          <h3>Material de Cátedras</h3>
-          <p>Presentaciones, videos y recursos subidos directamente por los docentes.</p>
-        </div>
-      </div>
-
-      <!-- Stats highlight -->
-      <div style="margin-top:28px; background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(79,70,229,.04)); border:1px solid rgba(124,58,237,.18); border-radius:20px; padding:28px 32px; display:flex; align-items:center; gap:28px; flex-wrap:wrap; position:relative; overflow:hidden;">
-        <div style="position:absolute; right:-40px; top:-20px; font-size:160px; opacity:.04; pointer-events:none;">
-          <i class="fas fa-books" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></i>
-        </div>
-        <div style="flex:1; min-width:160px; position:relative; z-index:1;">
-          <div style="font-family:'Outfit',sans-serif; font-size:2.4rem; font-weight:900; color:#fff; line-height:1; margin-bottom:6px;">+8.000</div>
-          <div style="font-size:.82rem; color:rgba(196,181,253,.7);">recursos disponibles ahora mismo</div>
-        </div>
-        <a href="{% url 'biblioteca' %}" class="sec-cta sec-cta-primary" style="position:relative; z-index:1;">
-          <i class="fas fa-book-open"></i>
-          Explorar Biblioteca
-        </a>
-      </div>
-
-    </section>
-
-    <!-- ════════════════════════════════════════════
-         SECTION 4 — IA PROFE JOY
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-j" aria-label="IA Profe Joy" style="padding-right: 0;">
-
-      <!-- Parallax decos: neural, wand, stars -->
-      <div class="px-deco" style="top:-30px; right:40px; font-size:240px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(167,139,250,.8),rgba(124,58,237,.3));" aria-hidden="true">
-        <i class="fas fa-robot"></i>
-      </div>
-      <div class="px-deco" style="bottom:0; left:-20px; font-size:130px; --px-op:.04; --px-grad:linear-gradient(135deg,rgba(217,70,239,.6),rgba(192,38,211,.3));" aria-hidden="true">
-        <i class="fas fa-brain"></i>
-      </div>
-      <div class="px-deco" style="top:20%; right:220px; font-size:55px; --px-op:.07; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.5));" aria-hidden="true">
-        <i class="fas fa-wand-magic-sparkles"></i>
-      </div>
-
-      <div style="padding-right: 200px; position: relative; z-index:1;">
-        <span class="ao-slabel" style="color:#c4b5fd;">TUTORÍA IA</span>
-        <h2 class="ao-stitle">Profe Joy IA — Tu Inteligencia Académica</h2>
-        <p class="ao-ssub">Resuelve dudas médicas complejas con lenguaje preciso y ejemplos clínicos reales. Disponible 24 horas, 7 días.</p>
-
-        <div class="fw-grid-2">
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-comments"></i></div>
-            <h3>Chat 24/7</h3>
-            <p>Preguntá cualquier cosa sobre anatomía, fisiología, farmacología y más.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-diagram-project"></i></div>
-            <h3>Esquemas y Mapas</h3>
-            <p>Genera esquemas conceptuales y mapas mentales en segundos.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-flask"></i></div>
-            <h3>Casos Clínicos</h3>
-            <p>Practica el razonamiento clínico con casos reales guiados por IA.</p>
-          </div>
-          <div class="fw-card" style="border-color:rgba(167,139,250,.12);">
-            <div class="fw-card-ico" style="background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.2); color:#c4b5fd;"><i class="fas fa-microphone"></i></div>
-            <h3>Modo Voz</h3>
-            <p>Preguntá por voz y escuchá las explicaciones mientras estudiás.</p>
-          </div>
-        </div>
-
-        <!-- Chat demo -->
-        <div class="ao-mock" style="margin-top:22px;">
+        <!-- LEFT: Cartelera mock -->
+        <div class="ao-mock">
           <div class="ao-mock-hd">
             <div class="ao-dot2" style="background:#ef4444;"></div>
             <div class="ao-dot2" style="background:#fbbf24;"></div>
             <div class="ao-dot2" style="background:#10b981;"></div>
-            <div class="ao-mock-url">alumed.online/joy-ia</div>
+            <div class="ao-mock-url">alumed.online/conecta</div>
           </div>
-          <div class="ao-mock-bd ao-chat">
-            <div class="ao-bubble ao-bu">¿Por qué la hiperpotasemia altera la conducción cardíaca en el ECG?</div>
-            <div class="ao-bubble ao-bj">
-              <strong>Profe Joy IA:</strong> Al aumentar el K⁺ extracelular, el potencial de membrana en reposo se despolariza parcialmente. Esto reduce la disponibilidad de canales de Na⁺ dependientes de voltaje, enlenteciendo la fase 0. En el ECG: ondas T picudas, ensanchamiento del QRS y aplanamiento de la onda P.
-            </div>
-            <div class="ao-bubble ao-bu">Generame un esquema de eso</div>
-            <div class="ao-bubble ao-bj" style="font-size:.8rem;">
-              <strong>Profe Joy IA:</strong>
-              <div style="margin-top:8px; padding:10px; background:rgba(124,58,237,.1); border-radius:8px; border:1px solid rgba(167,139,250,.2); font-family:monospace; font-size:.75rem; line-height:1.7; color:#c4b5fd;">
-                K⁺↑ → Vm reposo ↑ (menos negativo)<br>
-                → Canales Nav: inactivados parcialmente<br>
-                → Fase 0 enlentecida → QRS ancho<br>
-                → Repolarización acelerada → T picuda<br>
-                → Onda P: conducción aurícula afectada
+          <div class="ao-mock-bd">
+            {% for notice in cartelera_notices %}
+            <a href="{{ notice.url }}" target="_blank" class="ao-notice">
+              <div>
+                <div class="ao-notice-dept">{{ notice.dept }}</div>
+                <h4 class="ao-notice-title">{{ notice.title }}</h4>
               </div>
+              <div class="ao-notice-date"><i class="far fa-calendar" style="margin-right:5px;"></i>{{ notice.date }}</div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- RIGHT: Live activity panel -->
+        <div class="con-live-panel">
+          <div class="con-live-hd">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;">
+              <circle cx="12" cy="12" r="10" stroke="rgba(251,191,36,.4)" stroke-width="1.5"/>
+              <path d="M8 12l2.5 2.5L16 9" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="con-live-title">Actividad del Sistema</span>
+            <div class="con-live-indicator">
+              <div class="con-live-dot"></div>
+              En línea
+            </div>
+          </div>
+
+          <!-- Pulse SVG connection visualization -->
+          <div style="padding:14px 18px 0; position:relative;">
+            <svg width="100%" height="36" style="overflow:visible;" aria-hidden="true">
+              <defs>
+                <linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="rgba(124,58,237,0)"/>
+                  <stop offset="50%" stop-color="rgba(251,191,36,.6)"/>
+                  <stop offset="100%" stop-color="rgba(124,58,237,0)"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="18" x2="100%" y2="18" stroke="url(#cg1)" stroke-width="1" class="con-pulse-line"/>
+              <!-- 6 data nodes -->
+              <g fill="rgba(251,191,36,.7)">
+                <circle cx="8%"  cy="18" r="3"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin="0s"    repeatCount="indefinite"/></circle>
+                <circle cx="24%" cy="18" r="2"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin=".3s"   repeatCount="indefinite"/></circle>
+                <circle cx="42%" cy="18" r="3"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin=".6s"   repeatCount="indefinite"/></circle>
+                <circle cx="60%" cy="18" r="2"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin=".9s"   repeatCount="indefinite"/></circle>
+                <circle cx="78%" cy="18" r="3"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin="1.2s"  repeatCount="indefinite"/></circle>
+                <circle cx="94%" cy="18" r="2"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" begin="1.5s"  repeatCount="indefinite"/></circle>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Live feed items (JS animated) -->
+          <div class="con-feed" id="con-feed-list">
+            <!-- populated by JS below -->
+          </div>
+
+          <!-- Stats -->
+          <div class="con-stats-row">
+            <div class="con-stat">
+              <div class="con-stat-num" id="con-stat-scrapes">247</div>
+              <div class="con-stat-lbl">SCRAPES HOY</div>
+            </div>
+            <div class="con-stat">
+              <div class="con-stat-num">+50k</div>
+              <div class="con-stat-lbl">ESTUDIANTES</div>
+            </div>
+            <div class="con-stat">
+              <div class="con-stat-num" style="color:#22c55e; font-size:1rem;">●&nbsp;ONLINE</div>
+              <div class="con-stat-lbl">SISTEMA ACTIVO</div>
             </div>
           </div>
         </div>
 
-        <div class="sec-cta-wrap">
-          <a href="{% url 'student_dashboard' %}" class="sec-cta sec-cta-primary" style="background:linear-gradient(135deg,rgba(124,58,237,.9),rgba(168,85,247,.8)); box-shadow:0 0 24px rgba(124,58,237,.4);">
-            <i class="fas fa-wand-magic-sparkles"></i>
-            Probar Profe Joy IA
-          </a>
-        </div>
-      </div>
-
-      <!-- Joy photo card (floating right) -->
-      <div class="joy-photo-card" id="joy-card">
-        <div class="joy-avatar" id="joy-avatar">
-          <i class="fas fa-robot"></i>
-          <!-- If user provides photo: <img src="..." alt="Profe Joy"> -->
-        </div>
-        <div class="joy-name">IA Profe Joy</div>
-        <div class="joy-sub">Tu profesora 24/7</div>
-        <div class="joy-badge-online">
-          <span class="live-dot"></span>
-          Disponible ahora
-        </div>
-        <!-- Floating sparkles around card -->
-        <div style="position:absolute; top:12px; right:14px; font-size:.7rem; color:rgba(167,139,250,.5); animation:matFloat 2.5s ease-in-out infinite;"><i class="fas fa-star"></i></div>
-        <div style="position:absolute; bottom:18px; left:10px; font-size:.55rem; color:rgba(251,191,36,.45); animation:matFloat 3s ease-in-out infinite reverse;"><i class="fas fa-star"></i></div>
-        <div style="position:absolute; top:45%; left:5px; font-size:.5rem; color:rgba(167,139,250,.35); animation:matFloat 4s ease-in-out infinite;"><i class="fas fa-sparkles"></i></div>
-      </div>
-
+      </div><!-- /con-grid -->
     </section>
 
-    <!-- ════════════════════════════════════════════
-         SECTION 5 — HERRAMIENTAS
-         ════════════════════════════════════════════ -->
-    <section class="ao-sec" id="ao-sec-h" aria-label="Herramientas">
+    <script>
+    /* Live feed simulation for Conecta */
+    (function(){
+      var feedItems = [
+        { icon:'fas fa-rss',        cls:'',       dept:'CARTELERA',            text:'Nuevo aviso: Relevamiento por los cupos para 3° bimestre', time:'hace 2 min' },
+        { icon:'fas fa-calendar',   cls:'purple',  dept:'CRONOGRAMA',           text:'Actualización de fechas de parciales — 2° cuatrimestre', time:'hace 8 min' },
+        { icon:'fas fa-bell',       cls:'',       dept:'SEC. ACADÉMICA',        text:'Inscripciones SEGUNDO CUATRIMESTRE abiertas', time:'hace 15 min' },
+        { icon:'fab fa-whatsapp',   cls:'green',  dept:'NOTIFICACIÓN',         text:'Alerta enviada a grupos de WhatsApp de 2° año', time:'hace 21 min' },
+        { icon:'fas fa-users',      cls:'purple',  dept:'COMISIONES',           text:'Comisiones actualizadas para el 3° bimestre', time:'hace 34 min' },
+        { icon:'fas fa-envelope',   cls:'green',  dept:'EMAIL',                text:'Newsletter semanal enviado — 3.240 destinatarios', time:'hace 1h' },
+        { icon:'fas fa-rss',        cls:'',       dept:'CARTELERA',            text:'Ingresantes 2026 – Prórroga Entrega de Documentación', time:'hace 2h' },
+      ];
 
-      <!-- Parallax decos: microscope, bone, cell -->
-      <div class="px-deco" style="top:-30px; right:-50px; font-size:270px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.7),rgba(245,158,11,.3));" aria-hidden="true">
-        <i class="fas fa-microscope"></i>
+      var list = document.getElementById('con-feed-list');
+      if(!list) return;
+
+      feedItems.forEach(function(item, i){
+        var div = document.createElement('div');
+        div.className = 'con-feed-item';
+        div.style.animationDelay = (i * 0.1) + 's';
+        div.innerHTML =
+          '<div class="con-feed-icon '+item.cls+'"><i class="'+item.icon+'"></i></div>'
+          +'<div style="flex:1;min-width:0;">'
+          +'<div class="con-feed-dept">'+item.dept+'</div>'
+          +'<p class="con-feed-text">'+item.text+'</p>'
+          +'<div class="con-feed-time">'+item.time+'</div>'
+          +'</div>';
+        list.appendChild(div);
+      });
+
+      /* Scrape counter animation */
+      var count = 247;
+      setInterval(function(){
+        count += Math.floor(Math.random() * 3);
+        var el = document.getElementById('con-stat-scrapes');
+        if(el) el.textContent = count;
+      }, 4500);
+
+      /* Periodically add new item at top with animation */
+      var newItems = [
+        { icon:'fas fa-rss', cls:'', dept:'CARTELERA', text:'Nueva resolución publicada por la Dirección de Enseñanza' },
+        { icon:'fas fa-bell', cls:'', dept:'NOTIFICACIÓN', text:'Actualización en la cartelera detectada — procesando...' },
+        { icon:'fas fa-users', cls:'purple', dept:'COMISIONES', text:'Cambio de aula detectado en comisión B3' },
+      ];
+      var ni = 0;
+      setInterval(function(){
+        var item = newItems[ni % newItems.length]; ni++;
+        var div = document.createElement('div');
+        div.className = 'con-feed-item';
+        div.style.animationDelay = '0s';
+        var now = new Date();
+        var t = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+        div.innerHTML =
+          '<div class="con-feed-icon '+item.cls+'"><i class="'+item.icon+'"></i></div>'
+          +'<div style="flex:1;min-width:0;">'
+          +'<div class="con-feed-dept">'+item.dept+' <span style="color:#22c55e;font-size:.58rem;">● NUEVO</span></div>'
+          +'<p class="con-feed-text">'+item.text+'</p>'
+          +'<div class="con-feed-time">ahora · '+t+'</div>'
+          +'</div>';
+        list.insertBefore(div, list.firstChild);
+        /* remove last to keep count */
+        if(list.children.length > 9) list.removeChild(list.lastChild);
+      }, 12000);
+    })();
+    </script>
+
+
+    <!-- SECTION: BIBLIOTECA -->
+    <section class="ao-sec" id="ao-sec-b" aria-label="Biblioteca">
+      <!-- Parallax illustration: stacked books -->
+      <div class="ao-deco" id="deco-b" aria-hidden="true" style="right:-80px; opacity:.07;">
+        <i class="fas fa-book-open" style="font-size:200px;"></i>
+        <i class="fas fa-books ao-deco-sub" style="bottom:-20px; right:-10px; font-size:100px;"></i>
       </div>
-      <div class="px-deco" style="bottom:-10px; left:-20px; font-size:160px; --px-op:.04;" aria-hidden="true">
-        <i class="fas fa-bone"></i>
+
+      <span class="ao-slabel">BIBLIOTECA DIGITAL</span>
+      <h2 class="ao-stitle">Todo el Material Universitario</h2>
+      <p class="ao-ssub">Libros, atlas, guías de TPs y apuntes organizados por materia y unidad.</p>
+
+      <div class="ao-fgrid" style="margin-bottom:24px;">
+        <div class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-book-medical"></i></div>
+          <h3 class="ao-ftitle">Libros de Cátedra</h3>
+          <p class="ao-fdesc">Acceso directo a los libros recomendados por cada cátedra de la facultad.</p>
+        </div>
+        <div class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-atlas"></i></div>
+          <h3 class="ao-ftitle">Atlas de Anatomía</h3>
+          <p class="ao-fdesc">Netter, Rouvière y más. Imágenes de alta resolución con etiquetas interactivas.</p>
+        </div>
+        <div class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-scroll"></i></div>
+          <h3 class="ao-ftitle">Guías de TPs</h3>
+          <p class="ao-fdesc">Guías oficiales de trabajos prácticos ordenadas por comisión y fecha.</p>
+        </div>
+        <div class="ao-fcard">
+          <div class="ao-fico"><i class="fas fa-file-pdf"></i></div>
+          <h3 class="ao-ftitle">Apuntes PDF</h3>
+          <p class="ao-fdesc">Resúmenes y apuntes colaborativos revisados y validados por alumnos avanzados.</p>
+        </div>
       </div>
-      <div class="px-deco" style="top:40%; right:40px; font-size:80px; --px-op:.05; --px-grad:linear-gradient(135deg,rgba(239,68,68,.6),rgba(248,113,113,.3));" aria-hidden="true">
-        <i class="fas fa-heartbeat"></i>
+
+      <div style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(79,70,229,.04)); border:1px solid rgba(124,58,237,.2); border-radius:20px; padding:32px; display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+          <div style="font-family:'Outfit',sans-serif; font-size:2.2rem; font-weight:900; color:#fff; margin-bottom:4px;">+8.000</div>
+          <div style="font-size:.85rem; color:var(--dim);">recursos disponibles ahora mismo</div>
+        </div>
+        <a href="{% url 'biblioteca' %}" class="ao-cta ao-cta-a" style="width:auto; padding:13px 28px;">
+          Abrir Biblioteca &nbsp;<i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION: IA PROFE JOY -->
+    <section class="ao-sec" id="ao-sec-j" aria-label="IA Profe Joy">
+      <!-- Parallax illustration: robot / wand -->
+      <div class="ao-deco" id="deco-j" aria-hidden="true" style="right:-100px;">
+        <i class="fas fa-robot" style="font-size:210px; background:linear-gradient(135deg,#7c3aed,#c4b5fd,#818cf8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></i>
+        <i class="fas fa-wand-magic-sparkles ao-deco-sub" style="font-size:80px;"></i>
+      </div>
+
+      <span class="ao-slabel" style="color:#c4b5fd;">TUTORÍA IA</span>
+      <h2 class="ao-stitle">Profe Joy IA — Tu Inteligencia Académica</h2>
+      <p class="ao-ssub">Resuelve dudas médicas complejas con lenguaje preciso y ejemplos clínicos reales.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+        <div class="ao-fcard" style="border-color:rgba(167,139,250,.15);">
+          <div class="ao-fico" style="color:#c4b5fd;"><i class="fas fa-comments"></i></div>
+          <h3 class="ao-ftitle">Chat 24/7</h3>
+          <p class="ao-fdesc">Preguntá cualquier cosa sobre anatomía, fisiología, farmacología y más.</p>
+        </div>
+        <div class="ao-fcard" style="border-color:rgba(167,139,250,.15);">
+          <div class="ao-fico" style="color:#c4b5fd;"><i class="fas fa-diagram-project"></i></div>
+          <h3 class="ao-ftitle">Esquemas y Mapas</h3>
+          <p class="ao-fdesc">Genera esquemas conceptuales y mapas mentales en segundos.</p>
+        </div>
+      </div>
+
+      <div class="ao-mock">
+        <div class="ao-mock-hd">
+          <div class="ao-dot2" style="background:#ef4444;"></div>
+          <div class="ao-dot2" style="background:#fbbf24;"></div>
+          <div class="ao-dot2" style="background:#10b981;"></div>
+          <div class="ao-mock-url">alumed.online/joy-ia</div>
+        </div>
+        <div class="ao-mock-bd ao-chat">
+          <div class="ao-bubble ao-bu">¿Por qué la hiperpotasemia altera la conducción cardíaca en el ECG?</div>
+          <div class="ao-bubble ao-bj">
+            <strong>Profe Joy IA:</strong> Al aumentar el K⁺ extracelular, el potencial de membrana en reposo se despolariza parcialmente. Esto reduce la disponibilidad de canales de Na⁺ dependientes de voltaje, enlenteciendo la fase 0. En el ECG: ondas T picudas, ensanchamiento del QRS y aplanamiento de la onda P.
+          </div>
+          <div class="ao-bubble ao-bu">Generame un esquema de eso</div>
+          <div class="ao-bubble ao-bj" style="font-size:.8rem;">
+            <strong>Profe Joy IA:</strong>
+            <div style="margin-top:8px; padding:10px; background:rgba(124,58,237,.1); border-radius:8px; border:1px solid rgba(167,139,250,.2); font-family:monospace; font-size:.75rem; line-height:1.7; color:#c4b5fd;">
+              K⁺↑ → Vm reposo ↑ (menos negativo)<br>
+              → Canales Nav: inactivados parcialmente<br>
+              → Fase 0 enlentecida → QRS ancho<br>
+              → Repolarización acelerada → T picuda<br>
+              → Onda P: conducción aurícula afectada
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: HERRAMIENTAS -->
+    <section class="ao-sec" id="ao-sec-h" aria-label="Herramientas">
+      <!-- Parallax illustration: microscope -->
+      <div class="ao-deco" id="deco-h" aria-hidden="true" style="right:-90px;">
+        <i class="fas fa-microscope" style="font-size:215px;"></i>
+        <i class="fas fa-cube ao-deco-sub"></i>
       </div>
 
       <span class="ao-slabel">HERRAMIENTAS DE EVALUACIÓN</span>
       <h2 class="ao-stitle">Laboratorio Virtual Completo</h2>
-      <p class="ao-ssub">Tecnología médica de vanguardia para un estudio profundo, visual e interactivo. Microscopio, anatomía 3D, simulacros y más.</p>
+      <p class="ao-ssub">Tecnología médica a tu alcance para un estudio profundo y diferente.</p>
 
-      <div class="fw-grid">
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-clipboard-question"></i></div>
-          <h3>Simulacros Oficiales</h3>
-          <p>Tests aleatorios con preguntas reales de parciales anteriores. Cronometrados y con corrección automática.</p>
+      <div class="ao-fgrid" style="grid-template-columns:1fr 1fr;">
+        <div class="ao-fcard" style="text-align:center; padding:32px 20px;">
+          <div class="ao-fico" style="color:var(--gold); font-size:2rem;"><i class="fas fa-clipboard-question"></i></div>
+          <h3 class="ao-ftitle">Simulacros Oficiales</h3>
+          <p class="ao-fdesc">Tests aleatorios con preguntas reales de parciales anteriores. Cronometrados.</p>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-microscope"></i></div>
-          <h3>Microscopio Virtual</h3>
-          <p>Láminas histológicas reales con zoom infinito y anotaciones colaborativas entre estudiantes.</p>
+        <div class="ao-fcard" style="text-align:center; padding:32px 20px;">
+          <div class="ao-fico" style="color:var(--gold); font-size:2rem;"><i class="fas fa-microscope"></i></div>
+          <h3 class="ao-ftitle">Microscopio Virtual</h3>
+          <p class="ao-fdesc">Láminas histológicas reales con zoom y anotaciones colaborativas.</p>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-cube"></i></div>
-          <h3>Anatomía 3D</h3>
-          <p>Modelos 3D del cuerpo humano rotables e interactivos. Sistema por sistemas con capas anatómicas.</p>
+        <div class="ao-fcard" style="text-align:center; padding:32px 20px;">
+          <div class="ao-fico" style="color:var(--gold); font-size:2rem;"><i class="fas fa-cube"></i></div>
+          <h3 class="ao-ftitle">Anatomía 3D</h3>
+          <p class="ao-fdesc">Modelos 3D del cuerpo humano rotables e interactivos. Sistema por sistemas.</p>
         </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-podcast"></i></div>
-          <h3>Podcasts Médicos</h3>
-          <p>Audios rápidos y densos para repasar conceptos clave mientras viajás o hacés deporte.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-vials"></i></div>
-          <h3>Laboratorio Clínico</h3>
-          <p>Simulación de interpretación de valores de laboratorio con casos clínicos integrados.</p>
-        </div>
-        <div class="fw-card gold">
-          <div class="fw-card-ico"><i class="fas fa-heart-pulse"></i></div>
-          <h3>ECG Interactivo</h3>
-          <p>Interpretación guiada de electrocardiogramas con feedback instantáneo de IA.</p>
+        <div class="ao-fcard" style="text-align:center; padding:32px 20px;">
+          <div class="ao-fico" style="color:var(--gold); font-size:2rem;"><i class="fas fa-podcast"></i></div>
+          <h3 class="ao-ftitle">Podcasts Médicos</h3>
+          <p class="ao-fdesc">Audios rápidos y densos para repasar conceptos clave mientras viajás.</p>
         </div>
       </div>
-
     </section>
 
-    <!-- ════════════════════════════════════════════
-         SECTION 6 — PLANES / CLUB ALUMED
-         ════════════════════════════════════════════ -->
+    <!-- SECTION: PLANES -->
     <section class="ao-sec" id="ao-sec-p" aria-label="Planes">
-
-      <!-- Parallax decos: crown, medal, star -->
-      <div class="px-deco" style="top:-30px; right:-40px; font-size:260px; --px-op:.042; --px-grad:linear-gradient(135deg,rgba(251,191,36,.8),rgba(245,158,11,.4));" aria-hidden="true">
-        <i class="fas fa-crown"></i>
-      </div>
-      <div class="px-deco" style="bottom:-10px; left:-30px; font-size:140px; --px-op:.038; --px-grad:linear-gradient(135deg,rgba(251,191,36,.6),rgba(255,249,196,.3));" aria-hidden="true">
-        <i class="fas fa-medal"></i>
+      <!-- Parallax illustration: crown / trophy -->
+      <div class="ao-deco ao-deco-gold" id="deco-p" aria-hidden="true" style="right:-85px;">
+        <i class="fas fa-crown" style="font-size:200px;"></i>
+        <i class="fas fa-medal ao-deco-sub" style="font-size:80px; background:linear-gradient(135deg,#fbbf24,#fff59d); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></i>
       </div>
 
       <span class="ao-slabel" style="color:var(--gold);">SUSCRIPCIÓN</span>
-      <h2 class="ao-stitle">Elegí tu Plan de Estudios</h2>
-      <p class="ao-ssub">Unite hoy para tener acceso ilimitado a todo el ecosistema académico de ALUMED OS.</p>
 
+      <h2 class="ao-stitle">Elegí tu Plan de Estudios</h2>
+      <p class="ao-ssub">Unite hoy para tener acceso ilimitado a todo el ecosistema académico.</p>
       <div class="ao-plans">
         <div class="ao-plan">
           <h3 class="ao-plan-name">Acceso Básico</h3>
@@ -6181,11 +5981,9 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
           <a href="{% url 'club' %}" class="ao-cta ao-cta-c">Suscribirse al Club</a>
         </div>
       </div>
-
     </section>
 
-
-        <!-- FOOTER (inside content column) -->
+    <!-- FOOTER (inside content column) -->
     <footer class="ao-footer">
       <div class="ao-footer-inner">
         <a href="{% url 'home' %}" class="ao-flogo">
