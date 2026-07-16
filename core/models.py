@@ -185,3 +185,64 @@ class TestimonialVideo(models.Model):
         verbose_name = "Video Testimonio"
         verbose_name_plural = "Videos Testimonios"
         ordering = ['-created_at']
+
+
+# ──────────────────────────────────────────────────────────────
+# CARTELERA FCM-UNLP — Modelo de persistência de avisos
+# Estrutura real inspecionada em 2026-07-16:
+#   Container: div.card.card-outline-success
+#   Data:      div.card-header > h5.m-b-0.text-white
+#   Título:    div.card-body > h4.card-title > a[href]
+#   Subtítulo: div.card-body > h6.card-subtitle
+#   Emissor:   div.card-body > p.card-text.text-right
+#   Link:      /noticia/<id>  → base: https://cartelera.med.unlp.edu.ar
+# ──────────────────────────────────────────────────────────────
+class CarteleraItem(models.Model):
+    """
+    Aviso capturado da Cartelera oficial FCM-UNLP.
+    Cada aviso é identificado de forma única por external_id (path da URL).
+    Nunca duplica — apenas atualiza last_seen_at se já existir.
+    """
+    # ── Identificação única ──────────────────────────────────────
+    external_id  = models.CharField(
+        max_length=100, unique=True, db_index=True,
+        verbose_name='ID externo',
+        help_text='Extraído do path /noticia/<id>'
+    )
+    content_hash = models.CharField(
+        max_length=64, db_index=True,
+        verbose_name='Hash do conteúdo',
+        help_text='SHA-256 de título+data+emissor — detecta mudanças'
+    )
+
+    # ── Dados do aviso ───────────────────────────────────────────
+    title        = models.CharField(max_length=500, verbose_name='Título')
+    subtitle     = models.CharField(max_length=500, blank=True, verbose_name='Subtítulo')
+    issuer       = models.CharField(max_length=300, blank=True, verbose_name='Organismo emissor')
+    date_str     = models.CharField(max_length=30,  blank=True, verbose_name='Data (texto original)')
+    date_parsed  = models.DateField(null=True, blank=True, verbose_name='Data (parseada)')
+    url          = models.URLField(max_length=500, verbose_name='URL original')
+    category     = models.CharField(max_length=200, blank=True, verbose_name='Categoria/Matéria')
+
+    # ── Controle de ciclo de vida ────────────────────────────────
+    first_seen_at = models.DateTimeField(auto_now_add=True, verbose_name='Primeira vez visto')
+    last_seen_at  = models.DateTimeField(auto_now=True,     verbose_name='Última vez visto')
+    notified_at   = models.DateTimeField(null=True, blank=True, verbose_name='Notificado em')
+    is_active     = models.BooleanField(default=True, verbose_name='Ainda ativo na cartelera')
+
+    class Meta:
+        ordering            = ['-date_parsed', '-first_seen_at']
+        verbose_name        = 'Aviso da Cartelera'
+        verbose_name_plural = 'Avisos da Cartelera'
+        indexes = [
+            models.Index(fields=['date_parsed', 'is_active']),
+            models.Index(fields=['notified_at']),
+        ]
+
+    def __str__(self):
+        return f"[{self.date_str}] {self.title[:60]} — {self.issuer or 'Sin emisor'}"
+
+    @property
+    def needs_notification(self):
+        """True se ainda não foi notificado."""
+        return self.notified_at is None
