@@ -32,7 +32,9 @@ ALLOWED_HOSTS = [
     '.loca.lt',
     '.railway.app',
     '.up.railway.app',
+    '.vercel.app',                 # Vercel preview e production
     env('RAILWAY_STATIC_URL', default='').replace('https://', '').rstrip('/'),
+    env('VERCEL_URL', default='').replace('https://', '').rstrip('/'),
 ]
 ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]  # remove vazios
 
@@ -41,6 +43,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.alumedestudiantes.com',
     'https://*.railway.app',
     'https://*.up.railway.app',
+    'https://*.vercel.app',        # Vercel
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
