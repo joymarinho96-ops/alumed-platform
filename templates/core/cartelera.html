@@ -135,55 +135,107 @@
     <!-- ── PANEL 3: ALERTAS ── -->
     <div class="sub-card">
       <h3 class="sub-title"><i class="fas fa-bell"></i> Alertas en tu Dispositivo</h3>
-      <p class="sub-desc">Configurá cómo recibir los avisos:</p>
+      <p class="sub-desc">Configurá cómo recibir los avisos cuando las integraciones estén disponibles:</p>
 
-      <!-- WhatsApp -->
-      <div style="margin-bottom:12px;">
-        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> Tu número de WhatsApp</label>
+      <style>
+        .integ-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 9.5px;
+          font-weight: 800;
+          padding: 2px 8px;
+          border-radius: 20px;
+          letter-spacing: .6px;
+          text-transform: uppercase;
+          vertical-align: middle;
+          margin-left: 6px;
+        }
+        .badge-activo  { background: rgba(16,185,129,.18); color: #10b981; border: 1px solid rgba(16,185,129,.35); }
+        .badge-beta    { background: rgba(251,191,36,.15);  color: #fbbf24; border: 1px solid rgba(251,191,36,.35); }
+        .badge-prox    { background: rgba(148,163,184,.12); color: #94a3b8; border: 1px solid rgba(148,163,184,.3); }
+        .integ-note {
+          font-size: 11px;
+          color: #64748b;
+          margin-top: 4px;
+          padding: 6px 10px;
+          background: rgba(255,255,255,.03);
+          border-left: 2px solid rgba(148,163,184,.25);
+          border-radius: 0 6px 6px 0;
+          line-height: 1.5;
+        }
+        .toggle-sw input:disabled + .toggle-slider {
+          opacity: .35;
+          cursor: not-allowed;
+        }
+        .toggle-sw input:disabled ~ * { cursor: not-allowed; }
+        label:has(input:disabled) { cursor: not-allowed; }
+      </style>
+
+      <!-- ── WhatsApp (Beta) ───────────────────────────────── -->
+      <div style="margin-bottom:6px;">
+        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;">
+          <i class="fab fa-whatsapp" style="color:#25d366;"></i> Tu número de WhatsApp
+          <span class="integ-badge badge-beta">⚡ Beta</span>
+        </label>
         <input class="alert-field" type="tel" id="alertWA" placeholder="+54 9 221 1234567">
       </div>
 
       <div class="alert-toggle">
-        <span class="alert-toggle-label"><i class="fab fa-whatsapp" style="color:#25d366;"></i> Alertas por WhatsApp</span>
+        <span class="alert-toggle-label">
+          <i class="fab fa-whatsapp" style="color:#25d366;"></i> Alertas por WhatsApp
+          <span class="integ-badge badge-beta">⚡ Beta</span>
+        </span>
         <label class="toggle-sw"><input type="checkbox" id="toggleWA"><span class="toggle-slider"></span></label>
       </div>
+      <div class="integ-note">
+        <i class="fas fa-info-circle"></i> Registrá tu número para ser notificado cuando los envíos automáticos estén disponibles. <strong>No se envían mensajes reales aún.</strong>
+      </div>
 
-      <!-- Email -->
-      <div style="margin-bottom:12px;margin-top:10px;">
-        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;"><i class="far fa-envelope" style="color:#60a5fa;"></i> Tu correo electrónico</label>
-        <input class="alert-field" type="email" id="alertEmail" value="{{ user.email }}" placeholder="tucorreo@gmail.com">
+      <!-- ── Email (Próximamente) ──────────────────────────── -->
+      <div style="margin-bottom:6px;margin-top:14px;">
+        <label style="font-size:11.5px;color:#94a3b8;display:block;margin-bottom:5px;font-weight:700;">
+          <i class="far fa-envelope" style="color:#60a5fa;"></i> Tu correo electrónico
+          <span class="integ-badge badge-prox">🕐 Próximamente</span>
+        </label>
+        <input class="alert-field" type="email" id="alertEmail" value="{{ user.email }}" placeholder="tucorreo@gmail.com" disabled style="opacity:.5;cursor:not-allowed;">
       </div>
 
       <div class="alert-toggle">
-        <span class="alert-toggle-label"><i class="far fa-envelope" style="color:#60a5fa;"></i> Alertas por Email</span>
-        <label class="toggle-sw"><input type="checkbox" id="toggleEmail"><span class="toggle-slider"></span></label>
+        <span class="alert-toggle-label">
+          <i class="far fa-envelope" style="color:#60a5fa;"></i> Alertas por Email
+          <span class="integ-badge badge-prox">🕐 Próximamente</span>
+        </span>
+        <label class="toggle-sw"><input type="checkbox" id="toggleEmail" disabled><span class="toggle-slider"></span></label>
+      </div>
+      <div class="integ-note">
+        <i class="fas fa-info-circle"></i> El envío automático por email estará disponible pronto. Podés dejar tu correo guardado.
       </div>
 
-      <!-- Google Calendar -->
-      <div class="alert-toggle" style="margin-top:7px;">
-        <span class="alert-toggle-label"><i class="fab fa-google" style="color:#ea4335;"></i> Sincronizar Google Calendar</span>
-        <label class="toggle-sw"><input type="checkbox" id="toggleCal"><span class="toggle-slider"></span></label>
+      <!-- ── Google Calendar (Próximamente) ───────────────── -->
+      <div class="alert-toggle" style="margin-top:14px;">
+        <span class="alert-toggle-label">
+          <i class="fab fa-google" style="color:#ea4335;"></i> Sincronizar Google Calendar
+          <span class="integ-badge badge-prox">🕐 Próximamente</span>
+        </span>
+        <label class="toggle-sw"><input type="checkbox" id="toggleCal" disabled><span class="toggle-slider"></span></label>
       </div>
-
-      <!-- Official channels note -->
-      <div class="official-note" style="margin-top:12px;">
-        <i class="fas fa-shield-alt" style="color:#f5c542;"></i>
-        Los emails se enviarán desde <strong style="color:#f5c542;">institutoalumed@gmail.com</strong><br>
-        Los WhatsApp desde <strong style="color:#25d366;">+54 9 221 544-8983</strong>
+      <div class="integ-note">
+        <i class="fas fa-info-circle"></i> La sincronización con Google Calendar está en desarrollo. Próximamente podrás exportar los eventos académicos directamente a tu calendario.
       </div>
 
       <!-- Consent -->
-      <div class="consent-row">
+      <div class="consent-row" style="margin-top:14px;">
         <input type="checkbox" id="consentChk" style="accent-color:#f5c542;width:16px;height:16px;flex-shrink:0;margin-top:2px;cursor:pointer;">
-        <label for="consentChk">Autorizo recibir notificaciones académicas por WhatsApp y correo electrónico según las preferencias seleccionadas. (<em>versión v1</em>)</label>
+        <label for="consentChk">Registrar mi interés en recibir notificaciones académicas cuando las integraciones estén disponibles. (<em>versión beta</em>)</label>
       </div>
 
       <!-- Save -->
       <button class="sub-save-btn" onclick="SUB.save()">
-        <i class="fas fa-save"></i> Guardar y activar alertas
+        <i class="fas fa-save"></i> Guardar preferencias
       </button>
     </div>
-  </div>
+
 
   <!-- ═══ SEARCH + DYNAMIC FILTERS ═══════════════════════════════════════════ -->
   <div style="max-width:1200px;margin:0 auto 30px;padding:0 10px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;" class="reveal-up">
