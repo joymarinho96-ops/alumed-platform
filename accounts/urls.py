@@ -9,6 +9,17 @@ urlpatterns = [
     path('dashboard/', views.student_dashboard_view, name='student_dashboard'),
     path('campus/', views.student_dashboard_view, name='campus'),
 
+    # Planejamento Acadêmico
+    path('planejamento/', views.planejamento_view, name='planejamento'),
+
+    # Academic Events API
+    path('api/events/',                views.api_events_list,   name='api_events_list'),
+    path('api/events/create/',         views.api_events_create, name='api_events_create'),
+    path('api/events/<int:pk>/update/',views.api_events_update, name='api_events_update'),
+    path('api/events/<int:pk>/delete/',views.api_events_delete, name='api_events_delete'),
+    path('api/events/<int:pk>/status/',views.api_events_status, name='api_events_status'),
+    path('api/events/<int:pk>/gcal/',  views.api_events_gcal,   name='api_events_gcal'),
+
     # Mis Cursos — redireciona direto para o Wix, sem pagina intermediaria
     path('mis-cursos/', RedirectView.as_view(
         url='https://www.alumedestudiantes.com/miscursos',

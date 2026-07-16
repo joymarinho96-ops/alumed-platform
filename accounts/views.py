@@ -12,8 +12,10 @@ from django.core.cache import cache
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
+from datetime import datetime
 from .models import (ChatMessage, Profile, AccessProduct, UserAccess,
-                     ConectaPreference, ConectaSubscription, ConectaConsentEvent)
+                     ConectaPreference, ConectaSubscription, ConectaConsentEvent,
+                     AcademicEvent)
 from django.core.management import call_command
 from django.contrib import messages
 from functools import wraps
@@ -928,3 +930,309 @@ def conecta_preferences(request):
     return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
 
 
+# ══════════════════════════════════════════════════════════════════
+# 📅  ACADEMIC EVENTS API
+# ══════════════════════════════════════════════════════════════════
+
+@login_required
+def api_events_list(request):
+    """GET → lista eventos do usuário em JSON."""
+    events = AcademicEvent.objects.filter(user=request.user)
+    # Filtro opcional por tipo
+    etype = request.GET.get('type')
+    if etype:
+        events = events.filter(event_type=etype)
+    # Filtro por mês/ano
+    month = request.GET.get('month')
+    year  = request.GET.get('year')
+    if month and year:
+        events = events.filter(
+            start_datetime__month=month,
+            start_datetime__year=year,
+        )
+    return JsonResponse({'ok': True, 'events': [e.to_dict() for e in events]})
+
+
+@login_required
+def api_events_create(request):
+    """POST → cria novo evento acadêmico."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'ok': False, 'error': 'JSON inválido'}, status=400)
+
+    # Validações mínimas
+    title       = data.get('title', '').strip()
+    event_type  = data.get('event_type', '').strip()
+    start_str   = data.get('start_datetime', '').strip()
+    if not title:
+        return JsonResponse({'ok': False, 'error': 'El título es obligatorio.'}, status=400)
+    if not event_type:
+        return JsonResponse({'ok': False, 'error': 'El tipo de evento es obligatorio.'}, status=400)
+    if not start_str:
+        return JsonResponse({'ok': False, 'error': 'La fecha y hora son obligatorias.'}, status=400)
+
+    valid_types = [c[0] for c in AcademicEvent.TYPE_CHOICES]
+    if event_type not in valid_types:
+        return JsonResponse({'ok': False, 'error': 'Tipo de evento inválido.'}, status=400)
+
+    def parse_dt(s):
+        if not s:
+            return None
+        for fmt in ('%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
+            try:
+                from django.utils import timezone as tz
+                naive = datetime.strptime(s, fmt)
+                return tz.make_aware(naive)
+            except ValueError:
+                continue
+        return None
+
+    start_dt = parse_dt(start_str)
+    if not start_dt:
+        return JsonResponse({'ok': False, 'error': 'Formato de fecha inválido.'}, status=400)
+
+    event = AcademicEvent.objects.create(
+        user                  = request.user,
+        title                 = title,
+        subject               = data.get('subject', '').strip(),
+        event_type            = event_type,
+        start_datetime        = start_dt,
+        end_datetime          = parse_dt(data.get('end_datetime', '')),
+        location              = data.get('location', '').strip(),
+        notes                 = data.get('notes', '').strip(),
+        registration_open_at  = parse_dt(data.get('registration_open_at', '')),
+        registration_deadline = parse_dt(data.get('registration_deadline', '')),
+        status                = 'upcoming',
+    )
+    return JsonResponse({'ok': True, 'event': event.to_dict()}, status=201)
+
+
+@login_required
+def api_events_update(request, pk):
+    """POST → edita evento existente (só o dono)."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+    try:
+        event = AcademicEvent.objects.get(pk=pk, user=request.user)
+    except AcademicEvent.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Evento no encontrado.'}, status=404)
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'ok': False, 'error': 'JSON inválido'}, status=400)
+
+    def parse_dt(s):
+        if not s:
+            return None
+        for fmt in ('%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
+            try:
+                from django.utils import timezone as tz
+                return tz.make_aware(datetime.strptime(s, fmt))
+            except ValueError:
+                continue
+        return None
+
+    if 'title'       in data: event.title       = data['title'].strip()
+    if 'subject'     in data: event.subject      = data['subject'].strip()
+    if 'event_type'  in data: event.event_type   = data['event_type']
+    if 'location'    in data: event.location     = data['location'].strip()
+    if 'notes'       in data: event.notes        = data['notes'].strip()
+    if 'status'      in data: event.status       = data['status']
+    if 'start_datetime'        in data: event.start_datetime        = parse_dt(data['start_datetime'])
+    if 'end_datetime'          in data: event.end_datetime          = parse_dt(data['end_datetime'])
+    if 'registration_open_at'  in data: event.registration_open_at  = parse_dt(data['registration_open_at'])
+    if 'registration_deadline' in data: event.registration_deadline = parse_dt(data['registration_deadline'])
+    event.save()
+    return JsonResponse({'ok': True, 'event': event.to_dict()})
+
+
+@login_required
+def api_events_delete(request, pk):
+    """POST → deleta evento (só o dono)."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+    try:
+        event = AcademicEvent.objects.get(pk=pk, user=request.user)
+    except AcademicEvent.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Evento no encontrado.'}, status=404)
+    google_id = event.google_event_id
+    event.delete()
+    return JsonResponse({'ok': True, 'google_event_id': google_id})
+
+
+@login_required
+def api_events_status(request, pk):
+    """POST → atualiza status/confirmação de inscrição."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+    try:
+        event = AcademicEvent.objects.get(pk=pk, user=request.user)
+    except AcademicEvent.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Evento no encontrado.'}, status=404)
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'ok': False, 'error': 'JSON inválido'}, status=400)
+
+    if 'status'                    in data: event.status                    = data['status']
+    if 'registration_confirmed'    in data: event.registration_confirmed    = data['registration_confirmed']
+    if 'inscription_alert_dismissed' in data: event.inscription_alert_dismissed = data['inscription_alert_dismissed']
+    event.save()
+    return JsonResponse({'ok': True, 'event': event.to_dict()})
+
+
+@login_required
+def api_events_gcal(request, pk):
+    """POST → sincroniza evento com Google Calendar do usuário."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Method not allowed'}, status=405)
+    try:
+        event = AcademicEvent.objects.get(pk=pk, user=request.user)
+    except AcademicEvent.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Evento no encontrado.'}, status=404)
+
+    # Verificar se Google socialaccount está disponível
+    try:
+        from allauth.socialaccount.models import SocialToken, SocialApp
+        from google.oauth2.credentials import Credentials
+        from googleapiclient.discovery import build as gcal_build
+        has_gcal = True
+    except ImportError:
+        has_gcal = False
+
+    if not has_gcal:
+        return JsonResponse({
+            'ok': False,
+            'proximamente': True,
+            'message': 'Google Calendar — Próximamente. La integración estará disponible pronto.',
+        })
+
+    # Verificar se app Google está configurado
+    try:
+        app = SocialApp.objects.get(provider='google')
+    except SocialApp.DoesNotExist:
+        return JsonResponse({
+            'ok': False,
+            'proximamente': True,
+            'message': 'Google Calendar — Próximamente.',
+        })
+
+    # Obter token do usuário
+    try:
+        token_obj = SocialToken.objects.get(account__user=request.user, account__provider='google')
+    except SocialToken.DoesNotExist:
+        return JsonResponse({
+            'ok': False,
+            'needs_oauth': True,
+            'message': 'Necesitás conectar tu cuenta de Google primero.',
+        })
+
+    creds = Credentials(
+        token         = token_obj.token,
+        refresh_token = token_obj.token_secret,
+        client_id     = app.client_id,
+        client_secret = app.secret,
+        token_uri     = 'https://oauth2.googleapis.com/token',
+    )
+    service = gcal_build('calendar', 'v3', credentials=creds)
+
+    # Construir evento Google
+    end_dt = event.end_datetime or (event.start_datetime + timedelta(hours=2))
+    gcal_event = {
+        'summary':     event.title,
+        'description': f"{event.subject}\n\n{event.notes}".strip(),
+        'location':    event.location,
+        'start':       {'dateTime': event.start_datetime.isoformat(), 'timeZone': 'America/Argentina/Buenos_Aires'},
+        'end':         {'dateTime': end_dt.isoformat(),               'timeZone': 'America/Argentina/Buenos_Aires'},
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'popup', 'minutes': 60},
+                {'method': 'popup', 'minutes': 1440},
+            ],
+        },
+    }
+    # Lembrete 10 dias para finais/parciais
+    if event.event_type in ('final', 'parcial', 'inscripcion', 'simulacro'):
+        gcal_event['reminders']['overrides'].append(
+            {'method': 'popup', 'minutes': 10 * 1440}
+        )
+
+    try:
+        if event.google_event_id:
+            # Atualizar evento existente
+            result = service.events().update(
+                calendarId='primary',
+                eventId=event.google_event_id,
+                body=gcal_event,
+            ).execute()
+        else:
+            # Criar novo evento
+            result = service.events().insert(
+                calendarId='primary',
+                body=gcal_event,
+            ).execute()
+
+        event.google_event_id   = result.get('id', '')
+        event.google_calendar_id = 'primary'
+        event.google_synced_at  = timezone.now()
+        event.save(update_fields=['google_event_id', 'google_calendar_id', 'google_synced_at'])
+
+        return JsonResponse({'ok': True, 'google_event_id': event.google_event_id,
+                             'message': '¡Agregado a Google Calendar!'})
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=500)
+
+
+# ══════════════════════════════════════════════════════════════════
+# 📋  PLANEJAMENTO ACADÊMICO — página dedicada
+# ══════════════════════════════════════════════════════════════════
+
+@login_required
+def planejamento_view(request):
+    """Página completa de planejamento acadêmico com todos os eventos."""
+    from django.utils import timezone as tz
+    now  = tz.now()
+    user = request.user
+
+    # Atualizar status automaticamente
+    upcoming_events = AcademicEvent.objects.filter(
+        user=user, start_datetime__gte=now
+    ).order_by('start_datetime')
+
+    past_events = AcademicEvent.objects.filter(
+        user=user, start_datetime__lt=now, status__in=['upcoming', 'pending', 'open']
+    )
+    past_events.update(status='done')
+
+    # Alertas de inscrição (faltam ≤10 dias, não dispensado)
+    alerts = [e for e in upcoming_events if e.needs_inscription_alert]
+
+    # Verificar Google Calendar disponibilidade
+    gcal_available = False
+    try:
+        from allauth.socialaccount.models import SocialApp, SocialToken
+        gcal_available = (
+            SocialApp.objects.filter(provider='google').exists() and
+            SocialToken.objects.filter(account__user=user, account__provider='google').exists()
+        )
+    except Exception:
+        pass
+
+    context = {
+        'upcoming_events':  list(upcoming_events),
+        'past_events':      list(AcademicEvent.objects.filter(
+                                 user=user, start_datetime__lt=now
+                             ).order_by('-start_datetime')[:20]),
+        'alerts':           alerts,
+        'gcal_available':   gcal_available,
+        'events_json':      json.dumps(
+                                [e.to_dict() for e in AcademicEvent.objects.filter(user=user)],
+                                cls=DjangoJSONEncoder
+                            ),
+        'now':              now,
+    }
+    return render(request, 'accounts/planejamento.html', context)

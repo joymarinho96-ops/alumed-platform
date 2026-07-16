@@ -4171,6 +4171,57 @@
         50%      { background-position: 100% 50%; }
     }
 
+    /* ── CURSOS NAV BUTTON — Destaque Dourado×Violéta ────────────────── */
+    .nav-cursos-btn {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px !important;
+        border-radius: 20px !important;
+        font-size: 12.5px !important;
+        font-weight: 900 !important;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: #fff !important;
+        text-decoration: none;
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #f59e0b 100%) !important;
+        background-size: 200% 200% !important;
+        border: 1px solid rgba(168,85,247,.6) !important;
+        box-shadow:
+            0 0 14px rgba(124,58,237,.55),
+            0 0 32px rgba(124,58,237,.2),
+            inset 0 1px 0 rgba(255,255,255,.2) !important;
+        animation: cursosGlow 2.2s ease-in-out infinite, cursosShift 4s ease infinite !important;
+        transition: all .25s ease !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .nav-cursos-btn::before {
+        content: '';
+        position: absolute; inset: 0; border-radius: 20px;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
+        transform: translateX(-100%);
+        transition: transform .5s ease;
+    }
+    .nav-cursos-btn:hover::before { transform: translateX(100%); }
+    .nav-cursos-btn:hover {
+        transform: translateY(-2px) scale(1.05) !important;
+        box-shadow:
+            0 0 24px rgba(168,85,247,.8),
+            0 0 56px rgba(168,85,247,.3),
+            0 4px 20px rgba(0,0,0,.3) !important;
+        color: #fff !important;
+    }
+    @keyframes cursosGlow {
+        0%,100% { box-shadow: 0 0 12px rgba(124,58,237,.5), 0 0 28px rgba(124,58,237,.15), inset 0 1px 0 rgba(255,255,255,.2); }
+        50%      { box-shadow: 0 0 22px rgba(168,85,247,.85), 0 0 48px rgba(245,158,11,.25), inset 0 1px 0 rgba(255,255,255,.25); }
+    }
+    @keyframes cursosShift {
+        0%,100% { background-position: 0% 50%; }
+        50%      { background-position: 100% 50%; }
+    }
+
+
     {% block extra_head %}{% endblock %}
 </style>
 
@@ -4286,7 +4337,10 @@
         </div>
 
         <a href="{% url 'facultad' %}">Facultad</a>
-        <a href="{% url 'club' %}">Club</a>
+        <a href="{% url 'club' %}" class="nav-cursos-btn" id="nav-cursos-btn">
+            <i class="fas fa-graduation-cap" style="font-size:11px;"></i>
+            CURSOS
+        </a>
 
         <!-- ⭐ CONECTA FCM — Botão premium dourado -->
         <a href="{% url 'conecta_fcm' %}" class="nav-conecta-btn" id="nav-conecta-btn">
@@ -6195,7 +6249,7 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
         <nav class="ao-flinks">
           <a href="{% url 'home' %}">Inicio</a>
           <a href="{% url 'biblioteca' %}">Biblioteca</a>
-          <a href="{% url 'club' %}">Club ALUMED</a>
+          <a href="{% url 'club' %}">Cursos ALUMED</a>
           <a href="{% url 'conecta_fcm' %}">Conecta</a>
         </nav>
         <div class="ao-fsocial">

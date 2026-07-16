@@ -309,3 +309,113 @@ class ConectaConsentEvent(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.action} ({self.created_at:%d/%m/%Y %H:%M})"
+
+
+class AcademicEvent(models.Model):
+    """
+    Evento acadêmico pessoal do aluno.
+    Privado: apenas o dono pode ver/editar/deletar.
+    """
+    TYPE_CHOICES = [
+        ('final',       'Final'),
+        ('parcial',     'Parcial'),
+        ('tp',          'TP'),
+        ('inscripcion', 'Inscripción'),
+        ('clase',       'Clase especial'),
+        ('simulacro',   'Simulacro'),
+        ('meta',        'Meta personal'),
+        ('otro',        'Otro'),
+    ]
+    STATUS_CHOICES = [
+        ('pending',  'Inscripción pendiente'),
+        ('open',     'Inscripción abierta'),
+        ('upcoming', 'Próximo'),
+        ('done',     'Realizado'),
+    ]
+    COLOR_MAP = {
+        'final':       '#ef4444',
+        'parcial':     '#f59e0b',
+        'tp':          '#8b5cf6',
+        'inscripcion': '#06b6d4',
+        'clase':       '#3b82f6',
+        'simulacro':   '#f97316',
+        'meta':        '#10b981',
+        'otro':        '#94a3b8',
+    }
+
+    user                        = models.ForeignKey(
+                                      User, on_delete=models.CASCADE,
+                                      related_name='academic_events')
+    title                       = models.CharField(max_length=200, verbose_name='Título')
+    subject                     = models.CharField(max_length=100, blank=True, verbose_name='Materia')
+    event_type                  = models.CharField(max_length=15, choices=TYPE_CHOICES, verbose_name='Tipo')
+    start_datetime              = models.DateTimeField(verbose_name='Fecha y hora')
+    end_datetime                = models.DateTimeField(null=True, blank=True, verbose_name='Fin')
+    location                    = models.CharField(max_length=200, blank=True, verbose_name='Lugar/Aula')
+    notes                       = models.TextField(blank=True, verbose_name='Observaciones')
+    registration_open_at        = models.DateTimeField(null=True, blank=True, verbose_name='Apertura de inscripción')
+    registration_deadline       = models.DateTimeField(null=True, blank=True, verbose_name='Cierre de inscripción')
+    registration_confirmed      = models.BooleanField(default=False, verbose_name='Inscripción confirmada')
+    inscription_alert_dismissed = models.BooleanField(default=False, verbose_name='Alerta descartada')
+    google_event_id             = models.CharField(max_length=300, blank=True, verbose_name='ID Google Calendar')
+    google_calendar_id          = models.CharField(max_length=300, blank=True, verbose_name='Calendar ID')
+    google_synced_at            = models.DateTimeField(null=True, blank=True, verbose_name='Último sync Google')
+    status                      = models.CharField(max_length=15, choices=STATUS_CHOICES,
+                                      default='upcoming', verbose_name='Estado')
+    created_at                  = models.DateTimeField(auto_now_add=True)
+    updated_at                  = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering            = ['start_datetime']
+        verbose_name        = 'Evento Académico'
+        verbose_name_plural = 'Eventos Académicos'
+        indexes             = [models.Index(fields=['user', 'start_datetime'],
+                                   name='idx_academic_event_user_dt')]
+
+    def __str__(self):
+        return f"{self.title} ({self.user.username}) — {self.start_datetime:%d/%m/%Y}"
+
+    @property
+    def days_until(self):
+        from django.utils import timezone
+        delta = self.start_datetime.date() - timezone.now().date()
+        return delta.days
+
+    @property
+    def color(self):
+        return self.COLOR_MAP.get(self.event_type, '#94a3b8')
+
+    @property
+    def needs_inscription_alert(self):
+        """True se faltam ≤10 dias e inscrição não confirmada."""
+        if self.event_type not in ('final', 'parcial', 'inscripcion', 'simulacro'):
+            return False
+        if self.registration_confirmed or self.inscription_alert_dismissed:
+            return False
+        return 0 <= self.days_until <= 10
+
+    def to_dict(self):
+        from django.utils import timezone
+        return {
+            'id':                    self.pk,
+            'title':                 self.title,
+            'subject':               self.subject,
+            'event_type':            self.event_type,
+            'event_type_display':    self.get_event_type_display(),
+            'start_datetime':        self.start_datetime.isoformat(),
+            'end_datetime':          self.end_datetime.isoformat() if self.end_datetime else None,
+            'location':              self.location,
+            'notes':                 self.notes,
+            'registration_open_at':  self.registration_open_at.isoformat() if self.registration_open_at else None,
+            'registration_deadline': self.registration_deadline.isoformat() if self.registration_deadline else None,
+            'registration_confirmed':self.registration_confirmed,
+            'inscription_alert_dismissed': self.inscription_alert_dismissed,
+            'google_event_id':       self.google_event_id,
+            'google_synced':         bool(self.google_event_id),
+            'status':                self.status,
+            'status_display':        self.get_status_display(),
+            'days_until':            self.days_until,
+            'color':                 self.color,
+            'needs_inscription_alert': self.needs_inscription_alert,
+            'created_at':            self.created_at.isoformat(),
+        }
