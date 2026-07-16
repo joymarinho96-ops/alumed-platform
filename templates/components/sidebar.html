@@ -22,8 +22,8 @@
         </div>
     </div>
 
-    <!-- CONECTA FCM — Botão de destaque dourado -->
-    <a href="{% url 'conecta_landing' %}" style="
+    <!-- CONECTA FCM — Botão de destaque dourado → direto pro Dashboard -->
+    <a href="{% if user.is_authenticated %}/conecta/dashboard/{% else %}/login/?next=/conecta/dashboard/{% endif %}" style="
         display:flex; align-items:center; gap:10px;
         padding: 12px 14px; border-radius: 12px; margin-bottom: 14px;
         background: linear-gradient(135deg, rgba(245,200,66,.18), rgba(245,200,66,.08));

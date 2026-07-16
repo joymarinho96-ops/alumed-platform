@@ -634,13 +634,198 @@ body {
           </div>
         </div>
       </div>
+
+        <!-- ══════════════════════════════════════════
+             🌧 CHUVA + 🎵 FRECUENCIAS — Abaixo do Pomodoro
+             ══════════════════════════════════════════ -->
+        <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.06);padding-top:18px;">
+
+          <!-- Título integrado -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:.95rem;">🎵</span>
+              <span style="font-size:.82rem;font-weight:900;color:#f1eeff;letter-spacing:.02em;">Frecuencias & Ambiente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);">
+              <span style="width:5px;height:5px;border-radius:50%;background:#a855f7;box-shadow:0 0 6px #a855f7;animation:frqBlink 1.4s infinite;display:inline-block;"></span>
+              <span id="frqCurrentHz" style="font-size:.6rem;font-weight:900;color:#a855f7;letter-spacing:.05em;">—</span>
+            </div>
+          </div>
+
+          <!-- 🌧 CHUVA + AUTO-AJUSTE -->
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);margin-bottom:12px;">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🌧</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:.78rem;font-weight:800;color:#93c5fd;">Lluvia de fondo</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span id="rainAutoLabel" style="font-size:.6rem;color:rgba(147,197,253,.5);font-weight:700;">AUTO</span>
+                  <label style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+                    <input type="checkbox" id="rainAutoToggle" style="opacity:0;width:0;height:0;position:absolute;"
+                           onchange="RAIN.toggleAuto(this.checked)">
+                    <span id="rainAutoKnob" style="width:32px;height:18px;background:rgba(96,165,250,.2);border:1px solid rgba(96,165,250,.3);border-radius:99px;display:inline-block;transition:all .25s;position:relative;">
+                      <span style="width:12px;height:12px;border-radius:50%;background:#64748b;position:absolute;top:2px;left:2px;transition:all .25s;display:block;" id="rainKnobDot"></span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button id="rainPlayBtn" onclick="RAIN.toggle()" style="width:30px;height:30px;border-radius:50%;border:none;background:rgba(96,165,250,.15);color:#93c5fd;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;">
+                  <i class="fas fa-play" id="rainIcon"></i>
+                </button>
+                <input type="range" id="rainVol" min="0" max="1" step="0.05" value="0.25"
+                       oninput="RAIN.setVol(parseFloat(this.value))"
+                       style="-webkit-appearance:none;flex:1;height:4px;border-radius:99px;outline:none;cursor:pointer;background:rgba(96,165,250,.25);">
+                <span id="rainVolLabel" style="font-size:.62rem;color:rgba(147,197,253,.5);width:24px;text-align:right;flex-shrink:0;">25%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABS FRECUENCIAS -->
+          <div class="frq-tabs" style="margin-bottom:12px;">
+            <button class="frq-tab active" data-cat="repasar">📚 Repasar</button>
+            <button class="frq-tab" data-cat="memorizar">📝 Memorizar</button>
+            <button class="frq-tab" data-cat="final">🔥 Final</button>
+            <button class="frq-tab" data-cat="despues">🌙 Después</button>
+          </div>
+
+          <!-- PANEL REPASAR -->
+          <div class="frq-panel active" id="frq-repasar">
+            <div class="frq-item" data-hz="40" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.2);">🧠</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#22d3ee;">40 Hz Gamma</div>
+                <div class="frq-desc">Concentración máxima · Atención sostenida · Conceptos complejos.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Anatomía</span>
+                  <span class="frq-tag" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Histología</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">40 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(34,211,238,.15);color:#22d3ee;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+            <div class="frq-item" data-hz="20" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.2);">🧬</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#fb923c;">20 Hz Beta</div>
+                <div class="frq-desc">Estado mental activo · Resolución de problemas · Energía para estudiar.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);">Parciales</span>
+                  <span class="frq-tag" style="background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);">Finales</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">20 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(251,146,60,.15);color:#fb923c;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL MEMORIZAR -->
+          <div class="frq-panel" id="frq-memorizar">
+            <div class="frq-item" data-hz="10" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.2);">💡</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#4ade80;">10 Hz Alpha</div>
+                <div class="frq-desc">Calma mental · Ordena información · Fluidez para memorizar.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Leer apuntes</span>
+                  <span class="frq-tag" style="background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Mapas mentales</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">10 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(74,222,128,.12);color:#4ade80;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+            <div class="frq-item" data-hz="8" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.2);">🎓</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#34d399;">8 Hz Alpha baja</div>
+                <div class="frq-desc">Repaso tranquilo · Creatividad · Conexión entre temas.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);">Embriología</span>
+                  <span class="frq-tag" style="background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);">Conexiones</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">8 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(52,211,153,.12);color:#34d399;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.4" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL MODO FINAL -->
+          <div class="frq-panel" id="frq-final">
+            <div class="frq-item" data-hz="40" data-type="sine" style="border-color:rgba(245,200,66,.15);background:rgba(245,200,66,.04);">
+              <div class="frq-icon-wrap" style="background:rgba(245,200,66,.12);border-color:rgba(245,200,66,.25);">⚡</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#f5c842;">40 Hz + Pomodoro</div>
+                <div class="frq-desc">Foco intenso · Menos distracciones · Máximo rendimiento en tareas exigentes.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">⚡ Foco total</span>
+                  <span class="frq-tag" style="background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.25);">🍅 Pomodoro</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">40 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(245,200,66,.15);color:#f5c842;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.5" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL DEPOIS -->
+          <div class="frq-panel" id="frq-despues">
+            <div class="frq-item" data-hz="7.83" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.2);">🌊</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#818cf8;">7.83 Hz — Schumann</div>
+                <div class="frq-desc">Descanso mental · Tranquilidad · Resonancia natural de la Tierra.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(99,102,241,.1);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Descanso</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">7.83 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(99,102,241,.12);color:#818cf8;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.3" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+            <div class="frq-item" data-hz="2" data-type="sine">
+              <div class="frq-icon-wrap" style="background:rgba(55,48,163,.15);border-color:rgba(55,48,163,.3);">🌙</div>
+              <div class="frq-info">
+                <div class="frq-name" style="color:#6366f1;">2–4 Hz Delta</div>
+                <div class="frq-desc">Relajación profunda · Preparación para dormir.</div>
+                <div class="frq-tags">
+                  <span class="frq-tag" style="background:rgba(55,48,163,.12);color:#6366f1;border:1px solid rgba(55,48,163,.25);">Dormir</span>
+                </div>
+              </div>
+              <div class="frq-controls">
+                <span class="frq-hz">2 Hz</span>
+                <button class="frq-play-btn" style="background:rgba(55,48,163,.15);color:#6366f1;" onclick="FRQ.toggle(this)"><i class="fas fa-play"></i></button>
+                <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.3" oninput="FRQ.vol(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer tip -->
+          <p style="font-size:.6rem;color:rgba(200,180,255,.3);text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i class="fas fa-headphones"></i> Auriculares para mayor efectividad · Binaural beats
+          </p>
+        </div>
+
     </div>
   </div>
 
-  <!-- ════════════════════════════════════
-       FRECUENCIAS ALUMED
-       ════════════════════════════════════ -->
-  <div class="al-card" style="margin-top:0;">
+  <!-- (Frecuencias movidas para dentro do Pomodoro) -->
+  <div class="al-card" style="margin-top:0;display:none;"> <!-- placeholder removido -->
     <div class="al-card-glow"></div>
 
     <style>
@@ -862,13 +1047,8 @@ body {
           <input class="frq-vol" type="range" min="0" max="1" step="0.05" value="0.3" oninput="FRQ.vol(this)">
         </div>
       </div>
-    </div>
+  </div><!-- /frecuencias-placeholder -->
 
-    <!-- Footer tip -->
-    <p style="font-size:.65rem;color:rgba(200,180,255,.35);text-align:center;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
-      <i class="fas fa-headphones"></i> Usá auriculares para mayor efectividad · Las frecuencias bajas son binaural beats
-    </p>
-  </div>
 
   <!-- ════════════════════════════════════
        SEÇÃO 4+5 — PROGRESSO + IA
@@ -1545,5 +1725,125 @@ setTimeout(function(){
 },400);
 
 })();
+
+// ══════════════════════════════════════════════════════
+// 🌧 RAIN — Chuva sintética Web Audio API + Auto Pomodoro
+// ══════════════════════════════════════════════════════
+const RAIN = (function(){
+  let ctx=null,bufSrc=null,gainNode=null,filterNode=null;
+  let playing=false, autoMode=false, currentVol=0.25;
+
+  function getCtx(){
+    if(!ctx) ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
+    return ctx;
+  }
+
+  function buildRain(){
+    const c=getCtx();
+    const N=c.sampleRate*3;
+    const buf=c.createBuffer(2,N,c.sampleRate);
+    for(let ch=0;ch<2;ch++){
+      const d=buf.getChannelData(ch);
+      for(let i=0;i<N;i++) d[i]=Math.random()*2-1;
+    }
+    bufSrc=c.createBufferSource();
+    bufSrc.buffer=buf; bufSrc.loop=true;
+
+    filterNode=c.createBiquadFilter();
+    filterNode.type='bandpass';
+    filterNode.frequency.value=1400;
+    filterNode.Q.value=0.3;
+
+    gainNode=c.createGain();
+    gainNode.gain.setValueAtTime(0.001,c.currentTime);
+    gainNode.gain.linearRampToValueAtTime(currentVol,c.currentTime+1.2);
+
+    bufSrc.connect(filterNode);
+    filterNode.connect(gainNode);
+    gainNode.connect(c.destination);
+    bufSrc.start();
+  }
+
+  function start(){
+    if(playing) return;
+    buildRain(); playing=true; _ui();
+  }
+
+  function stop(){
+    if(!playing) return;
+    if(gainNode&&ctx){
+      gainNode.gain.linearRampToValueAtTime(0.001,ctx.currentTime+0.8);
+      setTimeout(function(){
+        try{bufSrc&&bufSrc.stop();}catch(e){}
+        bufSrc=null;gainNode=null;filterNode=null;
+      },900);
+    }
+    playing=false; _ui();
+  }
+
+  function toggle(){ playing?stop():start(); }
+
+  function setVol(v){
+    currentVol=Math.min(1,Math.max(0,v));
+    if(gainNode&&playing) gainNode.gain.setTargetAtTime(currentVol,ctx.currentTime,0.15);
+    const lbl=document.getElementById('rainVolLabel');
+    if(lbl) lbl.textContent=Math.round(currentVol*100)+'%';
+    const sl=document.getElementById('rainVol');
+    if(sl) sl.value=currentVol;
+  }
+
+  function onPomoState(state){
+    if(!autoMode) return;
+    if(state==='focus'){ setVol(0.20); if(!playing) start(); }
+    else if(state==='rest'){ setVol(0.60); if(!playing) start(); }
+  }
+
+  function toggleAuto(on){
+    autoMode=on;
+    const dot=document.getElementById('rainKnobDot');
+    const knob=document.getElementById('rainAutoKnob');
+    const lbl=document.getElementById('rainAutoLabel');
+    if(on){
+      if(dot)  { dot.style.left='16px';  dot.style.background='#93c5fd'; }
+      if(knob) knob.style.background='rgba(96,165,250,.35)';
+      if(lbl)  lbl.style.color='#93c5fd';
+      onPomoState('focus');
+    } else {
+      if(dot)  { dot.style.left='2px';   dot.style.background='#64748b'; }
+      if(knob) knob.style.background='rgba(96,165,250,.2)';
+      if(lbl)  lbl.style.color='rgba(147,197,253,.5)';
+    }
+  }
+
+  function _ui(){
+    const btn=document.getElementById('rainPlayBtn');
+    const ico=document.getElementById('rainIcon');
+    if(!btn||!ico) return;
+    if(playing){
+      ico.className='fas fa-pause';
+      btn.style.background='rgba(96,165,250,.35)';
+      btn.style.boxShadow='0 0 12px rgba(96,165,250,.3)';
+    } else {
+      ico.className='fas fa-play';
+      btn.style.background='rgba(96,165,250,.15)';
+      btn.style.boxShadow='none';
+    }
+  }
+
+  return { toggle, start, stop, setVol, toggleAuto, onPomoState };
+})();
+
+// Integração RAIN ↔ Pomodoro via MutationObserver no label
+(function(){
+  const lbl=document.getElementById('pomoLabel');
+  if(!lbl) return;
+  new MutationObserver(function(){
+    const t=lbl.textContent.trim().toUpperCase();
+    if(t.includes('FOCO'))   RAIN.onPomoState('focus');
+    if(t.includes('DESCANSO')) RAIN.onPomoState('rest');
+  }).observe(lbl,{childList:true,characterData:true,subtree:true});
+})();
+
 </script>
 {% endblock %}
