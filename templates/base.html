@@ -4415,6 +4415,11 @@
     </div>
 
     <div class="auth-buttons">
+        <!-- Hamburger (mobile/tablet) -->
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
         {% if user.is_authenticated %}
             <div class="user-menu">
                 <button class="user-menu-btn">
@@ -4443,6 +4448,47 @@
         {% endif %}
     </div>
 </nav>
+
+<!-- ══ MOBILE NAV DRAWER ════════════════════════════════════════════ -->
+<div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-hidden="true">
+  <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Cerrar menú">&times;</button>
+  <div class="nav-drawer-links">
+
+    <p class="nav-drawer-section-label">Inicio</p>
+    <a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a>
+    <a href="{% url 'student_dashboard' %}" style="color:#a78bfa; font-weight:800;">
+      <i class="fas fa-bolt"></i> CURSOS ALUMED
+    </a>
+
+    <div class="nav-drawer-divider"></div>
+    <p class="nav-drawer-section-label">Académico</p>
+    <a href="{% url 'cartelera' %}"><i class="fas fa-calendar-alt"></i> Cartelera</a>
+    <a href="{% url 'planning' %}"><i class="fas fa-calendar-check"></i> Planeamiento</a>
+    <a href="{% url 'becas' %}"><i class="fas fa-hand-holding-heart"></i> Becas y Beneficios</a>
+    <a href="{% url 'facultad' %}"><i class="fas fa-university"></i> Facultad</a>
+
+    <div class="nav-drawer-divider"></div>
+    <p class="nav-drawer-section-label">Estudio</p>
+    <a href="{% url 'biblioteca' %}"><i class="fas fa-book-open"></i> Biblioteca</a>
+    <a href="{% url 'courses:flashcards_dashboard' %}"><i class="fas fa-clone"></i> Flashcards</a>
+    <a href="{% url 'microscopio_virtual' %}"><i class="fas fa-microscope"></i> Microscopio Virtual</a>
+    <a href="{% url 'anatomia_3d' %}"><i class="fas fa-cube"></i> Anatomía 3D</a>
+    <a href="{% url 'conecta_fcm' %}" style="color:#fbbf24;">
+      <i class="fas fa-bolt"></i> Conecta FCM
+    </a>
+
+    <div class="nav-drawer-divider"></div>
+    {% if user.is_authenticated %}
+      <a href="{% url 'student_dashboard' %}"><i class="fas fa-graduation-cap"></i> Mi Panel</a>
+      <a href="{% url 'account_logout' %}" style="color:#f87171;"><i class="fas fa-sign-out-alt"></i> Salir</a>
+    {% else %}
+      <a href="{% url 'login' %}" style="color:#a78bfa; font-weight:700;"><i class="fas fa-sign-in-alt"></i> Entrar</a>
+      <a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Registrarse</a>
+    {% endif %}
+  </div>
+</div>
+<!-- Overlay para fechar drawer -->
+<div id="nav-drawer-overlay" style="display:none; position:fixed; inset:0; z-index:9997; background:rgba(0,0,0,.4);"></div>
 
 <main>
     {% block content %}
@@ -5546,6 +5592,249 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
 @media (max-width:480px) {
   .ao-stats { padding:10px 8px; gap:6px; }
   .ao-slbl { font-size:.56rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ALUMED OS — RESPONSIVE COMPLETO
+   Mobile-first upgrades: hamburger, spine, cards, CTA, footer, sections
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── HAMBURGER BUTTON ────────────────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px; width: 40px; height: 40px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
+  padding: 0;
+}
+.nav-hamburger span {
+  display: block; width: 20px; height: 2px;
+  background: rgba(255,255,255,.85); border-radius: 2px;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV DRAWER ────────────────────────────────────────────── */
+.nav-mobile-drawer {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9998;
+  background: rgba(7,3,15,.97);
+  backdrop-filter: blur(20px);
+  flex-direction: column;
+  padding: 80px 28px 40px;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.nav-mobile-drawer.open {
+  transform: translateX(0);
+}
+.nav-drawer-links {
+  display: flex; flex-direction: column; gap: 4px; flex: 1;
+}
+.nav-drawer-links a,
+.nav-drawer-links button {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: 12px;
+  font-size: 15px; font-weight: 600; color: rgba(255,255,255,.8);
+  text-decoration: none; background: transparent; border: none; cursor: pointer;
+  transition: background .2s, color .2s; width: 100%; text-align: left;
+}
+.nav-drawer-links a:hover,
+.nav-drawer-links button:hover {
+  background: rgba(139,92,246,.12); color: #a78bfa;
+}
+.nav-drawer-links a i { width: 20px; text-align: center; opacity: .7; font-size: 14px; }
+.nav-drawer-divider {
+  height: 1px; background: rgba(255,255,255,.07);
+  margin: 12px 0;
+}
+.nav-drawer-section-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.3);
+  padding: 8px 18px 4px;
+}
+.nav-drawer-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  color: #fff; font-size: 16px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: background .2s;
+}
+.nav-drawer-close:hover { background: rgba(255,255,255,.12); }
+
+/* ── TABLET (768px – 1024px) ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Navbar: esconde links menos importantes */
+  .nav-links > a:not(.nav-cursos-hero):not([href*="dashboard"]) {
+    font-size: 12px;
+  }
+  /* Spine um pouco menor */
+  .ao-spine-img {
+    width: clamp(240px, 26vw, 440px);
+  }
+  /* CTA Intensivo */
+  .ao-intensivo-cta { gap: 12px; padding: 14px 16px; }
+  .ao-int-title { font-size: 14px; }
+}
+
+/* ── TABLET PORTRAIT (600px – 900px) ────────────────────────────── */
+@media (max-width: 900px) {
+  /* Nav hamburger aparece */
+  .nav-hamburger { display: flex; }
+  .nav-links { display: none !important; }
+  .nav-mobile-drawer { display: flex; }
+
+  /* Spine: fica entre navbar e conteúdo, menor */
+  .ao-spine-track { order: 0; }
+  .ao-spine-sticky {
+    position: relative; top: 0;
+    height: 45vw; max-height: 280px;
+    min-height: 160px;
+  }
+  .ao-spine-img {
+    height: 100%; width: auto;
+    max-width: 260px; margin: 0 auto;
+    display: block;
+  }
+
+  /* Oculta partículas no tablet */
+  .ao-ptcl, .ao-energy-wrap, .ao-hint { display: none !important; }
+
+  /* CTA responsivo */
+  .ao-intensivo-cta {
+    flex-wrap: wrap; gap: 10px; padding: 14px 16px;
+  }
+  .ao-int-title { font-size: 15px; }
+  .ao-int-btn { width: 100%; justify-content: center; }
+
+  /* Footer grid */
+  .ao-footer-grid,
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px; }
+}
+
+/* ── MOBILE LANDSCAPE + LARGE PHONE (600px – 768px) ─────────────── */
+@media (max-width: 768px) {
+  /* Layout em coluna única */
+  .ao-page { grid-template-columns: 1fr !important; }
+  .ao-tl-track { display: none !important; }
+
+  .ao-content { order: 2; }
+  .ao-spine-track { order: 1; }
+
+  /* Spine horizontal acima do conteúdo */
+  .ao-spine-sticky {
+    position: relative; top: 0;
+    height: 42vw; max-height: 240px; min-height: 140px;
+    padding: 8px 0;
+  }
+  .ao-spine-img {
+    height: 100%; width: auto;
+    max-width: 200px; margin: 0 auto;
+  }
+
+  /* Hero área */
+  .ao-hero-area {
+    min-height: auto;
+    padding: 20px 18px 32px;
+  }
+  .ao-h1 { font-size: clamp(2rem, 8vw, 3rem) !important; line-height: 1.15; }
+  .ao-sub { font-size: 14px; margin-bottom: 18px; }
+
+  /* Cards em coluna */
+  .ao-cards { grid-template-columns: 1fr !important; gap: 14px; }
+  .ao-card { padding: 20px 18px; }
+  .ao-ctitle { font-size: 1.1rem; }
+
+  /* Stats em 2 colunas */
+  .ao-stats { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+
+  /* CTA Intensivo empilhado */
+  .ao-intensivo-cta {
+    flex-direction: column; align-items: flex-start;
+    gap: 12px; padding: 16px;
+    margin-bottom: 20px;
+  }
+  .ao-int-badge { font-size: 9px; }
+  .ao-int-title { font-size: 16px; }
+  .ao-int-sub { font-size: 12px; }
+  .ao-int-btn {
+    width: 100%; justify-content: center;
+    padding: 13px 20px; font-size: 12px;
+  }
+
+  /* Seções de conteúdo */
+  .ao-sec { padding: 40px 18px !important; }
+  .fw-grid, .fw-grid-2 { grid-template-columns: 1fr !important; }
+  .fw-grid-4 { grid-template-columns: 1fr 1fr !important; }
+
+  /* Footer */
+  .ao-footer, footer { padding: 40px 18px 24px !important; }
+  .ao-footer-grid,
+  .footer-grid { grid-template-columns: 1fr !important; gap: 20px; }
+  .ao-fsocial { justify-content: center; }
+  .ao-fcopy { font-size: .65rem; }
+}
+
+/* ── MOBILE PORTRAIT (max 480px) ─────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Navbar compacta */
+  .navbar { padding: 0 14px !important; height: 58px !important; }
+  .logo { font-size: 18px !important; }
+
+  /* Status bar: só essencial */
+  .sb-group { display: none !important; }
+  .sb-mobile-show { display: flex !important; }
+  #ao-status-bar { justify-content: center; padding: 0 12px; }
+
+  /* Spine bem pequena */
+  .ao-spine-sticky {
+    height: 38vw; max-height: 180px; min-height: 110px;
+  }
+  .ao-spine-img { max-width: 160px; }
+
+  /* Título */
+  .ao-h1 { font-size: clamp(1.75rem, 9vw, 2.5rem) !important; }
+
+  /* Stats em 2x2 */
+  .ao-stats {
+    grid-template-columns: 1fr 1fr !important;
+    padding: 8px 6px; gap: 6px;
+  }
+  .ao-sval { font-size: 1.4rem; }
+  .ao-slbl { font-size: .55rem; }
+
+  /* Cards */
+  .ao-card { padding: 18px 14px; border-radius: 14px; }
+  .ao-list { gap: 8px; }
+  .ao-list li a { font-size: 13px; gap: 8px; }
+
+  /* CTA */
+  .ao-int-title { font-size: 14px; }
+  .ao-int-sub { font-size: 11px; }
+  .ao-int-btn { font-size: 11px; padding: 11px 16px; }
+
+  /* Grids de seções */
+  .fw-grid, .fw-grid-2, .fw-grid-4 { grid-template-columns: 1fr !important; }
+
+  /* Texto das seções */
+  .ao-sec { padding: 32px 14px !important; }
+  h2 { font-size: clamp(1.4rem, 7vw, 2rem) !important; }
+}
+
+/* ── VERY SMALL (max 360px — iPhone SE, Galaxy A) ─────────────────── */
+@media (max-width: 360px) {
+  .ao-h1 { font-size: 1.65rem !important; }
+  .ao-int-title { font-size: 13px; letter-spacing: .04em; }
+  .ao-int-btn { font-size: 10px; padding: 10px 14px; }
+  .ao-spine-sticky { height: 32vw; min-height: 90px; }
+  .ao-spine-img { max-width: 120px; }
 }
 
 /* ── SECTION DECO ILLUSTRATIONS ────────────────────────────────── */
@@ -8125,4 +8414,49 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
 {% endif %}
 
 </body>
+
+<!-- ══ HAMBURGER MENU JS ══════════════════════════════════════════════ -->
+<script>
+(function(){
+  var btn     = document.getElementById('nav-hamburger');
+  var drawer  = document.getElementById('nav-mobile-drawer');
+  var overlay = document.getElementById('nav-drawer-overlay');
+  var closeBtn= document.getElementById('nav-drawer-close');
+  if(!btn || !drawer) return;
+
+  function openDrawer(){
+    drawer.classList.add('open');
+    overlay.style.display = 'block';
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    drawer.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    overlay.style.display = 'none';
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    drawer.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', function(){
+    drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+  });
+  if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if(overlay)  overlay.addEventListener('click',  closeDrawer);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeDrawer();
+  });
+
+  /* Fechar ao navegar para um link interno */
+  drawer.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      setTimeout(closeDrawer, 120);
+    });
+  });
+})();
+</script>
+
 </html>
