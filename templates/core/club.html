@@ -1,777 +1,777 @@
-﻿{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}ALUMED â€” Cursos de Medicina Â· Primer AÃ±o FCM UNLP{% endblock %}
-{% block meta_description %}Cursos intensivos de BiologÃ­a, AnatomÃ­a e HistologÃ­a para el primer aÃ±o de Medicina en la UNLP. MÃ©todo Joy. ALUMED BOOST y Conecta FCM.{% endblock %}
-
-{% block content %}
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ESTILOS GLOBALES DE LA PÃGINA
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<style>
-  :root {
-    --gold:    #FFE600;
-    --gold2:   #d4af37;
-    --violet:  #7c3aed;
-    --violet2: #a78bfa;
-    --pink:    #ec4899;
-    --bg:      #070709;
-    --surface: rgba(255,255,255,.03);
-    --border:  rgba(255,255,255,.07);
-  }
-
-  /* â”€â”€ RESET SECCIÃ“N â”€â”€ */
-  .club-page { background: var(--bg); min-height: 100vh; font-family: 'Outfit',sans-serif; overflow-x:hidden; }
-
-  /* â”€â”€ PARTÃCULAS DE FONDO â”€â”€ */
-  .bg-particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-  .bp { position:absolute; border-radius:50%; opacity:0; animation:bpFloat linear infinite; }
-  @keyframes bpFloat {
-    0%   { transform:translateY(100vh) scale(0); opacity:0; }
-    5%   { opacity:.5; }
-    95%  { opacity:.2; }
-    100% { transform:translateY(-10vh) scale(1.5); opacity:0; }
-  }
-
-  /* â”€â”€ GRID RADIAL â”€â”€ */
-  .radial-bg {
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124,58,237,.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,230,0,.06) 0%, transparent 55%);
-  }
-
-  /* â”€â”€ CONTENEDOR â”€â”€ */
-  .cx { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:2; }
-  .cx-sm { max-width:760px; margin:0 auto; padding:0 24px; position:relative; z-index:2; }
-
-  /* â”€â”€ BADGE â”€â”€ */
-  .badge {
-    display:inline-flex; align-items:center; gap:6px;
-    padding:5px 14px; border-radius:20px; font-size:11px; font-weight:800;
-    letter-spacing:.8px; text-transform:uppercase; font-family:'Orbitron',sans-serif;
-    border:1px solid; margin-bottom:18px;
-  }
-  .badge-gold   { background:rgba(255,230,0,.1);   border-color:rgba(255,230,0,.3);   color:#FFE600; }
-  .badge-violet { background:rgba(124,58,237,.12); border-color:rgba(124,58,237,.35); color:#a78bfa; }
-  .badge-cyan   { background:rgba(34,211,238,.1);  border-color:rgba(34,211,238,.3);  color:#22d3ee; }
-  .badge-green  { background:rgba(16,185,129,.1);  border-color:rgba(16,185,129,.3);  color:#10b981; }
-
-  /* â”€â”€ TÃTULOS â”€â”€ */
-  .display-xl {
-    font-family:'Outfit',sans-serif; font-weight:900; line-height:1.05;
-    font-size:clamp(52px,7vw,88px); letter-spacing:-2px; color:white;
-  }
-  .display-lg {
-    font-family:'Outfit',sans-serif; font-weight:900; line-height:1.1;
-    font-size:clamp(32px,4.5vw,58px); letter-spacing:-1px; color:white;
-  }
-  .display-md {
-    font-family:'Outfit',sans-serif; font-weight:800; line-height:1.2;
-    font-size:clamp(22px,3vw,36px); color:white;
-  }
-  .grad-gold   { background:linear-gradient(135deg,#FFE600,#f5c842,#d4af37);     -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .grad-violet { background:linear-gradient(135deg,#7c3aed,#a78bfa,#ec4899);     -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .grad-mix    { background:linear-gradient(135deg,#FFE600 0%,#f5c842 40%,#a78bfa 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-  /* â”€â”€ BOTONES â”€â”€ */
-  .btn-primary {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 28px; border-radius:12px; font-weight:800; font-size:15px;
-    background:linear-gradient(135deg,#FFE600,#d4af37); color:#070709;
-    border:none; cursor:pointer; transition:all .25s;
-    box-shadow:0 0 30px rgba(255,230,0,.25);
-    font-family:'Outfit',sans-serif; text-decoration:none;
-  }
-  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 45px rgba(255,230,0,.4); }
-
-  .btn-ghost {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 28px; border-radius:12px; font-weight:700; font-size:15px;
-    background:rgba(255,255,255,.05); color:white;
-    border:1px solid rgba(255,255,255,.12); cursor:pointer; transition:all .25s;
-    font-family:'Outfit',sans-serif; text-decoration:none;
-  }
-  .btn-ghost:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); transform:translateY(-2px); }
-
-  .btn-violet {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 28px; border-radius:12px; font-weight:800; font-size:15px;
-    background:linear-gradient(135deg,#7c3aed,#a855f7); color:white;
-    border:none; cursor:pointer; transition:all .25s;
-    box-shadow:0 0 30px rgba(124,58,237,.3);
-    font-family:'Outfit',sans-serif; text-decoration:none;
-  }
-  .btn-violet:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(124,58,237,.5); }
-
-  /* â”€â”€ GLASS CARD â”€â”€ */
-  .glass {
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:20px; backdrop-filter:blur(12px);
-    transition:all .3s;
-  }
-  .glass:hover { border-color:rgba(255,255,255,.14); transform:translateY(-3px); box-shadow:0 20px 60px rgba(0,0,0,.4); }
-
-  /* â”€â”€ SECTION SPACING â”€â”€ */
-  .section { padding:100px 0; position:relative; z-index:2; }
-  .section-sm { padding:60px 0; position:relative; z-index:2; }
-
-  /* â”€â”€ DIVIDER â”€â”€ */
-  .divider {
-    height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
-    margin:0; border:none;
-  }
-
-  /* â”€â”€ FEATURE ROW â”€â”€ */
-  .feat { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:14px; color:rgba(255,255,255,.8); }
-  .feat i { color:#FFE600; font-size:13px; width:18px; flex-shrink:0; }
-
-  /* â”€â”€ CURSO CARD â”€â”€ */
-  .curso-card {
-    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
-    border-radius:24px; padding:32px; position:relative; overflow:hidden;
-    transition:all .35s cubic-bezier(.25,.8,.25,1);
-  }
-  .curso-card::before {
-    content:''; position:absolute; inset:0; opacity:0; transition:opacity .35s;
-    background:linear-gradient(135deg,rgba(255,230,0,.04),rgba(124,58,237,.06));
-  }
-  .curso-card:hover { transform:translateY(-6px); border-color:rgba(255,230,0,.25); box-shadow:0 24px 64px rgba(0,0,0,.5); }
-  .curso-card:hover::before { opacity:1; }
-  .curso-card.featured {
-    border-color:rgba(124,58,237,.4);
-    background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(236,72,153,.04));
-    box-shadow:0 0 40px rgba(124,58,237,.15);
-  }
-
-  /* â”€â”€ PRECIO TAG â”€â”€ */
-  .price-tag { font-family:'Outfit',sans-serif; font-weight:900; font-size:36px; color:#FFE600; letter-spacing:-1px; }
-  .price-sub { font-size:13px; color:#64748b; margin-top:2px; }
-
-  /* â”€â”€ STAT CARD â”€â”€ */
-  .stat-num { font-family:'Outfit',sans-serif; font-weight:900; font-size:clamp(36px,5vw,56px); color:#FFE600; }
-
-  /* â”€â”€ TESTIMONIAL â”€â”€ */
-  .testi-card { padding:28px; border-radius:20px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); }
-  .testi-stars { color:#FFE600; font-size:13px; letter-spacing:2px; margin-bottom:12px; }
-
-  /* â”€â”€ SCROLL REVEAL â”€â”€ */
-  .reveal { opacity:0; transform:translateY(30px); transition:all .7s cubic-bezier(.25,.8,.25,1); }
-  .reveal.visible { opacity:1; transform:none; }
-
-  /* â”€â”€ FLOATING ELEMENTS (HERO) â”€â”€ */
-  .float-med {
-    position:absolute; font-size:28px; opacity:0; pointer-events:none;
-    animation:floatMed ease-in-out infinite;
-  }
-  @keyframes floatMed {
-    0%,100% { transform:translateY(0) rotate(0deg); opacity:.35; }
-    50%      { transform:translateY(-18px) rotate(6deg); opacity:.6; }
-  }
-
-  /* â”€â”€ BOOST CARD â”€â”€ */
-  .boost-card {
-    background:linear-gradient(135deg,rgba(255,230,0,.06),rgba(236,72,153,.05),rgba(124,58,237,.08));
-    border:1px solid rgba(255,230,0,.2); border-radius:28px; padding:48px;
-    position:relative; overflow:hidden;
-  }
-  .boost-card::after {
-    content:''; position:absolute; top:-80px; right:-80px;
-    width:300px; height:300px; border-radius:50%;
-    background:radial-gradient(circle,rgba(255,230,0,.12),transparent 70%);
-    pointer-events:none;
-  }
-
-  /* â”€â”€ PULSE CARD â”€â”€ */
-  .pulse-card {
-    background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(255,230,0,.05));
-    border:1px solid rgba(124,58,237,.3); border-radius:28px; padding:48px;
-    position:relative; overflow:hidden;
-  }
-  .pulse-card::after {
-    content:''; position:absolute; top:-60px; left:-60px;
-    width:250px; height:250px; border-radius:50%;
-    background:radial-gradient(circle,rgba(124,58,237,.15),transparent 70%);
-    pointer-events:none;
-  }
-
-  /* â”€â”€ COMBO CARD â”€â”€ */
-  .combo-card {
-    padding:30px 28px; border-radius:20px; text-align:center;
-    border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);
-    cursor:pointer; transition:all .3s;
-  }
-  .combo-card:hover { border-color:rgba(255,230,0,.3); background:rgba(255,230,0,.04); transform:translateY(-4px); }
-  .combo-card.highlight { border-color:rgba(255,230,0,.4); background:rgba(255,230,0,.06); box-shadow:0 0 30px rgba(255,230,0,.1); }
-
-  /* â”€â”€ RESPONSIVE â”€â”€ */
-  @media(max-width:768px) {
-    .hero-cols { flex-direction:column !important; }
-    .hero-visual { display:none !important; }
-    .cursos-grid { grid-template-columns:1fr !important; }
-    .combos-grid { grid-template-columns:1fr !important; }
-    .stats-grid  { grid-template-columns:repeat(2,1fr) !important; }
-    .boost-grid  { grid-template-columns:1fr !important; }
-  }
-</style>
-
-<div class="club-page">
-
-<!-- BG EFFECTS -->
-<div class="radial-bg"></div>
-<div class="bg-particles" id="bgParticles"></div>
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸŽ“ HERO PRINCIPAL
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section" style="padding-top:140px;padding-bottom:80px;">
-  <div class="cx">
-    <div class="hero-cols" style="display:flex;align-items:center;gap:60px;">
-
-      <!-- LEFT: Text -->
-      <div style="flex:1;min-width:0;">
-        <span class="badge badge-gold reveal">
-          <i class="fas fa-graduation-cap"></i> Primer aÃ±o de Medicina Â· FCM UNLP
-        </span>
-
-        <h1 class="display-xl reveal" style="margin:0 0 8px;">
-          ALUMED
-        </h1>
-        <h2 class="display-md reveal" style="color:rgba(255,255,255,.55);font-weight:500;margin:0 0 24px;letter-spacing:0;">
-          AprendÃ© Medicina con el <span style="color:#FFE600;font-weight:800;">MÃ©todo Joy.</span>
-        </h2>
-
-        <p class="reveal" style="font-size:17px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:36px;max-width:520px;">
-          Cursos intensivos, herramientas inteligentes y acompaÃ±amiento personalizado para aprobar
-          <strong style="color:white;">BiologÃ­a, AnatomÃ­a</strong> e
-          <strong style="color:white;">HistologÃ­a y EmbriologÃ­a</strong>.
-        </p>
-
-        <div class="reveal" style="display:flex;flex-wrap:wrap;gap:14px;">
-          <a href="#cursos" class="btn-primary">
-            <i class="fas fa-book-open"></i> Ver cursos
-          </a>
-          <a href="#boost" class="btn-ghost">
-            <i class="fas fa-bolt"></i> Conocer ALUMED BOOST
-          </a>
-        </div>
-
-        <!-- TRUST BAR -->
-        <div class="reveal" style="margin-top:40px;padding-top:28px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-wrap:wrap;gap:24px;">
-          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
-            <i class="fas fa-users" style="color:#FFE600;"></i> +50.000 estudiantes
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
-            <i class="fas fa-star" style="color:#FFE600;"></i> 97% de satisfacciÃ³n
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
-            <i class="fas fa-shield-check" style="color:#FFE600;"></i> MÃ©todo probado
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Visual -->
-      <div class="hero-visual" style="flex:0 0 400px;height:480px;position:relative;">
-        <!-- Blob glow -->
-        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(124,58,237,.25),transparent 70%);border-radius:50%;"></div>
-
-        <!-- Central circle -->
-        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:64px;">ðŸ§ </div>
-
-        <!-- ECG ring -->
-        <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 480">
-          <circle cx="200" cy="240" r="155" fill="none" stroke="rgba(124,58,237,.2)" stroke-width="1.5" stroke-dasharray="6,8"/>
-          <circle cx="200" cy="240" r="110" fill="none" stroke="rgba(255,230,0,.12)" stroke-width="1" stroke-dasharray="4,10"/>
-        </svg>
-
-        <!-- Floating elements -->
-        <div class="float-med" style="top:8%;left:12%;animation-duration:6s;animation-delay:0s;">ðŸ§¬</div>
-        <div class="float-med" style="top:14%;right:10%;animation-duration:7.5s;animation-delay:1s;">ðŸ¦´</div>
-        <div class="float-med" style="bottom:20%;left:8%;animation-duration:8s;animation-delay:2s;">ðŸ”¬</div>
-        <div class="float-med" style="bottom:14%;right:12%;animation-duration:6.5s;animation-delay:.5s;">ðŸ“–</div>
-        <div class="float-med" style="top:40%;left:4%;animation-duration:9s;animation-delay:3s;">âš—ï¸</div>
-        <div class="float-med" style="top:35%;right:5%;animation-duration:7s;animation-delay:1.5s;">ðŸ«€</div>
-        <div class="float-med" style="bottom:35%;left:30%;font-size:20px;animation-duration:5s;animation-delay:4s;">ðŸ’Š</div>
-
-        <!-- Cards flotantes con info -->
-        <div style="position:absolute;top:5%;right:0;background:rgba(10,12,20,.9);border:1px solid rgba(255,230,0,.25);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);">
-          <div style="font-size:10px;color:#FFE600;font-weight:800;font-family:'Orbitron',sans-serif;letter-spacing:1px;">ANATOMÃA</div>
-          <div style="font-size:18px;font-weight:900;color:white;margin-top:2px;">ARS 23.300</div>
-        </div>
-        <div style="position:absolute;bottom:10%;left:0;background:rgba(10,12,20,.9);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);">
-          <div style="font-size:10px;color:#a78bfa;font-weight:800;font-family:'Orbitron',sans-serif;letter-spacing:1px;">BOOST ACTIVO</div>
-          <div style="font-size:13px;color:white;margin-top:2px;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;background:#10b981;border-radius:50%;box-shadow:0 0 6px #10b981;display:inline-block;"></span> IA Profe Joy</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸ“š CURSOS â€” SECCIÃ“N PRINCIPAL
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section" id="cursos">
-  <div class="cx">
-
-    <div class="cx-sm" style="text-align:center;padding:0;margin-bottom:60px;">
-      <span class="badge badge-violet reveal">
-        <i class="fas fa-book-medical"></i> Cursos de Medicina Â· FCM UNLP
-      </span>
-      <h2 class="display-lg reveal">ElegÃ­ la materia<br>que <span class="grad-gold">necesitÃ¡s.</span></h2>
-      <p class="reveal" style="color:rgba(255,255,255,.5);font-size:16px;margin-top:16px;line-height:1.6;">
-        Cada curso incluye tanto la cursada como el final. Docentes especializados, mÃ©todo intensivo, resultados reales.
-      </p>
-    </div>
-
-    <!-- CURSO CARDS GRID -->
-    <div class="cursos-grid reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px;">
-
-      <!-- ðŸ§¬ BIOLOGÃA -->
-      <div class="curso-card">
-        <div style="font-size:40px;margin-bottom:16px;">ðŸ§¬</div>
-        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#FFE600;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1Â° AÃ‘O FCM</div>
-        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">BiologÃ­a</h3>
-        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">Bases moleculares y celulares de la vida. Primer obstÃ¡culo del aÃ±o.</p>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Cursada completa</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Final intensivo</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Videos + PDFs + Ejercicios</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
-        <hr style="border:none;border-top:1px solid rgba(255,255,255,.07);margin:24px 0;">
-        <div class="price-tag">ARS 20.900</div>
-        <div class="price-sub">Pago Ãºnico Â· Acceso permanente</div>
-        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
-          <i class="fas fa-whatsapp"></i> Ver programa
-        </a>
-      </div>
-
-      <!-- ðŸ¦´ ANATOMÃA (destacado) -->
-      <div class="curso-card featured" style="transform:scale(1.03);">
-        <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:white;font-size:9px;font-weight:800;padding:4px 10px;border-radius:10px;letter-spacing:1px;font-family:'Orbitron',sans-serif;">MÃS VENDIDO</div>
-        <div style="font-size:40px;margin-bottom:16px;">ðŸ¦´</div>
-        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#a78bfa;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1Â° AÃ‘O FCM</div>
-        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">AnatomÃ­a</h3>
-        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">La materia mÃ¡s compleja del primer aÃ±o. Con el MÃ©todo Joy, aprobÃ¡s.</p>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Cursada completa</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Final intensivo</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Atlas digital interactivo</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Casos clÃ­nicos prÃ¡cticos</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
-        <hr style="border:none;border-top:1px solid rgba(124,58,237,.2);margin:24px 0;">
-        <div class="price-tag">ARS 23.300</div>
-        <div class="price-sub">Pago Ãºnico Â· Acceso permanente</div>
-        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-violet" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
-          <i class="fas fa-whatsapp"></i> Ver programa
-        </a>
-      </div>
-
-      <!-- ðŸ”¬ HISTOLOGÃA -->
-      <div class="curso-card">
-        <div style="font-size:40px;margin-bottom:16px;">ðŸ”¬</div>
-        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#FFE600;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1Â° AÃ‘O FCM</div>
-        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">HistologÃ­a<br><span style="font-size:18px;font-weight:700;color:rgba(255,255,255,.7);">y EmbriologÃ­a</span></h3>
-        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">MicroscopÃ­a, tejidos y desarrollo embrionario. Dominalo con imÃ¡genes.</p>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Cursada completa</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> MÃ³dulo Final intensivo</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Microscopio virtual IA</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
-        <hr style="border:none;border-top:1px solid rgba(255,255,255,.07);margin:24px 0;">
-        <div class="price-tag">ARS 24.300</div>
-        <div class="price-sub">Pago Ãºnico Â· Acceso permanente</div>
-        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
-          <i class="fas fa-whatsapp"></i> Ver programa
-        </a>
-      </div>
-
-    </div>
-
-    <!-- â”€â”€ COMBOS â”€â”€ -->
-    <div class="reveal" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:40px 32px;">
-      <div style="text-align:center;margin-bottom:32px;">
-        <span class="badge badge-gold">
-          <i class="fas fa-layer-group"></i> Combos
-        </span>
-        <h3 class="display-md" style="margin:8px 0 8px;">CombinÃ¡ materias segÃºn<br>tu situaciÃ³n acadÃ©mica.</h3>
-        <p style="color:rgba(255,255,255,.4);font-size:14px;">AhorrÃ¡ hasta un 30% eligiendo el combo ideal.</p>
-      </div>
-
-      <div class="combos-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:640px;margin:0 auto;">
-        <div class="combo-card">
-          <div style="font-size:32px;margin-bottom:12px;">ðŸ“š</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFE600;letter-spacing:1.5px;margin-bottom:6px;">COMBO 2 MATERIAS</div>
-          <div style="font-size:32px;font-weight:900;color:white;">ARS 36.500</div>
-          <div style="font-size:12px;color:#64748b;margin:4px 0 16px;"><s>ARS 44.000+</s> Â· AhorrÃ¡s +$7.500</div>
-          <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:13px;padding:10px 20px;width:100%;justify-content:center;box-sizing:border-box;">
-            Elegir materias
-          </a>
-        </div>
-        <div class="combo-card highlight">
-          <div style="font-size:32px;margin-bottom:12px;">ðŸŽ“</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFE600;letter-spacing:1.5px;margin-bottom:6px;">COMBO COMPLETO</div>
-          <div style="font-size:32px;font-weight:900;color:white;">ARS 52.900</div>
-          <div style="font-size:12px;color:#64748b;margin:4px 0 16px;"><s>ARS 68.500+</s> Â· AhorrÃ¡s +$15.600</div>
-          <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:13px;padding:10px 20px;width:100%;justify-content:center;box-sizing:border-box;">
-            Quiero todo
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸ“Š ESTADÃSTICAS
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section-sm" style="background:rgba(255,230,0,.02);">
-  <div class="cx">
-    <div class="stats-grid reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center;">
-      <div>
-        <div class="stat-num" id="stat1">0</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Estudiantes</div>
-      </div>
-      <div>
-        <div class="stat-num" id="stat2">0</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Simulacros realizados</div>
-      </div>
-      <div>
-        <div class="stat-num" id="stat3">0</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Mensajes IA / dÃ­a</div>
-      </div>
-      <div>
-        <div class="stat-num" id="stat4">0</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">SatisfacciÃ³n</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     âš¡ ALUMED BOOST
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section" id="boost">
-  <div class="cx">
-
-    <div class="boost-card reveal">
-      <div class="boost-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
-
-        <!-- Left -->
-        <div>
-          <!-- BOOST Logo Typography -->
-          <div style="margin-bottom:28px;">
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
-              <div style="width:52px;height:52px;background:linear-gradient(135deg,#FFE600,#f97316);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 24px rgba(255,230,0,.4);">âš¡</div>
-              <div>
-                <div style="font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,.5);text-transform:uppercase;">ALUMED</div>
-                <div style="font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;line-height:1;background:linear-gradient(135deg,#FFE600,#f97316,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;">BOOST</div>
-              </div>
-            </div>
-            <p style="font-size:15px;color:rgba(255,255,255,.5);margin:0;letter-spacing:2px;text-transform:uppercase;font-weight:600;">â€” Herramientas IA para estudiar mejor â€”</p>
-          </div>
-
-          <p style="font-size:17px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:28px;">
-            ActivÃ¡ tu modo estudio. IA, flashcards, simulacros y resÃºmenes automÃ¡ticos en un solo lugar.
-          </p>
-
-          <div style="margin-bottom:32px;">
-            <div class="feat"><i class="fas fa-robot"></i> Profe Joy IA â€” responde 24/7</div>
-            <div class="feat"><i class="fas fa-cards-blank"></i> Flashcards inteligentes generadas por IA</div>
-            <div class="feat"><i class="fas fa-clipboard-list"></i> Simulador de exÃ¡menes con correcciÃ³n</div>
-            <div class="feat"><i class="fas fa-file-lines"></i> ResÃºmenes automÃ¡ticos de contenido</div>
-            <div class="feat"><i class="fas fa-question-circle"></i> Generador de preguntas de parcial</div>
-            <div class="feat"><i class="fas fa-tools"></i> Todas las herramientas de estudio</div>
-          </div>
-
-          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:24px;">
-            <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:42px;color:#FFE600;letter-spacing:-1px;">ARS 6.300</span>
-            <span style="font-size:14px;color:rgba(255,255,255,.35);">/ mes</span>
-          </div>
-          <a href="/dashboard/" class="btn-primary" style="font-size:16px;padding:16px 32px;">
-            <i class="fas fa-bolt"></i> Activar BOOST
-          </a>
-        </div>
-
-        <!-- Right: Visual -->
-        <div style="position:relative;height:340px;">
-          <!-- Center glow -->
-          <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,230,0,.1),transparent 65%);border-radius:50%;"></div>
-
-          <!-- Feature pills floating -->
-          <div style="position:absolute;top:10%;left:10%;background:rgba(10,12,20,.95);border:1px solid rgba(255,230,0,.25);border-radius:14px;padding:12px 18px;">
-            <div style="font-size:20px;margin-bottom:4px;">ðŸ¤–</div>
-            <div style="font-size:12px;font-weight:800;color:white;">Profe Joy IA</div>
-            <div style="font-size:10px;color:#64748b;">Responde en segundos</div>
-          </div>
-          <div style="position:absolute;top:12%;right:5%;background:rgba(10,12,20,.95);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:12px 18px;">
-            <div style="font-size:20px;margin-bottom:4px;">ðŸƒ</div>
-            <div style="font-size:12px;font-weight:800;color:white;">Flashcards IA</div>
-            <div style="font-size:10px;color:#64748b;">Generadas por tu contenido</div>
-          </div>
-          <div style="position:absolute;top:42%;left:0;background:rgba(10,12,20,.95);border:1px solid rgba(16,185,129,.25);border-radius:14px;padding:12px 18px;">
-            <div style="font-size:20px;margin-bottom:4px;">ðŸ“Š</div>
-            <div style="font-size:12px;font-weight:800;color:white;">Simulacros</div>
-            <div style="font-size:10px;color:#64748b;">Con correcciÃ³n automÃ¡tica</div>
-          </div>
-          <div style="position:absolute;bottom:20%;right:0;background:rgba(10,12,20,.95);border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:12px 18px;">
-            <div style="font-size:20px;margin-bottom:4px;">ðŸ“</div>
-            <div style="font-size:12px;font-weight:800;color:white;">ResÃºmenes</div>
-            <div style="font-size:10px;color:#64748b;">AutomÃ¡ticos por tema</div>
-          </div>
-          <div style="position:absolute;bottom:5%;left:20%;background:rgba(10,12,20,.95);border:1px solid rgba(236,72,153,.25);border-radius:14px;padding:12px 18px;">
-            <div style="font-size:20px;margin-bottom:4px;">â“</div>
-            <div style="font-size:12px;font-weight:800;color:white;">Preguntas IA</div>
-            <div style="font-size:10px;color:#64748b;">Estilo parcial UNLP</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸ“² CONECTA FCM
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section" id="conecta">
-  <div class="cx">
-
-    <div style="text-align:center;margin-bottom:56px;">
-      <span class="badge badge-cyan reveal">
-        <i class="fas fa-satellite-dish"></i> Conecta FCM
-      </span>
-      <h2 class="display-lg reveal">Tu facultad, <span class="grad-mix">organizada.</span></h2>
-      <p class="reveal" style="color:rgba(255,255,255,.45);font-size:16px;margin-top:14px;">
-        InformaciÃ³n universitaria gratuita para estudiantes de Medicina de la FCM UNLP.
-      </p>
-    </div>
-
-    <div class="boost-grid reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-
-      <!-- FREE: Conecta FCM -->
-      <div class="glass" style="padding:40px;">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
-          <div style="width:48px;height:48px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;">ðŸŽ“</div>
-          <div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;color:#22d3ee;letter-spacing:2px;">GRATUITO</div>
-            <div style="font-size:22px;font-weight:900;color:white;">Conecta FCM</div>
-          </div>
-        </div>
-        <div style="font-size:32px;font-weight:900;color:white;margin-bottom:4px;">Gratis</div>
-        <div style="font-size:13px;color:#64748b;margin-bottom:28px;">Para todos los estudiantes de FCM</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Cartelera oficial en tiempo real</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Fechas de parciales y finales</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Biblioteca pÃºblica</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> InformaciÃ³n sobre becas</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Mapa interactivo del campus</div>
-        <div class="feat"><i class="fas fa-check-circle"></i> Horarios de cÃ¡tedras</div>
-        <a href="/conecta/" class="btn-ghost" style="margin-top:28px;width:100%;justify-content:center;box-sizing:border-box;">
-          <i class="fas fa-satellite-dish"></i> Entrar a Conecta FCM
-        </a>
-      </div>
-
-      <!-- PULSE: Conecta Pulse -->
-      <div class="pulse-card reveal" style="position:relative;">
-        <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#7c3aed,#FFE600);color:#070709;font-size:9px;font-weight:800;padding:4px 10px;border-radius:10px;letter-spacing:1px;font-family:'Orbitron',sans-serif;">PREMIUM</div>
-
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
-          <!-- Pulse Logo -->
-          <div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(255,230,0,.2));border:1px solid rgba(124,58,237,.5);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;">âš¡</div>
-          <div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;letter-spacing:2px;background:linear-gradient(135deg,#7c3aed,#FFE600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CONECTA</div>
-            <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#FFE600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">PULSE</div>
-          </div>
-        </div>
-
-        <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;font-style:italic;">
-          "Tu facultad te avisa antes de que tengas que preocuparte."
-        </p>
-
-        <div style="font-size:13px;color:#64748b;margin-bottom:28px;">PrÃ³ximamente â€” registrÃ¡ tu interÃ©s</div>
-
-        <div class="feat"><i class="fab fa-whatsapp" style="color:#25d366;"></i> WhatsApp automÃ¡tico con novedades</div>
-        <div class="feat"><i class="fas fa-bell"></i> Recordatorios de inscripciÃ³n</div>
-        <div class="feat"><i class="fab fa-google"></i> Google Calendar sincronizado</div>
-        <div class="feat"><i class="fas fa-brain"></i> Notificaciones inteligentes</div>
-        <div class="feat"><i class="fas fa-envelope"></i> Correos institucionales</div>
-        <div class="feat"><i class="fas fa-graduation-cap"></i> Seguimiento por materias</div>
-
-        <div style="margin-top:28px;padding:14px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:12px;font-size:12px;color:rgba(255,255,255,.5);">
-          <i class="fas fa-clock" style="color:#a78bfa;"></i> <strong style="color:#a78bfa;">PrÃ³ximamente.</strong> DejÃ¡ tu email y avisamos cuando estÃ© disponible.
-        </div>
-        <a href="/conecta/" class="btn-violet" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
-          <i class="fas fa-bolt"></i> Registrar interÃ©s
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸ’¬ TESTIMONIOS
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section class="section" id="testimonios">
-  <div class="cx">
-
-    <div style="text-align:center;margin-bottom:52px;">
-      <span class="badge badge-green reveal"><i class="fas fa-star"></i> Testimonios</span>
-      <h2 class="display-lg reveal">Ellos ya <span class="grad-gold">aprobaron.</span></h2>
-    </div>
-
-    <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
-
-      <div class="testi-card">
-        <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
-          "AprobÃ© AnatomÃ­a con un 8 gracias al curso de ALUMED. La Profe Joy me explicÃ³ lo que no entendÃ­a a las 2am antes del parcial. Imprescindible."
-        </p>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;">V</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">Valentina R.</div>
-            <div style="font-size:11px;color:#64748b;">1Â° aÃ±o FCM Â· AnatomÃ­a âœ“</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testi-card" style="border-color:rgba(255,230,0,.15);background:rgba(255,230,0,.02);">
-        <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
-          "El combo completo fue lo mejor que hice. PasÃ© las 3 materias en el mismo cuatrimestre. Los flashcards de Histo me salvaron literalmente."
-        </p>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFE600,#f97316);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#070709;">M</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">MatÃ­as G.</div>
-            <div style="font-size:11px;color:#64748b;">1Â° aÃ±o FCM Â· Combo completo âœ“</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testi-card">
-        <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
-          "BiologÃ­a me daba pÃ¡nico. Con ALUMED entendÃ­ todo desde cero. El mÃ©todo de Joy es diferente, te explica como una persona, no como un libro."
-        </p>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10b981,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#070709;">L</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">Luciana T.</div>
-            <div style="font-size:11px;color:#64748b;">1Â° aÃ±o FCM Â· BiologÃ­a âœ“</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ðŸŽ¯ CTA FINAL
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<section style="padding:80px 0 120px;position:relative;z-index:2;">
-  <div class="cx-sm" style="text-align:center;">
-    <div class="glass reveal" style="padding:64px 48px;">
-      <div style="font-size:48px;margin-bottom:20px;">ðŸŽ“</div>
-      <h2 class="display-lg reveal" style="margin-bottom:16px;">
-        Tu primera materia<br>aprobada empieza <span class="grad-gold">hoy.</span>
-      </h2>
-      <p class="reveal" style="font-size:16px;color:rgba(255,255,255,.5);max-width:460px;margin:0 auto 36px;line-height:1.7;">
-        MÃ¡s de 50.000 estudiantes ya eligieron ALUMED. El MÃ©todo Joy funciona.
-      </p>
-      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
-        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:16px;padding:16px 36px;">
-          <i class="fas fa-book-open"></i> Ver todos los cursos
-        </a>
-        <a href="/dashboard/" class="btn-ghost" style="font-size:16px;padding:16px 36px;">
-          <i class="fas fa-bolt"></i> Activar BOOST
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-</div><!-- .club-page -->
-
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     SCRIPTS
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-<script>
-// â”€â”€ PARTÃCULAS DE FONDO â”€â”€
-(function(){
-  const c = document.getElementById('bgParticles');
-  const cols = ['#FFE600','#7c3aed','#a78bfa','#ec4899','#22d3ee'];
-  for(let i=0;i<28;i++){
-    const d = document.createElement('div');
-    d.className = 'bp';
-    const s = 2+Math.random()*5;
-    d.style.cssText = `
-      width:${s}px;height:${s}px;
-      left:${Math.random()*100}%;
-      background:${cols[Math.floor(Math.random()*cols.length)]};
-      box-shadow:0 0 ${s*2}px currentColor;
-      animation-duration:${8+Math.random()*14}s;
-      animation-delay:${Math.random()*10}s;
-    `;
-    c.appendChild(d);
-  }
-})();
-
-// â”€â”€ SCROLL REVEAL â”€â”€
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, {threshold:.12});
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// â”€â”€ COUNTER ANIMADO â”€â”€
-function animateCount(el, target, suffix, decimals=0) {
-  let start=0, duration=2000;
-  const step = ts => {
-    if(!start) start=ts;
-    const prog = Math.min((ts-start)/duration,1);
-    const ease = 1-Math.pow(1-prog,4);
-    const val = Math.floor(ease*target);
-    el.textContent = (decimals ? val : val.toLocaleString('es-AR')) + suffix;
-    if(prog<1) requestAnimationFrame(step);
-    else el.textContent = (decimals ? target : target.toLocaleString('es-AR')) + suffix;
-  };
-  requestAnimationFrame(step);
-}
-
-const statsObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){
-      animateCount(document.getElementById('stat1'), 50000, '+');
-      animateCount(document.getElementById('stat2'), 100000, '+');
-      animateCount(document.getElementById('stat3'), 5000, '+');
-      animateCount(document.getElementById('stat4'), 97, '%');
-      statsObs.disconnect();
-    }
-  });
-},{threshold:.3});
-const statsEl = document.querySelector('.stats-grid');
-if(statsEl) statsObs.observe(statsEl);
-
-// â”€â”€ SMOOTH SCROLL â”€â”€
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
-  });
-});
-</script>
-{% endblock %}
-
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ALUMED ââ‚¬" Cursos de Medicina · Primer Año FCM UNLP{% endblock %}
+{% block meta_description %}Cursos intensivos de Biología, Anatomía e Histología para el primer año de Medicina en la UNLP. Método Joy. ALUMED BOOST y Conecta FCM.{% endblock %}
+
+{% block content %}
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     ESTILOS GLOBALES DE LA PÀƒÂGINA
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<style>
+  :root {
+    --gold:    #FFE600;
+    --gold2:   #d4af37;
+    --violet:  #7c3aed;
+    --violet2: #a78bfa;
+    --pink:    #ec4899;
+    --bg:      #070709;
+    --surface: rgba(255,255,255,.03);
+    --border:  rgba(255,255,255,.07);
+  }
+
+  /* â"â‚¬â"â‚¬ RESET SECCIÀƒ"N â"â‚¬â"â‚¬ */
+  .club-page { background: var(--bg); min-height: 100vh; font-family: 'Outfit',sans-serif; overflow-x:hidden; }
+
+  /* â"â‚¬â"â‚¬ PARTÀƒÂCULAS DE FONDO â"â‚¬â"â‚¬ */
+  .bg-particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .bp { position:absolute; border-radius:50%; opacity:0; animation:bpFloat linear infinite; }
+  @keyframes bpFloat {
+    0%   { transform:translateY(100vh) scale(0); opacity:0; }
+    5%   { opacity:.5; }
+    95%  { opacity:.2; }
+    100% { transform:translateY(-10vh) scale(1.5); opacity:0; }
+  }
+
+  /* â"â‚¬â"â‚¬ GRID RADIAL â"â‚¬â"â‚¬ */
+  .radial-bg {
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124,58,237,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,230,0,.06) 0%, transparent 55%);
+  }
+
+  /* â"â‚¬â"â‚¬ CONTENEDOR â"â‚¬â"â‚¬ */
+  .cx { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:2; }
+  .cx-sm { max-width:760px; margin:0 auto; padding:0 24px; position:relative; z-index:2; }
+
+  /* â"â‚¬â"â‚¬ BADGE â"â‚¬â"â‚¬ */
+  .badge {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 14px; border-radius:20px; font-size:11px; font-weight:800;
+    letter-spacing:.8px; text-transform:uppercase; font-family:'Orbitron',sans-serif;
+    border:1px solid; margin-bottom:18px;
+  }
+  .badge-gold   { background:rgba(255,230,0,.1);   border-color:rgba(255,230,0,.3);   color:#FFE600; }
+  .badge-violet { background:rgba(124,58,237,.12); border-color:rgba(124,58,237,.35); color:#a78bfa; }
+  .badge-cyan   { background:rgba(34,211,238,.1);  border-color:rgba(34,211,238,.3);  color:#22d3ee; }
+  .badge-green  { background:rgba(16,185,129,.1);  border-color:rgba(16,185,129,.3);  color:#10b981; }
+
+  /* â"â‚¬â"â‚¬ TÀƒÂTULOS â"â‚¬â"â‚¬ */
+  .display-xl {
+    font-family:'Outfit',sans-serif; font-weight:900; line-height:1.05;
+    font-size:clamp(52px,7vw,88px); letter-spacing:-2px; color:white;
+  }
+  .display-lg {
+    font-family:'Outfit',sans-serif; font-weight:900; line-height:1.1;
+    font-size:clamp(32px,4.5vw,58px); letter-spacing:-1px; color:white;
+  }
+  .display-md {
+    font-family:'Outfit',sans-serif; font-weight:800; line-height:1.2;
+    font-size:clamp(22px,3vw,36px); color:white;
+  }
+  .grad-gold   { background:linear-gradient(135deg,#FFE600,#f5c842,#d4af37);     -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .grad-violet { background:linear-gradient(135deg,#7c3aed,#a78bfa,#ec4899);     -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .grad-mix    { background:linear-gradient(135deg,#FFE600 0%,#f5c842 40%,#a78bfa 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+  /* â"â‚¬â"â‚¬ BOTONES â"â‚¬â"â‚¬ */
+  .btn-primary {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 28px; border-radius:12px; font-weight:800; font-size:15px;
+    background:linear-gradient(135deg,#FFE600,#d4af37); color:#070709;
+    border:none; cursor:pointer; transition:all .25s;
+    box-shadow:0 0 30px rgba(255,230,0,.25);
+    font-family:'Outfit',sans-serif; text-decoration:none;
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 45px rgba(255,230,0,.4); }
+
+  .btn-ghost {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 28px; border-radius:12px; font-weight:700; font-size:15px;
+    background:rgba(255,255,255,.05); color:white;
+    border:1px solid rgba(255,255,255,.12); cursor:pointer; transition:all .25s;
+    font-family:'Outfit',sans-serif; text-decoration:none;
+  }
+  .btn-ghost:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); transform:translateY(-2px); }
+
+  .btn-violet {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 28px; border-radius:12px; font-weight:800; font-size:15px;
+    background:linear-gradient(135deg,#7c3aed,#a855f7); color:white;
+    border:none; cursor:pointer; transition:all .25s;
+    box-shadow:0 0 30px rgba(124,58,237,.3);
+    font-family:'Outfit',sans-serif; text-decoration:none;
+  }
+  .btn-violet:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(124,58,237,.5); }
+
+  /* â"â‚¬â"â‚¬ GLASS CARD â"â‚¬â"â‚¬ */
+  .glass {
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px; backdrop-filter:blur(12px);
+    transition:all .3s;
+  }
+  .glass:hover { border-color:rgba(255,255,255,.14); transform:translateY(-3px); box-shadow:0 20px 60px rgba(0,0,0,.4); }
+
+  /* â"â‚¬â"â‚¬ SECTION SPACING â"â‚¬â"â‚¬ */
+  .section { padding:100px 0; position:relative; z-index:2; }
+  .section-sm { padding:60px 0; position:relative; z-index:2; }
+
+  /* â"â‚¬â"â‚¬ DIVIDER â"â‚¬â"â‚¬ */
+  .divider {
+    height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+    margin:0; border:none;
+  }
+
+  /* â"â‚¬â"â‚¬ FEATURE ROW â"â‚¬â"â‚¬ */
+  .feat { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:14px; color:rgba(255,255,255,.8); }
+  .feat i { color:#FFE600; font-size:13px; width:18px; flex-shrink:0; }
+
+  /* â"â‚¬â"â‚¬ CURSO CARD â"â‚¬â"â‚¬ */
+  .curso-card {
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+    border-radius:24px; padding:32px; position:relative; overflow:hidden;
+    transition:all .35s cubic-bezier(.25,.8,.25,1);
+  }
+  .curso-card::before {
+    content:''; position:absolute; inset:0; opacity:0; transition:opacity .35s;
+    background:linear-gradient(135deg,rgba(255,230,0,.04),rgba(124,58,237,.06));
+  }
+  .curso-card:hover { transform:translateY(-6px); border-color:rgba(255,230,0,.25); box-shadow:0 24px 64px rgba(0,0,0,.5); }
+  .curso-card:hover::before { opacity:1; }
+  .curso-card.featured {
+    border-color:rgba(124,58,237,.4);
+    background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(236,72,153,.04));
+    box-shadow:0 0 40px rgba(124,58,237,.15);
+  }
+
+  /* â"â‚¬â"â‚¬ PRECIO TAG â"â‚¬â"â‚¬ */
+  .price-tag { font-family:'Outfit',sans-serif; font-weight:900; font-size:36px; color:#FFE600; letter-spacing:-1px; }
+  .price-sub { font-size:13px; color:#64748b; margin-top:2px; }
+
+  /* â"â‚¬â"â‚¬ STAT CARD â"â‚¬â"â‚¬ */
+  .stat-num { font-family:'Outfit',sans-serif; font-weight:900; font-size:clamp(36px,5vw,56px); color:#FFE600; }
+
+  /* â"â‚¬â"â‚¬ TESTIMONIAL â"â‚¬â"â‚¬ */
+  .testi-card { padding:28px; border-radius:20px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); }
+  .testi-stars { color:#FFE600; font-size:13px; letter-spacing:2px; margin-bottom:12px; }
+
+  /* â"â‚¬â"â‚¬ SCROLL REVEAL â"â‚¬â"â‚¬ */
+  .reveal { opacity:0; transform:translateY(30px); transition:all .7s cubic-bezier(.25,.8,.25,1); }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* â"â‚¬â"â‚¬ FLOATING ELEMENTS (HERO) â"â‚¬â"â‚¬ */
+  .float-med {
+    position:absolute; font-size:28px; opacity:0; pointer-events:none;
+    animation:floatMed ease-in-out infinite;
+  }
+  @keyframes floatMed {
+    0%,100% { transform:translateY(0) rotate(0deg); opacity:.35; }
+    50%      { transform:translateY(-18px) rotate(6deg); opacity:.6; }
+  }
+
+  /* â"â‚¬â"â‚¬ BOOST CARD â"â‚¬â"â‚¬ */
+  .boost-card {
+    background:linear-gradient(135deg,rgba(255,230,0,.06),rgba(236,72,153,.05),rgba(124,58,237,.08));
+    border:1px solid rgba(255,230,0,.2); border-radius:28px; padding:48px;
+    position:relative; overflow:hidden;
+  }
+  .boost-card::after {
+    content:''; position:absolute; top:-80px; right:-80px;
+    width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle,rgba(255,230,0,.12),transparent 70%);
+    pointer-events:none;
+  }
+
+  /* â"â‚¬â"â‚¬ PULSE CARD â"â‚¬â"â‚¬ */
+  .pulse-card {
+    background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(255,230,0,.05));
+    border:1px solid rgba(124,58,237,.3); border-radius:28px; padding:48px;
+    position:relative; overflow:hidden;
+  }
+  .pulse-card::after {
+    content:''; position:absolute; top:-60px; left:-60px;
+    width:250px; height:250px; border-radius:50%;
+    background:radial-gradient(circle,rgba(124,58,237,.15),transparent 70%);
+    pointer-events:none;
+  }
+
+  /* â"â‚¬â"â‚¬ COMBO CARD â"â‚¬â"â‚¬ */
+  .combo-card {
+    padding:30px 28px; border-radius:20px; text-align:center;
+    border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);
+    cursor:pointer; transition:all .3s;
+  }
+  .combo-card:hover { border-color:rgba(255,230,0,.3); background:rgba(255,230,0,.04); transform:translateY(-4px); }
+  .combo-card.highlight { border-color:rgba(255,230,0,.4); background:rgba(255,230,0,.06); box-shadow:0 0 30px rgba(255,230,0,.1); }
+
+  /* â"â‚¬â"â‚¬ RESPONSIVE â"â‚¬â"â‚¬ */
+  @media(max-width:768px) {
+    .hero-cols { flex-direction:column !important; }
+    .hero-visual { display:none !important; }
+    .cursos-grid { grid-template-columns:1fr !important; }
+    .combos-grid { grid-template-columns:1fr !important; }
+    .stats-grid  { grid-template-columns:repeat(2,1fr) !important; }
+    .boost-grid  { grid-template-columns:1fr !important; }
+  }
+</style>
+
+<div class="club-page">
+
+<!-- BG EFFECTS -->
+<div class="radial-bg"></div>
+<div class="bg-particles" id="bgParticles"></div>
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸Å½" HERO PRINCIPAL
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section" style="padding-top:140px;padding-bottom:80px;">
+  <div class="cx">
+    <div class="hero-cols" style="display:flex;align-items:center;gap:60px;">
+
+      <!-- LEFT: Text -->
+      <div style="flex:1;min-width:0;">
+        <span class="badge badge-gold reveal">
+          <i class="fas fa-graduation-cap"></i> Primer año de Medicina · FCM UNLP
+        </span>
+
+        <h1 class="display-xl reveal" style="margin:0 0 8px;">
+          ALUMED
+        </h1>
+        <h2 class="display-md reveal" style="color:rgba(255,255,255,.55);font-weight:500;margin:0 0 24px;letter-spacing:0;">
+          Aprendé Medicina con el <span style="color:#FFE600;font-weight:800;">Método Joy.</span>
+        </h2>
+
+        <p class="reveal" style="font-size:17px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:36px;max-width:520px;">
+          Cursos intensivos, herramientas inteligentes y acompañamiento personalizado para aprobar
+          <strong style="color:white;">Biología, Anatomía</strong> e
+          <strong style="color:white;">Histología y Embriología</strong>.
+        </p>
+
+        <div class="reveal" style="display:flex;flex-wrap:wrap;gap:14px;">
+          <a href="#cursos" class="btn-primary">
+            <i class="fas fa-book-open"></i> Ver cursos
+          </a>
+          <a href="#boost" class="btn-ghost">
+            <i class="fas fa-bolt"></i> Conocer ALUMED BOOST
+          </a>
+        </div>
+
+        <!-- TRUST BAR -->
+        <div class="reveal" style="margin-top:40px;padding-top:28px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-wrap:wrap;gap:24px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
+            <i class="fas fa-users" style="color:#FFE600;"></i> +50.000 estudiantes
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
+            <i class="fas fa-star" style="color:#FFE600;"></i> 97% de satisfacción
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.5);">
+            <i class="fas fa-shield-check" style="color:#FFE600;"></i> Método probado
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Visual -->
+      <div class="hero-visual" style="flex:0 0 400px;height:480px;position:relative;">
+        <!-- Blob glow -->
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(124,58,237,.25),transparent 70%);border-radius:50%;"></div>
+
+        <!-- Central circle -->
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:64px;">À°Å¸Â§Â </div>
+
+        <!-- ECG ring -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 480">
+          <circle cx="200" cy="240" r="155" fill="none" stroke="rgba(124,58,237,.2)" stroke-width="1.5" stroke-dasharray="6,8"/>
+          <circle cx="200" cy="240" r="110" fill="none" stroke="rgba(255,230,0,.12)" stroke-width="1" stroke-dasharray="4,10"/>
+        </svg>
+
+        <!-- Floating elements -->
+        <div class="float-med" style="top:8%;left:12%;animation-duration:6s;animation-delay:0s;">À°Å¸Â§Â¬</div>
+        <div class="float-med" style="top:14%;right:10%;animation-duration:7.5s;animation-delay:1s;">À°Å¸Â¦Â´</div>
+        <div class="float-med" style="bottom:20%;left:8%;animation-duration:8s;animation-delay:2s;">À°Å¸"Â¬</div>
+        <div class="float-med" style="bottom:14%;right:12%;animation-duration:6.5s;animation-delay:.5s;">À°Å¸""“</div>
+        <div class="float-med" style="top:40%;left:4%;animation-duration:9s;animation-delay:3s;">âÅ¡"”ïÂ¸Â</div>
+        <div class="float-med" style="top:35%;right:5%;animation-duration:7s;animation-delay:1.5s;">À°Å¸Â«â‚¬</div>
+        <div class="float-med" style="bottom:35%;left:30%;font-size:20px;animation-duration:5s;animation-delay:4s;">À°Å¸'Å </div>
+
+        <!-- Cards flotantes con info -->
+        <div style="position:absolute;top:5%;right:0;background:rgba(10,12,20,.9);border:1px solid rgba(255,230,0,.25);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);">
+          <div style="font-size:10px;color:#FFE600;font-weight:800;font-family:'Orbitron',sans-serif;letter-spacing:1px;">ANATOMÀƒÂA</div>
+          <div style="font-size:18px;font-weight:900;color:white;margin-top:2px;">ARS 23.300</div>
+        </div>
+        <div style="position:absolute;bottom:10%;left:0;background:rgba(10,12,20,.9);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);">
+          <div style="font-size:10px;color:#a78bfa;font-weight:800;font-family:'Orbitron',sans-serif;letter-spacing:1px;">BOOST ACTIVO</div>
+          <div style="font-size:13px;color:white;margin-top:2px;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;background:#10b981;border-radius:50%;box-shadow:0 0 6px #10b981;display:inline-block;"></span> IA Profe Joy</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸"Å¡ CURSOS ââ‚¬" SECCIÀƒ"N PRINCIPAL
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section" id="cursos">
+  <div class="cx">
+
+    <div class="cx-sm" style="text-align:center;padding:0;margin-bottom:60px;">
+      <span class="badge badge-violet reveal">
+        <i class="fas fa-book-medical"></i> Cursos de Medicina · FCM UNLP
+      </span>
+      <h2 class="display-lg reveal">Elegí la materia<br>que <span class="grad-gold">necesitás.</span></h2>
+      <p class="reveal" style="color:rgba(255,255,255,.5);font-size:16px;margin-top:16px;line-height:1.6;">
+        Cada curso incluye tanto la cursada como el final. Docentes especializados, método intensivo, resultados reales.
+      </p>
+    </div>
+
+    <!-- CURSO CARDS GRID -->
+    <div class="cursos-grid reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px;">
+
+      <!-- À°Å¸Â§Â¬ BIOLOGÀƒÂA -->
+      <div class="curso-card">
+        <div style="font-size:40px;margin-bottom:16px;">À°Å¸Â§Â¬</div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#FFE600;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1À‚° AÀƒ"˜O FCM</div>
+        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">Biología</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">Bases moleculares y celulares de la vida. Primer obstáculo del año.</p>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Cursada completa</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Final intensivo</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Videos + PDFs + Ejercicios</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,.07);margin:24px 0;">
+        <div class="price-tag">ARS 20.900</div>
+        <div class="price-sub">Pago único · Acceso permanente</div>
+        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
+          <i class="fas fa-whatsapp"></i> Ver programa
+        </a>
+      </div>
+
+      <!-- À°Å¸Â¦Â´ ANATOMÀƒÂA (destacado) -->
+      <div class="curso-card featured" style="transform:scale(1.03);">
+        <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:white;font-size:9px;font-weight:800;padding:4px 10px;border-radius:10px;letter-spacing:1px;font-family:'Orbitron',sans-serif;">MÀƒÂS VENDIDO</div>
+        <div style="font-size:40px;margin-bottom:16px;">À°Å¸Â¦Â´</div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#a78bfa;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1À‚° AÀƒ"˜O FCM</div>
+        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">Anatomía</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">La materia más compleja del primer año. Con el Método Joy, aprobás.</p>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Cursada completa</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Final intensivo</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Atlas digital interactivo</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Casos clínicos prácticos</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
+        <hr style="border:none;border-top:1px solid rgba(124,58,237,.2);margin:24px 0;">
+        <div class="price-tag">ARS 23.300</div>
+        <div class="price-sub">Pago único · Acceso permanente</div>
+        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-violet" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
+          <i class="fas fa-whatsapp"></i> Ver programa
+        </a>
+      </div>
+
+      <!-- À°Å¸"Â¬ HISTOLOGÀƒÂA -->
+      <div class="curso-card">
+        <div style="font-size:40px;margin-bottom:16px;">À°Å¸"Â¬</div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#FFE600;font-family:'Orbitron',sans-serif;margin-bottom:6px;">1À‚° AÀƒ"˜O FCM</div>
+        <h3 style="font-size:26px;font-weight:900;color:white;margin:0 0 6px;">Histología<br><span style="font-size:18px;font-weight:700;color:rgba(255,255,255,.7);">y Embriología</span></h3>
+        <p style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5;">Microscopía, tejidos y desarrollo embrionario. Dominalo con imágenes.</p>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Cursada completa</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Módulo Final intensivo</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Microscopio virtual IA</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Soporte con la Profe Joy</div>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,.07);margin:24px 0;">
+        <div class="price-tag">ARS 24.300</div>
+        <div class="price-sub">Pago único · Acceso permanente</div>
+        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
+          <i class="fas fa-whatsapp"></i> Ver programa
+        </a>
+      </div>
+
+    </div>
+
+    <!-- â"â‚¬â"â‚¬ COMBOS â"â‚¬â"â‚¬ -->
+    <div class="reveal" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:40px 32px;">
+      <div style="text-align:center;margin-bottom:32px;">
+        <span class="badge badge-gold">
+          <i class="fas fa-layer-group"></i> Combos
+        </span>
+        <h3 class="display-md" style="margin:8px 0 8px;">Combiná materias según<br>tu situación académica.</h3>
+        <p style="color:rgba(255,255,255,.4);font-size:14px;">Ahorrá hasta un 30% eligiendo el combo ideal.</p>
+      </div>
+
+      <div class="combos-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:640px;margin:0 auto;">
+        <div class="combo-card">
+          <div style="font-size:32px;margin-bottom:12px;">À°Å¸"Å¡</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFE600;letter-spacing:1.5px;margin-bottom:6px;">COMBO 2 MATERIAS</div>
+          <div style="font-size:32px;font-weight:900;color:white;">ARS 36.500</div>
+          <div style="font-size:12px;color:#64748b;margin:4px 0 16px;"><s>ARS 44.000+</s> · Ahorrás +$7.500</div>
+          <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:13px;padding:10px 20px;width:100%;justify-content:center;box-sizing:border-box;">
+            Elegir materias
+          </a>
+        </div>
+        <div class="combo-card highlight">
+          <div style="font-size:32px;margin-bottom:12px;">À°Å¸Å½"</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#FFE600;letter-spacing:1.5px;margin-bottom:6px;">COMBO COMPLETO</div>
+          <div style="font-size:32px;font-weight:900;color:white;">ARS 52.900</div>
+          <div style="font-size:12px;color:#64748b;margin:4px 0 16px;"><s>ARS 68.500+</s> · Ahorrás +$15.600</div>
+          <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:13px;padding:10px 20px;width:100%;justify-content:center;box-sizing:border-box;">
+            Quiero todo
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸"Å  ESTADÀƒÂSTICAS
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section-sm" style="background:rgba(255,230,0,.02);">
+  <div class="cx">
+    <div class="stats-grid reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center;">
+      <div>
+        <div class="stat-num" id="stat1">0</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Estudiantes</div>
+      </div>
+      <div>
+        <div class="stat-num" id="stat2">0</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Simulacros realizados</div>
+      </div>
+      <div>
+        <div class="stat-num" id="stat3">0</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Mensajes IA / día</div>
+      </div>
+      <div>
+        <div class="stat-num" id="stat4">0</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;">Satisfacción</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     âÅ¡¡ ALUMED BOOST
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section" id="boost">
+  <div class="cx">
+
+    <div class="boost-card reveal">
+      <div class="boost-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
+
+        <!-- Left -->
+        <div>
+          <!-- BOOST Logo Typography -->
+          <div style="margin-bottom:28px;">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
+              <div style="width:52px;height:52px;background:linear-gradient(135deg,#FFE600,#f97316);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 24px rgba(255,230,0,.4);">âÅ¡¡</div>
+              <div>
+                <div style="font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,.5);text-transform:uppercase;">ALUMED</div>
+                <div style="font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;line-height:1;background:linear-gradient(135deg,#FFE600,#f97316,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;">BOOST</div>
+              </div>
+            </div>
+            <p style="font-size:15px;color:rgba(255,255,255,.5);margin:0;letter-spacing:2px;text-transform:uppercase;font-weight:600;">ââ‚¬" Herramientas IA para estudiar mejor ââ‚¬"</p>
+          </div>
+
+          <p style="font-size:17px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:28px;">
+            Activá tu modo estudio. IA, flashcards, simulacros y resúmenes automáticos en un solo lugar.
+          </p>
+
+          <div style="margin-bottom:32px;">
+            <div class="feat"><i class="fas fa-robot"></i> Profe Joy IA ââ‚¬" responde 24/7</div>
+            <div class="feat"><i class="fas fa-cards-blank"></i> Flashcards inteligentes generadas por IA</div>
+            <div class="feat"><i class="fas fa-clipboard-list"></i> Simulador de exámenes con corrección</div>
+            <div class="feat"><i class="fas fa-file-lines"></i> Resúmenes automáticos de contenido</div>
+            <div class="feat"><i class="fas fa-question-circle"></i> Generador de preguntas de parcial</div>
+            <div class="feat"><i class="fas fa-tools"></i> Todas las herramientas de estudio</div>
+          </div>
+
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:24px;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:42px;color:#FFE600;letter-spacing:-1px;">ARS 6.300</span>
+            <span style="font-size:14px;color:rgba(255,255,255,.35);">/ mes</span>
+          </div>
+          <a href="/dashboard/" class="btn-primary" style="font-size:16px;padding:16px 32px;">
+            <i class="fas fa-bolt"></i> Activar BOOST
+          </a>
+        </div>
+
+        <!-- Right: Visual -->
+        <div style="position:relative;height:340px;">
+          <!-- Center glow -->
+          <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,230,0,.1),transparent 65%);border-radius:50%;"></div>
+
+          <!-- Feature pills floating -->
+          <div style="position:absolute;top:10%;left:10%;background:rgba(10,12,20,.95);border:1px solid rgba(255,230,0,.25);border-radius:14px;padding:12px 18px;">
+            <div style="font-size:20px;margin-bottom:4px;">À°Å¸Â¤"“</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Profe Joy IA</div>
+            <div style="font-size:10px;color:#64748b;">Responde en segundos</div>
+          </div>
+          <div style="position:absolute;top:12%;right:5%;background:rgba(10,12,20,.95);border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:12px 18px;">
+            <div style="font-size:20px;margin-bottom:4px;">À°Å¸Æ’Â</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Flashcards IA</div>
+            <div style="font-size:10px;color:#64748b;">Generadas por tu contenido</div>
+          </div>
+          <div style="position:absolute;top:42%;left:0;background:rgba(10,12,20,.95);border:1px solid rgba(16,185,129,.25);border-radius:14px;padding:12px 18px;">
+            <div style="font-size:20px;margin-bottom:4px;">À°Å¸"Å </div>
+            <div style="font-size:12px;font-weight:800;color:white;">Simulacros</div>
+            <div style="font-size:10px;color:#64748b;">Con corrección automática</div>
+          </div>
+          <div style="position:absolute;bottom:20%;right:0;background:rgba(10,12,20,.95);border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:12px 18px;">
+            <div style="font-size:20px;margin-bottom:4px;">À°Å¸"Â</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Resúmenes</div>
+            <div style="font-size:10px;color:#64748b;">Automáticos por tema</div>
+          </div>
+          <div style="position:absolute;bottom:5%;left:20%;background:rgba(10,12,20,.95);border:1px solid rgba(236,72,153,.25);border-radius:14px;padding:12px 18px;">
+            <div style="font-size:20px;margin-bottom:4px;">âÂ"</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Preguntas IA</div>
+            <div style="font-size:10px;color:#64748b;">Estilo parcial UNLP</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸"Â² CONECTA FCM
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section" id="conecta">
+  <div class="cx">
+
+    <div style="text-align:center;margin-bottom:56px;">
+      <span class="badge badge-cyan reveal">
+        <i class="fas fa-satellite-dish"></i> Conecta FCM
+      </span>
+      <h2 class="display-lg reveal">Tu facultad, <span class="grad-mix">organizada.</span></h2>
+      <p class="reveal" style="color:rgba(255,255,255,.45);font-size:16px;margin-top:14px;">
+        Información universitaria gratuita para estudiantes de Medicina de la FCM UNLP.
+      </p>
+    </div>
+
+    <div class="boost-grid reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+
+      <!-- FREE: Conecta FCM -->
+      <div class="glass" style="padding:40px;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div style="width:48px;height:48px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;">À°Å¸Å½"</div>
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;color:#22d3ee;letter-spacing:2px;">GRATUITO</div>
+            <div style="font-size:22px;font-weight:900;color:white;">Conecta FCM</div>
+          </div>
+        </div>
+        <div style="font-size:32px;font-weight:900;color:white;margin-bottom:4px;">Gratis</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:28px;">Para todos los estudiantes de FCM</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Cartelera oficial en tiempo real</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Fechas de parciales y finales</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Biblioteca pública</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Información sobre becas</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Mapa interactivo del campus</div>
+        <div class="feat"><i class="fas fa-check-circle"></i> Horarios de cátedras</div>
+        <a href="/conecta/" class="btn-ghost" style="margin-top:28px;width:100%;justify-content:center;box-sizing:border-box;">
+          <i class="fas fa-satellite-dish"></i> Entrar a Conecta FCM
+        </a>
+      </div>
+
+      <!-- PULSE: Conecta Pulse -->
+      <div class="pulse-card reveal" style="position:relative;">
+        <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#7c3aed,#FFE600);color:#070709;font-size:9px;font-weight:800;padding:4px 10px;border-radius:10px;letter-spacing:1px;font-family:'Orbitron',sans-serif;">PREMIUM</div>
+
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <!-- Pulse Logo -->
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(255,230,0,.2));border:1px solid rgba(124,58,237,.5);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;">âÅ¡¡</div>
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;letter-spacing:2px;background:linear-gradient(135deg,#7c3aed,#FFE600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CONECTA</div>
+            <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#FFE600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">PULSE</div>
+          </div>
+        </div>
+
+        <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;font-style:italic;">
+          "Tu facultad te avisa antes de que tengas que preocuparte."
+        </p>
+
+        <div style="font-size:13px;color:#64748b;margin-bottom:28px;">Próximamente ââ‚¬" registrá tu interés</div>
+
+        <div class="feat"><i class="fab fa-whatsapp" style="color:#25d366;"></i> WhatsApp automático con novedades</div>
+        <div class="feat"><i class="fas fa-bell"></i> Recordatorios de inscripción</div>
+        <div class="feat"><i class="fab fa-google"></i> Google Calendar sincronizado</div>
+        <div class="feat"><i class="fas fa-brain"></i> Notificaciones inteligentes</div>
+        <div class="feat"><i class="fas fa-envelope"></i> Correos institucionales</div>
+        <div class="feat"><i class="fas fa-graduation-cap"></i> Seguimiento por materias</div>
+
+        <div style="margin-top:28px;padding:14px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:12px;font-size:12px;color:rgba(255,255,255,.5);">
+          <i class="fas fa-clock" style="color:#a78bfa;"></i> <strong style="color:#a78bfa;">Próximamente.</strong> Dejá tu email y avisamos cuando esté disponible.
+        </div>
+        <a href="/conecta/" class="btn-violet" style="margin-top:20px;width:100%;justify-content:center;box-sizing:border-box;">
+          <i class="fas fa-bolt"></i> Registrar interés
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸'Â¬ TESTIMONIOS
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section class="section" id="testimonios">
+  <div class="cx">
+
+    <div style="text-align:center;margin-bottom:52px;">
+      <span class="badge badge-green reveal"><i class="fas fa-star"></i> Testimonios</span>
+      <h2 class="display-lg reveal">Ellos ya <span class="grad-gold">aprobaron.</span></h2>
+    </div>
+
+    <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+
+      <div class="testi-card">
+        <div class="testi-stars">âËœ"¦âËœ"¦âËœ"¦âËœ"¦âËœ"¦</div>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
+          "Aprobé Anatomía con un 8 gracias al curso de ALUMED. La Profe Joy me explicó lo que no entendía a las 2am antes del parcial. Imprescindible."
+        </p>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;">V</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:white;">Valentina R.</div>
+            <div style="font-size:11px;color:#64748b;">1À‚° año FCM · Anatomía âÅ“"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card" style="border-color:rgba(255,230,0,.15);background:rgba(255,230,0,.02);">
+        <div class="testi-stars">âËœ"¦âËœ"¦âËœ"¦âËœ"¦âËœ"¦</div>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
+          "El combo completo fue lo mejor que hice. Pasé las 3 materias en el mismo cuatrimestre. Los flashcards de Histo me salvaron literalmente."
+        </p>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFE600,#f97316);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#070709;">M</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:white;">Matías G.</div>
+            <div style="font-size:11px;color:#64748b;">1À‚° año FCM · Combo completo âÅ“"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">âËœ"¦âËœ"¦âËœ"¦âËœ"¦âËœ"¦</div>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:18px;">
+          "Biología me daba pánico. Con ALUMED entendí todo desde cero. El método de Joy es diferente, te explica como una persona, no como un libro."
+        </p>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10b981,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#070709;">L</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:white;">Luciana T.</div>
+            <div style="font-size:11px;color:#64748b;">1À‚° año FCM · Biología âÅ“"</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     À°Å¸Å½Â¯ CTA FINAL
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<section style="padding:80px 0 120px;position:relative;z-index:2;">
+  <div class="cx-sm" style="text-align:center;">
+    <div class="glass reveal" style="padding:64px 48px;">
+      <div style="font-size:48px;margin-bottom:20px;">À°Å¸Å½"</div>
+      <h2 class="display-lg reveal" style="margin-bottom:16px;">
+        Tu primera materia<br>aprobada empieza <span class="grad-gold">hoy.</span>
+      </h2>
+      <p class="reveal" style="font-size:16px;color:rgba(255,255,255,.5);max-width:460px;margin:0 auto 36px;line-height:1.7;">
+        Más de 50.000 estudiantes ya eligieron ALUMED. El Método Joy funciona.
+      </p>
+      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
+        <a href="https://wa.me/542215448983?text=Hola!%20Quiero%20conocer%20el%20programa%20del%20curso%20ALUMED%20%F0%9F%8E%93" target="_blank" rel="noopener" class="btn-primary" style="font-size:16px;padding:16px 36px;">
+          <i class="fas fa-book-open"></i> Ver todos los cursos
+        </a>
+        <a href="/dashboard/" class="btn-ghost" style="font-size:16px;padding:16px 36px;">
+          <i class="fas fa-bolt"></i> Activar BOOST
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- .club-page -->
+
+<!-- â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â
+     SCRIPTS
+â"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Ââ"¢Â -->
+<script>
+// â"â‚¬â"â‚¬ PARTÀƒÂCULAS DE FONDO â"â‚¬â"â‚¬
+(function(){
+  const c = document.getElementById('bgParticles');
+  const cols = ['#FFE600','#7c3aed','#a78bfa','#ec4899','#22d3ee'];
+  for(let i=0;i<28;i++){
+    const d = document.createElement('div');
+    d.className = 'bp';
+    const s = 2+Math.random()*5;
+    d.style.cssText = `
+      width:${s}px;height:${s}px;
+      left:${Math.random()*100}%;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      box-shadow:0 0 ${s*2}px currentColor;
+      animation-duration:${8+Math.random()*14}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    c.appendChild(d);
+  }
+})();
+
+// â"â‚¬â"â‚¬ SCROLL REVEAL â"â‚¬â"â‚¬
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// â"â‚¬â"â‚¬ COUNTER ANIMADO â"â‚¬â"â‚¬
+function animateCount(el, target, suffix, decimals=0) {
+  let start=0, duration=2000;
+  const step = ts => {
+    if(!start) start=ts;
+    const prog = Math.min((ts-start)/duration,1);
+    const ease = 1-Math.pow(1-prog,4);
+    const val = Math.floor(ease*target);
+    el.textContent = (decimals ? val : val.toLocaleString('es-AR')) + suffix;
+    if(prog<1) requestAnimationFrame(step);
+    else el.textContent = (decimals ? target : target.toLocaleString('es-AR')) + suffix;
+  };
+  requestAnimationFrame(step);
+}
+
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      animateCount(document.getElementById('stat1'), 50000, '+');
+      animateCount(document.getElementById('stat2'), 100000, '+');
+      animateCount(document.getElementById('stat3'), 5000, '+');
+      animateCount(document.getElementById('stat4'), 97, '%');
+      statsObs.disconnect();
+    }
+  });
+},{threshold:.3});
+const statsEl = document.querySelector('.stats-grid');
+if(statsEl) statsObs.observe(statsEl);
+
+// â"â‚¬â"â‚¬ SMOOTH SCROLL â"â‚¬â"â‚¬
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+</script>
+{% endblock %}
+
