@@ -5026,7 +5026,12 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   width: auto; object-fit: contain;
   display: block; pointer-events: none; user-select: none;
   will-change: transform, filter;
-  opacity: 0; /* GSAP handles entry */
+  opacity: 0; /* GSAP handles entry — fallback below */
+  transition: opacity 1.2s ease; /* safety: CSS transition as fallback */
+}
+/* GSAP-fallback: if JS never runs, spine fades in after 0.5s via CSS */
+.ao-spine-img.ao-spine-visible {
+  opacity: 1 !important;
 }
 .ao-spine-img.alive {
   animation:
@@ -6684,6 +6689,10 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
           x:0, stagger:.1, duration:.58, ease:'power2.out'
         }, '-=.95');
 
+    /* ── Safety: mark spine as animated so the fallback timeout cancels ── */
+    var spineEl = document.getElementById('ao-spine-img');
+    if(spineEl) spineEl.setAttribute('data-gsap-ran','1');
+
     /* Inject ALUMED logo into navbar */
     var navLogo = q('nav.navbar a.logo');
     if(navLogo){
@@ -6800,6 +6809,28 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
     });
 
   }); // DOMContentLoaded
+
+  /* ── SPINE SAFETY FALLBACK ──────────────────────────────────────────
+     Si GSAP no corrió (CDN bloqueado, error previo de JS, etc.)
+     la clase .ao-spine-visible fuerza opacity:1 al cabo de 2.5s.
+  ─────────────────────────────────────────────────────────────────── */
+  (function(){
+    var _safeTimeout = setTimeout(function(){
+      var img = document.getElementById('ao-spine-img');
+      if(!img) return;
+      // Solo actúa si GSAP NO marcó el elemento (data-gsap-ran)
+      if(!img.getAttribute('data-gsap-ran')){
+        img.classList.add('ao-spine-visible');
+        img.classList.add('alive');
+      }
+    }, 2500);
+    // Si GSAP corre normalmente (DOMContentLoaded), cancela el timeout
+    document.addEventListener('DOMContentLoaded', function(){
+      if(typeof gsap !== 'undefined'){
+        clearTimeout(_safeTimeout);
+      }
+    });
+  })();
 
   /* ── 13. PARTICLE SYSTEM ────────────────────────────────────── */
   (function(){
