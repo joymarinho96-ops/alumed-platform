@@ -4836,6 +4836,100 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   line-height: 1.68; max-width: 390px; margin: 0 0 36px 0;
 }
 
+/* ── CTA INTENSIVO 4TA FECHA ──────────────────────────────────────── */
+.ao-intensivo-cta {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg,
+    rgba(124,58,237,.18) 0%,
+    rgba(192,38,211,.14) 45%,
+    rgba(251,191,36,.12) 100%);
+  border: 1px solid rgba(168,85,247,.35);
+  border-radius: 18px; padding: 18px 22px;
+  margin: 0 0 28px 0; position: relative;
+  overflow: hidden; cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,.15),
+    0 8px 40px rgba(124,58,237,.18),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  animation: aoIntPulse 4s ease-in-out infinite;
+  transition: transform .25s ease, box-shadow .25s ease;
+  text-decoration: none;
+}
+.ao-intensivo-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,.4),
+    0 16px 48px rgba(124,58,237,.32),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.ao-intensivo-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(168,85,247,.06) 50%, transparent 100%);
+  animation: aoIntShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes aoIntPulse {
+  0%,100% { border-color: rgba(168,85,247,.35); }
+  50%      { border-color: rgba(251,191,36,.45); }
+}
+@keyframes aoIntShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.ao-int-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #7c3aed, #c026d3);
+  color: #fff; font-size: 9px; font-weight: 900;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 99px; flex-shrink: 0;
+  position: relative; white-space: nowrap;
+  box-shadow: 0 0 18px rgba(124,58,237,.6);
+}
+.ao-int-pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #fbbf24; flex-shrink: 0;
+  box-shadow: 0 0 8px #fbbf24;
+  animation: aoBlink 1.4s ease-in-out infinite;
+}
+.ao-int-body { flex: 1; min-width: 0; }
+.ao-int-title {
+  font-size: clamp(14px, 2vw, 18px); font-weight: 900;
+  letter-spacing: .06em; margin: 0 0 4px;
+  background: linear-gradient(90deg, #a78bfa, #f0abfc, #fbbf24);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; text-transform: uppercase;
+}
+.ao-int-sub {
+  font-size: 12px; color: rgba(255,255,255,.65);
+  margin: 0 0 4px; line-height: 1.45;
+}
+.ao-int-urgency {
+  font-size: 10px; color: #34d399; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  margin: 0; display: flex; align-items: center; gap: 5px;
+}
+.ao-int-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #c026d3 55%, #f97316 100%);
+  color: #fff !important; font-size: 11px; font-weight: 900;
+  letter-spacing: .09em; text-transform: uppercase;
+  padding: 12px 20px; border-radius: 12px;
+  text-decoration: none !important; white-space: nowrap;
+  flex-shrink: 0; transition: all .25s ease;
+  box-shadow: 0 6px 28px rgba(124,58,237,.5);
+  position: relative; z-index: 2;
+}
+.ao-int-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 40px rgba(124,58,237,.7);
+}
+@media (max-width: 600px) {
+  .ao-intensivo-cta { flex-direction: column; text-align: center; }
+  .ao-int-body { text-align: left; }
+}
+
 /* PORTAL CARDS */
 .ao-cards {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -5020,19 +5114,32 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   ║  No other layout changes needed.     ║
   ╚══════════════════════════════════════╝
 */
+/* ── SPINE IMAGE — ALWAYS VISIBLE ──────────────────────────────────
+   opacity:1 es la base. GSAP anima la entrada pero NO puede ocultar
+   la imagen si falla. El fallback PNG siempre está renderizado.
+──────────────────────────────────────────────────────────────────── */
 .ao-spine-img {
   position: relative; z-index:5;
-  height: 88vh; max-height:880px;
-  width: auto; object-fit: contain;
-  display: block; pointer-events: none; user-select: none;
+  height: clamp(300px, 88vh, 880px);
+  width: clamp(300px, 31vw, 620px);
+  max-height: 88vh;
+  object-fit: contain;
+  transform-origin: center center;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1;             /* BASE: sempre visível — GSAP só anima entrada */
+  pointer-events: none; user-select: none;
   will-change: transform, filter;
-  opacity: 0; /* GSAP handles entry — fallback below */
-  transition: opacity 1.2s ease; /* safety: CSS transition as fallback */
+  transition: filter .6s ease;
+  /* Respiração suave — CSS puro, sem JS */
+  animation: aoBreath 5.5s ease-in-out infinite, aoGlow 6s ease-in-out infinite;
 }
-/* GSAP-fallback: if JS never runs, spine fades in after 0.5s via CSS */
-.ao-spine-img.ao-spine-visible {
-  opacity: 1 !important;
+/* Respeita prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ao-spine-img { animation: none !important; }
 }
+/* Classe adicionada pelo GSAP após animação de entrada */
+.ao-spine-img.ao-spine-visible { opacity: 1 !important; }
 .ao-spine-img.alive {
   animation:
     aoBreath 5.5s ease-in-out infinite,
@@ -5548,6 +5655,29 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
       <p class="ao-sub" id="j-sub">
         Estudiá, organizá y conectate con toda tu vida universitaria desde un único lugar.
       </p>
+
+      <!-- ══ CTA INTENSIVO 4TA FECHA ══════════════════════════════════ -->
+      <div class="ao-intensivo-cta" id="ao-intensivo-cta">
+        <div class="ao-int-badge">
+          <span class="ao-int-pulse"></span>
+          <i class="fas fa-bolt"></i> NUEVO
+        </div>
+        <div class="ao-int-body">
+          <h3 class="ao-int-title">INTENSIVO 4TA FECHA</h3>
+          <p class="ao-int-sub">Prepará el parcial con clases, repasos, simulacros y acompañamiento ALUMED.</p>
+          <p class="ao-int-urgency"><i class="fas fa-clock"></i> Inscripciones abiertas</p>
+        </div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'student_dashboard' %}" class="ao-int-btn">
+            <i class="fas fa-bolt"></i> ENTRAR AL INTENSIVO
+          </a>
+        {% else %}
+          <a href="{% url 'account_login' %}?next={% url 'student_dashboard' %}" class="ao-int-btn">
+            <i class="fas fa-bolt"></i> VER INTENSIVO 4TA FECHA
+          </a>
+        {% endif %}
+      </div>
+      <!-- ══ FIM CTA ══════════════════════════════════════════════════ -->
 
       <!-- PORTAL CARDS -->
       <div class="ao-cards" id="j-cards">
@@ -6665,9 +6795,11 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
     if(typeof gsap === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-    gsap.set(['#j-badge','#j-h1','#j-sub','#j-cards','#j-stats'],{opacity:0, y:30});
+    gsap.set(['#j-badge','#j-h1','#j-sub','#j-cards','#j-stats','#ao-intensivo-cta'],{opacity:0, y:30});
     gsap.set('#j-logo',{opacity:0, scale:.88, y:18});
-    gsap.set('#ao-spine-img', {opacity:0, scale:.84, y:28});
+    /* NOTA: ao-spine-img NÃO é ocultado — CSS base já define opacity:1
+       GSAP só adiciona um efeito de entrada suave via scale */
+    gsap.set('#ao-spine-img', {scale:.93, y:18});
     gsap.set('#ao-tl .ao-ti', {opacity:.14, x:12});
 
     var tl = gsap.timeline({delay:.08});
@@ -6675,10 +6807,12 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
       .to('#j-badge', {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.28')
       .to('#j-h1',    {opacity:1,y:0,duration:.80,ease:'power3.out'},'-=.28')
       .to('#j-sub',   {opacity:1,y:0,duration:.65,ease:'power3.out'},'-=.42')
+      .to('#ao-intensivo-cta', {opacity:1,y:0,duration:.60,ease:'power3.out'},'-=.35')
       .to('#j-cards', {opacity:1,y:0,duration:.75,ease:'power3.out'},'-=.40')
       .to('#j-stats', {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.40')
       .to('#ao-spine-img', {
-          opacity:1, scale:1, y:0, duration:1.45, ease:'power3.out',
+          /* Spine já é opacity:1 pelo CSS — GSAP só anima scale e y */
+          scale:1, y:0, duration:1.45, ease:'power3.out',
           onComplete: function(){
             var img = q('#ao-spine-img');
             if(img) img.classList.add('alive');
