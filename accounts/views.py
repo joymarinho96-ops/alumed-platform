@@ -402,9 +402,10 @@ def student_dashboard_view(request):
     return render(request, 'accounts/student_dashboard.html', context)
 
 
-@conecta_access_required
+
 def conecta_dashboard_view(request):
-    """Dashboard Conecta FCM — Centro de control de la vida universitaria. Requer UserAccess(CONECTA_FCM)."""
+    """Dashboard Conecta FCM — acesso publico, sem necessidade de login."""
+
 
     # Cartelera en vivo
     from core.views import get_cached_cartelera
@@ -430,14 +431,19 @@ def conecta_dashboard_view(request):
         })
     events_json = json.dumps(events_list, cls=DjangoJSONEncoder)
 
-    # Smart notification count (new announcements)
-    profile = request.user.profile
-    last_view = profile.last_announcement_view_time
-    new_notices_count = len([n for n in cartelera_notices]) if cartelera_notices else 0
-    has_new_announcements = Announcement.objects.filter(
-        is_active=True,
-        created_at__gt=last_view
-    ).exists()
+    # Smart notification count — funciona com ou sem login
+    has_new_announcements = False
+    new_notices_count     = len(cartelera_notices) if cartelera_notices else 0
+    if request.user.is_authenticated:
+        try:
+            profile   = request.user.profile
+            last_view = profile.last_announcement_view_time
+            has_new_announcements = Announcement.objects.filter(
+                is_active=True,
+                created_at__gt=last_view
+            ).exists()
+        except Exception:
+            pass
 
     # La Plata weather (reuse cache key from status bar if available)
     weather_data = cache.get('laplata_weather', {
@@ -455,6 +461,7 @@ def conecta_dashboard_view(request):
         'has_new_announcements': has_new_announcements,
         'weather_data': weather_data,
     }
+
     return render(request, 'accounts/conecta_dashboard.html', context)
 
 
