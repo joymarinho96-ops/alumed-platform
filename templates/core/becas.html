@@ -1,0 +1,603 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Becas y Beneficios Estudiantiles — ALUMED{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── BECAS PAGE ───────────────────────────────────────────────────────────── */
+.becas-hero {
+  background: linear-gradient(135deg, #0f0a1e 0%, #1a0a3e 50%, #0d1a2e 100%);
+  border-bottom: 1px solid rgba(139,92,246,.2);
+  padding: 56px 40px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.becas-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(139,92,246,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.becas-hero-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .14em;
+  color: #a78bfa; text-transform: uppercase;
+  background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.25);
+  padding: 5px 14px; border-radius: 99px; margin-bottom: 18px;
+}
+.becas-hero h1 {
+  font-size: clamp(26px, 4vw, 42px); font-weight: 900;
+  color: #fff; margin: 0 0 12px; line-height: 1.15;
+}
+.becas-hero p {
+  color: rgba(255,255,255,.55); font-size: 15px; max-width: 560px; margin: 0 auto;
+}
+
+/* nav tabs */
+.becas-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 28px 40px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.becas-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 12px 12px 0 0;
+  font-size: 13px; font-weight: 700; letter-spacing: .02em;
+  cursor: pointer; transition: all .2s ease;
+  border: 1px solid transparent; border-bottom: none;
+  background: transparent; color: rgba(255,255,255,.45);
+  position: relative; bottom: -1px;
+}
+.becas-tab:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.05); }
+.becas-tab.active {
+  background: rgba(15,10,30,1);
+  border-color: rgba(139,92,246,.3);
+  color: #a78bfa;
+  border-bottom-color: rgba(15,10,30,1);
+}
+.becas-tab .tab-icon { font-size: 16px; }
+
+/* panels */
+.becas-panels { padding: 0 40px 60px; }
+.becas-panel { display: none; padding-top: 36px; }
+.becas-panel.active { display: block; }
+
+/* benefit card */
+.bec-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px; padding: 36px 40px;
+  margin-bottom: 28px;
+  transition: border-color .2s;
+}
+.bec-card:hover { border-color: rgba(139,92,246,.3); }
+.bec-header {
+  display: flex; align-items: flex-start; gap: 20px;
+  margin-bottom: 28px;
+}
+.bec-icon-wrap {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.bec-header-text h2 {
+  font-size: 22px; font-weight: 800; color: #fff; margin: 0 0 4px;
+}
+.bec-header-text p {
+  font-size: 13px; color: rgba(255,255,255,.45); margin: 0;
+}
+.bec-source-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: #a78bfa; margin-top: 8px;
+  text-decoration: none; transition: color .2s;
+}
+.bec-source-link:hover { color: #c4b5fd; }
+
+/* sections inside card */
+.bec-section { margin-bottom: 28px; }
+.bec-section:last-child { margin-bottom: 0; }
+.bec-section-title {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.35);
+  margin: 0 0 14px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.bec-info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+.bec-info-item {
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px; padding: 14px 16px;
+}
+.bec-info-item label {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: rgba(255,255,255,.35);
+  display: block; margin-bottom: 4px;
+}
+.bec-info-item span {
+  font-size: 14px; font-weight: 600; color: rgba(255,255,255,.85);
+}
+
+/* steps */
+.bec-steps { display: flex; flex-direction: column; gap: 12px; }
+.bec-step {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.bec-step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+  margin-top: 1px;
+}
+.bec-step-text { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.55; }
+.bec-step-text strong { color: #fff; }
+
+/* requirements list */
+.bec-reqs { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.bec-reqs li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.5;
+}
+.bec-reqs li i {
+  font-size: 13px; margin-top: 3px; flex-shrink: 0;
+}
+
+/* alert box */
+.bec-alert {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(245,158,11,.07);
+  border: 1px solid rgba(245,158,11,.25);
+  border-radius: 12px; padding: 14px 18px;
+  margin-top: 20px;
+}
+.bec-alert i { color: #f59e0b; font-size: 15px; margin-top: 2px; flex-shrink: 0; }
+.bec-alert p { margin: 0; font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.5; }
+.bec-alert strong { color: #fff; }
+
+/* action btn */
+.bec-action {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  text-decoration: none; transition: all .2s ease;
+  margin-top: 20px;
+}
+.bec-action.green {
+  background: rgba(16,185,129,.15); color: #34d399;
+  border: 1px solid rgba(16,185,129,.3);
+}
+.bec-action.green:hover {
+  background: rgba(16,185,129,.25);
+  box-shadow: 0 0 20px rgba(16,185,129,.2);
+}
+.bec-action.violet {
+  background: rgba(139,92,246,.15); color: #a78bfa;
+  border: 1px solid rgba(139,92,246,.3);
+}
+.bec-action.violet:hover {
+  background: rgba(139,92,246,.25);
+  box-shadow: 0 0 20px rgba(139,92,246,.2);
+}
+.bec-action.blue {
+  background: rgba(59,130,246,.15); color: #93c5fd;
+  border: 1px solid rgba(59,130,246,.3);
+}
+.bec-action.blue:hover {
+  background: rgba(59,130,246,.25);
+  box-shadow: 0 0 20px rgba(59,130,246,.2);
+}
+.bec-action.gold {
+  background: rgba(245,158,11,.15); color: #fcd34d;
+  border: 1px solid rgba(245,158,11,.3);
+}
+.bec-action.gold:hover {
+  background: rgba(245,158,11,.25);
+  box-shadow: 0 0 20px rgba(245,158,11,.2);
+}
+
+@media (max-width: 700px) {
+  .becas-hero { padding: 36px 20px 28px; }
+  .becas-tabs { padding: 20px 16px 0; }
+  .becas-panels { padding: 0 16px 40px; }
+  .bec-card { padding: 24px 20px; }
+  .bec-header { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<div class="becas-hero">
+  <div class="becas-hero-label">
+    <i class="fas fa-hand-holding-heart"></i>
+    Bienestar Estudiantil
+  </div>
+  <h1>Becas y Beneficios</h1>
+  <p>Todo lo que necesitás saber sobre los beneficios disponibles para estudiantes de la FCM UNLP.</p>
+</div>
+
+<!-- ── TABS ──────────────────────────────────────────────────────────────── -->
+<div class="becas-tabs">
+  <button class="becas-tab active" onclick="showPanel('cude')" id="tab-cude">
+    <span class="tab-icon">🎓</span> Guía CUDE
+  </button>
+  <button class="becas-tab" onclick="showPanel('boleto')" id="tab-boleto">
+    <span class="tab-icon">🚌</span> Boleto Estudiantil
+  </button>
+  <button class="becas-tab" onclick="showPanel('libreta')" id="tab-libreta">
+    <span class="tab-icon">📗</span> Libreta Universitaria
+  </button>
+  <button class="becas-tab" onclick="showPanel('comedor')" id="tab-comedor">
+    <span class="tab-icon">🍽️</span> Comedor Universitario
+  </button>
+</div>
+
+<!-- ── PANELS ─────────────────────────────────────────────────────────────── -->
+<div class="becas-panels">
+
+  <!-- ═══ CUDE ═══════════════════════════════════════════════════════════ -->
+  <div class="becas-panel active" id="panel-cude">
+    <div class="bec-card">
+      <div class="bec-header">
+        <div class="bec-icon-wrap" style="background:rgba(139,92,246,.15);">🎓</div>
+        <div class="bec-header-text">
+          <h2>Beca CUDE — Centro Universitario de Educación</h2>
+          <p>Asistencia económica para estudiantes de la UNLP en situación de vulnerabilidad socioeconómica</p>
+          <a class="bec-source-link" href="https://secretaria478.wixsite.com/conectafcm/guiacude" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Ver guía completa en Conecta FCM
+          </a>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Qué es?</p>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.65;margin:0;">
+          El <strong style="color:#c4b5fd;">CUDE (Centro Universitario de Educación)</strong> otorga becas a estudiantes de la UNLP que se encuentran en situación de vulnerabilidad socioeconómica. Las becas pueden ser de <strong style="color:#fff;">dinero en efectivo, materiales de estudio o alojamiento</strong>, según el caso y la disponibilidad.
+        </p>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Tipos de becas disponibles</p>
+        <div class="bec-info-grid">
+          <div class="bec-info-item">
+            <label>💵 Beca Económica</label>
+            <span>Ayuda mensual en dinero para gastos de estudio y manutención</span>
+          </div>
+          <div class="bec-info-item">
+            <label>📚 Beca de Material</label>
+            <span>Libros, apuntes, materiales de laboratorio y útiles</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🏠 Beca de Alojamiento</label>
+            <span>Residencia universitaria para estudiantes del interior</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🍽️ Beca de Comedor</label>
+            <span>Acceso al comedor universitario sin costo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Requisitos generales</p>
+        <ul class="bec-reqs">
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Ser estudiante regular de la UNLP (tener regularidad académica)</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Demostrar situación socioeconómica desfavorable mediante estudio socioeconómico</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> No poseer otro beneficio de la misma naturaleza</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Completar el formulario de solicitud dentro del período de inscripción</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Presentar documentación requerida (DNI, recibos de sueldo, etc.)</li>
+        </ul>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Cómo solicitarla?</p>
+        <div class="bec-steps">
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(139,92,246,.2);color:#a78bfa;">1</div>
+            <div class="bec-step-text">Ingresá al portal de becas de la UNLP en el período de inscripción (generalmente <strong>marzo–abril</strong>)</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(139,92,246,.2);color:#a78bfa;">2</div>
+            <div class="bec-step-text">Completá el formulario online con tus datos personales y socioeconómicos</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(139,92,246,.2);color:#a78bfa;">3</div>
+            <div class="bec-step-text">Presentá la documentación requerida en la secretaría de la FCM o de la UNLP</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(139,92,246,.2);color:#a78bfa;">4</div>
+            <div class="bec-step-text">Esperá la resolución. Si es aprobada, se acreditará en la cuenta UNLP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p><strong>Importante:</strong> Las fechas de inscripción varían cada año. Seguí el portal de Conecta FCM y los comunicados de la FCM para no perder el plazo.</p>
+      </div>
+
+      <a class="bec-action violet" href="https://secretaria478.wixsite.com/conectafcm/guiacude" target="_blank" rel="noopener">
+        <i class="fas fa-external-link-alt"></i> Ver guía completa CUDE
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ BOLETO ════════════════════════════════════════════════════════ -->
+  <div class="becas-panel" id="panel-boleto">
+    <div class="bec-card">
+      <div class="bec-header">
+        <div class="bec-icon-wrap" style="background:rgba(59,130,246,.15);">🚌</div>
+        <div class="bec-header-text">
+          <h2>Boleto Educativo Gratuito</h2>
+          <p>Transporte gratuito o subsidiado para estudiantes universitarios de La Plata</p>
+          <a class="bec-source-link" href="https://secretaria478.wixsite.com/conectafcm/boleto-estudiantil" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Ver guía completa en Conecta FCM
+          </a>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Qué es?</p>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.65;margin:0;">
+          El <strong style="color:#93c5fd;">Boleto Educativo Gratuito (BEG)</strong> es un beneficio provincial que permite a los estudiantes universitarios bonaerenses viajar en transporte público interurbano de forma <strong style="color:#fff;">gratuita o con descuento significativo</strong>. En La Plata aplica para colectivos urbanos y trenes.
+        </p>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Información clave</p>
+        <div class="bec-info-grid">
+          <div class="bec-info-item">
+            <label>📍 Cobertura</label>
+            <span>Transporte urbano e interurbano de Buenos Aires</span>
+          </div>
+          <div class="bec-info-item">
+            <label>💰 Costo</label>
+            <span>Gratuito o con descuento según tipo de servicio</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🗓️ Vigencia</label>
+            <span>Anual, con renovación cada ciclo lectivo</span>
+          </div>
+          <div class="bec-info-item">
+            <label>💳 Tarjeta</label>
+            <span>SUBE con beneficio activo (se gestiona online)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Requisitos</p>
+        <ul class="bec-reqs">
+          <li><i class="fas fa-check-circle" style="color:#93c5fd;"></i> Ser estudiante universitario bonaerense regular</li>
+          <li><i class="fas fa-check-circle" style="color:#93c5fd;"></i> Tener DNI argentino o extranjero con domicilio en PBA</li>
+          <li><i class="fas fa-check-circle" style="color:#93c5fd;"></i> Poseer tarjeta SUBE registrada</li>
+          <li><i class="fas fa-check-circle" style="color:#93c5fd;"></i> Constancia de alumno regular de la UNLP (se descarga del Guaraní)</li>
+          <li><i class="fas fa-check-circle" style="color:#93c5fd;"></i> No tener ingresos superiores al límite establecido por la resolución vigente</li>
+        </ul>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Pasos para solicitarlo</p>
+        <div class="bec-steps">
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(59,130,246,.2);color:#93c5fd;">1</div>
+            <div class="bec-step-text">Descargá tu <strong>certificado de alumno regular</strong> desde el sistema Guaraní</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(59,130,246,.2);color:#93c5fd;">2</div>
+            <div class="bec-step-text">Ingresá al portal <strong>Mi Argentina</strong> o al sitio del Ministerio de Transporte PBA</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(59,130,246,.2);color:#93c5fd;">3</div>
+            <div class="bec-step-text">Registrá tu tarjeta SUBE y solicitá el beneficio educativo</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(59,130,246,.2);color:#93c5fd;">4</div>
+            <div class="bec-step-text">Esperá la acreditación (generalmente <strong>48–72 horas hábiles</strong>)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p><strong>Renovación:</strong> El beneficio debe renovarse cada año. Recordá actualizar tu certificado de alumno regular antes del vencimiento para no perder el descuento.</p>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a class="bec-action blue" href="https://secretaria478.wixsite.com/conectafcm/boleto-estudiantil" target="_blank" rel="noopener">
+          <i class="fas fa-external-link-alt"></i> Ver guía completa
+        </a>
+        <a class="bec-action green" href="https://guarani.unlp.edu.ar" target="_blank" rel="noopener">
+          <i class="fas fa-file-alt"></i> Descargar constancia (Guaraní)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LIBRETA ═══════════════════════════════════════════════════════ -->
+  <div class="becas-panel" id="panel-libreta">
+    <div class="bec-card">
+      <div class="bec-header">
+        <div class="bec-icon-wrap" style="background:rgba(16,185,129,.15);">📗</div>
+        <div class="bec-header-text">
+          <h2>Libreta Universitaria</h2>
+          <p>Documento oficial que acredita tu condición de estudiante de la UNLP</p>
+          <a class="bec-source-link" href="https://secretaria478.wixsite.com/conectafcm/libreta-estudantil" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Ver guía completa en Conecta FCM
+          </a>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Qué es?</p>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.65;margin:0;">
+          La <strong style="color:#6ee7b7;">Libreta Universitaria</strong> es el documento oficial que acredita tu condición de estudiante de la UNLP. Se utiliza para trámites dentro y fuera de la universidad, y es obligatoria para rendir exámenes finales y parciales en muchas cátedras.
+        </p>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Para qué sirve?</p>
+        <div class="bec-info-grid">
+          <div class="bec-info-item">
+            <label>📝 Exámenes</label>
+            <span>Obligatoria para rendir finales y parciales en la FCM</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🏥 Cobertura médica</label>
+            <span>Acceso al sistema de salud universitario CAPSF / IOMA</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🚌 Descuentos</label>
+            <span>Descuentos en transporte, cine, museos y comercios adheridos</span>
+          </div>
+          <div class="bec-info-item">
+            <label>📋 Trámites</label>
+            <span>Acredita tu condición de estudiante ante organismos públicos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Cómo tramitarla?</p>
+        <div class="bec-steps">
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(16,185,129,.2);color:#34d399;">1</div>
+            <div class="bec-step-text">Concurrí a la <strong>Dirección de Alumnos de la FCM</strong> (Planta Baja, Edificio Central, calle 60 y 120)</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(16,185,129,.2);color:#34d399;">2</div>
+            <div class="bec-step-text">Presentá: <strong>DNI original y fotocopia</strong>, foto carnet 4×4 fondo blanco y constancia de inscripción</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(16,185,129,.2);color:#34d399;">3</div>
+            <div class="bec-step-text">Completá el formulario de solicitud y abonás el arancel (si corresponde)</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(16,185,129,.2);color:#34d399;">4</div>
+            <div class="bec-step-text">La libreta se entrega en el momento o en un plazo de <strong>3 a 5 días hábiles</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Documentación requerida</p>
+        <ul class="bec-reqs">
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> DNI original y fotocopia (frente y dorso)</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> 2 fotos carnet 4×4 fondo blanco, actualizadas</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Constancia de inscripción / alumno regular (Guaraní)</li>
+          <li><i class="fas fa-check-circle" style="color:#34d399;"></i> Analítico secundario original y fotocopia (solo ingresantes)</li>
+        </ul>
+      </div>
+
+      <div class="bec-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p><strong>Horario de atención:</strong> La Dirección de Alumnos atiende de lunes a viernes de 8:00 a 13:00 hs. Podés consultar por teléfono o presencialmente en la sede de la facultad.</p>
+      </div>
+
+      <a class="bec-action green" href="https://secretaria478.wixsite.com/conectafcm/libreta-estudantil" target="_blank" rel="noopener">
+        <i class="fas fa-external-link-alt"></i> Ver guía completa
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ COMEDOR ════════════════════════════════════════════════════════ -->
+  <div class="becas-panel" id="panel-comedor">
+    <div class="bec-card">
+      <div class="bec-header">
+        <div class="bec-icon-wrap" style="background:rgba(245,158,11,.15);">🍽️</div>
+        <div class="bec-header-text">
+          <h2>Comedor Universitario UNLP</h2>
+          <p>Alimentación accesible para estudiantes universitarios en La Plata</p>
+          <a class="bec-source-link" href="https://secretaria478.wixsite.com/conectafcm/comedor-universit%C3%A1rio" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Ver guía completa en Conecta FCM
+          </a>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">¿Qué es?</p>
+        <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.65;margin:0;">
+          El <strong style="color:#fcd34d;">Comedor Universitario de la UNLP</strong> brinda almuerzo y cena a precios muy accesibles para toda la comunidad universitaria. Para estudiantes en situación de vulnerabilidad, el acceso puede ser <strong style="color:#fff;">totalmente gratuito</strong> mediante una beca de comedor.
+        </p>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Información práctica</p>
+        <div class="bec-info-grid">
+          <div class="bec-info-item">
+            <label>📍 Ubicación</label>
+            <span>Comedor Central UNLP — Calle 49 y 124, La Plata</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🕐 Almuerzo</label>
+            <span>Lunes a viernes de 12:00 a 15:00 hs</span>
+          </div>
+          <div class="bec-info-item">
+            <label>🌙 Cena</label>
+            <span>Lunes a viernes de 19:00 a 21:30 hs</span>
+          </div>
+          <div class="bec-info-item">
+            <label>💰 Precio</label>
+            <span>Valor subsidiado o gratuito con beca activa</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Beca de comedor — ¿Cómo acceder?</p>
+        <div class="bec-steps">
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(245,158,11,.2);color:#fcd34d;">1</div>
+            <div class="bec-step-text">Completá el estudio socioeconómico en la Dirección de Bienestar Estudiantil de la UNLP</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(245,158,11,.2);color:#fcd34d;">2</div>
+            <div class="bec-step-text">Presentá la documentación requerida: DNI, recibos de sueldo del grupo familiar, constancia de alumno regular</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(245,158,11,.2);color:#fcd34d;">3</div>
+            <div class="bec-step-text">Si la beca es aprobada, recibís un <strong>código o credencial</strong> para acceder sin costo al comedor</div>
+          </div>
+          <div class="bec-step">
+            <div class="bec-step-num" style="background:rgba(245,158,11,.2);color:#fcd34d;">4</div>
+            <div class="bec-step-text">La beca debe renovarse cada cuatrimestre o año según resolución vigente</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bec-section">
+        <p class="bec-section-title">Menú y opciones</p>
+        <ul class="bec-reqs">
+          <li><i class="fas fa-utensils" style="color:#fcd34d;"></i> Menú completo con entrada, plato principal y postre</li>
+          <li><i class="fas fa-leaf" style="color:#34d399;"></i> Opción vegetariana disponible todos los días</li>
+          <li><i class="fas fa-utensils" style="color:#fcd34d;"></i> Menú celíaco disponible bajo pedido previo</li>
+          <li><i class="fas fa-coffee" style="color:#fcd34d;"></i> Desayuno y merienda en algunas sedes</li>
+        </ul>
+      </div>
+
+      <div class="bec-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p><strong>Sugerencia:</strong> Si llegás a La Plata desde el interior y no podés costearte las comidas, solicitá la beca de comedor apenas comiences tu primer cuatrimestre. El trámite es sencillo y puede hacer una gran diferencia.</p>
+      </div>
+
+      <a class="bec-action gold" href="https://secretaria478.wixsite.com/conectafcm/comedor-universit%C3%A1rio" target="_blank" rel="noopener">
+        <i class="fas fa-external-link-alt"></i> Ver guía completa
+      </a>
+    </div>
+  </div>
+
+</div><!-- /panels -->
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.becas-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.becas-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+</script>
+{% endblock %}

@@ -253,3 +253,16 @@ def conecta_landing_view(request):
         if has_product_access(request.user, 'CONECTA_FCM'):
             return _redirect('conecta_dashboard')
     return render(request, 'core/conecta_landing.html')
+
+
+def becas_view(request):
+    """
+    Página de Becas y Beneficios Estudiantiles — UNLP / FCM.
+    Muestra CUDE, Boleto Educativo, Libreta Universitaria y Comedor.
+    Requiere autenticación.
+    """
+    from accounts.views import student_auth_required
+    @student_auth_required
+    def _inner(request):
+        return render(request, 'core/becas.html')
+    return _inner(request)

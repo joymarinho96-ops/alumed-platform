@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view
+from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +39,7 @@ urlpatterns = [
     path('club/', club, name='club'),
     path('favoritos/', favoritos, name='favoritos'),
     path('mapa-facultad/', mapa_facultad_view, name='mapa_facultad'),
+    path('becas/', becas_view, name='becas'),
 ]
 
 if settings.DEBUG:
