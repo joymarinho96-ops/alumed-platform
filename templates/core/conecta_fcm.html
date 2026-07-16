@@ -522,11 +522,17 @@ body::before {
     border:1px solid rgba(245,200,66,.25);
     box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.5), 0 0 80px rgba(245,200,66,.06);
     background:#0a0510;
+    /* CORRIGIDO: força altura mínima para evitar colapso */
+    min-height:420px;
+    display:block;
   }
   .map-img {
-    width:100%; display:block;
+    width:100%; height:auto; display:block;
     opacity:.88; transition:opacity .4s;
     filter: saturate(1.1) contrast(1.05);
+    /* Garante que a imagem apareça */
+    min-height:200px;
+    object-fit:cover;
   }
   .map-wrap:hover .map-img { opacity:.72; }
 
@@ -627,58 +633,101 @@ body::before {
     <div class="map-overlay"></div>
     <div class="map-scan"></div>
 
-    <!-- ── PINS ── posições calibradas sobre a imagem ── -->
-    <!-- Berisso (ala esquerda) -->
-    <div class="map-pin" style="left:38%;top:68%;"
-         data-title="Ala Berisso" data-info="Aulas 15 · Aula 27 · Anfiteatro Maccari · 4to piso" data-color="#f5c842">
+    <!-- ── PINS com nomes e locais REAIS ── -->
+
+    <!-- ALA BERISSO (esquerda) -->
+    <div class="map-pin" style="left:36%;top:62%;"
+         data-title="Ala Berisso" data-info="Aulas Planta Baja · 1er piso · 2do piso · 3er piso · 4to piso" data-color="#f5c842">
       <div class="pin-dot" style="background:#f5c842;color:#f5c842;">🏛️</div>
       <div class="pin-label">Ala Berisso</div>
     </div>
 
-    <!-- La Plata (ala direita) -->
-    <div class="map-pin" style="left:68%;top:68%;"
-         data-title="Ala La Plata" data-info="Aula 17 · Aula LT · Anfiteatro Etulain · 1er piso" data-color="#f5c842">
+    <!-- ALA LA PLATA (derecha) -->
+    <div class="map-pin" style="left:66%;top:62%;"
+         data-title="Ala La Plata" data-info="Aulas 1er piso · 2do piso · 3er piso · 4to piso" data-color="#f5c842">
       <div class="pin-dot" style="background:#f5c842;color:#f5c842;">🏛️</div>
       <div class="pin-label">Ala La Plata</div>
     </div>
 
-    <!-- Edificio Principal -->
-    <div class="map-pin" style="left:53%;top:74%;"
-         data-title="Edificio Principal" data-info="Secretaría Académica · Decanato · Dirección · Planta baja" data-color="#60a5fa">
-      <div class="pin-dot" style="background:#60a5fa;color:#60a5fa;">🏢</div>
-      <div class="pin-label">Edificio Principal</div>
-    </div>
-
-    <!-- Anfiteatro Prieto Díaz A -->
-    <div class="map-pin" style="left:56%;top:28%;"
-         data-title="Prieto Díaz A" data-info="Planta baja de Berisso · Anfiteatro principal · Capacidad grande" data-color="#c084fc">
+    <!-- PRIETO DIAZ A — Planta baja Ala Berisso -->
+    <div class="map-pin" style="left:30%;top:80%;"
+         data-title="Prieto Díaz A" data-info="Planta baja · Ala Berisso · Anfiteatro 1" data-color="#c084fc">
       <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
       <div class="pin-label">Prieto Díaz A</div>
     </div>
 
-    <!-- Anfiteatro Galli -->
-    <div class="map-pin" style="left:77%;top:28%;"
-         data-title="Anfiteatro Galli" data-info="1er piso de La Plata · Clases magistrales" data-color="#c084fc">
+    <!-- GALLI (Anfiteatro 2) — 1er piso Ala Berisso -->
+    <div class="map-pin" style="left:32%;top:68%;"
+         data-title="Galli (Anfiteatro 2)" data-info="1er piso · Ala Berisso" data-color="#c084fc">
       <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
       <div class="pin-label">Galli</div>
     </div>
 
-    <!-- Rawson -->
-    <div class="map-pin" style="left:46%;top:50%;"
-         data-title="Rawson (Aula)" data-info="2do piso de Berisso · Aula grande · Anatomía" data-color="#4ade80">
+    <!-- RAWSON (aula) — 1er piso Ala La Plata -->
+    <div class="map-pin" style="left:70%;top:68%;"
+         data-title="Rawson (Aula)" data-info="1er piso · Ala La Plata" data-color="#4ade80">
       <div class="pin-dot" style="background:#4ade80;color:#4ade80;">📐</div>
       <div class="pin-label">Rawson</div>
     </div>
 
-    <!-- Aula Fuschere -->
-    <div class="map-pin" style="left:53%;top:58%;"
-         data-title="Aula Fuschere" data-info="Área central · Acceso desde pasillo principal" data-color="#fb923c">
-      <div class="pin-dot" style="background:#fb923c;color:#fb923c;">📚</div>
-      <div class="pin-label">Fuschere</div>
+    <!-- CHRISTMAN (Anfiteatro 3) — 2do piso Ala La Plata -->
+    <div class="map-pin" style="left:72%;top:56%;"
+         data-title="Christman (Anfiteatro 3)" data-info="2do piso · Ala La Plata" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Christman</div>
     </div>
 
-    <!-- Acceso Principal -->
-    <div class="map-pin" style="left:53%;top:91%;"
+    <!-- MAINETTI (Anfiteatro 4) — 2do piso Ala Berisso -->
+    <div class="map-pin" style="left:34%;top:56%;"
+         data-title="Mainetti (Anfiteatro 4)" data-info="2do piso · Ala Berisso" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Mainetti</div>
+    </div>
+
+    <!-- FAVALORO (Anfiteatro 5) — 3er piso Ala La Plata -->
+    <div class="map-pin" style="left:68%;top:44%;"
+         data-title="Favaloro (Anfiteatro 5)" data-info="3er piso · Ala La Plata" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Favaloro</div>
+    </div>
+
+    <!-- PASTEUR (Anfiteatro 6) — 3er piso Ala Berisso -->
+    <div class="map-pin" style="left:36%;top:44%;"
+         data-title="Pasteur (Anfiteatro 6)" data-info="3er piso · Ala Berisso" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Pasteur</div>
+    </div>
+
+    <!-- MAZZEI (Anfiteatro 7) — 4to piso Ala Berisso -->
+    <div class="map-pin" style="left:30%;top:32%;"
+         data-title="Mazzei (Anfiteatro 7)" data-info="4to piso · Ala Berisso · Aulas 15, 17, 25 en este piso" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Mazzei · Aulas 15/17/25</div>
+    </div>
+
+    <!-- ESTIU (Anfiteatro 8) — 4to piso Ala La Plata -->
+    <div class="map-pin" style="left:66%;top:32%;"
+         data-title="Estiu (Anfiteatro 8)" data-info="4to piso · Ala La Plata" data-color="#c084fc">
+      <div class="pin-dot" style="background:#c084fc;color:#c084fc;">🎓</div>
+      <div class="pin-label">Estiu</div>
+    </div>
+
+    <!-- BIBLIOTECA — Aulas 21, 24 y Microcine -->
+    <div class="map-pin" style="left:53%;top:48%;"
+         data-title="Biblioteca — Aulas 21 · 24 · Microcine" data-info="Aula 21: 1er piso · Aula 24: 2do piso · Microcine: Planta baja" data-color="#60a5fa">
+      <div class="pin-dot" style="background:#60a5fa;color:#60a5fa;">📚</div>
+      <div class="pin-label">Biblioteca</div>
+    </div>
+
+    <!-- BUFFET — Patio -->
+    <div class="map-pin" style="left:50%;top:74%;"
+         data-title="Buffet" data-info="Patio central · Planta baja · Cafetería" data-color="#fb923c">
+      <div class="pin-dot" style="background:#fb923c;color:#fb923c;">☕</div>
+      <div class="pin-label">Buffet</div>
+    </div>
+
+    <!-- ACCESO PRINCIPAL -->
+    <div class="map-pin" style="left:53%;top:90%;"
          data-title="Acceso Principal" data-info="Entrada a la Facultad · Guardia · Orientación" data-color="#f87171">
       <div class="pin-dot" style="background:#f87171;color:#f87171;">🚪</div>
       <div class="pin-label">Acceso Principal</div>
@@ -689,6 +738,7 @@ body::before {
       <div class="tooltip-title" id="ttTitle">—</div>
       <div class="tooltip-rows" id="ttRows"></div>
     </div>
+
 
     <!-- Info bar inferior -->
     <div class="map-bar">

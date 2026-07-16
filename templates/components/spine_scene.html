@@ -1,162 +1,163 @@
-<!-- SpineScene: Columna Vertebral Hero — ALUMED OS -->
+<!-- SpineScene: Columna Vertebral Hero — ALUMED OS — VIVA -->
+{% load static %}
 <div class="spine-webgl-viewport" id="spineViewport">
 
-    <!-- ── Partículas médicas flutuantes ── -->
+    <!-- ── PARTÍCULAS MÉDICAS FLUTUANTES ── -->
     <div class="med-particles" id="medParticles"></div>
 
-    <!-- ── Elementos flutuantes leves ── -->
-    <div class="float-el float-cell"  style="top:12%;left:62%">🧬</div>
-    <div class="float-el float-book"  style="top:28%;left:72%">📖</div>
-    <div class="float-el float-mol"   style="top:48%;left:68%">⚗️</div>
-    <div class="float-el float-heart" style="top:65%;left:74%">🫀</div>
-    <div class="float-el float-dna"   style="top:80%;left:60%">🧪</div>
+    <!-- ── ELEMENTOS FLUTUANTES LEVES ── -->
+    <div class="float-el float-cell"  style="top:8%;left:68%">🧬</div>
+    <div class="float-el float-book"  style="top:22%;left:76%">📖</div>
+    <div class="float-el float-mol"   style="top:44%;left:72%">⚗️</div>
+    <div class="float-el float-heart" style="top:63%;left:78%">🫀</div>
+    <div class="float-el float-dna"   style="top:80%;left:65%">🧪</div>
+    <div class="float-el float-pill"  style="top:33%;left:58%">💊</div>
 
-    <!-- ── Coluna vertebral SVG ── -->
+    <!-- ── GLOW RADIAL DINÂMICO (roxo/dourado) ── -->
+    <div class="spine-glow-bg" id="spineGlowBg"></div>
+
+    <!-- ── WRAP PRINCIPAL DA COLUNA ── -->
     <div class="spine-wrap" id="spineWrap">
-        <svg class="spine-svg" viewBox="0 0 160 720" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="boneGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stop-color="#c8b89a" stop-opacity="0.7"/>
-                    <stop offset="50%"  stop-color="#f0e6d0" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="#c8b89a" stop-opacity="0.7"/>
-                </linearGradient>
-                <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stop-color="#FFE600" stop-opacity="0"/>
-                    <stop offset="50%"  stop-color="#FFE600" stop-opacity="0.9"/>
-                    <stop offset="100%" stop-color="#FFE600" stop-opacity="0"/>
-                </linearGradient>
-                <filter id="boneGlow">
-                    <feGaussianBlur stdDeviation="3" result="blur"/>
-                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-                <filter id="goldGlow">
-                    <feGaussianBlur stdDeviation="4" result="blur"/>
-                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-            </defs>
 
-            <!-- Canal medular central -->
-            <line x1="80" y1="20" x2="80" y2="700" stroke="rgba(124,58,237,0.2)" stroke-width="2" stroke-dasharray="4,6"/>
+        <!-- IMAGEM REAL da coluna (spine.png) -->
+        <img
+            src="{% static 'img/spine.png' %}"
+            class="spine-img"
+            id="spineImg"
+            alt="Columna vertebral — ALUMED"
+            draggable="false"
+        />
 
-            <!-- ── CRÁNEO base ── -->
-            <ellipse cx="80" cy="38" rx="32" ry="28" fill="url(#boneGrad)" filter="url(#boneGlow)" opacity="0.9"/>
-            <ellipse cx="80" cy="38" rx="28" ry="24" fill="none" stroke="#FFE600" stroke-width="0.8" opacity="0.4"/>
+        <!-- ZONA DE ILUMINAÇÃO CERVICAL (C1-C7) -->
+        <div class="spine-zone zone-cervical" id="zone-cervical"
+             style="top:2%;height:18%;"></div>
 
-            <!-- ── VÉRTEBRAS CERVICALES (C1–C7) ── -->
-            <!-- C1 Atlas -->
-            <g class="vertebra" transform="translate(80,85)">
-                <ellipse cx="0" cy="0" rx="28" ry="9" fill="url(#boneGrad)" filter="url(#boneGlow)"/>
-                <ellipse cx="-20" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.85"/>
-                <ellipse cx="20" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.85"/>
-                <ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(124,58,237,0.3)"/>
-                <line x1="-20" y1="0" x2="20" y2="0" stroke="url(#goldAccent)" stroke-width="1" opacity="0.6"/>
-            </g>
-            <!-- C2 Axis -->
-            <g class="vertebra" transform="translate(80,110)">
-                <ellipse cx="0" cy="0" rx="26" ry="9" fill="url(#boneGrad)" filter="url(#boneGlow)"/>
-                <ellipse cx="-18" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.85"/>
-                <ellipse cx="18" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.85"/>
-                <ellipse cx="0" cy="-7" rx="5" ry="9" fill="url(#boneGrad)" opacity="0.7"/>
-                <ellipse cx="0" cy="0" rx="7" ry="5" fill="rgba(124,58,237,0.3)"/>
-            </g>
-            <!-- C3-C7 -->
-            <g class="vertebra" transform="translate(80,135)"><ellipse cx="0" cy="0" rx="25" ry="8" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(124,58,237,0.25)"/></g>
-            <g class="vertebra" transform="translate(80,157)"><ellipse cx="0" cy="0" rx="25" ry="8" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(124,58,237,0.25)"/></g>
-            <g class="vertebra" transform="translate(80,179)"><ellipse cx="0" cy="0" rx="25" ry="8" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(124,58,237,0.25)"/></g>
-            <g class="vertebra" transform="translate(80,201)"><ellipse cx="0" cy="0" rx="25" ry="8" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(124,58,237,0.25)"/></g>
-            <g class="vertebra" transform="translate(80,223)"><ellipse cx="0" cy="0" rx="25" ry="8" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="17" cy="0" rx="6" ry="5" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(124,58,237,0.25)"/></g>
+        <!-- ZONA TORÁCICA (T1-T12) -->
+        <div class="spine-zone zone-thoracic" id="zone-thoracic"
+             style="top:20%;height:30%;"></div>
 
-            <!-- ── VÉRTEBRAS TORÁCICAS (T1–T12) ── -->
-            <g class="vertebra" transform="translate(80,250)"><ellipse cx="0" cy="0" rx="28" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-22" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="22" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,275)"><ellipse cx="0" cy="0" rx="29" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-23" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="23" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,300)"><ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,325)"><ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="9" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,350)"><ellipse cx="0" cy="0" rx="31" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-25" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="25" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="9" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="9" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,375)"><ellipse cx="0" cy="0" rx="31" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-25" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="25" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="9" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="9" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,400)"><ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="9" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,425)"><ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-24" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="24" cy="0" rx="8" ry="6" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="7" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(255,230,0,0.15)"/></g>
-            <g class="vertebra" transform="translate(80,450)"><ellipse cx="0" cy="0" rx="28" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-22" cy="0" rx="8" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="22" cy="0" rx="8" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="8" rx="5" ry="6" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="8" ry="5" fill="rgba(255,230,0,0.12)"/></g>
-            <g class="vertebra" transform="translate(80,473)"><ellipse cx="0" cy="0" rx="27" ry="9" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-21" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="21" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="7" rx="4" ry="6" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(255,230,0,0.12)"/></g>
-            <g class="vertebra" transform="translate(80,493)"><ellipse cx="0" cy="0" rx="26" ry="9" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-20" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="20" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="7" rx="4" ry="6" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(255,230,0,0.1)"/></g>
-            <g class="vertebra" transform="translate(80,513)"><ellipse cx="0" cy="0" rx="25" ry="9" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-19" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="19" cy="0" rx="7" ry="5" fill="url(#boneGrad)" opacity="0.8"/><ellipse cx="0" cy="7" rx="4" ry="6" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="7" ry="4" fill="rgba(255,230,0,0.1)"/></g>
+        <!-- ZONA LOMBAR (L1-L5) -->
+        <div class="spine-zone zone-lumbar" id="zone-lumbar"
+             style="top:50%;height:28%;"></div>
 
-            <!-- ── VÉRTEBRAS LUMBARES (L1–L5) ── -->
-            <g class="vertebra" transform="translate(80,540)"><ellipse cx="0" cy="0" rx="34" ry="12" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-26" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="26" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="9" rx="6" ry="8" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="10" ry="6" fill="rgba(124,58,237,0.2)"/></g>
-            <g class="vertebra" transform="translate(80,568)"><ellipse cx="0" cy="0" rx="35" ry="12" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-27" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="27" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="9" rx="6" ry="8" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="10" ry="6" fill="rgba(124,58,237,0.2)"/></g>
-            <g class="vertebra" transform="translate(80,596)"><ellipse cx="0" cy="0" rx="35" ry="12" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-27" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="27" cy="0" rx="10" ry="7" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="9" rx="6" ry="8" fill="url(#boneGrad)" opacity="0.7"/><ellipse cx="0" cy="0" rx="11" ry="7" fill="rgba(124,58,237,0.2)"/></g>
-            <g class="vertebra" transform="translate(80,624)"><ellipse cx="0" cy="0" rx="34" ry="11" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-26" cy="0" rx="10" ry="6" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="26" cy="0" rx="10" ry="6" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="10" ry="6" fill="rgba(124,58,237,0.2)"/></g>
-            <g class="vertebra" transform="translate(80,649)"><ellipse cx="0" cy="0" rx="32" ry="10" fill="url(#boneGrad)" filter="url(#boneGlow)"/><ellipse cx="-24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="24" cy="0" rx="9" ry="6" fill="url(#boneGrad)" opacity="0.85"/><ellipse cx="0" cy="0" rx="9" ry="5" fill="rgba(124,58,237,0.2)"/></g>
+        <!-- ZONA SACRO -->
+        <div class="spine-zone zone-sacral" id="zone-sacral"
+             style="top:78%;height:22%;"></div>
 
-            <!-- ── SACRO ── -->
-            <ellipse cx="80" cy="685" rx="26" ry="22" fill="url(#boneGrad)" filter="url(#boneGlow)" opacity="0.95"/>
-            <ellipse cx="80" cy="685" rx="20" ry="16" fill="none" stroke="#FFE600" stroke-width="0.8" opacity="0.35"/>
-            <line x1="68" y1="676" x2="92" y2="676" stroke="url(#goldAccent)" stroke-width="0.8" opacity="0.5"/>
-            <line x1="66" y1="685" x2="94" y2="685" stroke="url(#goldAccent)" stroke-width="0.8" opacity="0.5"/>
-            <line x1="68" y1="694" x2="92" y2="694" stroke="url(#goldAccent)" stroke-width="0.8" opacity="0.5"/>
+        <!-- LINHA ECG atravessando a coluna -->
+        <canvas class="spine-ecg-canvas" id="ecgCanvas"></canvas>
 
-            <!-- ── PULSO ECG viajando pelo canal ── -->
-            <polyline id="ecgLine" points="80,350" fill="none" stroke="#FFE600" stroke-width="1.5" opacity="0.8" filter="url(#goldGlow)"/>
-        </svg>
+        <!-- CANAL MEDULAR — partículas descendo -->
+        <canvas class="spine-neural-canvas" id="neuralCanvas"></canvas>
 
-        <!-- Label flutuante -->
+        <!-- LABEL FLUTUANTE -->
         <div class="spine-label">
             <span class="spine-label-text">Columna Vertebral</span>
             <span class="spine-label-sub">La base de tu carrera médica</span>
         </div>
     </div>
 
-    <!-- ── HUD SVG Connectors ── -->
-    <svg class="spine-hud-connectors" viewBox="0 0 400 700">
-        <line x1="120" y1="50"  x2="120" y2="650" class="hud-line-vert"/>
-        <line x1="120" y1="90"  x2="240" y2="90"  class="hud-connector" id="hconn-alumed"/>
-        <line x1="120" y1="180" x2="240" y2="180" class="hud-connector" id="hconn-conecta"/>
-        <line x1="120" y1="270" x2="240" y2="270" class="hud-connector" id="hconn-biblioteca"/>
-        <line x1="120" y1="360" x2="240" y2="360" class="hud-connector" id="hconn-joy"/>
-        <line x1="120" y1="450" x2="240" y2="450" class="hud-connector" id="hconn-herramientas"/>
-        <line x1="120" y1="540" x2="240" y2="540" class="hud-connector" id="hconn-planes"/>
-        <circle cx="120" cy="610" r="6" class="hud-anchor-dot"/>
+    <!-- ── HUD SVG CONNECTORS ── -->
+    <svg class="spine-hud-connectors" viewBox="0 0 400 700" id="hudSVG">
+        <line x1="128" y1="50"  x2="128" y2="650" class="hud-line-vert"/>
+        <!-- Conectores horizontais para cada módulo -->
+        <line x1="128" y1="90"  x2="248" y2="90"  class="hud-connector" id="hconn-alumed"/>
+        <circle cx="128" cy="90"  r="4" class="hud-dot" id="hdot-alumed"/>
+        <line x1="128" y1="200" x2="248" y2="200" class="hud-connector" id="hconn-conecta"/>
+        <circle cx="128" cy="200" r="4" class="hud-dot" id="hdot-conecta"/>
+        <line x1="128" y1="310" x2="248" y2="310" class="hud-connector" id="hconn-biblioteca"/>
+        <circle cx="128" cy="310" r="4" class="hud-dot" id="hdot-biblioteca"/>
+        <line x1="128" y1="420" x2="248" y2="420" class="hud-connector" id="hconn-joy"/>
+        <circle cx="128" cy="420" r="4" class="hud-dot" id="hdot-joy"/>
+        <line x1="128" y1="530" x2="248" y2="530" class="hud-connector" id="hconn-herramientas"/>
+        <circle cx="128" cy="530" r="4" class="hud-dot" id="hdot-herramientas"/>
+        <line x1="128" y1="620" x2="248" y2="620" class="hud-connector" id="hconn-planes"/>
+        <circle cx="128" cy="620" r="4" class="hud-dot" id="hdot-planes"/>
+        <!-- Pulso ECG HUD -->
+        <polyline id="hudECG" points="" fill="none" stroke="rgba(255,230,0,0)" stroke-width="1.5"/>
     </svg>
 
-    <!-- ── Canvas neural ── -->
-    <canvas class="spine-canvas" id="neural-canvas"></canvas>
+    <!-- ── HUD NAV ── -->
+    <div class="spine-hud-nav" id="spineHudNav">
 
-    <!-- ── HUD Nav ── -->
-    <div class="spine-hud-nav">
-        <div class="hud-nav-item" id="hud-alumed" onclick="scrollToSection('alumed-section')">
+        <div class="hud-nav-item" id="hud-alumed"
+             data-zone="zone-cervical"
+             data-conn="hconn-alumed" data-dot="hdot-alumed"
+             onclick="scrollToSection('alumed-section')">
             <div class="hud-nav-circle"><i class="fas fa-brain"></i></div>
-            <div class="hud-nav-info"><h4>ALUMED</h4><p>Aprendé a tu ritmo con los mejores recursos y docentes.</p></div>
+            <div class="hud-nav-info">
+                <h4>ALUMED</h4>
+                <p>Aprendé a tu ritmo con los mejores recursos y docentes.</p>
+            </div>
         </div>
-        <div class="hud-nav-item" id="hud-conecta" onclick="scrollToSection('conecta-section')">
-            <div class="hud-nav-circle"><i class="fas fa-bell"></i></div>
-            <div class="hud-nav-info"><h4>CONECTA</h4><p>La cartelera de tu facultad en tiempo real.</p></div>
+
+        <div class="hud-nav-item" id="hud-conecta"
+             data-zone="zone-thoracic"
+             data-conn="hconn-conecta" data-dot="hdot-conecta"
+             onclick="scrollToSection('conecta-section')">
+            <div class="hud-nav-circle"><i class="fas fa-satellite-dish"></i></div>
+            <div class="hud-nav-info">
+                <h4>CONECTA FCM</h4>
+                <p>La cartelera de tu facultad en tiempo real.</p>
+            </div>
         </div>
-        <div class="hud-nav-item" id="hud-biblioteca" onclick="scrollToSection('biblioteca-section')">
+
+        <div class="hud-nav-item" id="hud-biblioteca"
+             data-zone="zone-thoracic"
+             data-conn="hconn-biblioteca" data-dot="hdot-biblioteca"
+             onclick="scrollToSection('biblioteca-section')">
             <div class="hud-nav-circle"><i class="fas fa-book-open"></i></div>
-            <div class="hud-nav-info"><h4>BIBLIOTECA</h4><p>Todos los contenidos organizados por materia y tema.</p></div>
+            <div class="hud-nav-info">
+                <h4>BIBLIOTECA</h4>
+                <p>Todos los contenidos organizados por materia y tema.</p>
+            </div>
         </div>
-        <div class="hud-nav-item" id="hud-joy" onclick="scrollToSection('joy-section')">
+
+        <div class="hud-nav-item" id="hud-joy"
+             data-zone="zone-lumbar"
+             data-conn="hconn-joy" data-dot="hdot-joy"
+             onclick="scrollToSection('joy-section')">
             <div class="hud-nav-circle"><i class="fas fa-wand-magic-sparkles"></i></div>
-            <div class="hud-nav-info"><h4>IA PROFE JOY</h4><p>Tu profesora 24/7. Resuelve, explica, acompaña.</p></div>
+            <div class="hud-nav-info">
+                <h4>IA PROFE JOY</h4>
+                <p>Tu profesora 24/7. Resuelve, explica, acompaña.</p>
+            </div>
         </div>
-        <div class="hud-nav-item" id="hud-herramientas" onclick="scrollToSection('herramientas-section')">
+
+        <div class="hud-nav-item" id="hud-herramientas"
+             data-zone="zone-lumbar"
+             data-conn="hconn-herramientas" data-dot="hdot-herramientas"
+             onclick="scrollToSection('herramientas-section')">
             <div class="hud-nav-circle"><i class="fas fa-cube"></i></div>
-            <div class="hud-nav-info"><h4>HERRAMIENTAS</h4><p>Microscopio, Anatomía 3D, Simulacros y más.</p></div>
+            <div class="hud-nav-info">
+                <h4>HERRAMIENTAS</h4>
+                <p>Microscopio, Anatomía 3D, Simulacros y más.</p>
+            </div>
         </div>
-        <div class="hud-nav-item" id="hud-planes" onclick="scrollToSection('planes-section')">
+
+        <div class="hud-nav-item" id="hud-planes"
+             data-zone="zone-sacral"
+             data-conn="hconn-planes" data-dot="hdot-planes"
+             onclick="scrollToSection('planes-section')">
             <div class="hud-nav-circle"><i class="fas fa-crown"></i></div>
-            <div class="hud-nav-info"><h4>PLANES</h4><p>Elegí el plan que se adapta a vos.</p></div>
+            <div class="hud-nav-info">
+                <h4>PLANES</h4>
+                <p>Elegí el plan que se adapta a vos.</p>
+            </div>
         </div>
+
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     ESTILOS
+═══════════════════════════════════════════ -->
 <style>
     /* ── VIEWPORT ── */
     .spine-webgl-viewport {
         position: fixed;
-        right: 0;
-        top: 0;
-        width: 48vw;
-        height: 100vh;
+        right: 0; top: 0;
+        width: 48vw; height: 100vh;
         z-index: 10;
         pointer-events: none;
         display: flex;
@@ -165,276 +166,563 @@
         overflow: hidden;
     }
 
-    /* ── SPINE WRAP — tamaño aumentado 30% ── */
+    /* ── GLOW BG ── */
+    .spine-glow-bg {
+        position: absolute;
+        left: -40px; top: 50%;
+        transform: translateY(-50%);
+        width: 260px; height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+        pointer-events: none;
+        transition: background 0.6s ease;
+        animation: glowPulse 4s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+        0%,100% {
+            background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+            transform: translateY(-50%) scale(1);
+        }
+        50% {
+            background: radial-gradient(circle, rgba(124,58,237,0.28) 0%, rgba(255,230,0,0.06) 50%, transparent 70%);
+            transform: translateY(-50%) scale(1.12);
+        }
+    }
+
+    /* ── SPINE WRAP ── */
     .spine-wrap {
         position: absolute;
-        left: -10px;
-        top: 50%;
+        left: 8px; top: 50%;
         transform: translateY(-50%);
-        width: 200px;
-        height: 85vh;
+        width: 180px; height: 88vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        animation: spineBreath 4s ease-in-out infinite;
+        /* Respiração suave */
+        animation: spineBreath 4.5s ease-in-out infinite;
+        will-change: transform, filter;
     }
     @keyframes spineBreath {
-        0%,100% { transform: translateY(-50%) scale(1);    filter: drop-shadow(0 0 18px rgba(124,58,237,0.5)); }
-        50%      { transform: translateY(-50%) scale(1.025); filter: drop-shadow(0 0 32px rgba(124,58,237,0.75)); }
+        0%,100% {
+            transform: translateY(-50%) scale(1);
+            filter: drop-shadow(0 0 18px rgba(124,58,237,0.55))
+                    drop-shadow(0 0 40px rgba(124,58,237,0.18));
+        }
+        50% {
+            transform: translateY(-50%) scale(1.028);
+            filter: drop-shadow(0 0 30px rgba(124,58,237,0.80))
+                    drop-shadow(0 0 60px rgba(255,230,0,0.12));
+        }
     }
 
-    .spine-svg {
+    /* ── IMAGEM REAL DA COLUNA ── */
+    .spine-img {
+        position: absolute;
         width: 100%;
-        height: 100%;
-        filter: drop-shadow(0 0 20px rgba(124,58,237,0.5));
+        height: 96%;
+        object-fit: contain;
+        object-position: center top;
+        pointer-events: none;
+        user-select: none;
+        transition: filter 0.4s ease;
     }
-    .spine-svg .vertebra {
-        transition: all 0.3s ease;
+
+    /* ── ZONAS DE ILUMINAÇÃO ── */
+    .spine-zone {
+        position: absolute;
+        left: 15%; width: 70%;
+        border-radius: 12px;
+        background: transparent;
+        pointer-events: none;
+        transition: background 0.5s ease, box-shadow 0.5s ease;
+        z-index: 2;
     }
-    .spine-svg .vertebra:hover {
-        filter: drop-shadow(0 0 10px #FFE600);
+    .spine-zone.lit-violet {
+        background: rgba(124,58,237,0.18);
+        box-shadow: 0 0 28px rgba(124,58,237,0.35);
+    }
+    .spine-zone.lit-gold {
+        background: rgba(255,230,0,0.12);
+        box-shadow: 0 0 28px rgba(255,230,0,0.3);
+    }
+
+    /* ── ECG CANVAS ── */
+    .spine-ecg-canvas {
+        position: absolute;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 3;
+        opacity: 0.75;
+    }
+
+    /* ── NEURAL CANVAS ── */
+    .spine-neural-canvas {
+        position: absolute;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 4;
     }
 
     /* ── LABEL ── */
     .spine-label {
         position: absolute;
-        bottom: 8%;
+        bottom: 4%;
         left: 50%;
         transform: translateX(-50%);
         text-align: center;
         white-space: nowrap;
         animation: fadeFloat 3s ease-in-out infinite;
+        z-index: 5;
     }
     .spine-label-text {
         display: block;
         font-family: 'Outfit', sans-serif;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: #FFE600;
-        opacity: 0.7;
+        font-size: 9px; font-weight: 800;
+        letter-spacing: 2.5px; text-transform: uppercase;
+        color: #FFE600; opacity: 0.65;
     }
     .spine-label-sub {
         display: block;
-        font-size: 8px;
-        color: rgba(255,255,255,0.4);
-        margin-top: 2px;
-        letter-spacing: 1px;
+        font-size: 7.5px;
+        color: rgba(255,255,255,0.35);
+        margin-top: 2px; letter-spacing: 1px;
     }
     @keyframes fadeFloat {
-        0%,100% { opacity: 0.6; transform: translateX(-50%) translateY(0); }
-        50%      { opacity: 1;   transform: translateX(-50%) translateY(-4px); }
+        0%,100% { opacity:0.6; transform:translateX(-50%) translateY(0); }
+        50%      { opacity:1;   transform:translateX(-50%) translateY(-5px); }
     }
 
     /* ── ELEMENTOS FLUTUANTES ── */
     .float-el {
         position: absolute;
-        font-size: 18px;
-        opacity: 0.35;
+        font-size: 16px; opacity: 0.3;
         pointer-events: none;
-        animation: floatRandom 6s ease-in-out infinite;
+        animation: floatMed ease-in-out infinite;
         filter: blur(0.3px);
     }
-    .float-cell  { animation-duration: 7s;  animation-delay: 0s;   }
-    .float-book  { animation-duration: 9s;  animation-delay: 1.5s; }
-    .float-mol   { animation-duration: 8s;  animation-delay: 3s;   }
-    .float-heart { animation-duration: 6s;  animation-delay: 0.5s; }
-    .float-dna   { animation-duration: 10s; animation-delay: 2s;   }
-    @keyframes floatRandom {
-        0%,100% { transform: translate(0,0) rotate(0deg);      opacity: 0.3; }
-        25%     { transform: translate(6px,-10px) rotate(5deg); opacity: 0.5; }
-        50%     { transform: translate(-4px,8px) rotate(-3deg); opacity: 0.35; }
-        75%     { transform: translate(8px,4px) rotate(4deg);   opacity: 0.45; }
+    .float-cell  { animation-duration:7s;  animation-delay:0s;   }
+    .float-book  { animation-duration:9s;  animation-delay:1.5s; }
+    .float-mol   { animation-duration:8s;  animation-delay:3s;   }
+    .float-heart { animation-duration:6s;  animation-delay:0.5s; }
+    .float-dna   { animation-duration:10s; animation-delay:2s;   }
+    .float-pill  { animation-duration:7.5s;animation-delay:4s;   }
+    @keyframes floatMed {
+        0%,100% { transform:translate(0,0) rotate(0deg);       opacity:0.25; }
+        25%     { transform:translate(7px,-12px) rotate(6deg);  opacity:0.45; }
+        50%     { transform:translate(-5px,8px) rotate(-4deg);  opacity:0.3;  }
+        75%     { transform:translate(9px,5px) rotate(5deg);    opacity:0.4;  }
     }
 
-    /* ── PARTÍCULAS MÉDICAS ── */
-    .med-particles {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        overflow: hidden;
-    }
+    /* ── PARTÍCULAS ── */
+    .med-particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
     .med-dot {
-        position: absolute;
-        border-radius: 50%;
-        animation: medFloat linear infinite;
-        opacity: 0;
+        position:absolute; border-radius:50%;
+        animation: medFloat linear infinite; opacity:0;
     }
     @keyframes medFloat {
-        0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-        10%  { opacity: 0.6; }
-        90%  { opacity: 0.3; }
-        100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
-    }
-
-    /* ── CANVAS NEURAL ── */
-    .spine-canvas {
-        position: absolute;
-        left: 0;
-        top: 10%;
-        width: 200px;
-        height: 80%;
-        z-index: 11;
-        pointer-events: none;
+        0%   { transform:translateY(100vh) scale(0); opacity:0; }
+        8%   { opacity:0.55; }
+        92%  { opacity:0.2; }
+        100% { transform:translateY(-60px) scale(1.8); opacity:0; }
     }
 
     /* ── HUD SVG ── */
     .spine-hud-connectors {
         position: absolute;
-        left: 0;
-        top: 10%;
-        width: 260px;
-        height: 80%;
-        overflow: visible;
-        z-index: 12;
+        left: 0; top: 6%;
+        width: 280px; height: 88%;
+        overflow: visible; z-index: 12;
+        pointer-events: none;
     }
-    .hud-line-vert  { stroke: rgba(124,58,237,0.15); stroke-width: 1.5; }
-    .hud-connector  { stroke: rgba(255,255,255,0.12); stroke-width: 1.5; transition: all 0.4s; }
-    .hud-connector.active { stroke: #FFE600; stroke-width: 2; filter: drop-shadow(0 0 4px rgba(255,230,0,0.5)); }
-    .hud-anchor-dot { fill: none; stroke: #FFE600; stroke-width: 2; }
+    .hud-line-vert  { stroke:rgba(124,58,237,0.12); stroke-width:1.5; }
+    .hud-connector  {
+        stroke:rgba(255,255,255,0.1); stroke-width:1.5;
+        transition:all 0.4s cubic-bezier(.25,.8,.25,1);
+        stroke-dasharray:4 4; stroke-dashoffset:0;
+    }
+    .hud-connector.active {
+        stroke:#FFE600; stroke-width:2;
+        stroke-dasharray:none;
+        filter:drop-shadow(0 0 5px rgba(255,230,0,.6));
+    }
+    .hud-dot {
+        fill:rgba(124,58,237,0.4); stroke:rgba(124,58,237,0.6); stroke-width:1;
+        transition:all 0.4s;
+    }
+    .hud-dot.active { fill:#FFE600; stroke:#FFE600; filter:drop-shadow(0 0 6px #FFE600); }
 
     /* ── HUD NAV ── */
     .spine-hud-nav {
         position: absolute;
-        left: 210px;
-        top: 12%;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        z-index: 13;
-        width: 300px;
+        left: 222px; top: 8%;
+        display: flex; flex-direction: column; gap: 14px;
+        z-index: 13; width: 290px;
         pointer-events: auto;
     }
     .hud-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        cursor: pointer;
-        opacity: 0.5;
+        display: flex; align-items: center; gap: 14px;
+        cursor: pointer; opacity: 0.45;
         transition: all 0.4s cubic-bezier(0.25,0.8,0.25,1);
     }
-    .hud-nav-item:hover, .hud-nav-item.active { opacity: 1; }
+    .hud-nav-item:hover, .hud-nav-item.active { opacity:1; }
     .hud-nav-circle {
-        width: 48px; height: 48px;
-        border-radius: 50%;
-        border: 2.5px solid rgba(124,58,237,0.4);
-        background: #110822;
-        color: #a78bfa;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.15rem; flex-shrink: 0;
-        transition: all 0.4s cubic-bezier(0.25,0.8,0.25,1);
+        width:46px; height:46px; border-radius:50%;
+        border:2px solid rgba(124,58,237,0.35);
+        background:rgba(17,8,34,0.9);
+        color:#a78bfa;
+        display:flex; align-items:center; justify-content:center;
+        font-size:1.1rem; flex-shrink:0;
+        transition:all 0.4s cubic-bezier(0.25,0.8,0.25,1);
+        box-shadow:0 0 0 0 rgba(255,230,0,0);
     }
     .hud-nav-item:hover .hud-nav-circle,
     .hud-nav-item.active .hud-nav-circle {
-        border-color: #FFE600; color: #FFE600;
-        box-shadow: 0 0 16px rgba(255,230,0,0.35);
-        transform: scale(1.1);
+        border-color:#FFE600; color:#FFE600;
+        box-shadow:0 0 18px rgba(255,230,0,0.4), 0 0 0 4px rgba(255,230,0,0.08);
+        transform:scale(1.12);
     }
     .hud-nav-info h4 {
-        font-family: 'Outfit',sans-serif; font-weight: 800;
-        font-size: 0.95rem; color: #fff;
-        margin: 0 0 2px; letter-spacing: 0.5px; transition: color 0.3s;
+        font-family:'Outfit',sans-serif; font-weight:800;
+        font-size:0.9rem; color:#fff;
+        margin:0 0 2px; letter-spacing:0.5px;
+        transition:color 0.3s;
     }
     .hud-nav-item:hover .hud-nav-info h4,
-    .hud-nav-item.active .hud-nav-info h4 { color: #FFE600; }
-    .hud-nav-info p {
-        font-size: 0.72rem; color: #94a3b8; margin: 0; line-height: 1.3;
+    .hud-nav-item.active .hud-nav-info h4 { color:#FFE600; }
+    .hud-nav-info p { font-size:0.7rem; color:#64748b; margin:0; line-height:1.3; }
+
+    /* ── MICROANIMAÇÕES POR MÓDULO ── */
+    #hud-biblioteca:hover .hud-nav-circle { animation: bookFlip 0.6s ease; }
+    @keyframes bookFlip {
+        0%,100%{ transform:scale(1.12) rotateY(0deg); }
+        50%    { transform:scale(1.12) rotateY(180deg); }
+    }
+    #hud-conecta:hover .hud-nav-circle { animation: waveSignal 0.8s ease; }
+    @keyframes waveSignal {
+        0%,100%{ transform:scale(1.12); }
+        25%    { transform:scale(1.2)  rotate(5deg); }
+        75%    { transform:scale(1.15) rotate(-5deg); }
+    }
+    #hud-joy:hover .hud-nav-circle { animation: sparkle 0.5s ease; }
+    @keyframes sparkle {
+        0%,100%{ transform:scale(1.12); box-shadow:0 0 18px rgba(255,230,0,0.4); }
+        50%    { transform:scale(1.25); box-shadow:0 0 40px rgba(255,230,0,0.8); }
+    }
+    #hud-planes:hover .hud-nav-circle { animation: crownBounce 0.5s ease; }
+    @keyframes crownBounce {
+        0%,100%{ transform:scale(1.12) translateY(0); }
+        50%    { transform:scale(1.12) translateY(-6px); }
     }
 
-    @media (max-width: 1024px) {
-        .spine-webgl-viewport { display: none !important; }
+    @media (max-width: 1100px) {
+        .spine-webgl-viewport { display:none !important; }
     }
 </style>
 
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── 1. Partículas médicas flutuantes ──
-    const container = document.getElementById('medParticles');
-    const colors = ['#7c3aed','#FFE600','#a78bfa','#e879f9','#38bdf8'];
-    if (container) {
-        for (let i = 0; i < 20; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'med-dot';
-            const size = 2 + Math.random() * 4;
-            dot.style.cssText = `
-                width:${size}px; height:${size}px;
-                left:${5 + Math.random() * 90}%;
-                background:${colors[Math.floor(Math.random()*colors.length)]};
-                box-shadow:0 0 ${size*2}px currentColor;
-                animation-duration:${6+Math.random()*10}s;
-                animation-delay:${Math.random()*8}s;
+    const viewport = document.getElementById('spineViewport');
+    const spineWrap = document.getElementById('spineWrap');
+    const spineImg  = document.getElementById('spineImg');
+    const glowBg    = document.getElementById('spineGlowBg');
+    if (!viewport || !spineWrap) return;
+
+    /* ══════════════════════════════════
+       1. PARTÍCULAS MÉDICAS
+    ══════════════════════════════════ */
+    const medContainer = document.getElementById('medParticles');
+    const medColors    = ['#7c3aed','#FFE600','#a78bfa','#e879f9','#38bdf8','#f97316'];
+    if (medContainer) {
+        for (let i = 0; i < 22; i++) {
+            const d = document.createElement('div');
+            d.className = 'med-dot';
+            const s = 2 + Math.random() * 4;
+            d.style.cssText = `
+                width:${s}px;height:${s}px;
+                left:${4+Math.random()*92}%;
+                background:${medColors[Math.floor(Math.random()*medColors.length)]};
+                box-shadow:0 0 ${s*2}px currentColor;
+                animation-duration:${7+Math.random()*12}s;
+                animation-delay:${Math.random()*10}s;
             `;
-            container.appendChild(dot);
+            medContainer.appendChild(d);
         }
     }
 
-    // ── 2. Neural Particles Canvas ──
-    const viewport = document.querySelector('.spine-webgl-viewport');
-    const canvas   = document.getElementById('neural-canvas');
-    if (!viewport || !canvas) return;
+    /* ══════════════════════════════════
+       2. PARALLAX DO MOUSE
+    ══════════════════════════════════ */
+    let mouseX = 0, mouseY = 0;
+    let currentX = 0, currentY = 0;
+    let raf;
 
-    const ctx = canvas.getContext('2d');
-    let width  = canvas.width  = 200;
-    let height = canvas.height = viewport.offsetHeight * 0.8;
-
-    window.addEventListener('resize', () => {
-        width  = canvas.width  = 200;
-        height = canvas.height = viewport.offsetHeight * 0.8;
+    document.addEventListener('mousemove', e => {
+        const cx = window.innerWidth  / 2;
+        const cy = window.innerHeight / 2;
+        mouseX = (e.clientX - cx) / cx;  // -1 a +1
+        mouseY = (e.clientY - cy) / cy;
     });
 
-    class ActionPotential {
-        constructor() { this.reset(); }
-        reset() {
-            this.y       = Math.random() * height;
-            this.x       = 80;
-            this.speed   = 1.5 + Math.random() * 2.5;
-            this.radius  = 1 + Math.random() * 2.5;
-            this.opacity = 0.4 + Math.random() * 0.5;
-            this.color   = Math.random() > 0.5 ? '#FFE600' : '#7c3aed';
+    function parallaxLoop() {
+        // Suavização (lerp)
+        currentX += (mouseX - currentX) * 0.05;
+        currentY += (mouseY - currentY) * 0.05;
+
+        const tx = currentX * -8;  // máx 8px horizontal
+        const ty = currentY * -5;  // máx 5px vertical
+
+        spineWrap.style.transform =
+            `translateY(calc(-50% + ${ty}px)) translateX(${tx}px)`;
+
+        // Glow dinâmico muda de roxo para dourado com mouse
+        const goldAmount  = (currentX + 1) / 2;  // 0-1
+        const violetAlpha = 0.18 + Math.abs(currentY) * 0.1;
+        const goldAlpha   = goldAmount * 0.12;
+        glowBg.style.background =
+            `radial-gradient(circle,
+                rgba(124,58,237,${violetAlpha}) 0%,
+                rgba(255,230,0,${goldAlpha}) 45%,
+                transparent 70%)`;
+
+        raf = requestAnimationFrame(parallaxLoop);
+    }
+    parallaxLoop();
+
+    /* ══════════════════════════════════
+       3. ECG CANVAS — linha discreta
+    ══════════════════════════════════ */
+    const ecgCanvas = document.getElementById('ecgCanvas');
+    if (ecgCanvas) {
+        const ec  = ecgCanvas.getContext('2d');
+        let ecgW  = ecgCanvas.width  = spineWrap.offsetWidth;
+        let ecgH  = ecgCanvas.height = spineWrap.offsetHeight;
+
+        const ECG_X  = ecgW * 0.5;   // centro horizontal
+        let   ecgT   = 0;
+        let   ecgY   = ecgH * 0.25;  // começa no topo
+        const SPEED  = 1.4;
+
+        function ecgWaveform(t) {
+            // Forma de onda ECG simplificada: P, QRS, T
+            const phase = t % 80;
+            if (phase < 15) return Math.sin(phase / 15 * Math.PI) * 8;   // onda P
+            if (phase < 25) return -3;                                      // PR
+            if (phase < 27) return -12;                                     // Q
+            if (phase < 30) return 22;                                      // R (pico)
+            if (phase < 33) return -8;                                      // S
+            if (phase < 45) return Math.sin((phase-33)/12*Math.PI) * 10;   // T
+            return 0;
         }
-        update() { this.y += this.speed; if (this.y > height) { this.reset(); this.y = 0; } }
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-            ctx.fillStyle   = this.color;
-            ctx.shadowColor = this.color;
-            ctx.shadowBlur  = 10;
-            ctx.globalAlpha = this.opacity;
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.shadowBlur  = 0;
+
+        const ecgTrail = [];
+        const MAX_TRAIL = 120;
+
+        function drawECG() {
+            ecgW = ecgCanvas.width  = spineWrap.offsetWidth  || 180;
+            ecgH = ecgCanvas.height = spineWrap.offsetHeight || 600;
+            ec.clearRect(0, 0, ecgW, ecgH);
+
+            const cx = ecgW * 0.48;
+            const wave = ecgWaveform(ecgT);
+
+            ecgTrail.push({ x: cx + wave, y: ecgY });
+            if (ecgTrail.length > MAX_TRAIL) ecgTrail.shift();
+
+            ecgY += SPEED;
+            if (ecgY > ecgH * 0.88) { ecgY = ecgH * 0.12; ecgTrail.length = 0; }
+            ecgT += 1;
+
+            if (ecgTrail.length > 2) {
+                ec.beginPath();
+                ec.moveTo(ecgTrail[0].x, ecgTrail[0].y);
+                for (let i = 1; i < ecgTrail.length; i++) {
+                    ec.lineTo(ecgTrail[i].x, ecgTrail[i].y);
+                }
+                ec.strokeStyle = 'rgba(255,230,0,0.55)';
+                ec.lineWidth   = 1.5;
+                ec.shadowColor = '#FFE600';
+                ec.shadowBlur  = 6;
+                ec.stroke();
+                ec.shadowBlur  = 0;
+
+                // Ponto de frente brilhante
+                const last = ecgTrail[ecgTrail.length - 1];
+                ec.beginPath();
+                ec.arc(last.x, last.y, 3, 0, Math.PI * 2);
+                ec.fillStyle  = '#FFE600';
+                ec.shadowColor = '#FFE600';
+                ec.shadowBlur  = 12;
+                ec.fill();
+                ec.shadowBlur  = 0;
+            }
+
+            requestAnimationFrame(drawECG);
         }
+        drawECG();
     }
 
-    const particles = Array.from({length:30}, () => new ActionPotential());
-    function animate() {
-        ctx.clearRect(0,0,width,height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-    animate();
+    /* ══════════════════════════════════
+       4. NEURAL CANVAS — partículas
+    ══════════════════════════════════ */
+    const neuralCanvas = document.getElementById('neuralCanvas');
+    if (neuralCanvas) {
+        const nc = neuralCanvas.getContext('2d');
 
-    // ── 3. ScrollTrigger HUD ──
+        function resizeNeural() {
+            neuralCanvas.width  = spineWrap.offsetWidth  || 180;
+            neuralCanvas.height = spineWrap.offsetHeight || 600;
+        }
+        resizeNeural();
+        window.addEventListener('resize', resizeNeural);
+
+        class Spark {
+            constructor() { this.reset(); }
+            reset() {
+                const w = neuralCanvas.width, h = neuralCanvas.height;
+                this.x       = w * 0.48 + (Math.random() - 0.5) * 12;
+                this.y       = Math.random() * h;
+                this.speed   = 1.2 + Math.random() * 2.2;
+                this.radius  = 0.8 + Math.random() * 2;
+                this.opacity = 0.35 + Math.random() * 0.5;
+                this.color   = Math.random() > 0.55 ? '#FFE600' : '#7c3aed';
+                this.wiggle  = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.y += this.speed;
+                this.x += this.wiggle;
+                if (this.y > neuralCanvas.height + 10) { this.reset(); this.y = 0; }
+            }
+            draw() {
+                nc.beginPath();
+                nc.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                nc.fillStyle   = this.color;
+                nc.shadowColor = this.color;
+                nc.shadowBlur  = 8;
+                nc.globalAlpha = this.opacity;
+                nc.fill();
+                nc.globalAlpha = 1;
+                nc.shadowBlur  = 0;
+            }
+        }
+
+        const sparks = Array.from({length: 28}, () => new Spark());
+        function animateSparks() {
+            nc.clearRect(0, 0, neuralCanvas.width, neuralCanvas.height);
+            sparks.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateSparks);
+        }
+        animateSparks();
+    }
+
+    /* ══════════════════════════════════
+       5. SCROLL TRANSITION — brilho
+    ══════════════════════════════════ */
+    let lastScrollY = 0;
+    window.addEventListener('scroll', () => {
+        const scrollPct = Math.min(window.scrollY / (document.body.scrollHeight - window.innerHeight), 1);
+        // Quanto mais desce, mais dourado fica o glow
+        const vOpacity = 0.55 - scrollPct * 0.2;
+        const gOpacity = scrollPct * 0.35;
+        spineImg.style.filter =
+            `drop-shadow(0 0 ${18 + scrollPct*20}px rgba(124,58,237,${vOpacity}))
+             drop-shadow(0 0 ${scrollPct*30}px rgba(255,230,0,${gOpacity}))`;
+        lastScrollY = window.scrollY;
+    }, {passive:true});
+
+    /* ══════════════════════════════════
+       6. HOVER NOS MÓDULOS — ilumina zona da coluna
+    ══════════════════════════════════ */
+    const navItems = document.querySelectorAll('.hud-nav-item');
+
+    navItems.forEach(item => {
+        const zoneId = item.dataset.zone;
+        const connId = item.dataset.conn;
+        const dotId  = item.dataset.dot;
+        const isGold = (item.id === 'hud-planes' || item.id === 'hud-joy');
+
+        item.addEventListener('mouseenter', () => {
+            // Limpa todas as zonas
+            document.querySelectorAll('.spine-zone').forEach(z => {
+                z.classList.remove('lit-violet', 'lit-gold');
+            });
+            // Ilumina a zona correspondente
+            const zone = document.getElementById(zoneId);
+            if (zone) zone.classList.add(isGold ? 'lit-gold' : 'lit-violet');
+
+            // Ativa conector HUD
+            const conn = document.getElementById(connId);
+            const dot  = document.getElementById(dotId);
+            if (conn) conn.classList.add('active');
+            if (dot)  dot.classList.add('active');
+
+            // Boost no brilho da imagem
+            spineImg.style.filter =
+                isGold
+                ? 'drop-shadow(0 0 28px rgba(255,230,0,0.7)) drop-shadow(0 0 50px rgba(255,230,0,0.25))'
+                : 'drop-shadow(0 0 28px rgba(124,58,237,0.85)) drop-shadow(0 0 50px rgba(124,58,237,0.3))';
+        });
+
+        item.addEventListener('mouseleave', () => {
+            document.querySelectorAll('.spine-zone').forEach(z => {
+                z.classList.remove('lit-violet', 'lit-gold');
+            });
+            const conn = document.getElementById(connId);
+            const dot  = document.getElementById(dotId);
+            if (conn) conn.classList.remove('active');
+            if (dot)  dot.classList.remove('active');
+            spineImg.style.filter = '';
+        });
+    });
+
+    /* ══════════════════════════════════
+       7. SCROLL TRIGGER — ativa HUD
+    ══════════════════════════════════ */
     const sections = [
-        {id:'alumed-section',     hud:'hud-alumed',      conn:'hconn-alumed'},
-        {id:'conecta-section',    hud:'hud-conecta',     conn:'hconn-conecta'},
-        {id:'biblioteca-section', hud:'hud-biblioteca',  conn:'hconn-biblioteca'},
-        {id:'joy-section',        hud:'hud-joy',         conn:'hconn-joy'},
-        {id:'herramientas-section',hud:'hud-herramientas',conn:'hconn-herramientas'},
-        {id:'planes-section',     hud:'hud-planes',      conn:'hconn-planes'},
+        {id:'alumed-section',      hud:'hud-alumed',       conn:'hconn-alumed',      dot:'hdot-alumed'},
+        {id:'conecta-section',     hud:'hud-conecta',      conn:'hconn-conecta',     dot:'hdot-conecta'},
+        {id:'biblioteca-section',  hud:'hud-biblioteca',   conn:'hconn-biblioteca',  dot:'hdot-biblioteca'},
+        {id:'joy-section',         hud:'hud-joy',          conn:'hconn-joy',         dot:'hdot-joy'},
+        {id:'herramientas-section',hud:'hud-herramientas', conn:'hconn-herramientas',dot:'hdot-herramientas'},
+        {id:'planes-section',      hud:'hud-planes',       conn:'hconn-planes',      dot:'hdot-planes'},
     ];
+
     if (typeof ScrollTrigger !== 'undefined') {
         sections.forEach(sec => {
             ScrollTrigger.create({
-                trigger:`#${sec.id}`, start:'top center+=120', end:'bottom center-=120',
+                trigger: `#${sec.id}`,
+                start: 'top center+=100',
+                end:   'bottom center-=100',
                 onToggle: self => {
                     document.getElementById(sec.hud)?.classList.toggle('active', self.isActive);
                     document.getElementById(sec.conn)?.classList.toggle('active', self.isActive);
+                    document.getElementById(sec.dot)?.classList.toggle('active', self.isActive);
                 }
             });
         });
+    } else {
+        // Fallback sem GSAP — IntersectionObserver
+        const ioOptions = { rootMargin: '-30% 0px -30% 0px', threshold: 0.2 };
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const sec = sections.find(s => s.id === entry.target.id);
+                if (!sec) return;
+                const active = entry.isIntersecting;
+                document.getElementById(sec.hud)?.classList.toggle('active', active);
+                document.getElementById(sec.conn)?.classList.toggle('active', active);
+                document.getElementById(sec.dot)?.classList.toggle('active', active);
+            });
+        }, ioOptions);
+        sections.forEach(sec => {
+            const el = document.getElementById(sec.id);
+            if (el) io.observe(el);
+        });
     }
+
 });
 </script>
