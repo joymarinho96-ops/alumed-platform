@@ -1,4 +1,9 @@
-# Django
+# ═══════════════════════════════════════════════
+#  ALUMED OS — .gitignore (Segurança Reforçada)
+#  NUNCA remova itens desta lista
+# ═══════════════════════════════════════════════
+
+# ── Django ───────────────────────────────────────
 *.log
 *.pot
 *.pyc
@@ -9,38 +14,65 @@ db.sqlite3-journal
 media/
 settings.py
 
-# Ambientes Virtuais
+# ── Ambientes Virtuais ────────────────────────────
 venv/
 env/
-.env
 .venv/
 
-# IDEs
+# ── Variáveis de Ambiente (NUNCA subir) ──────────
+.env
+.env.*
+*.env
+.env.local
+.env.production
+.env.staging
+
+# ── IDEs ─────────────────────────────────────────
 .vscode/
 .idea/
 
-# Google Cloud Credentials (NUNCA suba isso)
+# ── Credenciais Google Cloud (NUNCA subir) ────────
+credentials.json
+token.json
 gcs_credentials.json
 gcs_credentials2.json
 alumed/gcs_credentials.json
 alumed/gcs_credentials2.json
+service_account*.json
+*-service-account*.json
 
-# Mac/Windows
+# ── Chaves e Tokens (NUNCA subir) ─────────────────
+*.pem
+*.key
+*.p12
+*.p8
+*.pfx
+*_rsa
+*_rsa.pub
+secrets.json
+secret*.json
+
+# ── Mac/Windows ───────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Temporary scrape / logs / tokens
-*.json
-!requirements.txt
-!wix.config.json
-!wix.config.json.backup
-*.png
-# Ignorar solo HTMLs generados o temporales, no los templates de Django
-netlify_build/*.html
-netlify_build/**/*.html
-conecta-biblioteca-source.html
+# ── Arquivos temporários / logs / scraping ────────
 tmp-*
 @ + *
 tmp_library_server.py
 apply_cors.py
 check_sites.py
+conecta-biblioteca-source.html
+scratch/
+
+# ── Imagens e HTMLs gerados (não templates) ───────
+*.png
+netlify_build/*.html
+netlify_build/**/*.html
+
+# ── JSONs (exceto configs necessários) ────────────
+*.json
+!requirements.txt
+!wix.config.json
+!wix.config.json.backup
+!cors.json
