@@ -259,10 +259,6 @@ def becas_view(request):
     """
     Página de Becas y Beneficios Estudiantiles — UNLP / FCM.
     Muestra CUDE, Boleto Educativo, Libreta Universitaria y Comedor.
-    Requiere autenticación.
+    Acceso libre — sin necesidad de login.
     """
-    from accounts.views import student_auth_required
-    @student_auth_required
-    def _inner(request):
-        return render(request, 'core/becas.html')
-    return _inner(request)
+    return render(request, 'core/becas.html')
