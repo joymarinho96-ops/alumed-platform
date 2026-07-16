@@ -244,14 +244,11 @@ def conecta_landing_view(request):
     """
     Landing publica do Conecta FCM.
     Nao requer login — mostra funcionalidades e CTA 'Activar mi Conecta'.
-    Se o usuario ja tem acesso, redireciona direto para o dashboard.
+    Se o usuario ja esta autenticado, redireciona direto para o dashboard.
     """
     from django.shortcuts import redirect as _redirect
     if request.user.is_authenticated:
-        # Verifica se ja tem acesso
-        from accounts.views import has_product_access
-        if has_product_access(request.user, 'CONECTA_FCM'):
-            return _redirect('conecta_dashboard')
+        return _redirect('conecta_dashboard')
     return render(request, 'core/conecta_landing.html')
 
 

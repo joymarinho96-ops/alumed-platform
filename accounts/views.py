@@ -34,29 +34,21 @@ def student_auth_required(view_func):
 def has_product_access(user, product_slug):
     """
     Verifica se um usuario tem acesso ativo a um AccessProduct (ex: CONECTA_FCM).
-    Independente de Enrollment de cursos.
-    Staff sempre tem acesso.
+    POLÍTICA ATUAL: todo usuário autenticado tem acesso ao Conecta FCM.
+    Staff sempre tem acesso premium.
+    Para acesso restrito por pagamento, revisar esta função.
     """
-    if user.is_staff:
-        return True
-    return UserAccess.objects.filter(
-        user=user,
-        product__slug=product_slug,
-        is_active=True,
-    ).filter(
-        Q(expires_at__isnull=True) | Q(expires_at__gt=timezone.now())
-    ).exists()
+    # Todo usuário autenticado tem acesso ao Conecta FCM
+    return True
 
 
 def conecta_access_required(view_func):
-    """Protege views do Conecta FCM. Requer login + UserAccess(CONECTA_FCM) ativo."""
+    """Protege views do Conecta FCM. Requer apenas login."""
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
         if not request.user.is_authenticated:
             next_url = request.get_full_path()
             return redirect(f"{reverse('login')}?next={next_url}")
-        if not has_product_access(request.user, 'CONECTA_FCM'):
-            return redirect('conecta_landing')
         return view_func(request, *args, **kwargs)
     return _wrapped
 
