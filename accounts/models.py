@@ -438,3 +438,60 @@ class AcademicEvent(models.Model):
             'needs_inscription_alert': self.needs_inscription_alert,
             'created_at':            self.created_at.isoformat(),
         }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TelegramSubscriber — Alunos inscritos no bot @conecta_radar_fcm_bot
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TelegramSubscriber(models.Model):
+    """
+    Armazena alunos que enviaram /start ao bot do Telegram.
+    O bot salva automaticamente o chat_id e o ano escolhido.
+    Usado pelo scraper para enviar DMs segmentadas por ano.
+    """
+    YEAR_CHOICES = [
+        ('ingreso',   'Ingreso'),
+        ('1',         '1° Año'),
+        ('2',         '2° Año'),
+        ('3',         '3° Año'),
+        ('4',         '4° Año'),
+        ('5',         '5° Año'),
+        ('6',         '6° Año'),
+        ('internado', 'Internado'),
+        ('todos',     'Todos los años'),
+    ]
+
+    telegram_chat_id  = models.BigIntegerField(unique=True, verbose_name='Chat ID Telegram')
+    first_name        = models.CharField(max_length=100, blank=True, verbose_name='Nombre')
+    username          = models.CharField(max_length=100, blank=True, verbose_name='@usuario')
+    year              = models.CharField(
+                            max_length=10, choices=YEAR_CHOICES, default='todos',
+                            verbose_name='Año académico'
+                        )
+    is_active         = models.BooleanField(default=True, verbose_name='Activo')
+    subscribed_at     = models.DateTimeField(auto_now_add=True, verbose_name='Inscrito em')
+    updated_at        = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
+
+    class Meta:
+        ordering            = ['-subscribed_at']
+        verbose_name        = 'Suscriptor Telegram'
+        verbose_name_plural = 'Suscriptores Telegram'
+
+    def __str__(self):
+        name = self.username or self.first_name or str(self.telegram_chat_id)
+        return f'{name} | {self.get_year_display()}'
+
+    @classmethod
+    def get_targets_for_years(cls, target_years_csv: str):
+        """
+        Retorna QuerySet dos subscribers que devem receber um aviso.
+        target_years_csv: '' = todos | '1,2' = só 1° e 2° ano
+        """
+        qs = cls.objects.filter(is_active=True)
+        if not target_years_csv:
+            return qs  # aviso geral -> todos
+        years = [y.strip() for y in target_years_csv.split(',') if y.strip()]
+        # Inclui quem escolheu 'todos' + quem está nos anos alvo
+        return qs.filter(year__in=years + ['todos'])
+

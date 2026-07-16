@@ -309,61 +309,111 @@ def send_telegram(item: CarteleraItem) -> bool:
 
 def send_telegram_segmented(item: CarteleraItem) -> bool:
     """
-    Notificacao segmentada por ano da carreira.
+    Notificacao CIRURGICA por ano da carreira.
 
-    Logica:
-    - Se target_years == '' -> aviso geral -> envia para o canal principal (TELEGRAM_CHAT_ID)
-    - Se target_years == '1,2' -> filtra alunos com profile.year in ['1','2']
-      e envia mensagens individuais via TELEGRAM_BOT_TOKEN para cada chat_id pessoal
-      (se o aluno tiver telegram_chat_id cadastrado no perfil -- campo futuro).
-    - Por enquanto, envia para o canal principal com tag de ano no titulo.
+    Fluxo:
+    1. Posta no canal principal (TELEGRAM_CHAT_ID) com tag do ano — visivel a todos.
+    2. Envia DM individual para cada TelegramSubscriber cujo year bate com
+       os target_years do aviso.
+       - Aviso geral (target_years='') -> todos os subscribers ativos
+       - Aviso de ano especifico -> apenas subscribers daquele ano + 'todos'
 
-    Retorna True se pelo menos uma mensagem foi enviada com sucesso.
+    Retorna True se pelo menos uma mensagem foi enviada.
     """
-    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
-    chat_id   = os.environ.get('TELEGRAM_CHAT_ID', '')
+    from accounts.models import TelegramSubscriber
 
-    if not bot_token or not chat_id:
-        logger.warning('TELEGRAM_BOT_TOKEN ou TELEGRAM_CHAT_ID nao configurados')
+    bot_token  = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+    channel_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+
+    if not bot_token:
+        logger.warning('TELEGRAM_BOT_TOKEN nao configurado')
         return False
 
-    # Etiqueta do ano para o titulo da mensagem
+    # ── Montar texto do aviso ──────────────────────────────────
+    anos_display = {
+        'ingreso': '🎓 Ingreso', '1': '1° Año', '2': '2° Año',
+        '3': '3° Año', '4': '4° Año', '5': '5° Año',
+        '6': '6° Año', 'internado': '🏥 Internado',
+    }
     if item.target_years:
-        anos_display = {
-            'ingreso': 'Ingreso',
-            '1': '1 Ano', '2': '2 Ano', '3': '3 Ano',
-            '4': '4 Ano', '5': '5 Ano', '6': '6 Ano',
-            'internado': 'Internado',
-        }
         anos_lista = [anos_display.get(a, a) for a in item.target_years.split(',')]
-        tag = ' | '.join(anos_lista)
-        header = f'[PIN] *CARTELERA FCM* [{tag}]\n\n'
+        tag    = ' · '.join(anos_lista)
+        header = f'📌 *CARTELERA FCM* — [{tag}]\n\n'
     else:
-        header = '[PIN] *CARTELERA FCM* [TODOS LOS ALUMNOS]\n\n'
+        header = '📌 *CARTELERA FCM* — [Todos los alumnos]\n\n'
 
     text = (
         f"{header}"
-        f"[DATE] {item.date_str}\n"
+        f"📅 {item.date_str}\n"
         f"*{item.title}*\n"
-        f"{('_' + item.subtitle + '_' + chr(10)) if item.subtitle else ''}"
-        f"[ORG] {item.issuer or 'Sin emisor'}\n\n"
-        f"[LINK] [Ver aviso completo]({item.url})"
+        f"{('_' + item.subtitle + '_\n') if item.subtitle else ''}"
+        f"🏛 {item.issuer or 'Sin emisor'}\n\n"
+        f"🔗 [Ver aviso completo]({item.url})"
     )
 
     api_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-    try:
-        resp = requests.post(api_url, json={
-            'chat_id':    chat_id,
-            'text':       text,
-            'parse_mode': 'Markdown',
-            'disable_web_page_preview': False,
-        }, timeout=10)
-        resp.raise_for_status()
-        logger.info(f'Aviso {item.external_id} notificado | anos={item.target_years or "geral"}')
-        return True
-    except Exception as exc:
-        logger.error(f'Erro ao enviar Telegram segmentado {item.external_id}: {exc}')
-        return False
+    sent    = 0
+
+    # ── 1. Postar no canal principal ───────────────────────────
+    if channel_id:
+        try:
+            r = requests.post(api_url, json={
+                'chat_id': channel_id, 'text': text,
+                'parse_mode': 'Markdown', 'disable_web_page_preview': False,
+            }, timeout=10)
+            r.raise_for_status()
+            sent += 1
+            logger.info(f'Canal notificado | {item.external_id}')
+        except Exception as exc:
+            logger.error(f'Erro canal {item.external_id}: {exc}')
+
+    # ── 2. DMs individuais segmentados ─────────────────────────
+    subscribers = TelegramSubscriber.get_targets_for_years(item.target_years)
+    total_subs  = subscribers.count()
+
+    if total_subs == 0:
+        logger.info(f'Sem subscribers para anos={item.target_years or "geral"}')
+        return sent > 0
+
+    logger.info(
+        f'Enviando DMs para {total_subs} subscribers '
+        f'| anos={item.target_years or "geral"} | {item.external_id}'
+    )
+
+    # Mensagem de DM (sem o header do canal — mais pessoal)
+    dm_text = (
+        f"🔔 *Nuevo aviso en Cartelera FCM*\n\n"
+        f"📅 {item.date_str}\n"
+        f"*{item.title}*\n"
+        f"{('_' + item.subtitle + '_\n') if item.subtitle else ''}"
+        f"🏛 {item.issuer or 'Sin emisor'}\n\n"
+        f"🔗 [Ver aviso completo]({item.url})\n\n"
+        f"_Para cancelar: /cancelar_"
+    )
+
+    for sub in subscribers:
+        try:
+            r = requests.post(api_url, json={
+                'chat_id':    sub.telegram_chat_id,
+                'text':       dm_text,
+                'parse_mode': 'Markdown',
+                'disable_web_page_preview': False,
+            }, timeout=10)
+            r.raise_for_status()
+            sent += 1
+        except requests.exceptions.HTTPError as exc:
+            # 403 = usuario bloqueou o bot -> desativar
+            if r.status_code == 403:
+                sub.is_active = False
+                sub.save(update_fields=['is_active'])
+                logger.warning(f'Subscriber {sub.telegram_chat_id} bloqueou o bot -> desativado')
+            else:
+                logger.error(f'DM falhou para {sub.telegram_chat_id}: {exc}')
+        except Exception as exc:
+            logger.error(f'DM erro {sub.telegram_chat_id}: {exc}')
+
+    logger.info(f'Notificacao concluida | enviados={sent} (1 canal + {sent-1} DMs)')
+    return sent > 0
 
 
 # ── Management Command ────────────────────────────────────────
