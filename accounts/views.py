@@ -736,7 +736,6 @@ def check_unread_messages(request):
         ,'by_user': by_user
     })
 
-@student_auth_required
 def alumed_store_view(request):
     products = Product.objects.filter(is_active=True)
     
@@ -824,8 +823,6 @@ def _validate_payload(data):
     return errors, cleaned
 
 
-@login_required
-@student_auth_required
 def api_cartelera_live(request):
     """
     GET /conecta/api/cartelera/
@@ -1228,12 +1225,21 @@ def api_events_gcal(request, pk):
 # 📋  PLANEJAMENTO ACADÊMICO — página dedicada
 # ══════════════════════════════════════════════════════════════════
 
-@login_required
 def planejamento_view(request):
-    """Página completa de planejamento acadêmico com todos os eventos."""
+    """Página completa de planejamento acadêmico com todos os eventos.
+    Acesso público — visitantes veem página vazia com CTA para criar conta.
+    Usuários logados veem seus eventos pessoais.
+    """
     from django.utils import timezone as tz
     now  = tz.now()
+    # Visitante não logado: renderiza página vazia sem erros
+    if not request.user.is_authenticated:
+        return render(request, 'accounts/planejamento.html', {
+            'events': [], 'upcoming_events': [], 'past_events': [],
+            'inscription_alerts': [], 'guest': True,
+        })
     user = request.user
+
 
     # Atualizar status automaticamente
     upcoming_events = AcademicEvent.objects.filter(
@@ -1273,3 +1279,4 @@ def planejamento_view(request):
         'now':              now,
     }
     return render(request, 'accounts/planejamento.html', context)
+
