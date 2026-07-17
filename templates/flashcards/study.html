@@ -169,5 +169,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'flashcards/study.js' %}"></script>
+<script src="{% static 'flashcards/study.js' %}?v={% now 'U' %}"></script>
 {% endblock %}

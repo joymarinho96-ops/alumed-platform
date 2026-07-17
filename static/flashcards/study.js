@@ -55,11 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (askJoyBtn) {
       askJoyBtn.onclick = (e) => {
         e.stopPropagation();
-        // Abre o chat da Profe Joy em uma NOVA aba para não sair da sessão de estudos!
+        // Abre a página do chat da Profe Joy (HTML) em uma NOVA aba!
         const msg = encodeURIComponent(`Hola Profe Joy, no entendí bien esta pregunta de ${card.deck_subject}: "${card.question}". La respuesta es "${card.answer}" y la explicación dice "${card.explanation || ''}". ¿Me lo podrías explicar mejor?`);
-        window.open(`/profe-joy/chat/?msg=${msg}`, '_blank');
+        window.open(`/profe-joy/?msg=${msg}`, '_blank');
       };
     }
+
 
     // Configura botão de pular/saltar ficha
     const skipBtn = document.getElementById("skip-card-btn");
