@@ -417,9 +417,20 @@ async function sendMessage() {
     sendBtn.disabled = false;
     input.focus();
 }
+
+// Inicialização automática a partir de query params (integração Joy Recall)
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoMsg = urlParams.get('msg');
+    if (autoMsg) {
+        input.value = autoMsg;
+        sendMessage();
+    }
+});
 </script>
 <!-- Bootstrap 5 JS (local) -->
 <script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <!-- Chartist JS (local) -->
 <script src="/static/assets/plugins/chartist-js/dist/chartist.min.js"></script>
 </body>
