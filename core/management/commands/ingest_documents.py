@@ -2,7 +2,7 @@
 Management command: python manage.py ingest_documents
 
 Ingere PDFs, URLs e texto plano na base de conhecimento do Profe Joy IA.
-Divide o conteúdo em chunks de ~500 tokens, gera embeddings OpenAI
+Divide o conteúdo em chunks de ~500 tokens, gera embeddings (OpenAI ou Gemini)
 e salva no banco (ProfeJoyChunk).
 
 Uso:
@@ -27,19 +27,27 @@ logger = logging.getLogger(__name__)
 
 CHUNK_SIZE   = 500   # tokens aproximados por chunk (palavras)
 CHUNK_OVERLAP = 50   # sobreposição entre chunks
-EMBED_MODEL  = 'text-embedding-3-small'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,*/*;q=0.8',
 }
 
 
-def _get_openai_client():
-    from openai import OpenAI
-    key = os.environ.get('OPENAI_API_KEY') or getattr(settings, 'OPENAI_API_KEY', '')
-    if not key:
-        raise ValueError('OPENAI_API_KEY não configurada nas variáveis de ambiente!')
-    return OpenAI(api_key=key)
+def _get_api_client():
+    """Retorna o tipo de cliente ativo e sua instância (openai ou gemini)."""
+    openai_key = os.environ.get('OPENAI_API_KEY') or getattr(settings, 'OPENAI_API_KEY', '')
+    gemini_key = os.environ.get('GEMINI_API_KEY') or getattr(settings, 'GEMINI_API_KEY', '')
+
+    if gemini_key:
+        import google.generativeai as genai
+        genai.configure(api_key=gemini_key)
+        return 'gemini', genai
+
+    if openai_key:
+        from openai import OpenAI
+        return 'openai', OpenAI(api_key=openai_key)
+
+    raise ValueError('Nenhuma chave de API configurada (GEMINI_API_KEY ou OPENAI_API_KEY).')
 
 
 def extract_text_from_pdf_url(url: str) -> str:
@@ -86,13 +94,23 @@ def split_into_chunks(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CH
     return chunks
 
 
-def generate_embedding(client, text: str) -> list[float]:
-    """Gera embedding via OpenAI text-embedding-3-small."""
-    resp = client.embeddings.create(
-        model=EMBED_MODEL,
-        input=text[:8000],  # limite de tokens
-    )
-    return resp.data[0].embedding
+def generate_embedding(client_type, client, text: str) -> list[float]:
+    """Gera embedding via OpenAI ou Gemini dependendo do cliente ativo."""
+    if client_type == 'gemini':
+        # embedding usando text-embedding-004 do Gemini
+        result = client.embed_content(
+            model="models/text-embedding-004",
+            content=text,
+            task_type="retrieval_document"
+        )
+        return result['embedding']
+    else:
+        # embedding usando OpenAI
+        resp = client.embeddings.create(
+            model='text-embedding-3-small',
+            input=text[:8000],
+        )
+        return resp.data[0].embedding
 
 
 class Command(BaseCommand):
@@ -181,11 +199,24 @@ class Command(BaseCommand):
             self.stdout.write(f'[CLEAN] {deleted} chunks antigos removidos')
 
         # ── Embeddings + Salvar ──
-        client = _get_openai_client()
+        try:
+            client_type, client = _get_api_client()
+            self.stdout.write(f'[API] Usando embedding provider: {client_type.upper()}')
+        except Exception as exc:
+            self.stdout.write(self.style.WARNING(f'[WARN] Sem chaves de API válidas ({exc}). Entrando em modo MOCK/DEBUG.'))
+            client_type, client = 'mock', None
+
         saved = 0
         for i, chunk in enumerate(chunks):
             try:
-                embedding = generate_embedding(client, chunk)
+                embedding = []
+                if client_type != 'mock':
+                    try:
+                        embedding = generate_embedding(client_type, client, chunk)
+                    except Exception as api_err:
+                        self.stdout.write(self.style.WARNING(f'  [WARN] Falha na API no chunk {i} ({api_err}). Salvando como MOCK.'))
+                        client_type = 'mock'  # chave falhou, vira mock para os próximos
+
                 ProfeJoyChunk.objects.create(
                     title=title,
                     source_url=source_url,
@@ -199,7 +230,7 @@ class Command(BaseCommand):
                 saved += 1
                 if (i + 1) % 5 == 0:
                     self.stdout.write(f'  ... {i+1}/{len(chunks)} chunks salvos')
-                time.sleep(0.2)  # rate limit
+                time.sleep(0.1)
             except Exception as exc:
                 self.stderr.write(self.style.ERROR(f'[ERR] Chunk {i}: {exc}'))
 
