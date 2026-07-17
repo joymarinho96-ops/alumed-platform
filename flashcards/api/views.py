@@ -40,6 +40,17 @@ class SubmitFlashcardReviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Mapeamento dinâmico de strings para inteiros (QUALITY_MAP)
+        QUALITY_MAP = {
+            "wrong": 1,
+            "hard": 2,
+            "remembered": 3,
+            "easy": 4,
+            "mastered": 5,
+        }
+        if isinstance(confidence, str) and confidence.lower() in QUALITY_MAP:
+            confidence = QUALITY_MAP[confidence.lower()]
+
         try:
             response_time = float(response_time)
             confidence = int(confidence)
@@ -52,6 +63,7 @@ class SubmitFlashcardReviewView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
         progress, _ = (
             StudentFlashcardProgress.objects.get_or_create(
