@@ -3,30 +3,34 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class Deck(models.Model):
+    title     = models.CharField(max_length=150, verbose_name="Título")
+    subject   = models.CharField(max_length=100, verbose_name="Materia")
+    exam_date = models.DateTimeField(null=True, blank=True, verbose_name="Fecha de Examen")
+    is_public = models.BooleanField(default=False, verbose_name="Público")
+
+    class Meta:
+        verbose_name        = 'Deck'
+        verbose_name_plural = 'Decks'
+        ordering            = ['subject', 'title']
+
+    def __str__(self):
+        return f"{self.title} ({self.subject})"
+
+
 class Flashcard(models.Model):
-    DIFFICULTY_CHOICES = [
-        (1, 'Muy Fácil'),
-        (2, 'Fácil'),
-        (3, 'Medio'),
-        (4, 'Difícil'),
-        (5, 'Muy Difícil'),
-    ]
-
-    question   = models.TextField(verbose_name='Pregunta')
-    answer     = models.TextField(verbose_name='Respuesta')
-    difficulty = models.PositiveSmallIntegerField(choices=DIFFICULTY_CHOICES, default=3, verbose_name='Dificultad')
-    subject    = models.CharField(max_length=200, verbose_name='Materia')
-    topic      = models.CharField(max_length=200, blank=True, verbose_name='Tema/Tópico') # <- Novo campo!
-    created_at = models.DateTimeField(auto_now_add=True)
-
+    deck        = models.ForeignKey(Deck, on_delete=models.CASCADE, related_name="flashcards")
+    question    = models.TextField(verbose_name="Pregunta")
+    answer      = models.TextField(verbose_name="Respuesta")
+    explanation = models.TextField(blank=True, verbose_name="Explicación")
+    difficulty  = models.PositiveSmallIntegerField(default=3, verbose_name="Dificultad")
 
     class Meta:
         verbose_name        = 'Flashcard'
         verbose_name_plural = 'Flashcards'
-        ordering            = ['subject', '-created_at']
 
     def __str__(self):
-        return f"[{self.subject}] {self.question[:50]}..."
+        return f"Card #{self.id} em {self.deck.title} ({self.question[:40]}...)"
 
 
 class StudentFlashcardProgress(models.Model):
@@ -40,7 +44,7 @@ class StudentFlashcardProgress(models.Model):
     interval_days         = models.PositiveIntegerField(default=0)
     ease_factor           = models.FloatField(default=2.5)
     mastery_score         = models.FloatField(default=0.0)
-    priority              = models.FloatField(default=0.0, db_index=True) # <- Otimizado: salvo no banco para a ordenação!
+    priority              = models.FloatField(default=0.0, db_index=True)
     
     # Estatísticas de desempenho
     total_reviews         = models.PositiveIntegerField(default=0)
@@ -65,3 +69,25 @@ class StudentFlashcardProgress(models.Model):
         if self.total_reviews == 0:
             return 100.0
         return (self.correct_reviews / self.total_reviews) * 100.0
+
+
+from django.conf import settings
+
+class StudyStreak(models.Model):
+    student = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="study_streak"
+    )
+
+    current_streak  = models.PositiveIntegerField(default=0, verbose_name="Racha Actual")
+    longest_streak  = models.PositiveIntegerField(default=0, verbose_name="Racha Máxima")
+    last_study_date = models.DateField(null=True, blank=True, verbose_name="Última Fecha de Estudio")
+
+    class Meta:
+        verbose_name        = "Racha de Estudio"
+        verbose_name_plural = "Rachas de Estudio"
+
+    def __str__(self):
+        return f"{self.student.username} — Racha: {self.current_streak} días"
+

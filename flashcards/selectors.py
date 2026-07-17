@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db.models import Avg
 
 from flashcards.models import StudentFlashcardProgress
 
@@ -15,15 +16,13 @@ def get_due_flashcards(student, limit: int = 20):
             student=student,
             next_review_at__lte=timezone.now(),
         )
-        .select_related("flashcard")
+        .select_related("flashcard", "flashcard__deck")
         .order_by(
-            "-priority",         # <- Otimizado: traz a maior prioridade primeiro!
+            "-priority",
             "next_review_at",
         )[:limit]
     )
 
-
-from django.db.models import Avg
 
 def get_subject_mastery(student):
     """
@@ -32,25 +31,25 @@ def get_subject_mastery(student):
     return (
         StudentFlashcardProgress.objects
         .filter(student=student)
-        .values("flashcard__subject")
+        .values("flashcard__deck__subject")
         .annotate(
             average_mastery=Avg("mastery_score")
         )
-        .order_by("flashcard__subject")
+        .order_by("flashcard__deck__subject")
     )
 
 
 def build_profe_joy_context(progress):
     """
     Retorna o contexto do flashcard estruturado para consumo pela Profe Joy IA.
+    Adaptado à nova modelagem com Decks.
     """
     return {
-        "subject": progress.flashcard.subject,
-        "topic": progress.flashcard.topic,
+        "subject": progress.flashcard.deck.subject,
+        "deck_title": progress.flashcard.deck.title,
         "question": progress.flashcard.question,
         "correct_answer": progress.flashcard.answer,
+        "explanation": progress.flashcard.explanation, # <- Novo campo!
         "mastery": progress.mastery_score,
         "consecutive_errors": progress.consecutive_errors,
     }
-
-
