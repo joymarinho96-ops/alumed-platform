@@ -1,0 +1,17 @@
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.idea/
+.vscode/
+media/
+scraped_library.html
+conecta-biblioteca-source.html
+*.png
+*.jpg
+tmp-*
+scratch/
+db.sqlite3

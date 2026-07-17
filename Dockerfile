@@ -21,4 +21,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput || true
 
 # Usar shell format para $PORT funcionar
-CMD gunicorn alumed.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+CMD python manage.py migrate && gunicorn alumed.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
