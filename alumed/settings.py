@@ -78,6 +78,10 @@ INSTALLED_APPS = [
     'core',
     'forum',
     'payments',
+    'flashcards',
+    'rest_framework',
+
+
 
     # Allauth apps
     'allauth',
