@@ -1,0 +1,562 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Lector: {{ book.title }} - Conecta FCM{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+    /* LECTOR INTELIGENTE - TEMA CONECTA FCM */
+    :root {
+      --cx-gold:      #f5c842;
+      --cx-gold-hover:#fde047;
+      --cx-gold-dark: #b45309;
+      --cx-cream:     #fdf8ee;
+      --cx-dark:      #0a0510;
+      --cx-dark-card: rgba(20,10,35,.8);
+      --cx-glass:     rgba(255,255,255,.04);
+      --cx-border:    rgba(245,200,66,.18);
+      --cx-text:      #f0e8d0;
+      --cx-muted:     rgba(220,200,160,.55);
+      --cx-purple:    #2d1060;
+    }
+
+    .lector-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .lector-header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(245,200,66,.15);
+        padding-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .lector-grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 20px;
+        min-height: calc(100vh - 200px);
+        align-items: stretch;
+    }
+    @media (max-width: 1024px) {
+        .lector-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Left panel: PDF / Study guide */
+    .document-viewer-panel {
+        background: var(--cx-dark-card);
+        border: 1px solid var(--cx-border);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .viewer-header-tabs {
+        background: rgba(10,5,20,.5);
+        border-bottom: 1px solid var(--cx-border);
+        display: flex;
+        gap: 2px;
+        padding: 4px 12px 0 12px;
+    }
+    .viewer-tab-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        border-bottom: none;
+        color: var(--cx-muted);
+        padding: 10px 18px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        transition: all .2s;
+    }
+    .viewer-tab-btn:hover {
+        color: #fff;
+        background: rgba(255,255,255,.02);
+    }
+    .viewer-tab-btn.active {
+        background: var(--cx-dark-card);
+        border-color: var(--cx-border);
+        color: var(--cx-gold);
+        font-weight: 800;
+    }
+
+    .viewer-content-area {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        color: rgba(240,232,208,.9);
+        font-family: 'Outfit', sans-serif;
+        font-size: 14.5px;
+        line-height: 1.6;
+    }
+
+    /* Simulated open page design */
+    .simulated-book-page {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(0,0,0,.35);
+        border: 1px solid rgba(255,255,255,.05);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: inset 0 0 30px rgba(0,0,0,.5);
+        position: relative;
+    }
+    .simulated-book-page::before {
+        content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+        background: rgba(255,255,255,.03);
+        box-shadow: 0 0 8px rgba(255,255,255,.05);
+    }
+
+    .interactive-term {
+        color: var(--cx-gold);
+        font-weight: 700;
+        text-decoration: underline dashed rgba(245,200,66,.5);
+        cursor: pointer;
+        transition: all .2s;
+        padding: 0 2px;
+        border-radius: 4px;
+    }
+    .interactive-term:hover {
+        background: rgba(245,200,66,.15);
+        color: #fff;
+        text-shadow: 0 0 6px var(--cx-gold);
+    }
+
+    /* Right panel: Profe Joy Chat */
+    .profe-sidebar-panel {
+        background: var(--cx-dark-card);
+        border: 1px solid var(--cx-border);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .sidebar-chat-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--cx-border);
+        background: rgba(10,5,20,.4);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .sidebar-chat-avatar {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: 2px solid var(--cx-gold);
+        overflow: hidden;
+    }
+    .sidebar-chat-avatar img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .sidebar-chat-name {
+        font-weight: 800; font-size: 13.5px; color: #fff;
+        font-family: 'Outfit', sans-serif;
+    }
+    .sidebar-chat-status {
+        font-size: 10.5px; color: #4ade80; display: flex; align-items: center; gap: 4px;
+    }
+    .sidebar-chat-messages {
+        flex: 1;
+        padding: 14px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: linear-gradient(180deg, transparent, rgba(10,5,20,.15));
+    }
+    .chat-bubble {
+        max-width: 85%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 1.45;
+        font-family: 'Outfit', sans-serif;
+    }
+    .chat-bubble.joy {
+        background: rgba(45,16,96,.45);
+        border: 1px solid rgba(124,58,237,.25);
+        color: #f0e8d0;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+    .chat-bubble.user {
+        background: rgba(245,200,66,.12);
+        border: 1px solid rgba(245,200,66,.25);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
+
+    /* Suggestion pills */
+    .sidebar-chat-suggestions {
+        display: flex;
+        gap: 4px;
+        padding: 8px 14px;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-top: 1px solid rgba(255,255,255,.02);
+    }
+    .suggestion-pill {
+        padding: 4px 10px;
+        border-radius: 99px;
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(245,200,66,.08);
+        color: var(--cx-muted);
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .suggestion-pill:hover {
+        background: rgba(245,200,66,.06);
+        border-color: var(--cx-gold);
+        color: var(--cx-gold);
+    }
+
+    /* Input area */
+    .sidebar-chat-input {
+        padding: 10px 14px;
+        border-top: 1px solid var(--cx-border);
+        display: flex;
+        gap: 8px;
+        background: rgba(10,5,20,.3);
+    }
+    .sidebar-chat-input textarea {
+        flex: 1;
+        background: rgba(0,0,0,.5);
+        border: 1px solid rgba(245,200,66,.2);
+        border-radius: 8px;
+        color: #fff;
+        padding: 6px 10px;
+        font-size: 12px;
+        outline: none;
+        resize: none;
+        height: 32px;
+        font-family: 'Outfit', sans-serif;
+    }
+    .sidebar-chat-send {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--cx-gold), var(--cx-gold-dark));
+        border: none; color: #000; font-size: 12px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all .2s;
+    }
+    .sidebar-chat-send:hover {
+        transform: scale(1.03);
+    }
+
+    .typing-bubble {
+        display: flex; gap: 3px; align-items: center; justify-content: center;
+        padding: 6px 10px;
+    }
+    .typing-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--cx-gold);
+        animation: typing 1s infinite alternate;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+        from { transform: translateY(0); opacity: 0.3; }
+        to { transform: translateY(-4px); opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="lector-wrapper">
+    <!-- Header -->
+    <div class="lector-header-bar">
+        <div style="display:flex; align-items:center; gap:16px;">
+            <a href="{% url 'conecta_biblioteca' %}" class="btn-secondary" style="padding: 8px 14px; font-size:12px; border-radius:10px; font-family:'Cinzel', serif; font-weight:700; text-decoration:none; color:inherit; display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-chevron-left"></i> Volver
+            </a>
+            <div>
+                <span style="background: rgba(245,200,66,.1); border:1px solid rgba(245,200,66,.3); color:var(--cx-gold); font-size: 8px; font-weight:800; padding:2px 8px; border-radius:4px; text-transform:uppercase;">
+                    {{ book.get_subject_display }}
+                </span>
+                <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-weight:900; margin: 4px 0 0 0; color:#fff;">
+                    {{ book.title }}
+                </h1>
+                <p style="font-size: 11px; color: var(--cx-muted); margin: 2px 0 0 0;">
+                    {{ book.author|default:"Cátedra FCM" }} · {{ book.year }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="lector-grid">
+        <!-- LEFT: Viewer -->
+        <div class="document-viewer-panel">
+            {% if is_simulated %}
+                <!-- Simulated Study Guide Interface -->
+                <div class="viewer-header-tabs">
+                    <button class="viewer-tab-btn active" onclick="switchViewerTab(1, this)">Capítulo 1: Introducción</button>
+                    <button class="viewer-tab-btn" onclick="switchViewerTab(2, this)">Capítulo 2: Temas Clave</button>
+                    <button class="viewer-tab-btn" onclick="switchViewerTab(3, this)">Capítulo 3: Resumen Rápido</button>
+                </div>
+                
+                <div class="viewer-content-area" id="viewerContentArea">
+                    <div class="simulated-book-page">
+                        <!-- Tab 1 -->
+                        <div id="tab-content-1" style="display:block;">
+                            <h2 style="font-family:'Cinzel', serif; font-size:18px; color:var(--cx-gold); border-bottom:1px dashed rgba(245,200,66,.2); padding-bottom:8px; margin-top:0;">
+                                Capítulo 1: Marco Teórico y Fundamentos
+                            </h2>
+                            <p style="font-size:14px; text-align:justify;">
+                                Bienvenido al módulo de estudio guiado de <strong>{{ book.title }}</strong>. Este recurso ha sido indexado desde la migración de archivos de Wix. A continuación se presentan los conceptos organizadores para estructurar tu aprendizaje.
+                            </p>
+                            <p style="font-size:14px; text-align:justify;">
+                                Para comenzar a estudiar, te recomendamos hacer clic en cualquiera de los <span class="interactive-term">conceptos marcados en dorado</span> en la pestaña de <strong>Temas Clave</strong>. Esto enviará la consulta directamente a la <strong>Profe Joy IA</strong> en la barra lateral para que te dé una explicación didáctica en tiempo real.
+                            </p>
+                            <div style="margin-top:30px; border-left:3px solid var(--cx-gold); padding-left:14px; font-style:italic; color:var(--cx-muted); font-size:13.5px;">
+                                "El conocimiento médico no es memorizar listas, es entender cómo cada parte microscópica se conecta para formar la vida, doc."
+                            </div>
+                        </div>
+
+                        <!-- Tab 2 -->
+                        <div id="tab-content-2" style="display:none;">
+                            <h2 style="font-family:'Cinzel', serif; font-size:18px; color:var(--cx-gold); border-bottom:1px dashed rgba(245,200,66,.2); padding-bottom:8px; margin-top:0;">
+                                Capítulo 2: Glosario de Conceptos Clave
+                            </h2>
+                            <p style="font-size:13.5px; margin-bottom:20px;">
+                                💡 <em>Hacé clic sobre cualquier concepto para pedirle a la Profe Joy que te lo explique de manera didáctica en el chat:</em>
+                            </p>
+                            
+                            <ul style="display:flex; flex-direction:column; gap:12px; padding-left:20px; font-size:14px;">
+                                {% if book.subject == 'anato' %}
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Aparato Locomotor')">Aparato Locomotor</span>: Sistema de huesos, articulaciones y músculos que permiten la biomecánica corporal.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Mediastino')">Mediastino</span>: Espacio topográfico del tórax entre ambos pulmones.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Neuroanatomía')">Neuroanatomía</span>: Organización del sistema nervioso central y periférico.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Articulaciones')">Articulaciones</span>: Puntos de unión entre dos o más huesos, clasificadas por su movilidad.</li>
+                                {% elif book.subject == 'histo' %}
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Tejido Epitelial')">Tejido Epitelial</span>: Capas de células que recubren superficies corporales internas y externas.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Tejido Conectivo')">Tejido Conectivo</span>: Matriz de soporte, nutrición y protección de otros tejidos.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Organología')">Organología</span>: Estructura microscópica detallada de los órganos corporales.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Preparados Histológicos')">Preparados Histológicos</span>: Láminas teñidas con hematoxilina y eosina para observación microscópica.</li>
+                                {% elif book.subject == 'embrio' %}
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Fecundación')">Fecundación</span>: Fusión del óvulo y espermatozoide para formar el cigoto.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Segmentación')">Segmentación</span>: Divisiones mitóticas del cigoto durante la primera semana.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Gastrulación')">Gastrulación</span>: Formación de las tres hojas germinativas (ectodermo, mesodermo, endodermo).</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Organogénesis')">Organogénesis</span>: Formación de esbozos de órganos entre la 4ª y 8ª semana.</li>
+                                {% else %}
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Ciclo Celular')">Ciclo Celular</span>: Mitosis, meiosis y fases de replicación celular.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Factores de Transcripción')">Factores de Transcripción</span>: Proteínas que regulan la expresión de los genes.</li>
+                                    <li>📌 <span class="interactive-term" onclick="askTerm('Expresión Génica')">Expresión Génica</span>: Procesos de transcripción del ADN a ARN y posterior traducción.</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                        <!-- Tab 3 -->
+                        <div id="tab-content-3" style="display:none;">
+                            <h2 style="font-family:'Cinzel', serif; font-size:18px; color:var(--cx-gold); border-bottom:1px dashed rgba(245,200,66,.2); padding-bottom:8px; margin-top:0;">
+                                Capítulo 3: Resumen Temático Rápido
+                            </h2>
+                            <ul style="display:flex; flex-direction:column; gap:14px; font-size:14px; padding-left:20px; text-align:justify;">
+                                <li>
+                                    <strong>1. Enfoque Troncal:</strong> La bibliografía de <em>{{ book.title }}</em> se enfoca en resolver las dudas más frecuentes de las cátedras de la UNLP. Es fundamental correlacionar la teoría con esquemas tridimensionales o preparados prácticos.
+                                </li>
+                                <li>
+                                    <strong>2. Tips de Estudio:</strong> Hacé autoevaluaciones frecuentes. No te quedes solo con leer el texto; intentá explicarle el tema a un compañero o a la Profe Joy en voz alta para afianzar el conocimiento.
+                                </li>
+                                <li>
+                                    <strong>3. Concepto Integrador:</strong> Todo cambio molecular o celular (Biología/Histología) se manifiesta en una estructura anatómica macroscópica (Anatomía). ¡Relacioná siempre las materias!
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Real PDF Viewer Frame -->
+                <div style="width:100%; height:100%; flex:1;">
+                    <iframe src="{{ pdf_url }}" style="width:100%; height:100%; border:none;" allow="autoplay"></iframe>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT: Profe Joy Chat -->
+        <div class="profe-sidebar-panel">
+            <div class="sidebar-chat-header">
+                <div class="sidebar-chat-avatar">
+                    <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy">
+                </div>
+                <div>
+                    <div class="sidebar-chat-name">Profe Joy IA</div>
+                    <div class="sidebar-chat-status">
+                        <span style="width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow: 0 0 5px #4ade80; display:inline-block;"></span>
+                        Asistente de Lectura
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Log -->
+            <div class="sidebar-chat-messages" id="sidebarChatContainer">
+                <div class="chat-bubble joy">
+                    ¡Holis, doc! Qué lindo tenerte estudiando con el libro <strong>"{{ book.title }}"</strong>. 📖
+                    <br><br>
+                    Preguntame lo que no entiendas o tocá los términos en dorado de la pestaña <strong>Temas Clave</strong> y te los explico de forma didáctica. ¡Mete pata! 🩺✨
+                </div>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="sidebar-chat-suggestions">
+                <div class="suggestion-pill" onclick="sendQuickQuestion('Haceme un resumen de este libro')">Resumen general</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('Preguntame 3 cosas de este tema para ver si sé')">Hacerme un test</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('Explicame el capítulo 1 de forma didáctica')">Capítulo 1</div>
+            </div>
+
+            <!-- Send Bar -->
+            <div class="sidebar-chat-input">
+                <textarea id="sidebarChatInputText" placeholder="Escribile a la Profe Joy..." onkeydown="handleInputKeydown(event)"></textarea>
+                <button type="button" class="sidebar-chat-send" onclick="sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var chatHistory = [
+        {role: 'system', content: 'El estudiante está leyendo actualmente el libro "{{ book.title }}" de la asignatura "{{ book.get_subject_display }}". Tu tono debe ser el de la Profe Joy (cariñoso, empático, en español rioplatense).'}
+    ];
+
+    function switchViewerTab(tabIndex, button) {
+        // Toggle active button
+        document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+
+        // Toggle content
+        document.getElementById('tab-content-1').style.display = tabIndex === 1 ? 'block' : 'none';
+        document.getElementById('tab-content-2').style.display = tabIndex === 2 ? 'block' : 'none';
+        document.getElementById('tab-content-3').style.display = tabIndex === 3 ? 'block' : 'none';
+    }
+
+    function askTerm(term) {
+        var question = 'Explicame qué es ' + term + ' en la materia ' + '{{ book.get_subject_display }}' + ' de forma didáctica, por favor.';
+        document.getElementById('sidebarChatInputText').value = question;
+        sendChatMessage();
+    }
+
+    function sendQuickQuestion(question) {
+        document.getElementById('sidebarChatInputText').value = question;
+        sendChatMessage();
+    }
+
+    function handleInputKeydown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function appendChatBubble(sender, text) {
+        var container = document.getElementById('sidebarChatContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + (sender === 'joy' ? 'joy' : 'user');
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function appendTypingIndicator() {
+        var container = document.getElementById('sidebarChatContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble joy';
+        bubble.id = 'chat-typing-indicator';
+        bubble.innerHTML = `
+            <div class="typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        var ind = document.getElementById('chat-typing-indicator');
+        if (ind) ind.remove();
+    }
+
+    function sendChatMessage() {
+        var input = document.getElementById('sidebarChatInputText');
+        var question = input.value.trim();
+        if (!question) return;
+
+        input.value = '';
+        appendChatBubble('user', question);
+        appendTypingIndicator();
+
+        var payloadData = {
+            question: question,
+            history: chatHistory,
+            book_id: "{{ book.id }}"
+        };
+
+        fetch('/profe-joy/chat/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payloadData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            removeTypingIndicator();
+            if (data.answer) {
+                appendChatBubble('joy', data.answer);
+                chatHistory.push({role: 'user', content: question});
+                chatHistory.push({role: 'assistant', content: data.answer});
+            } else if (data.error) {
+                appendChatBubble('joy', '❌ Ocurrió un error en la respuesta: ' + data.error);
+            }
+        })
+        .catch(err => {
+            removeTypingIndicator();
+            appendChatBubble('joy', '❌ Error de conexión con el plano de la Profe Joy. Reintentá en un ratito.');
+            console.error('Chat error:', err);
+        });
+    }
+
+    function getCsrfToken() {
+        var name = 'csrftoken';
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue || '{{ csrf_token }}';
+    }
+</script>
+{% endblock %}

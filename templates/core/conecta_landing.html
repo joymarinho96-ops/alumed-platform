@@ -364,6 +364,7 @@
   <div class="nav-links">
     <a href="/dashboard/" class="nav-btn nav-btn-purple">🟣 ALUMED OS</a>
     {% if user.is_authenticated %}
+      <a href="{% url 'conecta_biblioteca' %}" class="nav-btn nav-btn-ghost">Biblioteca Inteligente</a>
       <a href="/conecta/dashboard/" class="nav-btn nav-btn-gold">Mi Dashboard →</a>
     {% else %}
       <a href="/login/" class="nav-btn nav-btn-ghost">Entrar</a>

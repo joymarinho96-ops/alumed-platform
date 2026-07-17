@@ -522,6 +522,9 @@ body {
         <a href="/conecta/dashboard/" class="{% if request.path == '/conecta/dashboard/' %}active{% endif %}" style="color: #f0e8d0;">
             <i class="fas fa-home"></i> Resumen
         </a>
+        <a href="{% url 'conecta_biblioteca' %}" class="{% if request.resolver_match.url_name == 'conecta_biblioteca' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-book"></i> Biblioteca Inteligente
+        </a>
         <a href="/cartelera/" class="{% if request.path == '/cartelera/' %}active{% endif %}" style="color: #f0e8d0;">
             <i class="fas fa-bullhorn"></i> Cartelera en Vivo
         </a>
@@ -876,6 +879,11 @@ body {
     <span class="cx-label lbl-orange">🏛️ Herramientas Conecta</span>
     <h2 class="cx-section-title">Todo lo académico en un clic</h2>
     <div class="cx-tools-grid">
+      <a href="{% url 'conecta_biblioteca' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);"><i class="fas fa-book-reader"></i></div>
+        <div class="cx-tool-name">Biblioteca Inteligente</div>
+        <div class="cx-tool-desc">Libros virtuales y chat didáctico con la IA.</div>
+      </a>
       <a href="{% url 'plan_estudios' %}" class="cx-tool-card">
         <div class="cx-tool-ico" style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);"><i class="fas fa-list-ol"></i></div>
         <div class="cx-tool-name">Plan de Estudios</div>

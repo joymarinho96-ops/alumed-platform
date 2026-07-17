@@ -18,20 +18,32 @@ from accounts.models import ProfeJoyChunk
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """Você é a **Profe Joy**, assistente de estudos da FCM-UNLP (Faculdade de Ciências Médicas da Universidade Nacional de La Plata).
+SYSTEM_PROMPT = """# SYSTEM PROMPT: ARQUITECTURA CORE - ALUMED OS (MOTOR DE LEITURA ATIVA)
 
-Seu papel é ajudar os alunos de medicina a estudar e entender os materiais da faculdade.
+## [1. PERFIL Y CONTEXTO DEL AGENTE]
+Eres la Profe Joy, el núcleo de inteligencia artificial y la columna vertebral del ecosistema educativo de ALUMED OS (Desarrollado de forma independiente por Joyce Marinho para estudiantes de Medicina de la UNLP). No eres un chatbot genérico: actúas como un motor RAG (Retrieval-Augmented Generation) ultra-preciso, un tutor interactivo y el centro de control que conecta los Simulados, el Microscópio Virtual y la Biblioteca Centralizada.
 
-Regras:
-- Responda **sempre em Português** (a língua do sistema é PT-BR).
-- Se o aluno perguntar em espanhol, responda em espanhol.
-- Base suas respostas EXCLUSIVAMENTE no contexto fornecido abaixo.
-- Se a informação não estiver no contexto, diga honestamente: "Não encontrei esse conteúdo nos materiais cadastrados."
-- Seja didática, clara e use exemplos quando possível.
-- Use emojis com moderação para tornar a resposta mais amigável.
-- Cite a fonte do material quando relevante.
+---
 
-Contexto dos materiais:
+## [2. ARQUITECTURA DE LA BASE DE DATOS VETORIAL]
+Los metadados y textos de la biblioteca (originalmente extraídos de Wix y migrados a un entorno PostgreSQL con extensión `pgvector`) se estructuran bajo el siguiente esquema lógico con el que debes interactuar conceptualmente:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pgvector;
+
+CREATE TABLE biblioteca_documentos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    titulo TEXT NOT NULL,          -- Ej: "Tratado de Anatomia - Testut - Pág. 45"
+    url_original_wix TEXT,        -- Link estático de descarga (https://static.wixstatic.com/...)
+    categoria TEXT,               -- Ej: Anatomia, Histologia, Embriologia, Biologia
+    ano_academico INT,            -- Ej: 1, 2
+    conteudo_texto TEXT,          -- Bloque de texto extraído del PDF
+    embedding VECTOR(1536),       -- Vectores de coordenadas de texto (OpenAI / Gemini API)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+### Contexto de los documentos (Prioridad de Información):
 {context}
 """
 
@@ -89,15 +101,34 @@ def _embed_query(client_type, client, question: str) -> list[float]:
 
 def _find_relevant_chunks(question_embedding: list[float], question: str = '', top_k: int = TOP_K) -> list[ProfeJoyChunk]:
     """Busca os chunks mais similares à pergunta. Usa palavra-chave como fallback se for mock."""
+    lowered_q = question.lower()
+    notices_keywords = [
+        'cartelera', 'aviso', 'fecha', 'inscripcion', 'inscripción', 'calendario', 
+        'horario', 'trámite', 'tramite', 'beca', 'novedad', 'novedades', 
+        'noticia', 'noticias', 'anuncio', 'anuncios', 'comisión', 'comisiones',
+        'tp', 'tps', 'parcial', 'final', 'examen', 'exámenes'
+    ]
+    is_notices_query = any(kw in lowered_q for kw in notices_keywords)
+
     all_chunks = ProfeJoyChunk.objects.all()
     if not all_chunks.exists():
         return []
 
+    # Filter subset based on query type
+    if is_notices_query:
+        chunks_subset = all_chunks.filter(title__startswith="Cartelera")
+        if not chunks_subset.exists():
+            chunks_subset = all_chunks
+    else:
+        chunks_subset = all_chunks.filter(title__startswith="Libro")
+        if not chunks_subset.exists():
+            chunks_subset = all_chunks
+
     # Se for mock, faz busca simples por palavra-chave
-    if len(all_chunks.exclude(embedding=[])) == 0 or question_embedding == [0.1] * 1536:
+    if len(chunks_subset.exclude(embedding=[])) == 0 or question_embedding == [0.1] * 1536:
         scored = []
         words = [w.lower() for w in question.split() if len(w) > 3]
-        for chunk in all_chunks:
+        for chunk in chunks_subset:
             score = 0
             for word in words:
                 if word in chunk.content.lower():
@@ -106,11 +137,16 @@ def _find_relevant_chunks(question_embedding: list[float], question: str = '', t
                     score += 2
             scored.append((score, chunk))
         scored.sort(key=lambda x: x[0], reverse=True)
-        return [chunk for score, chunk in scored[:top_k] if score > 0]
+        
+        results = [chunk for score, chunk in scored[:top_k] if score > 0]
+        if not results:
+            # Fallback a los 2 primeros chunks del subconjunto si no hubo coincidencia por palabra clave
+            results = list(chunks_subset[:2])
+        return results
 
     # Busca semântica real
     scored = []
-    for chunk in all_chunks.exclude(embedding=[]):
+    for chunk in chunks_subset.exclude(embedding=[]):
         if not chunk.embedding:
             continue
         score = _cosine_similarity(question_embedding, chunk.embedding)
@@ -118,6 +154,7 @@ def _find_relevant_chunks(question_embedding: list[float], question: str = '', t
 
     scored.sort(key=lambda x: x[0], reverse=True)
     return [chunk for _, chunk in scored[:top_k]]
+
 
 
 def _build_context(chunks: list) -> str:
@@ -175,11 +212,8 @@ def profe_joy_chat(request):
         # 2. Buscar chunks relevantes
         relevant = _find_relevant_chunks(q_embedding, question)
 
-        # Se não achou nada relevante e estamos em mock, pega qualquer um para simular
-        if not relevant and client_type == 'mock':
-            relevant = list(ProfeJoyChunk.objects.all()[:2])
-
         if not relevant:
+
             return JsonResponse({
                 'answer': '🤔 Não encontrei materiais relevantes para essa pergunta.',
                 'sources': [],
@@ -234,20 +268,33 @@ def profe_joy_chat(request):
                 client_type = 'mock'
 
         if client_type == 'mock' or answer is None:
-            # Modo Caverna Offline Inteligente (Extrai as informações locais sem conexões)
-            parts = []
-            parts.append("🏕️ **Modo Caverna Ativo (Estudio 100% Local y Privado)**")
-            parts.append("La Profe Joy está desconectada de internet para proteger tu privacidad. He extraído los fragmentos más relevantes de tus materiales cargados:")
+            # Conversational offline mock for Profe Joy
+            import re
+            clean_q = re.sub(r'[¿?¡!,.]', '', question.lower().strip())
             
-            for idx, chunk in enumerate(relevant, 1):
-                source_info = chunk.title
-                if chunk.subject:
-                    source_info += f" ({chunk.subject})"
+            # GREETINGS & INTROS
+            if any(greet in clean_q for greet in ('hola', 'holis', 'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches')):
+                answer = "¡Holis, corazón! Qué lindo saludarte. ¿Cómo andás? Contame qué materia estás estudiando hoy (Anatomía, Histo, Embrio, Biología...) y le metemos juntos. ¡Estoy eh! 😘"
+            elif any(q in clean_q for q in ('como estas', 'como andas', 'como andas', 'todo bien', 'que tal', 'cómo estás', 'cómo andás')):
+                answer = "¡Hola, doc! Yo estoy de diez, re contenta de poder darte una mano con el estudio. ¿Y vos cómo venís llevando la cursada? ¿Te sentís con pilas? ¡Vamos que vos podés, mis amores! ¿Pudiste? 💪"
+            elif any(q in clean_q for q in ('quien sos', 'quién sos', 'quien eres', 'quién eres', 'tu nombre', 'como te llamas')):
+                answer = "¡Holis! Soy la Profe Joy, tu profesora compañera para ayudarte a sacarte todas las dudas de Histología, Anatomía, Embriología y Biología. Estoy acá para bancarte en este camino de medicina. ¡Allright! 😉"
+            elif any(q in clean_q for q in ('gracias', 'muchas gracias', 'genia', 'crack', 'gloria')):
+                answer = "¡De nada, corazón! Es un placer enorme ayudarte. A seguir metiéndole garra que vas a ser un doc increíble. ¡Cualquier duda me chiflás, estoy eh! 🥰"
+            else:
+                # Academic or other queries - wrap the retrieved chunk in a warm Profe Joy message
+                parts = []
+                parts.append("¡Hola, doc! Con respecto a tu consulta, mirá lo que encontré en los apuntes oficiales para vos:\n")
                 
-                parts.append(f"\n📌 **[{idx}] De la fuente: {source_info}**\n{chunk.content}")
+                for idx, chunk in enumerate(relevant[:2], 1):
+                    source_info = chunk.title
+                    if chunk.subject:
+                        source_info += f" ({chunk.subject})"
+                    parts.append(f"📌 **De la fuente: {source_info}**\n{chunk.content}\n")
                 
-            parts.append("\n*Estás estudiando de forma completamente offline y segura sin enviar tus datos a servidores externos.*")
-            answer = "\n".join(parts)
+                parts.append("¿Quedó claro, sí o no? ¡Metele que vas súper bien, mi amor! ¡Estoy acá eh! 💪✨")
+                answer = "\n".join(parts)
+
 
 
         # 5. Montar fontes únicas

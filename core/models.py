@@ -88,6 +88,17 @@ class DigitalBook(models.Model):
         ('anato', 'Anatomía'),
         ('transcripcion', 'Factores de Transcripción'),
         ('simulacros', 'Simulacros y Exámenes'),
+        ('quimica', 'Química Biológica / Bioquímica'),
+        ('fisio', 'Fisiología y Biofísica'),
+        ('micro', 'Microbiología y Parasitología'),
+        ('pato', 'Patología'),
+        ('farma', 'Farmacología'),
+        ('semiologia', 'Semiología y Medicina Interna'),
+        ('pediatria', 'Pediatría'),
+        ('ginecologia', 'Ginecología y Obstetricia'),
+        ('cirugia', 'Cirugía'),
+        ('clinica', 'Clínica Médica'),
+        ('otras', 'Otras Asignaturas'),
     ]
 
     STATUS_CHOICES = [

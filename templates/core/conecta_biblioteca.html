@@ -1,0 +1,997 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Biblioteca Inteligente Conecta FCM - ALUMED{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+    /* ═══════════════════════════════════════════════════════
+       BIBLIOTECA INTELIGENTE — TEMA CONECTA FCM
+       Glassmorphism · Dourado · Roxo · Chat Integrado
+       ═══════════════════════════════════════════════════════ */
+    :root {
+      --cx-gold:      #f5c842;
+      --cx-gold-hover:#fde047;
+      --cx-gold-dark: #b45309;
+      --cx-cream:     #fdf8ee;
+      --cx-dark:      #0a0510;
+      --cx-dark-card: rgba(20,10,35,.75);
+      --cx-glass:     rgba(255,255,255,.04);
+      --cx-glass2:    rgba(255,255,255,.08);
+      --cx-border:    rgba(245,200,66,.18);
+      --cx-border2:   rgba(255,255,255,.07);
+      --cx-text:      #f0e8d0;
+      --cx-muted:     rgba(220,200,160,.55);
+      --cx-purple:    #2d1060;
+    }
+
+    .library-page-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* Split layout: Biblioteca (65%) | Profe Joy Chat (35%) */
+    .library-split-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+        min-height: calc(100vh - 180px);
+        align-items: stretch;
+    }
+    @media (max-width: 1024px) {
+        .library-split-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ── LEFT CABINET (Glass Shelf System) ── */
+    .glass-cabinet-panel {
+        background: var(--cx-dark-card);
+        border: 1px solid var(--cx-border);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,.4), 0 0 40px rgba(245,200,66,.05);
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+    }
+    @media (max-width: 768px) {
+        .glass-cabinet-panel {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Sidebar Index */
+    .cabinet-sidebar {
+        background: rgba(10,5,20,.6);
+        border-right: 1px solid var(--cx-border);
+        padding: 20px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow-y: auto;
+    }
+    .sidebar-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 11px; font-weight: 700;
+        color: var(--cx-gold);
+        text-transform: uppercase; letter-spacing: .12em;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(245,200,66,.2);
+    }
+
+    /* Dynamic Tree Node */
+    .tree-node {
+        display: flex; align-items: center;
+        padding: 8px 10px; border-radius: 8px;
+        cursor: pointer; transition: all .2s; gap: 8px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px; color: var(--cx-muted);
+        border: 1px solid transparent;
+    }
+    .tree-node:hover {
+        background: var(--cx-glass);
+        color: #fff;
+    }
+    .tree-node.active {
+        background: rgba(245,200,66,.1);
+        border-color: rgba(245,200,66,.25);
+        color: var(--cx-gold);
+        font-weight: 700;
+    }
+    .tree-children {
+        margin-left: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow: hidden;
+        transition: max-height .3s ease-in-out;
+    }
+    .tree-children.collapsed {
+        max-height: 0 !important;
+    }
+
+    /* Content Area */
+    .cabinet-main {
+        display: flex;
+        flex-direction: column;
+        background: radial-gradient(ellipse at 50% 0%, rgba(245,200,66,.04) 0%, transparent 70%);
+        overflow-y: auto;
+    }
+    .cabinet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--cx-border);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .cabinet-breadcrumb {
+        font-family: 'Cinzel', serif;
+        font-size: 11px; font-weight: 700;
+        color: var(--cx-muted);
+        letter-spacing: .08em;
+    }
+    .cabinet-breadcrumb span.clickable {
+        cursor: pointer; color: var(--cx-gold); transition: color .2s;
+    }
+    .cabinet-breadcrumb span.clickable:hover {
+        color: #fff; text-shadow: 0 0 8px var(--cx-gold);
+    }
+    
+    /* Search */
+    .cabinet-search {
+        position: relative;
+        width: 220px;
+    }
+    .cabinet-search input {
+        width: 100%;
+        background: rgba(0,0,0,.4);
+        border: 1px solid rgba(245,200,66,.2);
+        border-radius: 8px;
+        color: #fff;
+        padding: 6px 12px 6px 30px;
+        font-size: 12px;
+        outline: none;
+        transition: all .2s;
+    }
+    .cabinet-search input:focus {
+        border-color: var(--cx-gold);
+        box-shadow: 0 0 12px rgba(245,200,66,.25);
+    }
+    .cabinet-search i {
+        position: absolute; left: 10px; top: 50%;
+        transform: translateY(-50%);
+        color: rgba(245,200,66,.4);
+        font-size: 11px;
+    }
+
+    /* Bookshelves shelves grid */
+    .cabinet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+        padding: 20px;
+    }
+
+    /* Folder Drawer */
+    .glass-folder-card {
+        background: rgba(255,255,255,.02);
+        border: 1px solid rgba(245,200,66,.12);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all .22s;
+        box-shadow: 0 4px 15px rgba(0,0,0,.2);
+        position: relative;
+        overflow: hidden;
+    }
+    .glass-folder-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, transparent, var(--cx-gold), transparent);
+        opacity: 0; transition: opacity .2s;
+    }
+    .glass-folder-card:hover {
+        transform: translateY(-3px);
+        background: rgba(255,255,255,.05);
+        border-color: rgba(245,200,66,.3);
+        box-shadow: 0 8px 24px rgba(245,200,66,.1);
+    }
+    .glass-folder-card:hover::before { opacity: 1; }
+
+    /* Book Spine Card */
+    .glass-book-card {
+        background: rgba(0,0,0,.45);
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 10px;
+        padding: 14px;
+        cursor: pointer;
+        transition: all .25s cubic-bezier(.34,1.56,.64,1);
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 6px 15px rgba(0,0,0,.3);
+        position: relative;
+    }
+    .glass-book-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--cx-gold);
+        box-shadow: 0 12px 30px rgba(0,0,0,.5), 0 0 15px rgba(245,200,66,.1);
+    }
+    .book-spine-badge {
+        font-size: 9px; font-weight: 800; text-transform: uppercase;
+        color: var(--cx-gold); letter-spacing: .05em;
+    }
+
+    /* ── RIGHT PANEL (Profe Joy Chat) ── */
+    .profe-chat-panel {
+        background: var(--cx-dark-card);
+        border: 1px solid var(--cx-border);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 40px rgba(0,0,0,.4);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .chat-panel-header {
+        padding: 16px;
+        border-bottom: 1px solid var(--cx-border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(10,5,20,.4);
+    }
+    .joy-chat-avatar {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        border: 2px solid var(--cx-gold);
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(245,200,66,.3);
+    }
+    .joy-chat-avatar img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .joy-chat-status {
+        display: flex; flex-direction: column;
+    }
+    .joy-chat-name {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800; font-size: 14px; color: #fff;
+    }
+    .joy-chat-online {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 11px; color: #4ade80;
+    }
+    .chat-online-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #4ade80; box-shadow: 0 0 6px #4ade80;
+        animation: blink 1.5s infinite;
+    }
+
+    /* Messages box */
+    .chat-messages-container {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: linear-gradient(180deg, transparent, rgba(10,5,20,.15));
+        scrollbar-width: thin;
+        scrollbar-color: rgba(245,200,66,.15) transparent;
+    }
+    .chat-bubble {
+        max-width: 85%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 12.5px;
+        line-height: 1.5;
+        font-family: 'Outfit', sans-serif;
+    }
+    .chat-bubble.joy {
+        background: rgba(45,16,96,.45);
+        border: 1px solid rgba(124,58,237,.25);
+        color: #f0e8d0;
+        align-self: flex-start;
+        border-bottom-left-radius: 3px;
+    }
+    .chat-bubble.user {
+        background: rgba(245,200,66,.12);
+        border: 1px solid rgba(245,200,66,.25);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 3px;
+    }
+
+    /* Suggestion Pills */
+    .chat-suggestions {
+        display: flex;
+        gap: 6px;
+        padding: 10px 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-top: 1px solid rgba(255,255,255,.03);
+    }
+    .suggestion-pill {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(245,200,66,.1);
+        color: var(--cx-muted);
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .suggestion-pill:hover {
+        background: rgba(245,200,66,.08);
+        border-color: var(--cx-gold);
+        color: var(--cx-gold);
+    }
+
+    /* Input area */
+    .chat-input-bar {
+        padding: 14px;
+        border-top: 1px solid var(--cx-border);
+        display: flex;
+        gap: 10px;
+        background: rgba(10,5,20,.3);
+    }
+    .chat-input-bar textarea {
+        flex: 1;
+        background: rgba(0,0,0,.5);
+        border: 1px solid rgba(245,200,66,.2);
+        border-radius: 10px;
+        color: #fff;
+        padding: 8px 12px;
+        font-size: 12.5px;
+        outline: none;
+        resize: none;
+        height: 38px;
+        transition: all .2s;
+        font-family: 'Outfit', sans-serif;
+    }
+    .chat-input-bar textarea:focus {
+        border-color: var(--cx-gold);
+        box-shadow: 0 0 10px rgba(245,200,66,.2);
+    }
+    .chat-send-btn {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--cx-gold), var(--cx-gold-dark));
+        border: none;
+        color: #000;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all .2s;
+    }
+    .chat-send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(245,200,66,.4);
+    }
+
+    /* Typing bubble */
+    .typing-bubble {
+        display: flex; gap: 4px; align-items: center; justify-content: center;
+        padding: 10px 14px;
+    }
+    .typing-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--cx-gold);
+        animation: typing 1s infinite alternate;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+        from { transform: translateY(0); opacity: 0.3; }
+        to { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── GLASS BOOK MODAL ── */
+    .glass-modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.7);
+        backdrop-filter: blur(10px);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 10000;
+        display: none;
+    }
+    .glass-modal-card {
+        background: rgba(15,8,30,.92);
+        border: 1px solid var(--cx-border);
+        border-radius: 18px;
+        max-width: 500px; width: 90%;
+        padding: 24px;
+        box-shadow: 0 15px 40px rgba(0,0,0,.6), 0 0 40px rgba(245,200,66,.1);
+        animation: modalScaleUp .25s ease-out;
+    }
+    @keyframes modalScaleUp {
+        from { transform: scale(.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="library-page-wrapper">
+    <!-- Top info / header banner -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(245,200,66,.1); padding-bottom: 14px;">
+        <div>
+            <span class="cx-label lbl-gold">📖 Biblioteca Inteligente</span>
+            <h1 style="font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3.5vw, 2.2rem); font-weight: 900; margin: 0; color: #fff;">
+                Biblioteca <span style="background: linear-gradient(135deg, #f5c842, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Inteligente</span>
+            </h1>
+            <p style="font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--cx-muted); margin: 4px 0 0 0;">
+                Accedé a toda la bibliografía oficial y apuntes del plan de medicina con la ayuda interactiva de la Profe Joy IA.
+            </p>
+        </div>
+    </div>
+
+    <!-- Career selection tabs -->
+    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;">
+        <button type="button" onclick="changeLibraryCareer('medicina')" class="btn-secondary" id="career-tab-medicina" style="padding: 8px 16px; font-size: 12px; border-radius: 10px; font-family: 'Cinzel', serif; font-weight: 700;">
+            🏥 Medicina
+        </button>
+        <button type="button" onclick="changeLibraryCareer('obstetricia')" class="btn-secondary" id="career-tab-obstetricia" style="padding: 8px 16px; font-size: 12px; border-radius: 10px; font-family: 'Cinzel', serif; font-weight: 700;">
+            👶 Obstetricia
+        </button>
+        <button type="button" onclick="changeLibraryCareer('odontologia')" class="btn-secondary" id="career-tab-odontologia" style="padding: 8px 16px; font-size: 12px; border-radius: 10px; font-family: 'Cinzel', serif; font-weight: 700;">
+            🦷 Odontología
+        </button>
+        <button type="button" onclick="changeLibraryCareer('enfermeria')" class="btn-secondary" id="career-tab-enfermeria" style="padding: 8px 16px; font-size: 12px; border-radius: 10px; font-family: 'Cinzel', serif; font-weight: 700;">
+            💉 Enfermería
+        </button>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="library-split-layout">
+        <!-- 1. The Shelf/Cabinet System -->
+        <div class="glass-cabinet-panel">
+            <!-- Sidebar Navigation index -->
+            <aside class="cabinet-sidebar">
+                <h3 class="sidebar-section-title"><i class="fas fa-book-open"></i> Catálogo</h3>
+                <div id="sidebarTreeContainer">
+                    <div class="tree-node active" id="node-root" onclick="selectRootNode()">
+                        <i class="fas fa-university" style="color: var(--cx-gold); font-size: 13px;"></i>
+                        <span class="tree-label">MEDICINA</span>
+                    </div>
+                    <div class="tree-children" id="treeChildrenRoot">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Library shelves Main cabinet -->
+            <main class="cabinet-main">
+                <div class="cabinet-header">
+                    <div class="cabinet-breadcrumb" id="cabinetBreadcrumb">
+                        <span class="clickable" onclick="selectRootNode()">MEDICINA</span>
+                    </div>
+                    <div class="cabinet-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="cabinetSearchInput" placeholder="Buscar libro o apunte..." oninput="handleSearch()">
+                    </div>
+                </div>
+
+                <div class="cabinet-grid" id="cabinetGrid">
+                    <!-- Populated dynamically with folders or books -->
+                </div>
+            </main>
+        </div>
+
+        <!-- 2. Integrated Profe Joy IA Chat -->
+        <div class="profe-chat-panel">
+            <div class="chat-panel-header">
+                <div class="joy-chat-avatar">
+                    <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy Portrait">
+                </div>
+                <div class="joy-chat-status">
+                    <span class="joy-chat-name">Profe Joy IA</span>
+                    <span class="joy-chat-online">
+                        <span class="chat-online-dot"></span>
+                        En línea · Tutora Científica
+                    </span>
+                </div>
+            </div>
+
+            <!-- Scrollable Messages box -->
+            <div class="chat-messages-container" id="chatMessagesContainer">
+                <div class="chat-bubble joy">
+                    ¡Holis, doc! Corazón, qué lindo saludarte. Soy tu Profe Joy virtual. Acá tenés toda la biblioteca inteligente de Conecta FCM.
+                    <br><br>
+                    Escribime cualquier duda sobre las materias o haceme clic en algún libro para que te enseñe de forma didáctica. ¡Mete que vas a ser un doc increíble! 🩺✨
+                </div>
+            </div>
+
+            <!-- Quick study suggestion pills -->
+            <div class="chat-suggestions">
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Cómo estudio histología?')">Estudiar Histología</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('Explicame el aparato locomotor de forma sencilla')">Aparato Locomotor</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Qué son los factores de transcripción?')">Factores de Transcripción</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Qué se rinde en el primer final de medicina?')">Rendir Finales</div>
+            </div>
+
+            <!-- Message write bar -->
+            <div class="chat-input-bar">
+                <textarea id="chatInputText" placeholder="Preguntale a la Profe Joy..." onkeydown="handleInputKeydown(event)"></textarea>
+                <button type="button" class="chat-send-btn" onclick="sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal Overlay -->
+<div id="bookModalOverlay" class="glass-modal-overlay" onclick="closeBookModal()">
+    <div class="glass-modal-card" onclick="event.stopPropagation()">
+        <div style="display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;">
+            <div style="width: 100px; height: 130px; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(245,200,66,.2);">
+                <img id="modalBookCover" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Cover">
+                <i id="modalBookIcon" class="fas fa-book" style="font-size: 32px; color: var(--cx-gold);"></i>
+            </div>
+            <div>
+                <span id="modalBookBadge" style="background: rgba(245,200,66,.1); border: 1px solid rgba(245,200,66,.3); color: var(--cx-gold); font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">Bibliografía</span>
+                <h3 id="modalBookTitle" style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 800; color: #fff; margin: 8px 0 4px 0; line-height: 1.3;">Book Title</h3>
+                <p id="modalBookAuthor" style="font-size: 11px; color: var(--cx-muted); margin: 0;">Autor/Cátedra</p>
+                <p id="modalBookSubject" style="font-size: 11px; color: var(--cx-gold); margin: 4px 0 0 0; text-transform: uppercase; font-weight: 700; letter-spacing: .05em;">Anatomía</p>
+            </div>
+        </div>
+
+        <p id="modalBookDesc" style="font-size: 12.5px; color: rgba(220,200,160,.85); line-height: 1.55; margin: 0 0 20px 0;">
+            Descripción del libro digital.
+        </p>
+
+        <!-- Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255,255,255,.08); padding-top: 16px;">
+            <button onclick="closeBookModal()" style="background: transparent; border: none; color: var(--cx-muted); text-decoration: underline; font-size: 12px; cursor: pointer;">Cerrar</button>
+            <div style="display: flex; gap: 8px;">
+                <button id="modalChatContextBtn" class="btn-secondary" style="font-size: 11px; padding: 6px 12px; border-radius: 6px;" onclick="askProfeAboutBook()">Preguntar a Profe</button>
+                <a href="#" id="modalBookLinkBtn" target="_blank" class="btn-primary" style="font-size: 11px; padding: 8px 16px; border-radius: 6px; text-decoration: none; color: #000 !important; font-weight: 900; display: inline-block; background: linear-gradient(135deg, #f5c842, #f59e0b) !important; border: 1px solid #f5c842 !important; box-shadow: 0 0 12px rgba(245,200,66,0.4) !important; transition: all 0.2s;">Leer Libro</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Embed dynamic catalog payload -->
+{{ library_payload|json_script:"library-catalog-data" }}
+
+<script>
+    // Load catalog payload
+    var payload = JSON.parse(document.getElementById("library-catalog-data").textContent);
+    var currentPath = [];
+    var searchQuery = "";
+    var currentCareer = "medicina";
+    var chatHistory = [];
+    var selectedBookContext = null;
+
+    // Career configurations tree mapping (Medicina, Obstetricia, Odontologia, Enfermeria, Otras Carreras)
+    var careerTreeConfigs = {
+        "medicina": {
+            name: "MEDICINA",
+            children: {
+                "1° AÑO": {
+                    type: "year",
+                    children: {
+                        "Anatomía": { type: "subject", subjectKey: "anato", group: "libros", icon: "fa-bone" },
+                        "Histología": { type: "subject", subjectKey: "histo", group: "libros", icon: "fa-microscope" },
+                        "Embriología": { type: "subject", subjectKey: "embrio", group: "libros", icon: "fa-dna" },
+                        "Biología": { type: "subject", subjectKey: "bio", group: "libros", icon: "fa-dna" },
+                        "Factores de Transcripción": { type: "subject", subjectKey: "transcripcion", group: "libros", icon: "fa-brain" }
+                    }
+                },
+                "2° AÑO": {
+                    type: "year",
+                    children: {
+                        "Fisiología": { type: "subject", subjectKey: "fisio", group: "libros", icon: "fa-heart-pulse" },
+                        "Química Biológica": { type: "subject", subjectKey: "quimica", group: "libros", icon: "fa-flask" }
+                    }
+                },
+                "3° AÑO": {
+                    type: "year",
+                    children: {
+                        "Microbiología": { type: "subject", subjectKey: "micro", group: "libros", icon: "fa-virus" },
+                        "Patología": { type: "subject", subjectKey: "pato", group: "libros", icon: "fa-notes-medical" },
+                        "Farmacología": { type: "subject", subjectKey: "farma", group: "libros", icon: "fa-capsules" }
+                    }
+                },
+                "4° y 5° AÑO": {
+                    type: "year",
+                    children: {
+                        "Semiología": { type: "subject", subjectKey: "semiologia", group: "libros", icon: "fa-stethoscope" },
+                        "Pediatría": { type: "subject", subjectKey: "pediatria", group: "libros", icon: "fa-baby-carriage" },
+                        "Ginecología y Obstetricia": { type: "subject", subjectKey: "ginecologia", group: "libros", icon: "fa-venus" },
+                        "Cirugía": { type: "subject", subjectKey: "cirugia", group: "libros", icon: "fa-heart" },
+                        "Clínica Médica": { type: "subject", subjectKey: "clinica", group: "libros", icon: "fa-user-md" },
+                        "Otras Asignaturas": { type: "subject", subjectKey: "otras", group: "libros", icon: "fa-folder-open" }
+                    }
+                }
+            }
+        },
+        "obstetricia": {
+            name: "OBSTETRICIA",
+            children: {
+                "1° AÑO": {
+                    type: "year",
+                    children: {
+                        "Anatomía Obstétrica": { type: "subject", subjectKey: "anato_obs", group: "libros", icon: "fa-baby" },
+                        "Embriología y Genética": { type: "subject", subjectKey: "embrio", group: "libros", icon: "fa-dna" }
+                    }
+                }
+            }
+        },
+        "odontologia": {
+            name: "ODONTOLOGÍA",
+            children: {
+                "1° AÑO": {
+                    type: "year",
+                    children: {
+                        "Anatomía Dentaria": { type: "subject", subjectKey: "anato_dent", group: "libros", icon: "fa-tooth" },
+                        "Histología y Embriología Bucal": { type: "subject", subjectKey: "histo_bucal", group: "libros", icon: "fa-teeth" }
+                    }
+                }
+            }
+        },
+        "enfermeria": {
+            name: "ENFERMERÍA",
+            children: {
+                "1° AÑO": {
+                    type: "year",
+                    children: {
+                        "Fundamentos de Enfermería": { type: "subject", subjectKey: "fundamentos_enf", group: "libros", icon: "fa-user-nurse" },
+                        "Anatomía y Fisiología": { type: "subject", subjectKey: "anato", group: "libros", icon: "fa-bone" }
+                    }
+                }
+            }
+        }
+    };
+
+    var currentConfig = careerTreeConfigs[currentCareer];
+
+    function changeLibraryCareer(careerId) {
+        if (!careerTreeConfigs[careerId]) return;
+        currentCareer = careerId;
+        currentConfig = careerTreeConfigs[careerId];
+        
+        // Update active class on selector tabs
+        document.querySelectorAll('[id^="career-tab-"]').forEach(btn => {
+            if (btn.id === 'career-tab-' + careerId) {
+                btn.style.background = 'rgba(245,200,66,.2)';
+                btn.style.borderColor = 'var(--cx-gold)';
+                btn.style.color = 'var(--cx-gold)';
+            } else {
+                btn.style.background = 'rgba(255,255,255,.03)';
+                btn.style.borderColor = 'rgba(255,255,255,.1)';
+                btn.style.color = 'var(--cx-muted)';
+            }
+        });
+
+        // Update root label
+        var rootNode = document.querySelector('#node-root .tree-label');
+        if (rootNode) rootNode.textContent = currentConfig.name;
+
+        navigateToPath([]);
+        renderSidebarTree();
+    }
+
+    function navigateToPath(pathArray) {
+        currentPath = pathArray;
+        renderBreadcrumbs();
+        renderGridContent();
+        highlightTreeSelection();
+    }
+
+    function highlightTreeSelection() {
+        document.querySelectorAll('.tree-node').forEach(node => {
+            node.classList.remove('active');
+        });
+        if (currentPath.length === 0) {
+            document.getElementById('node-root').classList.add('active');
+            return;
+        }
+        var nodeEl = document.getElementById('node-' + currentPath.join('-'));
+        if (nodeEl) nodeEl.classList.add('active');
+    }
+
+    function selectRootNode() {
+        navigateToPath([]);
+    }
+
+    function renderBreadcrumbs() {
+        var container = document.getElementById('cabinetBreadcrumb');
+        var html = '<span class="clickable" onclick="selectRootNode()">' + currentConfig.name + '</span>';
+        
+        var accum = [];
+        for (var i = 0; i < currentPath.length; i++) {
+            accum.push(currentPath[i]);
+            html += ' <i class="fas fa-chevron-right" style="font-size:9px; color:rgba(245,200,66,.3); margin:0 4px;"></i> ';
+            if (i === currentPath.length - 1) {
+                html += '<span>' + currentPath[i] + '</span>';
+            } else {
+                html += '<span class="clickable" onclick="navigateToPath([\'' + currentPath.slice(0, i+1).join('\',\'') + '\'])">' + currentPath[i] + '</span>';
+            }
+        }
+        container.innerHTML = html;
+    }
+
+    function renderSidebarTree() {
+        var container = document.getElementById('treeChildrenRoot');
+        container.innerHTML = '';
+
+        function buildSubtree(node, parentPath) {
+            var html = '';
+            for (var name in node) {
+                var child = node[name];
+                var accumPath = parentPath.concat([name]);
+                var nodeKey = accumPath.join('-');
+                var isSubject = child.type === 'subject';
+                
+                html += '<div class="tree-node" id="node-' + nodeKey + '" onclick="navigateToPath([\'' + accumPath.join("','") + '\']); event.stopPropagation();">';
+                html += '<i class="fas ' + (isSubject ? 'fa-book-open' : 'fa-folder') + '" style="font-size:11px; opacity:.7;"></i>';
+                html += '<span class="tree-label">' + name + '</span>';
+                html += '</div>';
+
+                if (child.children) {
+                    html += '<div class="tree-children" id="children-' + nodeKey + '">';
+                    html += buildSubtree(child.children, accumPath);
+                    html += '</div>';
+                }
+            }
+            return html;
+        }
+
+        container.innerHTML = buildSubtree(currentConfig.children, []);
+    }
+
+    function getDbItems(subjectKey) {
+        var room = payload.rooms[subjectKey];
+        if (!room) return [];
+        
+        var items = [];
+        // Merge books and resources
+        room.resourceGroups.forEach(g => {
+            if (g.items) {
+                items = items.concat(g.items);
+            }
+        });
+        return items;
+    }
+
+    function renderGridContent() {
+        var grid = document.getElementById('cabinetGrid');
+        grid.innerHTML = '';
+
+        var current = currentConfig;
+        for (var i = 0; i < currentPath.length; i++) {
+            if (current.children && current.children[currentPath[i]]) {
+                current = current.children[currentPath[i]];
+            }
+        }
+
+        // Case A: Has children folders (e.g. Year folder)
+        if (current.children) {
+            for (var name in current.children) {
+                var child = current.children[name];
+                if (searchQuery && !name.toLowerCase().includes(searchQuery)) continue;
+
+                var card = document.createElement('div');
+                card.className = 'glass-folder-card';
+                card.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fas ${child.type === 'subject' ? 'fa-book-open' : 'fa-folder-open'}" style="font-size:24px; color:var(--cx-gold);"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:13.5px; color:#fff; font-weight:700;">${name}</h4>
+                            <p style="margin:3px 0 0 0; font-size:11px; color:var(--cx-muted);">${child.type === 'subject' ? 'Asignatura académica' : 'Colección de materias'}</p>
+                        </div>
+                    </div>
+                `;
+                card.onclick = (function(n) {
+                    return function() { navigateToPath(currentPath.concat([n])); };
+                })(name);
+                grid.appendChild(card);
+            }
+        } 
+        // Case B: Subject leaf - Display list of books from payload
+        else if (current.type === 'subject') {
+            var dbItems = getDbItems(current.subjectKey);
+
+            if (dbItems.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--cx-muted);">
+                        <i class="fas fa-book-medical" style="font-size:32px; margin-bottom:12px; opacity:.4;"></i>
+                        <p style="margin:0; font-size:13px;">Próximamente estaremos listando apuntes y libros en esta sección.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            dbItems.forEach(item => {
+                if (searchQuery && !item.title.toLowerCase().includes(searchQuery)) return;
+
+                var card = document.createElement('div');
+                card.className = 'glass-book-card';
+                card.innerHTML = `
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                            <span class="book-spine-badge">${item.badge || 'Apunte'}</span>
+                            <i class="fas fa-file-pdf" style="color:#ef4444; font-size:14px;"></i>
+                        </div>
+                        <h4 style="margin:0; font-family:'Playfair Display', serif; font-size:13.5px; font-weight:700; color:#fff; line-height:1.3;">${item.title}</h4>
+                        <p style="margin:4px 0 0 0; font-size:11px; color:var(--cx-muted);">${item.author || 'Cátedra ALUMED'}</p>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; border-top: 1px solid rgba(255,255,255,.05); padding-top:10px;">
+                        <span style="font-size:10px; color:rgba(255,255,255,.45);">${item.source || 'ALUMED'}</span>
+                        <span style="font-size:10.5px; color:var(--cx-gold); font-weight:700; text-decoration:underline;">Ver Detalles</span>
+                    </div>
+                `;
+                card.onclick = function() {
+                    openBookDetails(item);
+                };
+                grid.appendChild(card);
+            });
+        }
+    }
+
+    function handleSearch() {
+        searchQuery = document.getElementById('cabinetSearchInput').value.toLowerCase().strip();
+        renderGridContent();
+    }
+
+    function openBookDetails(item) {
+        selectedBookContext = item;
+        document.getElementById('modalBookTitle').textContent = item.title;
+        document.getElementById('modalBookAuthor').textContent = item.author ? 'Autor: ' + item.author : 'Cátedra ALUMED';
+        document.getElementById('modalBookDesc').textContent = item.description || 'Apunte oficial de estudio y repaso científico para alumnos de la UNLP.';
+        document.getElementById('modalBookBadge').textContent = item.badge || 'Recurso Académico';
+        document.getElementById('modalBookSubject').textContent = item.subjectLabel || 'Materia';
+        
+        var coverImg = document.getElementById('modalBookCover');
+        var coverIcon = document.getElementById('modalBookIcon');
+        if (item.cover) {
+            coverImg.src = item.cover;
+            coverImg.style.display = 'block';
+            coverIcon.style.display = 'none';
+        } else {
+            coverImg.style.display = 'none';
+            coverIcon.style.display = 'block';
+        }
+
+        var linkBtn = document.getElementById('modalBookLinkBtn');
+        if (item.id && item.id.startsWith('db-')) {
+            var dbId = item.id.replace('db-', '');
+            linkBtn.href = '/conecta/biblioteca/lector/' + dbId + '/';
+            linkBtn.style.display = 'inline-block';
+        } else if (item.isAvailable && item.primaryUrl) {
+            linkBtn.href = item.primaryUrl;
+            linkBtn.style.display = 'inline-block';
+        } else {
+            linkBtn.style.display = 'none';
+        }
+
+        document.getElementById('bookModalOverlay').style.display = 'flex';
+    }
+
+    function closeBookModal() {
+        document.getElementById('bookModalOverlay').style.display = 'none';
+    }
+
+    // Profe Joy IA Chat integration
+    function appendChatBubble(sender, text) {
+        var container = document.getElementById('chatMessagesContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + (sender === 'joy' ? 'joy' : 'user');
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function appendTypingIndicator() {
+        var container = document.getElementById('chatMessagesContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble joy';
+        bubble.id = 'chat-typing-indicator';
+        bubble.innerHTML = `
+            <div class="typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        var ind = document.getElementById('chat-typing-indicator');
+        if (ind) ind.remove();
+    }
+
+    function handleInputKeydown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function sendQuickQuestion(question) {
+        document.getElementById('chatInputText').value = question;
+        sendChatMessage();
+    }
+
+    function askProfeAboutBook() {
+        if (!selectedBookContext) return;
+        closeBookModal();
+        var q = 'Explicame el tema del libro "' + selectedBookContext.title + '" de forma didáctica';
+        document.getElementById('chatInputText').value = q;
+        sendChatMessage();
+    }
+
+    function sendChatMessage() {
+        var input = document.getElementById('chatInputText');
+        var question = input.value.trim();
+        if (!question) return;
+
+        input.value = '';
+        appendChatBubble('user', question);
+        appendTypingIndicator();
+
+        var payloadData = {
+            question: question,
+            history: chatHistory
+        };
+
+        // Call Profe Joy Chat Endpoint
+        fetch('/profe-joy/chat/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payloadData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            removeTypingIndicator();
+            if (data.answer) {
+                appendChatBubble('joy', data.answer);
+                chatHistory.push({role: 'user', content: question});
+                chatHistory.push({role: 'assistant', content: data.answer});
+            } else if (data.error) {
+                appendChatBubble('joy', '❌ Ocurrió un error en la respuesta: ' + data.error);
+            }
+        })
+        .catch(err => {
+            removeTypingIndicator();
+            appendChatBubble('joy', '❌ Error de conexión con el plano astral de la Profe Joy. Por favor reintentá.');
+            console.error('Chat error:', err);
+        });
+    }
+
+    function getCsrfToken() {
+        var name = 'csrftoken';
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue || '{{ csrf_token }}';
+    }
+
+    // Init script
+    changeLibraryCareer('medicina');
+</script>
+{% endblock %}
