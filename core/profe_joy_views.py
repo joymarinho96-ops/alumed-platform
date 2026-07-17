@@ -163,8 +163,14 @@ def profe_joy_chat(request):
     try:
         client_type, client = _get_api_client()
 
-        # 1. Embed a pergunta
-        q_embedding = _embed_query(client_type, client, question)
+        # 1. Embed a pergunta (com fallback de segurança para mock se falhar)
+        try:
+            q_embedding = _embed_query(client_type, client, question)
+        except Exception as embed_exc:
+            logger.warning(f"Erro no embedding ({client_type}), usando fallback mock: {embed_exc}")
+            client_type = 'mock'
+            client = None
+            q_embedding = [0.1] * 1536
 
         # 2. Buscar chunks relevantes
         relevant = _find_relevant_chunks(q_embedding, question)
@@ -184,39 +190,50 @@ def profe_joy_chat(request):
         context = _build_context(relevant)
         system  = SYSTEM_PROMPT.format(context=context)
 
-        # 4. Chamar LLM correspondente (Gemini, OpenAI ou Mock)
+        # 4. Chamar LLM correspondente (Gemini, OpenAI ou Mock) com try-except de segurança
+        answer = None
         if client_type == 'gemini':
-            model = client.GenerativeModel(
-                model_name="gemini-2.0-flash",
-                system_instruction=system
-            )
-            
-            contents = []
-            for msg in history[-6:]:
-                role = 'user' if msg.get('role') == 'user' else 'model'
-                contents.append({'role': role, 'parts': [msg.get('content', '')]})
-            contents.append({'role': 'user', 'parts': [question]})
-            
-            response = model.generate_content(
-                contents=contents,
-                generation_config={"temperature": 0.3}
-            )
-            answer = response.text
-        elif client_type == 'openai':
-            messages = [{'role': 'system', 'content': system}]
-            for msg in history[-6:]:
-                if msg.get('role') in ('user', 'assistant') and msg.get('content'):
-                    messages.append({'role': msg['role'], 'content': msg['content']})
-            messages.append({'role': 'user', 'content': question})
+            try:
+                model = client.GenerativeModel(
+                    model_name="gemini-2.0-flash",
+                    system_instruction=system
+                )
+                
+                contents = []
+                for msg in history[-6:]:
+                    role = 'user' if msg.get('role') == 'user' else 'model'
+                    contents.append({'role': role, 'parts': [msg.get('content', '')]})
+                contents.append({'role': 'user', 'parts': [question]})
+                
+                response = model.generate_content(
+                    contents=contents,
+                    generation_config={"temperature": 0.3}
+                )
+                answer = response.text
+            except Exception as gemini_exc:
+                logger.error(f"Erro na API Gemini: {gemini_exc}")
+                client_type = 'mock'
 
-            response = client.chat.completions.create(
-                model='gpt-4o-mini',
-                messages=messages,
-                temperature=0.3,
-                max_tokens=1000,
-            )
-            answer = response.choices[0].message.content
-        else:
+        if client_type == 'openai' and answer is None:
+            try:
+                messages = [{'role': 'system', 'content': system}]
+                for msg in history[-6:]:
+                    if msg.get('role') in ('user', 'assistant') and msg.get('content'):
+                        messages.append({'role': msg['role'], 'content': msg['content']})
+                messages.append({'role': 'user', 'content': question})
+
+                response = client.chat.completions.create(
+                    model='gpt-4o-mini',
+                    messages=messages,
+                    temperature=0.3,
+                    max_tokens=1000,
+                )
+                answer = response.choices[0].message.content
+            except Exception as openai_exc:
+                logger.error(f"Erro na API OpenAI: {openai_exc}")
+                client_type = 'mock'
+
+        if client_type == 'mock' or answer is None:
             # Fallback Mock Inteligente
             first_chunk = relevant[0]
             answer = f"🤖 [MOCK DEMO] Com base no material **{first_chunk.title}**:\n\n{first_chunk.content[:250]}...\n\n*(Nota: O servidor está rodando em modo demonstração local porque nenhuma chave de API válida ou com saldo da OpenAI/Gemini foi detectada. Cadastre as chaves para ter respostas reais completas!)*"
@@ -243,6 +260,7 @@ def profe_joy_chat(request):
     except Exception as exc:
         logger.error(f'ProfeJoy chat error: {exc}', exc_info=True)
         return JsonResponse({'error': f'Erro interno: {str(exc)}'}, status=500)
+
 
 
 def profe_joy_page(request):
