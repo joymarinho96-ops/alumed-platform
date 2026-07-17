@@ -53,10 +53,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Configura botões de IA
     const askJoyBtn = document.getElementById("ask-profe-joy-btn");
     if (askJoyBtn) {
-      askJoyBtn.onclick = () => {
-        // Redireciona para o chat RAG passando dados do card como parâmetro de contexto
+      askJoyBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Abre o chat da Profe Joy em uma NOVA aba para não sair da sessão de estudos!
         const msg = encodeURIComponent(`Hola Profe Joy, no entendí bien esta pregunta de ${card.deck_subject}: "${card.question}". La respuesta es "${card.answer}" y la explicación dice "${card.explanation || ''}". ¿Me lo podrías explicar mejor?`);
-        window.location.href = `/profe-joy/chat/?msg=${msg}`;
+        window.open(`/profe-joy/chat/?msg=${msg}`, '_blank');
+      };
+    }
+
+    // Configura botão de pular/saltar ficha
+    const skipBtn = document.getElementById("skip-card-btn");
+    if (skipBtn) {
+      skipBtn.onclick = (e) => {
+        e.stopPropagation();
+        currentIndex++;
+        loadCard(currentIndex);
       };
     }
 
