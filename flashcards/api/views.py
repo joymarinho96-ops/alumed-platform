@@ -97,13 +97,13 @@ class SubmitFlashcardReviewView(APIView):
             exam_date=exam_date, # <- Motor agora se adapta com a data da prova!
         )
 
+        # Retorna o JSON exato no padrão do estudante
         return Response(
             {
-                "message": "Revisão registrada.",
-                "flashcard_id": flashcard.id,
-                "next_review_at": result.next_review_at,
+                "message": "Revisão registrada",
                 "interval_days": result.interval_days,
-                "mastery_score": result.mastery_score,
-                "priority": result.priority,
+                "mastery_score": int(result.mastery_score), # Retorna inteiro como na especificação (ex: 72)
+                "next_review_at": result.next_review_at.isoformat(),
             }
         )
+
