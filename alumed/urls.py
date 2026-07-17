@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view
 from core.telegram_views import telegram_webhook, setup_webhook
+from core.profe_joy_views import profe_joy_chat, profe_joy_page, profe_joy_stats
 
 
 urlpatterns = [
@@ -45,8 +46,10 @@ urlpatterns = [
     # Telegram Bot Webhook
     path('telegram/webhook/', telegram_webhook, name='telegram_webhook'),
     path('telegram/setup-webhook/', setup_webhook, name='telegram_setup_webhook'),
+
+    # ── Profe Joy IA ──
+    path('profe-joy/', profe_joy_page, name='profe_joy'),
+    path('profe-joy/chat/', profe_joy_chat, name='profe_joy_chat'),
+    path('profe-joy/stats/', profe_joy_stats, name='profe_joy_stats'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

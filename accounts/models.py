@@ -495,3 +495,44 @@ class TelegramSubscriber(models.Model):
         # Inclui quem escolheu 'todos' + quem está nos anos alvo
         return qs.filter(year__in=years + ['todos'])
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Profe Joy IA — RAG chunks
+# ─────────────────────────────────────────────────────────────────────────────
+
+class ProfeJoyChunk(models.Model):
+    """
+    Pedaço de texto de um material didático vetorizado para RAG.
+    Cada chunk é um trecho de ~500 tokens com seu embedding OpenAI.
+    """
+    SOURCE_TYPES = [
+        ('pdf',  'PDF'),
+        ('url',  'Página Web'),
+        ('text', 'Texto Manual'),
+    ]
+
+    title       = models.CharField(max_length=300, verbose_name='Título do material')
+    source_url  = models.URLField(max_length=1000, blank=True, verbose_name='URL da fonte')
+    content     = models.TextField(verbose_name='Conteúdo do chunk')
+    embedding   = models.JSONField(default=list, verbose_name='Vetor de embedding')
+    source_type = models.CharField(max_length=10, choices=SOURCE_TYPES, default='pdf')
+    chunk_index = models.PositiveIntegerField(default=0, verbose_name='Índice do chunk')
+    year        = models.CharField(max_length=20, blank=True,
+                      verbose_name='Ano letivo alvo',
+                      help_text='1,2,3... ou vazio para geral')
+    subject     = models.CharField(max_length=200, blank=True, verbose_name='Matéria')
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering            = ['title', 'chunk_index']
+        verbose_name        = 'Profe Joy — Chunk'
+        verbose_name_plural = 'Profe Joy — Chunks'
+        indexes             = [
+            models.Index(fields=['title'], name='idx_profejoy_title'),
+            models.Index(fields=['year'],  name='idx_profejoy_year'),
+        ]
+
+    def __str__(self):
+        return f"{self.title} [chunk {self.chunk_index}]"
+
+
