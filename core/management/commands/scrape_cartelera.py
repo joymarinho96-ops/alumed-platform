@@ -42,14 +42,30 @@ from core.models import CarteleraItem
 logger = logging.getLogger(__name__)
 
 # ── Configuração ──────────────────────────────────────────────
-BASE_URL    = 'https://cartelera.med.unlp.edu.ar'
+BASE_URL      = 'https://cartelera.med.unlp.edu.ar'
 CARTELERA_URL = f'{BASE_URL}/'
+
+# Headers disfarçados de Chrome 120 real — evita bloqueios
 HEADERS = {
-    'User-Agent': 'ALUMED-Bot/1.0 (FCM-UNLP student platform; +https://alumed.com)',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'es-AR,es;q=0.9,en;q=0.8',
+    'User-Agent': (
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+        'AppleWebKit/537.36 (KHTML, like Gecko) '
+        'Chrome/120.0.0.0 Safari/537.36'
+    ),
+    'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language':  'es-AR,es;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Encoding':  'gzip, deflate, br',
+    'Referer':          'https://www.med.unlp.edu.ar/',
+    'DNT':              '1',
+    'Connection':       'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest':   'document',
+    'Sec-Fetch-Mode':   'navigate',
+    'Sec-Fetch-Site':   'same-origin',
+    'Cache-Control':    'max-age=0',
 }
 TIMEOUT = 20  # segundos
+
 
 
 # ── Parser ────────────────────────────────────────────────────
@@ -171,39 +187,171 @@ YEAR_KEYWORDS: dict[str, list[str]] = {
         'premed', 'preingreso', 'pre-ingreso', 'nivelacion', 'curso ingreso',
     ],
     '1': [
-        'anatomia', 'histologia', 'embriologia', 'fisiologia', 'quimica biologica',
+        'anatomia', 'histologia', 'embriologia', 'quimica biologica',
         'biologia celular', 'primer ano', '1er ano', '1° ano', 'primer año',
-        '1er año', 'bioquimica', 'introduccion a la medicina',
+        '1er año', 'bioquimica', 'introduccion a la medicina', 'ciencias exactas',
+        'fisiologia', 'biologia',
     ],
     '2': [
-        'microbiologia', 'parasitologia', 'farmacologia', 'patologia general',
+        'microbiologia', 'parasitologia', 'farmacologia basica', 'patologia general',
         'semiologia', 'segundo ano', '2do ano', '2° ano', 'segundo año',
-        'propedeutica', 'fisiopatologia',
+        'propedeutica', 'fisiopatologia', 'bioquimica clinica',
     ],
     '3': [
-        'clinica medica', 'cirugia', 'pediatria', 'ginecologia', 'obstetricia',
-        'tercer ano', '3er ano', '3° ano', 'tercer año', 'medicina interna',
-        'diagnostico por imagenes', 'urologia',
+        'patologia', 'farmacologia aplicada', 'clinica medica',
+        'tercer ano', '3er ano', '3° ano', 'tercer año',
     ],
     '4': [
-        'cuarto ano', '4to ano', '4° ano', 'cuarto año', 'salud publica',
-        'medicina legal', 'psiquiatria', 'neurologia', 'infectologia',
-        'dermatologia', 'oftalmologia', 'otorrinolaringologia',
+        'medicina interna', 'cirugia', 'pediatria', 'ginecologia', 'obstetricia',
+        'cuarto ano', '4to ano', '4° ano', 'cuarto año', 'psiquiatria',
     ],
     '5': [
-        'quinto ano', '5to ano', '5° ano', 'quinto año', 'medicina familiar',
-        'geriatria', 'oncologia', 'hematologia', 'endocrinologia',
-        'reumatologia', 'cardiologia',
+        'salud publica', 'medicina legal', 'neurologia', 'dermatologia',
+        'oftalmologia', 'otorrinolaringologia', 'infectologia', 'terapia intensiva',
+        'quinto ano', '5to ano', '5° ano', 'quinto año', 'urologia',
+        'ortopedia', 'traumatologia',
     ],
     '6': [
         'sexto ano', '6to ano', '6° ano', 'sexto año', 'rotacion',
-        'rotaciones', 'practica final', 'egresado',
+        'rotaciones', 'practica final', 'medicina general', 'medicina familiar',
     ],
     'internado': [
         'internado', 'internados', 'residencia', 'concurso residencia',
         'residencias medicas', 'mir', 'examen residencia',
     ],
 }
+
+# ── Mapa de Cátedras por Ano (FCM-UNLP) ──────────────────────
+# Extraído do HTML real de cartelera.med.unlp.edu.ar
+# Chave: ID da cátedra | Valor: ano(s) alvo (string CSV)
+CATEDRA_YEAR_MAP: dict[int, str] = {
+    # ── MEDICINA ── 1° Ano ─────────────────────────────────────
+    1:  '1',   # Biología
+    5:  '1',   # Ciencias Exactas
+    26: '1',   # Citología, Histología y Embriología
+    32: '1',   # Anatomía A
+    4:  '1',   # Anatomía B
+    68: '1',   # Anatomía C
+    58: '1',   # Bioquímica y Biología Molecular
+    # ── MEDICINA ── 2° Ano ─────────────────────────────────────
+    21: '2',   # Fisiología y Física Biológica
+    6:  '2',   # Microbiología y Parasitología
+    69: '2',   # Farmacología Básica
+    9:  '2',   # Bioquímica Clínica I
+    8:  '2',   # Bioquímica Clínica II
+    # ── MEDICINA ── 3° Ano ─────────────────────────────────────
+    71: '3',   # Patología A
+    18: '3',   # Patología B
+    23: '3',   # Farmacología Aplicada
+    # ── MEDICINA ── 4° Ano ─────────────────────────────────────
+    60: '4',   # Medicina Interna A
+    24: '4',   # Medicina Interna B
+    63: '4',   # Medicina Interna C
+    7:  '4',   # Medicina Interna D
+    70: '4',   # Medicina Interna E
+    61: '4',   # Medicina Interna F
+    3:  '4',   # Cirugía A
+    64: '4',   # Cirugía B
+    67: '4',   # Cirugía C
+    19: '4',   # Cirugía D
+    22: '4',   # Cirugía E
+    11: '4',   # Pediatría A
+    16: '4',   # Pediatría B
+    30: '4',   # Ginecología A
+    25: '4',   # Ginecología B
+    17: '4',   # Obstetricia
+    31: '4',   # Psiquiatría
+    # ── MEDICINA ── 5° Ano ─────────────────────────────────────
+    75: '5',   # Salud Pública
+    33: '5',   # Deontología Médica y Medicina Legal
+    80: '5',   # Neurología
+    20: '5',   # Dermatología
+    34: '5',   # Oftalmología
+    37: '5',   # Ortopedia y Traumatología
+    36: '5',   # Otorrinolaringología
+    29: '5',   # Infectología
+    28: '5',   # Terapia Intensiva
+    10: '5',   # Toxicología
+    38: '5',   # Urología
+    78: '5',   # Cirugía de Tórax
+    # ── MEDICINA ── 6° Ano / Internado ────────────────────────
+    204: '6',  # Medicina General y Familiar
+    55:  '6',  # Salud y Medicina Comunitaria
+    56:  '6',  # Ecología Humana y Promoción de la Salud
+    # ── Materias Optativas / Todos ────────────────────────────
+    66:  '',   # Bioética (todos)
+    76:  '',   # Ciencias Sociales y Medicina (todos)
+    73:  '',   # Historia de la Medicina (todos)
+    65:  '',   # Filosofía Médica (todos)
+    72:  '',   # Literatura, Cine y Medicina (todos)
+    74:  '',   # Diagnóstico por Imágenes (todos)
+    79:  '',   # Informática Básica (todos)
+    77:  '',   # Informática Médica (todos)
+    82:  '',   # Inglés Médico (todos)
+    35:  '',   # Genética (todos)
+    27:  '',   # Inmunología (todos)
+    84:  '',   # Epidemiología (todos)
+    85:  '',   # Neuroanatomía Semiológica (todos)
+    83:  '',   # El paciente con enfermedad crónica (todos)
+    86:  '',   # Departamento de Informática (todos)
+    87:  '',   # Seminarios de Investigación (todos)
+    88:  '',   # Enfermedades Poco Frecuentes (todos)
+    89:  '',   # Discapacidad Intelectual (todos)
+    206: '',   # Neurocirugía (todos)
+    57:  '',   # Educación para la Salud (todos)
+    54:  '',   # Salud Ambiental (todos)
+    62:  '',   # Psicología Médica (todos)
+    # ── EU (Enfermería Universitaria) ─────────────────────────
+    39:  '1',  # EU - 1º Año
+    40:  '2',  # EU - 2º Año
+    41:  '3',  # EU - 3º Año
+    14:  '',   # EU - Información General
+    # ── LEN (Lic. en Nutrición) ───────────────────────────────
+    42:  '1',  # LEN - 1º AÑO
+    43:  '2',  # LEN - 2º AÑO
+    44:  '3',  # LEN - 3º AÑO
+    45:  '4',  # LEN - 4º AÑO
+    46:  '5',  # LEN - 5º AÑO
+    12:  '',   # LEN - INFORMACIÓN GENERAL
+    # ── LOB (Lic. en Obstetricia) ─────────────────────────────
+    47:  '1',  # LOB - 1º AÑO
+    48:  '2',  # LOB - 2º Año
+    49:  '3',  # LOB - 3º Año
+    50:  '4',  # LOB - 4º Año
+    13:  '',   # LOB - Información General
+    90:  '',   # LOB - PFO
+    # ── TPC (Tec. en Prácticas Cardiológicas) ─────────────────
+    51:  '1',  # TPC - 1º Año
+    52:  '2',  # TPC - 2º Año
+    53:  '3',  # TPC - 3º Año
+    15:  '',   # TPC - Información General
+}
+
+# Cátedras prioritárias para raspar (por ano FCM-UNLP Medicina + anos gerais)
+# Scrapa apenas estas para não sobrecarregar o servidor
+CATEDRAS_TO_SCRAPE: list[int] = [
+    # Ano 1 - Medicina
+    1, 5, 26, 32, 4, 68, 58,
+    # Ano 2 - Medicina
+    21, 6, 69,
+    # Ano 3 - Medicina
+    71, 18, 23,
+    # Ano 4 - Medicina
+    60, 24, 11, 16, 3, 64, 17, 31,
+    # Ano 5 - Medicina
+    75, 33, 80, 20, 34, 29,
+    # Gerais / todos
+    66, 84, 86,
+    # EU por ano
+    39, 40, 41,
+    # LEN por ano
+    42, 43, 44, 45, 46,
+    # LOB por ano
+    47, 48, 49, 50,
+    # TPC por ano
+    51, 52, 53,
+]
+
 
 # Palavras que indicam aviso GERAL (para todos os anos)
 GENERAL_KEYWORDS = [
@@ -256,7 +404,7 @@ def classify_years(title: str, subtitle: str, issuer: str) -> str:
 
 def fetch_cartelera() -> str:
     """
-    Faz requisição segura à Cartelera FCM-UNLP.
+    Faz requisição segura à Cartelera FCM-UNLP (página principal).
     Levanta exceção em caso de falha para o caller tratar.
     """
     response = requests.get(
@@ -267,6 +415,26 @@ def fetch_cartelera() -> str:
     response.raise_for_status()
     response.encoding = response.apparent_encoding or 'utf-8'
     return response.text
+
+
+def fetch_catedra(catedra_id: int) -> str | None:
+    """
+    Raspa uma página específica de cátedra: /catedra/{id}
+    Retorna o HTML ou None em caso de erro.
+    """
+    import time
+    url = f'{BASE_URL}/catedra/{catedra_id}'
+    try:
+        headers = dict(HEADERS)
+        headers['Referer'] = CARTELERA_URL  # simula navegação da cartelera
+        resp = requests.get(url, headers=headers, timeout=TIMEOUT)
+        resp.raise_for_status()
+        resp.encoding = resp.apparent_encoding or 'utf-8'
+        time.sleep(0.5)  # delay educado para não sobrecarregar o servidor
+        return resp.text
+    except Exception as exc:
+        logger.warning(f'Falha ao raspar cátedra {catedra_id}: {exc}')
+        return None
 
 
 def send_telegram(item: CarteleraItem) -> bool:
@@ -449,9 +617,9 @@ class Command(BaseCommand):
         if dry_run:
             self.stdout.write(self.style.WARNING('[DRY-RUN] Nada sera salvo no banco'))
 
-        # ── 1. Fetch ──
+        # ── 1. Fetch página principal ──
         try:
-            self.stdout.write('[*] Buscando cartelera...')
+            self.stdout.write('[*] Buscando cartelera principal...')
             html = fetch_cartelera()
             self.stdout.write(self.style.SUCCESS(f'[OK] HTML recebido ({len(html)} chars)'))
         except requests.exceptions.Timeout:
@@ -467,9 +635,46 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f'[ERROR] Erro inesperado no fetch: {exc}'))
             return
 
-        # ── 2. Parse ──
+        # ── 2. Parse página principal ──
         avisos = parse_cartelera(html)
-        self.stdout.write(f'[LIST] Avisos encontrados: {len(avisos)}')
+        self.stdout.write(f'[LIST] Avisos encontrados na principal: {len(avisos)}')
+
+        # Classificar por palavras-chave (página principal não tem cátedra)
+        for aviso in avisos:
+            aviso['_target_years'] = classify_years(
+                aviso.get('title', ''),
+                aviso.get('subtitle', ''),
+                aviso.get('issuer', ''),
+            )
+
+        # ── 3. Raspar TODAS as cátedras ──
+        self.stdout.write(f'\n[*] Raspando {len(CATEDRAS_TO_SCRAPE)} cátedras específicas...')
+        total_catedra_avisos = 0
+
+        for catedra_id in CATEDRAS_TO_SCRAPE:
+            year_for_catedra = CATEDRA_YEAR_MAP.get(catedra_id, '')
+            html_cat = fetch_catedra(catedra_id)
+            if not html_cat:
+                continue
+
+            avisos_cat = parse_cartelera(html_cat)
+            if not avisos_cat:
+                continue
+
+            total_catedra_avisos += len(avisos_cat)
+            # Para avisos de cátedra: ano vem do mapa (preciso) — não de palavras-chave
+            for aviso in avisos_cat:
+                aviso['_target_years'] = year_for_catedra
+                # Merge: evita duplicatas com a lista principal
+                already = any(a['external_id'] == aviso['external_id'] for a in avisos)
+                if not already:
+                    avisos.append(aviso)
+
+            self.stdout.write(
+                f'   [catedra/{catedra_id}] → {len(avisos_cat)} avisos | ano={year_for_catedra or "geral"}'
+            )
+
+        self.stdout.write(f'\n[LIST] Total após cátedras: {len(avisos)} avisos únicos')
 
         if limit:
             avisos = avisos[:limit]
@@ -479,7 +684,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING('[WARN]  Nenhum aviso encontrado -- verificar seletores'))
             return
 
-        # ── 3. Salvar / Deduplicar ──
+        # ── 4. Salvar / Deduplicar ──
         stats = {'new': 0, 'updated': 0, 'unchanged': 0, 'notified': 0}
 
         for aviso in avisos:
@@ -488,42 +693,39 @@ class Command(BaseCommand):
             )
 
             if dry_run:
-                # Apenas verificar se existe
                 exists = CarteleraItem.objects.filter(external_id=aviso['external_id']).exists()
                 status = '[EXISTS] JÁ EXISTE' if exists else '[NEW] NOVO'
                 self.stdout.write(f'     {status}')
                 continue
 
-            # Buscar existente
+            target_years = aviso.pop('_target_years', classify_years(
+                aviso.get('title', ''), aviso.get('subtitle', ''), aviso.get('issuer', '')
+            ))
+
             try:
                 existing = CarteleraItem.objects.get(external_id=aviso['external_id'])
                 if existing.content_hash != aviso['content_hash']:
-                    # Conteúdo mudou -- atualizar
                     for field in ('title', 'subtitle', 'issuer', 'date_str',
                                   'date_parsed', 'url', 'content_hash'):
                         setattr(existing, field, aviso[field])
                     existing.is_active = True
+                    # Atualiza ano se vier de cátedra (mais preciso)
+                    if target_years:
+                        existing.target_years = target_years
                     existing.save()
                     stats['updated'] += 1
-                    self.stdout.write(self.style.WARNING('     [UPDATED] Atualizado (conteúdo mudou)'))
+                    self.stdout.write(self.style.WARNING('     [UPDATED] Atualizado'))
                 else:
-                    # Sem mudança -- apenas toca last_seen_at (auto_now=True)
                     existing.is_active = True
                     existing.save(update_fields=['is_active', 'last_seen_at'])
                     stats['unchanged'] += 1
             except CarteleraItem.DoesNotExist:
-                # Novo aviso -- classificar por ano e salvar
-                target_years = classify_years(
-                    aviso.get('title', ''),
-                    aviso.get('subtitle', ''),
-                    aviso.get('issuer', ''),
-                )
                 item = CarteleraItem.objects.create(**aviso, target_years=target_years)
                 stats['new'] += 1
                 label = f'[ANOS: {target_years}]' if target_years else '[GERAL]'
                 self.stdout.write(self.style.SUCCESS(f'     [OK] Novo aviso salvo {label}'))
 
-                # ── 4. Notificar (se solicitado) -- segmentado por ano ──
+                # ── 5. Notificar ──
                 if do_notify:
                     sent = send_telegram_segmented(item)
                     if sent:
@@ -532,7 +734,7 @@ class Command(BaseCommand):
                         stats['notified'] += 1
                         self.stdout.write(self.style.SUCCESS('     [SENT] Notificacao enviada'))
 
-        # ── 5. Marcar avisos não vistos como inativos ──
+        # ── 6. Marcar inativos ──
         if not dry_run and avisos:
             active_ids = [a['external_id'] for a in avisos]
             inactive = CarteleraItem.objects.exclude(external_id__in=active_ids).filter(is_active=True)
@@ -540,7 +742,7 @@ class Command(BaseCommand):
                 count = inactive.update(is_active=False)
                 self.stdout.write(self.style.WARNING(f'\n[ARCHIVE]  {count} avisos marcados como inativos'))
 
-        # 6. Resumo
+        # ── 7. Resumo ──
         self.stdout.write('\n' + '-' * 50)
         self.stdout.write(self.style.SUCCESS(
             '[DONE] Concluido!\n'
@@ -549,5 +751,6 @@ class Command(BaseCommand):
             f'   [OK]      Sem mudanca: {stats["unchanged"]}\n'
             f'   [SENT]    Notificados: {stats["notified"]}'
         ))
+
 
 

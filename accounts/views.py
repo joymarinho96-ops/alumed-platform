@@ -22,33 +22,22 @@ from functools import wraps
 from django.urls import reverse
 
 def student_auth_required(view_func):
+    """Acesso livre — sem necessidade de login."""
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            next_url = request.get_full_path()
-            return redirect(f"{reverse('login')}?next={next_url}")
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
 
 def has_product_access(user, product_slug):
-    """
-    Verifica se um usuario tem acesso ativo a um AccessProduct (ex: CONECTA_FCM).
-    POLÍTICA ATUAL: todo usuário autenticado tem acesso ao Conecta FCM.
-    Staff sempre tem acesso premium.
-    Para acesso restrito por pagamento, revisar esta função.
-    """
-    # Todo usuário autenticado tem acesso ao Conecta FCM
+    """Todo usuario tem acesso — sem restricao por pagamento."""
     return True
 
 
 def conecta_access_required(view_func):
-    """Protege views do Conecta FCM. Requer apenas login."""
+    """Acesso livre ao Conecta — sem necessidade de login."""
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            next_url = request.get_full_path()
-            return redirect(f"{reverse('login')}?next={next_url}")
         return view_func(request, *args, **kwargs)
     return _wrapped
 
@@ -217,10 +206,7 @@ def logout_view(request):
     return redirect('home')
 
 def student_dashboard_view(request):
-    # Usuarios no autenticados van al inicio (sin bloqueo de login)
-    if not request.user.is_authenticated:
-        from django.shortcuts import redirect
-        return redirect('home')
+    # Versao publica: usuario nao autenticado ve dashboard vazio
     # Busca TODAS as matrículas, ordenadas por expiração (as que vencem primeiro ou já venceram aparecem antes)
     enrollments = Enrollment.objects.filter(user=request.user).order_by('expiration_date')
     courses_with_progress = []
