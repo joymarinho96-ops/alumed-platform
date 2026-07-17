@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_disconnect, get_list_or_404, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
+
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, Q
