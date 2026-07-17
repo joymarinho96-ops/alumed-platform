@@ -437,6 +437,155 @@ def fetch_catedra(catedra_id: int) -> str | None:
         return None
 
 
+def deep_scrape_aviso(item: CarteleraItem) -> bool:
+    """
+    Entra no link interno do aviso (/noticia/<id>), extrai o texto completo
+    e busca por links/PDFs de anexos. Baixa e extrai texto de arquivos PDF.
+    """
+    import io
+    from bs4 import BeautifulSoup
+    from pypdf import PdfReader
+    
+    url = item.url
+    logger.info(f'[DEEP] Acessando aviso: {url}')
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+        resp.raise_for_status()
+        resp.encoding = resp.apparent_encoding or 'utf-8'
+        soup = BeautifulSoup(resp.text, 'lxml')
+        
+        # O corpo do aviso geralmente está na div .card-body principal
+        body_div = soup.select_one('div.card.card-outline-success div.card-body') or soup.select_one('div.card-body')
+        if not body_div:
+            # Fallback para o body inteiro
+            body_div = soup.select_one('body')
+            
+        if not body_div:
+            return False
+            
+        # Extrai textos excluindo o cabeçalho e rodapé se existirem
+        paragraphs = []
+        for p in body_div.find_all(['p', 'div', 'li', 'h4', 'h5', 'h6', 'span']):
+            text = p.get_text(strip=True)
+            # Evita duplicar textos contidos em tags filhas
+            if text and not any(text in existing for existing in paragraphs):
+                paragraphs.append(text)
+                
+        full_text = '\n'.join(paragraphs)
+        
+        # Encontrar anexos
+        attachments = []
+        for link in body_div.find_all('a', href=True):
+            href = link['href']
+            # Se for relativo, torna absoluto
+            abs_url = href if href.startswith('http') else f'{BASE_URL}{href}'
+            
+            # Evita links duplicados ou links de navegação comuns
+            if abs_url != item.url and abs_url not in [a['url'] for a in attachments]:
+                title = link.get_text(strip=True) or 'Enlace/Anexo'
+                
+                # Identifica se é arquivo
+                is_file = any(abs_url.lower().endswith(ext) for ext in ('.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg', '.xls', '.xlsx'))
+                
+                attachments.append({
+                    'title': title,
+                    'url': abs_url,
+                    'is_file': is_file
+                })
+                
+                # Se for PDF, extrai texto do PDF e soma ao corpo
+                if abs_url.lower().endswith('.pdf'):
+                    try:
+                        logger.info(f'   [PDF] Baixando anexo: {abs_url}')
+                        pdf_resp = requests.get(abs_url, headers=HEADERS, timeout=TIMEOUT)
+                        pdf_resp.raise_for_status()
+                        reader = PdfReader(io.BytesIO(pdf_resp.content))
+                        pdf_pages = []
+                        for page in reader.pages:
+                            p_txt = page.extract_text()
+                            if p_txt:
+                                pdf_pages.append(p_txt.strip())
+                        if pdf_pages:
+                            full_text += f"\n\n--- [Texto extraído do anexo PDF: {title}] ---\n" + '\n'.join(pdf_pages)
+                            logger.info(f'   [PDF] {len(pdf_pages)} páginas extraídas')
+                    except Exception as pdf_err:
+                        logger.warning(f'   [PDF-ERR] Falha ao extrair PDF {abs_url}: {pdf_err}')
+                        
+        item.body_text = full_text.strip()
+        item.attachment_urls = attachments
+        item.is_deep_scraped = True
+        item.save()
+        logger.info(f'[DEEP] Sucesso! {len(item.body_text)} chars salvos e {len(attachments)} anexos listados.')
+        return True
+    except Exception as exc:
+        logger.error(f'[DEEP] Falha ao processar aviso {item.external_id}: {exc}')
+        return False
+
+
+def ingest_to_rag(item: CarteleraItem) -> int:
+    """
+    Divide o texto limpo do aviso em chunks e gera embeddings (OpenAI, Gemini ou Mock).
+    Insere na base de dados do Profe Joy (ProfeJoyChunk).
+    """
+    from accounts.models import ProfeJoyChunk
+    from core.profe_joy_views import _get_api_client, _embed_query
+    from core.management.commands.ingest_documents import split_into_chunks, generate_embedding
+    
+    if not item.body_text:
+        return 0
+        
+    title = f"Cartelera: {item.title}"
+    
+    # Remove chunks anteriores da mesma notícia
+    deleted, _ = ProfeJoyChunk.objects.filter(title=title).delete()
+
+    
+    # Prepara o texto com contexto do emissor e data
+    header = f"Aviso de la Cartelera FCM-UNLP\nFecha: {item.date_str}\nEmisor: {item.issuer or 'Sin emisor'}\nTítulo: {item.title}\n"
+    if item.subtitle:
+        header += f"Subtítulo: {item.subtitle}\n"
+    header += "\nContenido:\n"
+    
+    full_content = header + item.body_text
+    
+    chunks = split_into_chunks(full_content, chunk_size=300, overlap=30)
+    if not chunks:
+        return 0
+        
+    try:
+        client_type, client = _get_api_client()
+    except Exception:
+        client_type, client = 'mock', None
+        
+    saved = 0
+    for i, chunk in enumerate(chunks):
+        try:
+            embedding = []
+            if client_type != 'mock':
+                try:
+                    embedding = generate_embedding(client_type, client, chunk)
+                except Exception as api_err:
+                    logger.warning(f'[RAG-ERR] Falha na API de embedding, usando mock: {api_err}')
+                    client_type = 'mock'
+                    
+            ProfeJoyChunk.objects.create(
+                title=title,
+                source_url=item.url,
+                source_type='url',
+                content=chunk,
+                embedding=embedding,
+                chunk_index=i,
+                year=item.target_years,
+                subject=item.category or 'Cartelera',
+            )
+            saved += 1
+        except Exception as exc:
+            logger.error(f'[RAG-ERR] Erro no chunk {i} do aviso {item.external_id}: {exc}')
+            
+    return saved
+
+
+
 def send_telegram(item: CarteleraItem) -> bool:
     """
     Envia notificação Telegram para um aviso.
@@ -704,17 +853,30 @@ class Command(BaseCommand):
 
             try:
                 existing = CarteleraItem.objects.get(external_id=aviso['external_id'])
-                if existing.content_hash != aviso['content_hash']:
+                
+                # Se mudou conteúdo OU se ainda não foi feito scraping profundo
+                if existing.content_hash != aviso['content_hash'] or not existing.is_deep_scraped:
+                    had_change = existing.content_hash != aviso['content_hash']
+                    
                     for field in ('title', 'subtitle', 'issuer', 'date_str',
                                   'date_parsed', 'url', 'content_hash'):
                         setattr(existing, field, aviso[field])
                     existing.is_active = True
-                    # Atualiza ano se vier de cátedra (mais preciso)
                     if target_years:
                         existing.target_years = target_years
                     existing.save()
-                    stats['updated'] += 1
-                    self.stdout.write(self.style.WARNING('     [UPDATED] Atualizado'))
+                    
+                    if had_change:
+                        stats['updated'] += 1
+                        self.stdout.write(self.style.WARNING('     [UPDATED] Atualizado'))
+                    else:
+                        stats['unchanged'] += 1
+                        self.stdout.write('     [RE-SCRAPE] Forçando raspagem profunda')
+
+                    # Raspagem profunda + RAG
+                    if deep_scrape_aviso(existing):
+                        chunks_count = ingest_to_rag(existing)
+                        self.stdout.write(self.style.SUCCESS(f'     [RAG] {chunks_count} chunks gerados'))
                 else:
                     existing.is_active = True
                     existing.save(update_fields=['is_active', 'last_seen_at'])
@@ -725,6 +887,11 @@ class Command(BaseCommand):
                 label = f'[ANOS: {target_years}]' if target_years else '[GERAL]'
                 self.stdout.write(self.style.SUCCESS(f'     [OK] Novo aviso salvo {label}'))
 
+                # Raspagem profunda + RAG
+                if deep_scrape_aviso(item):
+                    chunks_count = ingest_to_rag(item)
+                    self.stdout.write(self.style.SUCCESS(f'     [RAG] {chunks_count} chunks gerados'))
+
                 # ── 5. Notificar ──
                 if do_notify:
                     sent = send_telegram_segmented(item)
@@ -733,6 +900,7 @@ class Command(BaseCommand):
                         item.save(update_fields=['notified_at'])
                         stats['notified'] += 1
                         self.stdout.write(self.style.SUCCESS('     [SENT] Notificacao enviada'))
+
 
         # ── 6. Marcar inativos ──
         if not dry_run and avisos:

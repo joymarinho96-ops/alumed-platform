@@ -224,7 +224,13 @@ class CarteleraItem(models.Model):
     url          = models.URLField(max_length=500, verbose_name='URL original')
     category     = models.CharField(max_length=200, blank=True, verbose_name='Categoria/Matéria')
 
+    # ── Raspagem Profunda (Deep Scraping) ─────────────────────────
+    body_text       = models.TextField(blank=True, verbose_name='Conteúdo completo do aviso')
+    attachment_urls = models.JSONField(default=list, verbose_name='Links e PDFs anexados')
+    is_deep_scraped = models.BooleanField(default=False, verbose_name='Raspagem profunda concluída')
+
     # ── Segmentação por ano ──────────────────────────────────────
+
     # CSV de anos alvo: '' = todos | 'ingreso,1,2' = só esses anos
     target_years = models.CharField(
         max_length=100, blank=True, default='',
