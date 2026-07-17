@@ -16,7 +16,9 @@ class Flashcard(models.Model):
     answer     = models.TextField(verbose_name='Respuesta')
     difficulty = models.PositiveSmallIntegerField(choices=DIFFICULTY_CHOICES, default=3, verbose_name='Dificultad')
     subject    = models.CharField(max_length=200, verbose_name='Materia')
+    topic      = models.CharField(max_length=200, blank=True, verbose_name='Tema/Tópico') # <- Novo campo!
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         verbose_name        = 'Flashcard'

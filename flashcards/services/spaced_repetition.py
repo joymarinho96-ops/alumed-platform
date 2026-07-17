@@ -16,7 +16,24 @@ class ReviewResult:
     priority: float
 
 
+def get_exam_mode(days_until_exam: int) -> str:
+    """
+    Retorna o modo de estudo baseado em quantos dias restam até o exame.
+    """
+    if days_until_exam <= 2:
+        return "emergency"
+
+    if days_until_exam <= 7:
+        return "intensive"
+
+    if days_until_exam <= 14:
+        return "reinforcement"
+
+    return "normal"
+
+
 class SpacedRepetitionEngine:
+
     """
     Motor de repetição espaçada do ALUMED OS.
 
@@ -271,19 +288,22 @@ class SpacedRepetitionEngine:
             0,
         )
 
-        if days_until_exam <= 2:
+        mode = get_exam_mode(days_until_exam)
+
+        if mode == "emergency":
             return 1
 
-        if days_until_exam <= 7:
+        if mode == "intensive":
             return min(interval_days, 2)
 
-        if days_until_exam <= 14:
+        if mode == "reinforcement":
             return min(interval_days, 4)
 
         if days_until_exam <= 30:
             return min(interval_days, 7)
 
         return interval_days
+
 
     def _calculate_mastery(
         self,
