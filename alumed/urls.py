@@ -14,7 +14,8 @@ urlpatterns = [
     path('cursos/', include('courses.urls', namespace='courses')),
     path('pagamento/', include('payments.urls', namespace='payments')),
     path('foro/', include('forum.urls', namespace='forum')),
-    path('', include('flashcards.urls')), # <- Rotas da API dos Flashcards
+    path('', include('flashcards.urls', namespace='flashcards')), # <- Rotas e API do Joy Recall
+
     path('', home, name='home'),
 
     path('unlp/', unlp, name='unlp'),

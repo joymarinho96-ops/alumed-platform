@@ -1,0 +1,166 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Sesión de Estudio — Joy Recall{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'flashcards/study.css' %}">
+<style>
+  .study-wrapper-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .study-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .finished-card {
+    text-align: center;
+    padding: 3rem;
+  }
+  .back-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--accent);
+  }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid py-4 joy-recall-theme">
+  <div class="study-wrapper-container">
+    
+    <!-- Header -->
+    <div class="study-header">
+      <div>
+        <a href="{% url 'flashcards:dashboard' %}" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Panel General
+        </a>
+      </div>
+      <div class="text-right">
+        <span class="badge bg-dark px-3 py-2 text-secondary" id="card-index">Cargando fichas...</span>
+      </div>
+    </div>
+
+    <!-- Container do Card de Estudo Activo -->
+    <div id="study-card-container">
+      <div class="study-area">
+        
+        <!-- Wrapper Flip 3D -->
+        <div class="flashcard-wrapper" id="flashcard-wrapper">
+          
+          <!-- FRENTE DO CARD -->
+          <div class="card-face card-front">
+            <div class="card-header">
+              <span id="card-subject">MATERIA</span>
+              <span>Pregunta</span>
+            </div>
+            <div class="card-content-area" id="card-front-text">
+              ...
+            </div>
+            <div class="card-footer-tip">
+              Haz clic para revelar la respuesta
+            </div>
+          </div>
+          
+          <!-- VERSO DO CARD -->
+          <div class="card-face card-back">
+            <div class="card-header">
+              <span>Respuesta Correcta</span>
+              <span>Revisión</span>
+            </div>
+            <div class="card-content-area" id="card-back-text" style="font-weight: 700; color: var(--accent);">
+              ...
+            </div>
+            <div class="card-footer-tip">
+              Ficha revelada
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Painel de Explicação e Integração com a Profe Joy (Só aparece quando virado) -->
+        <div class="review-panel" id="explain-panel" style="display: none;">
+          <div class="glass-panel" style="background: rgba(15,6,29,0.7); border-color: rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+            <h5 class="text-white fw-bold mb-2"><i class="fas fa-info-circle text-info"></i> Explicación Médica</h5>
+            <p class="text-secondary mb-0" id="card-explanation-text" style="font-size: 0.9rem; line-height: 1.5;">
+              ...
+            </p>
+          </div>
+
+          <!-- Banner da Profe Joy IA -->
+          <div class="profe-joy-banner">
+            <div style="font-size: 2rem;">👩‍⚕️</div>
+            <div>
+              <h6 class="text-white fw-bold mb-1">¿Te quedó alguna duda médica?</h6>
+              <p class="text-secondary mb-0" style="font-size: 0.8rem;">Pregúntale a la Profe Joy para una explicación interactiva de este tema.</p>
+            </div>
+            <button class="btn btn-sm btn-info ms-auto fw-bold px-3 py-2" id="ask-profe-joy-btn" style="border-radius: 8px;">
+              Preguntar a la Profe Joy
+            </button>
+          </div>
+        </div>
+
+        <!-- Botoes de Qualidade de Revisao (Só aparece quando virado) -->
+        <div class="review-panel" id="review-panel" style="display: none;">
+          <h5 class="text-white text-center fw-bold mb-3">¿Qué tan bien lo recordabas?</h5>
+          <div class="review-buttons">
+            <button class="btn-quality" data-quality="1">Errei</button>
+            <button class="btn-quality" data-quality="2">Difícil</button>
+            <button class="btn-quality" data-quality="3">Lembrei</button>
+            <button class="btn-quality" data-quality="4">Fácil</button>
+            <button class="btn-quality" data-quality="5">Dominei</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sessao Finalizada (Escondido por padrao) -->
+    <div id="session-finished-container" style="display: none;">
+      <div class="glass-panel finished-card">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+        <h2 class="text-white fw-bold mb-3">¡Sesión de Estudio Completada!</h2>
+        <p class="text-secondary mb-4">
+          Excelente constancia. Joy Recall™ ha recalculado el intervalo de repaso de todas tus fichas basándose en tu desempeño.
+        </p>
+        <a href="{% url 'flashcards:dashboard' %}" class="study-global-btn">
+          <i class="fas fa-chevron-left"></i> Volver al Panel de Fichas
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Dados das fichas serializados para JSON seguro -->
+<script id="cards-data" type="application/json">
+  [
+    {% for card in cards %}
+    {
+      "id": {{ card.id }},
+      "question": "{{ card.question|escapejs }}",
+      "answer": "{{ card.answer|escapejs }}",
+      "explanation": "{{ card.explanation|escapejs }}",
+      "deck_subject": "{{ card.deck.subject|escapejs }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+</script>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'flashcards/study.js' %}"></script>
+{% endblock %}

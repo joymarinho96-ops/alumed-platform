@@ -1,158 +1,149 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}{{ deck.title }} - Flashcards{% endblock %}
+{% block title %}{{ deck.title }} — Detalle de Baraja{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'css/flashcard_dashboard.css' %}">
-    <style>
-        .cards-list {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .card-item {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .card-content { flex: 1; }
-        .card-front { font-weight: bold; color: white; margin-bottom: 5px; }
-        .card-back { color: var(--muted); }
-
-        .delete-card-btn {
-            background: rgba(255,255,255,0.05);
-            border: none;
-            color: var(--muted);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-left: 15px;
-        }
-        .delete-card-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        .add-card-form {
-            background: rgba(255,255,255,0.02);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border: 1px dashed rgba(255,255,255,0.1);
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: white;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'flashcards/study.css' %}">
+<style>
+  .deck-detail-header {
+    margin-bottom: 2.5rem;
+  }
+  .accent-bar {
+    width: 60px;
+    height: 4px;
+    background: var(--accent);
+    margin-top: 0.5rem;
+    border-radius: 2px;
+  }
+  .subject-badge {
+    color: var(--accent);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .card-row {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .card-row:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .card-question-preview {
+    font-weight: 600;
+    color: white;
+    font-size: 1.05rem;
+  }
+  .card-answer-preview {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+  .back-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--accent);
+  }
+  .study-deck-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+    color: #120924 !important;
+    font-weight: 800;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    box-shadow: 0 6px 15px rgba(255, 230, 0, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+  .study-deck-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 230, 0, 0.3);
+  }
+</style>
 {% endblock %}
 
 {% block main_content %}
-    <div class="flashcards-container">
-        <div class="header-section">
-            <div class="header-title">
-                <a href="{% url 'courses:flashcards_dashboard' %}" style="color: var(--muted); text-decoration: none; font-size: 0.9rem;">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </a>
-                <h1 style="margin-top: 10px;">{{ deck.title }}</h1>
-            </div>
-        </div>
+<div class="container-fluid py-4 joy-recall-theme">
+  
+  <!-- Volver -->
+  <div class="mb-4">
+    <a href="{% url 'flashcards:dashboard' %}" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Volver a Barajas
+    </a>
+  </div>
 
-        <div class="add-card-form">
-            <h3 style="color: white; margin-bottom: 15px;">Añadir Nueva Tarjeta</h3>
-            <div class="form-group">
-                <input type="text" id="card-front" class="form-input" placeholder="Pregunta (Frente)">
-            </div>
-            <div class="form-group">
-                <textarea id="card-back" class="form-input" placeholder="Respuesta (Dorso)" rows="3"></textarea>
-            </div>
-            <button class="create-deck-btn" id="add-card-btn">
-                <i class="fas fa-plus"></i> Añadir Tarjeta
-            </button>
-        </div>
-
-        <div class="cards-list" id="cards-list">
-            {% for card in cards %}
-            <div class="card-item" id="card-{{ card.id }}">
-                <div class="card-content">
-                    <div class="card-front">{{ card.front }}</div>
-                    <div class="card-back">{{ card.back }}</div>
-                </div>
-                <button class="delete-card-btn" onclick="deleteCard({{ card.id }})" title="Eliminar Tarjeta">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-            {% empty %}
-            <p style="color: var(--muted); text-align: center;">No hay tarjetas en este mazo.</p>
-            {% endfor %}
-        </div>
+  <!-- Header -->
+  <div class="deck-detail-header d-flex justify-content-between align-items-start">
+    <div>
+      <span class="subject-badge">{{ deck.subject }}</span>
+      <h1 class="text-white fw-bold mt-1 mb-0">{{ deck.title }}</h1>
+      <div class="accent-bar"></div>
     </div>
+    <div>
+      <a href="{% url 'flashcards:study-deck' deck.id %}" class="study-deck-btn">
+        <i class="fas fa-play"></i> Estudiar Baraja
+      </a>
+    </div>
+  </div>
 
-    <script>
-        document.getElementById('add-card-btn').addEventListener('click', function() {
-            const front = document.getElementById('card-front').value;
-            const back = document.getElementById('card-back').value;
+  <!-- Métricas Rápidas de la Baraja -->
+  <div class="stats-container mb-4">
+    <div class="glass-panel stat-card">
+      <div class="stat-value">{{ total_cards }}</div>
+      <div class="stat-label">Total de Fichas</div>
+    </div>
+    <div class="glass-panel stat-card">
+      <div class="stat-value">{{ studied_count }}</div>
+      <div class="stat-label">Fichas Memorizadas</div>
+    </div>
+    <div class="glass-panel stat-card">
+      <div class="stat-value text-warning">{{ due_count }}</div>
+      <div class="stat-label">Fichas Vencidas (Due)</div>
+    </div>
+  </div>
 
-            if (front && back) {
-                fetch("{% url 'courses:create_flashcard' deck.id %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ front: front, back: back })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            } else {
-                alert("Completa ambos campos.");
-            }
-        });
+  <!-- Listagem de Cards da Baraja -->
+  <div class="mb-4">
+    <h3 class="text-white fw-bold mb-3">Fichas de esta Baraja</h3>
+    <div class="cards-list">
+      {% for card in flashcards %}
+      <div class="card-row">
+        <div>
+          <div class="card-question-preview">{{ card.question }}</div>
+          <div class="card-answer-preview"><strong>R:</strong> {{ card.answer|truncatechars:100 }}</div>
+        </div>
+        <div>
+          <span class="badge bg-dark text-secondary">Dif. {{ card.difficulty }}/5</span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center py-5 glass-panel col-12">
+        <i class="fas fa-search-plus text-muted mb-3" style="font-size: 3rem;"></i>
+        <h4 class="text-white">Esta baraja no tiene fichas cargadas</h4>
+        <p class="text-secondary">Carga fichas asociadas a este deck para comenzar a estudiar.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 
-        function deleteCard(cardId) {
-            if (confirm("¿Estás seguro de que quieres eliminar esta tarjeta?")) {
-                fetch(`/cursos/flashcards/card/${cardId}/delete/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const cardElement = document.getElementById(`card-${cardId}`);
-                        if (cardElement) {
-                            cardElement.remove();
-                        }
-                    } else {
-                        alert("Error al eliminar la tarjeta.");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-    </script>
+</div>
 {% endblock %}

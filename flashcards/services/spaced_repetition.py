@@ -16,20 +16,7 @@ class ReviewResult:
     priority: float
 
 
-def get_exam_mode(days_until_exam: int) -> str:
-    """
-    Retorna o modo de estudo baseado em quantos dias restam até o exame.
-    """
-    if days_until_exam <= 2:
-        return "emergency"
-
-    if days_until_exam <= 7:
-        return "intensive"
-
-    if days_until_exam <= 14:
-        return "reinforcement"
-
-    return "normal"
+from flashcards.services.exam_mode import get_exam_mode
 
 
 class SpacedRepetitionEngine:
