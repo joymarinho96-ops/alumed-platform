@@ -21,7 +21,7 @@ idna==3.11
 openai==1.12.0
 pillow==12.1.1
 proto-plus==1.26.1
-protobuf==6.33.5
+protobuf>=3.20.2,<6.0.0
 pyasn1==0.6.2
 pyasn1_modules==0.4.2
 PyJWT==2.8.0
