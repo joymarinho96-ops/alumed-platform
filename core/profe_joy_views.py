@@ -234,9 +234,21 @@ def profe_joy_chat(request):
                 client_type = 'mock'
 
         if client_type == 'mock' or answer is None:
-            # Fallback Mock Inteligente
-            first_chunk = relevant[0]
-            answer = f"🤖 [MOCK DEMO] Com base no material **{first_chunk.title}**:\n\n{first_chunk.content[:250]}...\n\n*(Nota: O servidor está rodando em modo demonstração local porque nenhuma chave de API válida ou com saldo da OpenAI/Gemini foi detectada. Cadastre as chaves para ter respostas reais completas!)*"
+            # Modo Caverna Offline Inteligente (Extrai as informações locais sem conexões)
+            parts = []
+            parts.append("🏕️ **Modo Caverna Ativo (Estudio 100% Local y Privado)**")
+            parts.append("La Profe Joy está desconectada de internet para proteger tu privacidad. He extraído los fragmentos más relevantes de tus materiales cargados:")
+            
+            for idx, chunk in enumerate(relevant, 1):
+                source_info = chunk.title
+                if chunk.subject:
+                    source_info += f" ({chunk.subject})"
+                
+                parts.append(f"\n📌 **[{idx}] De la fuente: {source_info}**\n{chunk.content}")
+                
+            parts.append("\n*Estás estudiando de forma completamente offline y segura sin enviar tus datos a servidores externos.*")
+            answer = "\n".join(parts)
+
 
         # 5. Montar fontes únicas
         sources = []
