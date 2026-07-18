@@ -1,7 +1,5 @@
 import streamlit as st
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 from openai import OpenAI
 import anthropic
@@ -9,42 +7,89 @@ import anthropic
 # 🎨 1. Configuração da Interfaz (ALUMED OS) - Deve ser chamado antes de qualquer elemento Streamlit
 st.set_page_config(page_title="IA Profe Joy - ALUMED OS", page_icon="👩‍🏫", layout="centered")
 
+# Lazy import de psycopg2 para evitar quebras de binários no Linux do Streamlit Cloud
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    HAS_PSYCOPG = True
+except ImportError:
+    HAS_PSYCOPG = False
+
+# Import do Supabase SDK
+try:
+    from supabase import create_client, Client
+    HAS_SUPABASE = True
+except ImportError:
+    HAS_SUPABASE = False
+
 # Carrega as variáveis do arquivo .env automaticamente
 load_dotenv()
 
 # ⚙️ 2. Conexões ao Cérebro Central
-# Conexão direta ao banco PostgreSQL do Railway para busca vetorial pgvector
+url_supabase = os.environ.get("SUPABASE_URL")
+key_supabase = os.environ.get("SUPABASE_KEY")
 database_url = os.environ.get("DATABASE_URL") or "postgresql://postgres:xaKXWitVrOXmyOVHRppFZPIRMmKTEegS@kodama.proxy.rlwy.net:23469/railway"
 openai_key = os.environ.get("OPENAI_API_KEY")
 anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 
-# Verifica chaves de segurança de forma elegante
+# Verifica chaves mínimas necessárias
 if not openai_key or not anthropic_key:
-    st.error("🚨 **Error de Configuración:** Por favor, asegúrate de configurar las variables de entorno `OPENAI_API_KEY` y `ANTHROPIC_API_KEY` en tu archivo `.env` antes de ejecutar la aplicación.")
-    st.info("💡 **Tip:** Abre tu archivo `.env` en la raíz del proyecto y asegúrate de que tengan tus llaves válidas.")
+    st.error("🚨 **Error de Configuración:** Por favor, asegúrate de configurar `OPENAI_API_KEY` y `ANTHROPIC_API_KEY` en tus Secrets (Streamlit Cloud) o en tu archivo `.env` local.")
+    st.info("💡 **Tip:** Abre los Secrets de Streamlit Cloud y añade las variables de entorno.")
     st.stop()
 
 # Inicializa clientes de APIs
 client_openai = OpenAI(api_key=openai_key)
 client_claude = anthropic.Anthropic(api_key=anthropic_key)
 
-def buscar_documentos_postgres(vector_pregunta, match_threshold=0.3, match_count=3):
-    """Busca fragmentos relevantes diretamente no PostgreSQL de Railway usando pgvector."""
+# Determina o modo de conexão ao banco de dados RAG de forma ultra-resiliente
+db_mode = None
+supabase_client = None
+
+if url_supabase and key_supabase and HAS_SUPABASE:
     try:
-        conn = psycopg2.connect(database_url)
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        # Executa a busca por similaridade de cosseno usando a função match_documentos
-        cur.execute("""
-            SELECT id, titulo, conteudo, materia, url_wix, similarity
-            FROM match_documentos(%s::vector, %s, %s);
-        """, (vector_pregunta, match_threshold, match_count))
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        return rows
+        supabase_client = create_client(url_supabase, key_supabase)
+        db_mode = "supabase"
     except Exception as e:
-        print(f"Erro na query Postgres RAG: {e}")
-        return []
+        st.warning(f"⚠️ Erro ao inicializar Supabase SDK, tentando Postgres: {e}")
+
+if not db_mode and HAS_PSYCOPG:
+    db_mode = "postgres"
+
+if not db_mode:
+    st.error("🚨 **Error de Conectores:** No se pudo inicializar ningún conector de base de dados. "
+             "Instala `psycopg2-binary` para modo local o define `SUPABASE_URL` y `SUPABASE_KEY` para modo HTTP nube.")
+    st.stop()
+
+def buscar_documentos(vector_pregunta, match_threshold=0.3, match_count=3):
+    """Busca fragmentos relevantes de forma híbrida no Supabase (HTTP) ou Postgres (SQL)."""
+    if db_mode == "supabase":
+        try:
+            resposta = supabase_client.rpc('match_documentos', {
+                'query_embedding': vector_pregunta,
+                'match_threshold': match_threshold,
+                'match_count': match_count
+            }).execute()
+            return resposta.data
+        except Exception as e:
+            st.error(f"🚨 **Error en consulta RAG Supabase:** {e}")
+            return []
+    elif db_mode == "postgres":
+        try:
+            conn = psycopg2.connect(database_url)
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("""
+                SELECT id, titulo, conteudo, materia, url_wix, similarity
+                FROM match_documentos(%s::vector, %s, %s);
+            """, (vector_pregunta, match_threshold, match_count))
+            rows = cur.fetchall()
+            cur.close()
+            conn.close()
+            return rows
+        except Exception as e:
+            st.error(f"🚨 **Error en consulta RAG Postgres:** {e}")
+            return []
+    return []
 
 st.title("✨ IA Profe Joy - Tu Inteligencia Académica 24/7")
 st.markdown("Tu GPS Universitario para Anatomía, Histología y Embriología en la UNLP.")
@@ -58,7 +103,7 @@ for msg in st.session_state.mensajes:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 💬 3. Interceptando la pregunta del estudiante
+# 💬 3. Interceptando la pregunta del estudante
 pregunta_alumno = st.chat_input("Escribe tu duda médica aquí...")
 
 if pregunta_alumno:
@@ -77,8 +122,8 @@ if pregunta_alumno:
                 )
                 vector_pregunta = resposta_embed.data.embedding
 
-                # 🔎 Fase B: Búsqueda Semántica en PostgreSQL de Railway (pgvector)
-                resultados_rag = buscar_documentos_postgres(
+                # 🔎 Fase B: Búsqueda Semántica Híbrida
+                resultados_rag = buscar_documentos(
                     vector_pregunta, 
                     match_threshold=0.3, 
                     match_count=3
@@ -104,8 +149,8 @@ if pregunta_alumno:
                 - Puedes llamar al alumno: "corazón", "mis amores", "doc".
                 - A veces finaliza frases con: "allright", "¿entendiste, sí o no?", "¿pudiste?", "estoy eh".
                 
-                REGLA CRÍTICA: Responde ÚNICAMENTE utilizando el siguiente contexto extraído de los livros de la biblioteca. 
-                Si la respuesta no se encuentra en el contexto, responde: "Corazón, todavía no tengo PDFs cargados sobre este tema 😢, pero podemos trabajarlo juntos con lo que sé. Mientras tanto, pedile al administrador que suba el material para darte una explicación más completa."
+                REGLA CRÍTICA: Responde ÚNICAMENTE utilizando el contexto de la biblioteca. 
+                Si la respuesta no se encuentra en el contexto, responde exactamente: "Corazón, todavía no tengo PDFs cargados sobre este tema 😢, pero podemos trabajarlo juntos con lo que sé. Mientras tanto, pedile al administrador que suba el material para darte una explicación más completa."
                 Luego, puedes complementar brevemente la explicación utilizando conocimiento científico general.
                 
                 CONTEXTO DE LA BIBLIOTECA ALUMED:
@@ -127,7 +172,7 @@ if pregunta_alumno:
                     respuesta_final += "\n\n---\n### 📚 Enlaces de Descarga Directa\n"
                     respuesta_final += "\n".join(list(set(enlaces_fuente)))
                     
-                    # Efecto Ecosistema: Venta cruzada o redirección al Microscopio/Anatomía 3D
+                    # Efecto Ecosistema: Venta cruzada
                     respuesta_final += "\n\n💡 *Tip ALUMED: ¿Quieres consolidar este tema? Te recomiendo practicar la visualización interactiva en el Microscopio Virtual o blindar tu preparação en la pestaña PRÉ-PARCIAL ALUMED.*"
                 else:
                     if "todavía no tengo PDFs cargados" not in respuesta_final:
