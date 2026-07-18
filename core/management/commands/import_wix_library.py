@@ -38,11 +38,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Screenshots de Debug...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Viewport Ampla 1080p...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
+            
+            # Força janela larga (1920x1080) para impedir que o Wix colapse os breadcrumbs em "..."
+            page = browser.new_page(viewport={"width": 1920, "height": 1080})
             
             # Vai até a biblioteca virtual
             url_wix = "https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual"
@@ -89,33 +91,27 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper para retorno de Breadcrumbs ou botão voltar físico (com captura de depuração)
+            # Helper para retorno de Breadcrumbs preciso baseando-se em comprimento de texto na tela cheia
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
                 js_code = '''() => {
                     const clean_parent = "___PARENT___";
                     
-                    // 1. Tenta achar o botão de voltar físico do Wix File Share
-                    const backElements = Array.from(document.querySelectorAll('button, div, span, svg, a'))
+                    // 1. Busca elemento curto sem quebra de linha que contêm o nome da pasta pai (exclui a grade de arquivos)
+                    const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
-                            const label = el.getAttribute('aria-label') || '';
-                            const testid = el.getAttribute('data-testid') || '';
-                            const className = (typeof el.className === 'string') ? el.className : '';
                             const text = el.innerText || '';
-                            
-                            return label.toUpperCase().includes('VOLVER') || 
-                                   label.toUpperCase().includes('BACK') || 
-                                   testid.toUpperCase().includes('BACK') ||
-                                   className.toUpperCase().includes('BACK') ||
-                                   text.toUpperCase().trim() === 'VOLVER' ||
-                                   text.toUpperCase().trim() === '<';
+                            return text.toUpperCase().trim().includes(clean_parent) && 
+                                   text.length < 25 &&
+                                   !text.includes('\\n');
                         });
-                    if (backElements.length > 0) {
-                        backElements[0].click();
-                        return { success: true, method: 'back_button', debug: [] };
+                    if (breadcrumbElements.length > 0) {
+                        breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
+                        breadcrumbElements[0].click();
+                        return { success: true, method: 'breadcrumb', debug: [] };
                     }
                     
-                    // 2. Captura candidatos para depurar no Python
+                    // 2. Coleta candidatos em caso de falhas
                     const candidates = [];
                     Array.from(document.querySelectorAll('*'))
                         .forEach(el => {
@@ -131,20 +127,6 @@ class Command(BaseCommand):
                                 });
                             }
                         });
-                    
-                    // 3. Fallback Breadcrumb: busca elemento curto sem quebra de linha que contêm o nome pai
-                    const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
-                        .filter(el => {
-                            const text = el.innerText || '';
-                            return text.toUpperCase().trim().includes(clean_parent) && 
-                                   text.length < 25 &&
-                                   !text.includes('\\n');
-                        });
-                    if (breadcrumbElements.length > 0) {
-                        breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
-                        breadcrumbElements[0].click();
-                        return { success: true, method: 'breadcrumb', debug: candidates };
-                    }
                     return { success: false, method: 'none', debug: candidates };
                 }'''.replace('___PARENT___', clean_parent)
                 return page.evaluate(js_code)
@@ -368,7 +350,7 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb / Botão de voltar
+                        # Retorno cirúrgico via Breadcrumb na janela 1080p
                         res = click_breadcrumb_parent(parent_folder_name)
                         
                         if res['success']:
