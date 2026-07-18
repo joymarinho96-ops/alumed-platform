@@ -217,11 +217,20 @@ class Command(BaseCommand):
                     try:
                         try:
                             page.get_by_text(folder_name).first.click(force=True, timeout=5000)
-                            page.wait_for_timeout(4000)
                         except Exception:
                             # Fallback JS Click para pastas
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{folder_name}'); if(el) el.click(); }}")
-                            page.wait_for_timeout(5000)
+                        
+                        # Sincroniza e espera o Wix carregar a nova pasta
+                        try:
+                            # Espera a barra de caminho atualizar mostrando a nova pasta
+                            page.wait_for_function(
+                                f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.includes(' > ') && e.innerText.includes('{folder_name}')); return !!el; }}",
+                                timeout=8000
+                            )
+                        except Exception:
+                            pass
+                        page.wait_for_timeout(3500) # delay de segurança garantido para terminar o render
                         
                         # Chamada recursiva
                         scan_folder(path + [folder_name])
@@ -231,11 +240,19 @@ class Command(BaseCommand):
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         try:
                             page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
-                            page.wait_for_timeout(4000)
                         except Exception:
                             # Fallback JS Click para o breadcrumb de retorno
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{parent_folder_name}'); if(el) el.click(); }}")
-                            page.wait_for_timeout(5000)
+                        
+                        # Sincroniza e espera retornar para a pasta pai
+                        try:
+                            page.wait_for_function(
+                                f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.includes(' > ') && e.innerText.includes('{parent_folder_name}')); return !!el; }}",
+                                timeout=8000
+                            )
+                        except Exception:
+                            pass
+                        page.wait_for_timeout(3500)
                             
                     except Exception as err:
                         self.stderr.write(f"      ❌ Falha na navegação da pasta {folder_name}: {err}")
