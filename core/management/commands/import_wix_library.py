@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Sincronia Dinâmica de DOM...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Filtro de Visibilidade de DOM...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -44,11 +44,20 @@ class Command(BaseCommand):
             self.stdout.write("⏳ Aguardando widget carregar...")
             page.wait_for_timeout(8000)
             
-            # Helper para capturar os dados brutos da lista atual
+            # Helper para capturar os dados visíveis da lista atual
             def get_current_items():
                 items_data = page.evaluate('''() => {
                     return Array.from(document.querySelectorAll('div, span, p'))
-                        .filter(d => d.innerText && (d.innerText.includes('ítem') || d.innerText.includes('MB') || d.innerText.includes('KB') || d.innerText.includes('GB')) && d.innerText.length < 150)
+                        .filter(d => {
+                            if (!d.innerText) return false;
+                            const matches = d.innerText.includes('ítem') || d.innerText.includes('MB') || d.innerText.includes('KB') || d.innerText.includes('GB');
+                            if (!matches || d.innerText.length >= 150) return false;
+                            
+                            // Validação de visibilidade física no DOM
+                            const rect = d.getBoundingClientRect();
+                            const style = window.getComputedStyle(d);
+                            return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+                        })
                         .map(d => d.innerText.trim());
                 }''')
                 # Dedup
@@ -60,17 +69,15 @@ class Command(BaseCommand):
                         unique_items.append(item)
                 return unique_items
 
-            # Helper que espera até o DOM de fato mudar após um clique
+            # Helper que espera até o DOM visível de fato mudar após um clique
             def wait_for_transition(old_items, timeout_sec=10):
                 start = time.time()
                 while time.time() - start < timeout_sec:
                     current = get_current_items()
-                    # Se o conjunto de itens mudou, a transição ocorreu!
                     if set(current) != set(old_items):
-                        page.wait_for_timeout(2000) # delay de segurança para garantir render total
+                        page.wait_for_timeout(2000) # delay de segurança para render total dos arquivos novos
                         return current
                     page.wait_for_timeout(500)
-                # Fallback: se der timeout, apenas espera mais 2 segundos e retorna
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
@@ -119,7 +126,6 @@ class Command(BaseCommand):
                 
                 # 1. Processa arquivos no nível atual
                 for file_name in files_to_download:
-                    # Classificação inteligente baseada no caminho de pastas
                     subject = "otras"
                     badge = "Apunte"
                     year = 1
@@ -204,9 +210,7 @@ class Command(BaseCommand):
                         if pdf_url:
                             self.stdout.write(f"      🔗 Link obtido: {pdf_url[:80]}...")
                             if not dry_run:
-                                # Conversão do ano numérico para string do modelo
                                 year_str = f"{year}º Año"
-                                
                                 DigitalBook.objects.create(
                                     title=clean_title,
                                     author="Cátedra UNLP",
@@ -231,13 +235,9 @@ class Command(BaseCommand):
                     self.stdout.write(f"   📂 [ENTRAR] Abrindo pasta: {folder_name}")
                     try:
                         old_items_list = get_current_items()
-                        
-                        # Tenta clicar pelo texto
                         try:
-                            # Busca elemento que contenha o nome exato e clica nele
                             page.get_by_text(folder_name).first.click(force=True, timeout=5000)
                         except Exception:
-                            # Fallback JS Click para pastas
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{folder_name}'); if(el) el.click(); }}")
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
@@ -254,7 +254,6 @@ class Command(BaseCommand):
                         try:
                             page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
                         except Exception:
-                            # Fallback JS Click para o breadcrumb de retorno
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{parent_folder_name}'); if(el) el.click(); }}")
                         
                         # Sincroniza e espera retornar para a pasta pai
