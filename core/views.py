@@ -242,14 +242,10 @@ def conecta_fcm_view(request):
 
 def conecta_landing_view(request):
     """
-    Landing publica do Conecta FCM.
-    Nao requer login — mostra funcionalidades e CTA 'Activar mi Conecta'.
-    Se o usuario ja esta autenticado, redireciona direto para o dashboard.
+    Conecta FCM — redireciona sempre para o dashboard (acesso publico, sem login).
     """
     from django.shortcuts import redirect as _redirect
-    if request.user.is_authenticated:
-        return _redirect('conecta_dashboard')
-    return render(request, 'core/conecta_landing.html')
+    return _redirect('conecta_dashboard')
 
 
 def becas_view(request):
