@@ -569,7 +569,39 @@ body {
 <div class="cx-ambient">
   <div class="cx-glow-1"></div>
   <div class="cx-glow-2"></div>
-  <div class="cx-glow-3"></div>
+  <div class="cx-glow-3"></div>  <!-- ╔════════════════════════════════════════════════════════╗
+       DICCIONARIO MED — CONECTA FCM
+       Raíces, Prefijos y Sufijos · integrado al dashboard
+       ╚════════════════════════════════════════════════════════╝ -->
+  <section style="margin-top:48px;">
+    <span class="cx-label" style="background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);">📖 Herramienta de Estudio</span>
+    <h2 class="cx-section-title">Diccionario Med</h2>
+    <p style="color:var(--cx-muted);font-size:.9rem;margin:-8px 0 20px;">Raíces, Prefijos y Sufijos de la Cursada · búsqueda instantánea</p>
+
+    <!-- Search -->
+    <div style="position:relative;margin-bottom:18px;">
+      <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(245,200,66,.35);font-size:.9rem;pointer-events:none;"></i>
+      <input id="cxDictSearch" type="text" placeholder="Buscar términos, raíces o afijos (ej: itis, hepato, cito)..."
+        style="width:100%;padding:13px 20px 13px 44px;background:rgba(10,5,16,.5);border:1.5px solid rgba(245,200,66,.2);border-radius:14px;color:var(--cx-text);font-family:'Outfit',sans-serif;font-size:.93rem;outline:none;box-sizing:border-box;transition:all .3s;backdrop-filter:blur(8px);"
+        onfocus="this.style.borderColor='rgba(245,200,66,.5)';this.style.boxShadow='0 0 0 3px rgba(245,200,66,.08)'"
+        onblur="this.style.borderColor='rgba(245,200,66,.2)';this.style.boxShadow='none'">
+    </div>
+
+    <!-- Filters -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="cx-dict-btn active" onclick="cxDictMode('todos',this)">Todos</button>
+      <button class="cx-dict-btn" onclick="cxDictMode('Anatomía',this)">Anatomía</button>
+      <button class="cx-dict-btn" onclick="cxDictMode('Histología',this)">Histología</button>
+      <button class="cx-dict-btn" onclick="cxDictMode('Embriología',this)">Embriología</button>
+      <button class="cx-dict-btn cx-dict-afijo-btn" onclick="cxDictMode('afijos',this)" style="margin-left:auto;">🔗 Raíces y Afijos</button>
+    </div>
+
+    <!-- Results -->
+    <div id="cxDictWords" style="display:flex;flex-direction:column;gap:12px;"></div>
+    <div id="cxDictAfijos" style="display:flex;flex-direction:column;gap:12px;display:none;"></div>
+    <div id="cxDictEmpty" style="display:none;text-align:center;padding:36px;color:var(--cx-muted);font-size:.95rem;">No se encontraron términos con ese criterio.</div>
+  </section>
+
 </div>
 <div class="cx-grid-bg"></div>
 
@@ -1039,4 +1071,106 @@ body {
 })();
 </script>
 
+<style>
+.cx-dict-btn { background:rgba(255,255,255,.04); border:1px solid rgba(245,200,66,.15); color:var(--cx-muted); padding:7px 16px; border-radius:20px; cursor:pointer; font-size:.8rem; font-weight:700; letter-spacing:.02em; transition:all .2s; font-family:'Outfit',sans-serif; }
+.cx-dict-btn:hover:not(.active) { background:rgba(245,200,66,.08); color:var(--cx-text); border-color:rgba(245,200,66,.3); }
+.cx-dict-btn.active { background:rgba(245,200,66,.18); border-color:rgba(245,200,66,.5); color:var(--cx-gold); }
+.cx-dict-afijo-btn { background:rgba(251,191,36,.08)!important; border-color:rgba(251,191,36,.25)!important; color:#fbbf24!important; }
+.cx-dict-afijo-btn.active { background:rgba(251,191,36,.2)!important; border-color:rgba(251,191,36,.5)!important; }
+.cx-dict-word-card { background:rgba(10,5,16,.5); border:1px solid rgba(245,200,66,.12); border-radius:14px; padding:20px 22px; transition:all .25s; backdrop-filter:blur(8px); }
+.cx-dict-word-card:hover { transform:translateY(-2px); border-color:rgba(245,200,66,.3); box-shadow:0 8px 24px rgba(245,200,66,.07); }
+.cx-dict-afijo-card { background:rgba(10,5,16,.5); border:1px solid rgba(251,191,36,.15); border-radius:14px; padding:20px 22px; transition:all .25s; backdrop-filter:blur(8px); }
+.cx-dict-afijo-card:hover { transform:translateY(-2px); border-color:rgba(251,191,36,.4); box-shadow:0 8px 24px rgba(251,191,36,.08); }
+</style>
+
+<script>
+(function(){
+  var cxDictCurrentMode = 'todos';
+  var cxDictData = [
+    { palabra:"Gastroenteritis", catedra:"Anatomía", significado:"Inflamación simultánea de la membrana mucosa del estómago y de los intestinos.", prefijo:"gastro- (griego: gaster - estómago)", sufijo:"-enter- (griego: enteron - intestino) e -itis (griego: inflamación)", ejemplo:"El paciente presenta un cuadro clínico compatible con gastroenteritis infecciosa." },
+    { palabra:"Eritrocito", catedra:"Histología", significado:"Célula sanguínea madura de color rojo que contiene hemoglobina y transporta oxígeno.", prefijo:"eritro- (griego: erythros - rojo)", sufijo:"-cito (griego: kytos - célula hueca)", ejemplo:"El recuento periférico muestra eritrocitos con morfología bicóncava normal." },
+    { palabra:"Hepatomegalia", catedra:"Anatomía", significado:"Agrandamiento patológico o anormal del tamaño del hígado.", prefijo:"hepato- (griego: hepatos - hígado)", sufijo:"-megalia (griego: megas - grande)", ejemplo:"Durante la palpación del hipocondrio derecho se detectó hepatomegalia franca." },
+    { palabra:"Anencefalia", catedra:"Embriología", significado:"Defecto del tubo neural grave caracterizado por la ausencia de una gran parte del cerebro y del cráneo.", prefijo:"an- (griego: privación, sin) y encéfalo (griego: enkephalos - dentro de la cabeza)", sufijo:"-ia (griego: cualidad/condición)", ejemplo:"La falla en el cierre del neuroporo craneal durante la cuarta semana provoca anencefalia." },
+    { palabra:"Condrocito", catedra:"Histología", significado:"Célula madura del tejido cartilaginoso alojada en lagunas o condroplastos.", prefijo:"condro- (griego: chondros - cartílago)", sufijo:"-cito (griego: kytos - célula)", ejemplo:"Los condrocitos secretan los componentes orgánicos de la matriz cartilaginosa." },
+    { palabra:"Esplacnología", catedra:"Anatomía", significado:"Rama de la anatomía que se encarga del estudio científico de las vísceras y órganos internos.", prefijo:"esplacno- (griego: splachnon - víscera)", sufijo:"-logía (griego: logos - estudio o tratado)", ejemplo:"En el segundo módulo de anatomía práctica nos adentraremos en el área de la esplacnología." },
+    { palabra:"Miofibroblasto", catedra:"Histología", significado:"Célula con características intermedias entre fibroblasto y célula muscular lisa, clave en la retracción de heridas.", prefijo:"mio- (griego: mys - músculo)", sufijo:"-blasto (griego: blastos - célula inmadura)", ejemplo:"Los miofibroblastos actúan contrayendo los bordes de la herida durante el proceso reparativo." }
+  ];
+  var cxAfijosData = [
+    { termino:"Gastro-", tipo:"Prefijo (Griego)", significado:"Relativo al estómago.", asociaciones:"Gastritis, Gastroenterología, Gastroesofágico.", tip:"Asócialo siempre con la digestión alta y la mucosa gástrica." },
+    { termino:"-itis", tipo:"Sufijo (Griego)", significado:"Inflamación o infección.", asociaciones:"Apendicitis, Artritis, Otitis, Meningitis, Hepatitis.", tip:"Si termina en -itis, el órgano afectado está sufriendo una respuesta inmunológica inflamatoria." },
+    { termino:"Condro-", tipo:"Prefijo (Griego)", significado:"Relativo al cartílago.", asociaciones:"Condrocito, Condrogénesis, Condrosarcoma.", tip:"Clave para Histología. Te sirve para rastrear todo el tejido conectivo especializado cartilaginoso." },
+    { termino:"-blasto", tipo:"Sufijo (Griego)", significado:"Célula germinal, inmadura ou formadora de matriz.", asociaciones:"Osteoblasto, Fibroblasto, Trofoblasto, Mioblasto.", tip:"Indica una célula 'joven' o metabólicamente muy activa que construye tejido." },
+    { termino:"-cito", tipo:"Sufijo (Griego)", significado:"Célula madura o receptáculo celular.", asociaciones:"Osteocito, Linfocito, Hepatocito, Adipocito.", tip:"A diferencia del -blasto, el -cito ya alcanzó su madurez y mantiene la homeostasis celular del tejido." },
+    { termino:"Hepato-", tipo:"Prefijo (Griego)", significado:"Relativo al hígado.", asociaciones:"Hepatocito, Hepatitis, Hepatomegalia, Hepatotóxico.", tip:"Crucial para los preparados de glándulas anexas en Histología y anatomía abdominal." },
+    { termino:"-megalia", tipo:"Sufijo (Griego)", significado:"Agrandamiento anormal o hipertrofia de tamaño.", asociaciones:"Esplenomegalia (bazo), Cardiomegalia (corazón), Acromegalia.", tip:"Término semiológico clínico súper común en las discusiones de casos anatomo-clínicos." },
+    { termino:"Mio-", tipo:"Prefijo (Griego)", significado:"Relativo al músculo.", asociaciones:"Miocardio, Miocito, Miometrio, Miopatía.", tip:"Indica siempre contractilidad. Úsalo para identificar capas musculares en órganos huecos de Histología." }
+  ];
+
+  function cxDictRender(q) {
+    q = (q||'').toLowerCase();
+    var wDiv = document.getElementById('cxDictWords');
+    var aDiv = document.getElementById('cxDictAfijos');
+    var empty = document.getElementById('cxDictEmpty');
+    if (!wDiv) return;
+
+    if (cxDictCurrentMode === 'afijos') {
+      wDiv.style.display='none'; aDiv.style.display='flex';
+      var f = cxAfijosData.filter(function(it){ return !q||it.termino.toLowerCase().includes(q)||it.significado.toLowerCase().includes(q)||it.asociaciones.toLowerCase().includes(q); });
+      aDiv.innerHTML='';
+      if(!f.length){empty.style.display='block';return;} empty.style.display='none';
+      f.forEach(function(it){
+        aDiv.innerHTML+='<div class="cx-dict-afijo-card">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'+
+            '<span style="font-size:1.3rem;font-weight:800;color:#fbbf24;font-family:\'Outfit\',sans-serif;">'+it.termino+'</span>'+
+            '<span style="font-size:.68rem;background:rgba(251,191,36,.12);padding:3px 10px;border-radius:10px;color:#fde68a;font-weight:700;">'+it.tipo+'</span>'+
+          '</div>'+
+          '<p style="color:var(--cx-text);font-size:.9rem;margin:0 0 12px;line-height:1.5;"><strong style="color:var(--cx-muted);">Significado:</strong> '+it.significado+'</p>'+
+          '<div style="background:rgba(245,200,66,.05);border-left:3px solid rgba(245,200,66,.3);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;">'+
+            '<div style="font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(245,200,66,.5);margin-bottom:4px;">Palabras de asociación</div>'+
+            '<div style="font-size:.88rem;color:#f5c842;font-weight:600;">'+it.asociaciones+'</div>'+
+          '</div>'+
+          '<p style="color:var(--cx-muted);font-size:.82rem;font-style:italic;margin:0;border-top:1px solid rgba(245,200,66,.08);padding-top:10px;">💡 '+it.tip+'</p>'+
+        '</div>';
+      });
+    } else {
+      aDiv.style.display='none'; wDiv.style.display='flex';
+      var f = cxDictData.filter(function(it){
+        var catOk=cxDictCurrentMode==='todos'||it.catedra===cxDictCurrentMode;
+        var textOk=!q||it.palabra.toLowerCase().includes(q)||it.significado.toLowerCase().includes(q)||it.prefijo.toLowerCase().includes(q)||it.sufijo.toLowerCase().includes(q);
+        return catOk&&textOk;
+      });
+      wDiv.innerHTML='';
+      if(!f.length){empty.style.display='block';return;} empty.style.display='none';
+      f.forEach(function(it){
+        var cc=it.catedra==='Anatomía'?'rgba(129,140,248,.8)':it.catedra==='Histología'?'rgba(52,211,153,.8)':'rgba(244,114,182,.8)';
+        wDiv.innerHTML+='<div class="cx-dict-word-card">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'+
+            '<span style="font-size:1.3rem;font-weight:800;color:var(--cx-text);font-family:\'Outfit\',sans-serif;">'+it.palabra+'</span>'+
+            '<span style="font-size:.68rem;background:rgba(255,255,255,.05);padding:3px 10px;border-radius:10px;color:'+cc+';font-weight:700;">'+it.catedra+'</span>'+
+          '</div>'+
+          '<p style="color:var(--cx-text);font-size:.9rem;margin:0 0 12px;line-height:1.5;opacity:.85;">'+it.significado+'</p>'+
+          '<div style="background:rgba(245,200,66,.04);border-left:3px solid rgba(245,200,66,.25);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;">'+
+            '<div style="font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(245,200,66,.5);margin-bottom:6px;">Análisis de raíces · Griego / Latín</div>'+
+            '<div style="font-size:.86rem;color:var(--cx-text);margin-bottom:3px;opacity:.8;"><strong style="opacity:.6;">Prefijo/Raíz:</strong> '+it.prefijo+'</div>'+
+            '<div style="font-size:.86rem;color:var(--cx-text);opacity:.8;"><strong style="opacity:.6;">Sufijo/Componente:</strong> '+it.sufijo+'</div>'+
+          '</div>'+
+          '<p style="color:var(--cx-muted);font-size:.82rem;font-style:italic;margin:0;border-top:1px solid rgba(245,200,66,.07);padding-top:10px;"><strong style="opacity:.5;">Clínica / Cursada:</strong> "'+it.ejemplo+'"</p>'+
+        '</div>';
+      });
+    }
+  }
+
+  window.cxDictMode = function(mode, btn) {
+    cxDictCurrentMode = mode;
+    document.querySelectorAll('.cx-dict-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    cxDictRender(document.getElementById('cxDictSearch').value);
+  };
+  var cxSrch = document.getElementById('cxDictSearch');
+  if(cxSrch) cxSrch.addEventListener('input', function(){ cxDictRender(this.value); });
+  cxDictRender('');
+})();
+</script>
+
 {% endblock %}
+
