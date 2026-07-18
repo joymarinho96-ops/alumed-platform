@@ -25,6 +25,7 @@ OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
 MERCADOPAGO_ACCESS_TOKEN = env('MERCADOPAGO_ACCESS_TOKEN', default='')
 
 ALLOWED_HOSTS = [
+    '*',
     'alumedestudiantes.com',
     'www.alumedestudiantes.com',
     'localhost',
