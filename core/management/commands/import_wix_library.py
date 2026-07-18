@@ -18,11 +18,6 @@ logger = logging.getLogger(__name__)
 # Configura encoding do console para evitar erros de emoji no Windows
 sys.stdout.reconfigure(encoding='utf-8')
 
-# Função auxiliar para limpar emojis e caracteres especiais do nome para fins de clique
-def clean_folder_name(name):
-    cleaned = re.sub(r'[^\w\s\dáéíóúÁÉÍÓÚñÑüÜ°]', '', name)
-    return re.sub(r'\s+', ' ', cleaned).strip()
-
 class Command(BaseCommand):
     help = "Varre a Biblioteca Virtual do Wix usando Playwright e importa todos os livros/apuntes para o banco de dados."
 
@@ -36,7 +31,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Validação de Transições...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -87,63 +82,10 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper de clique cirúrgico direcionado para a grade de arquivos
-            def click_folder_in_grid(folder_name):
-                clean_name = clean_folder_name(folder_name).upper()
-                js_code = '''() => {
-                    const clean_name = "___NAME___";
-                    const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
-                        .filter(el => {
-                            const text = el.innerText;
-                            return text && text.includes('\\n') && 
-                                   (text.includes('ítem') || text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
-                                   text.toUpperCase().includes(clean_name);
-                        });
-                    if (elements.length > 0) {
-                        elements.sort((a, b) => a.innerText.length - b.innerText.length);
-                        elements[0].click();
-                        return true;
-                    }
-                    return false;
-                }'''.replace('___NAME___', clean_name)
-                success = page.evaluate(js_code)
-                if not success:
-                    # Fallback clicando por texto geral
-                    try:
-                        clean_search = clean_folder_name(folder_name)
-                        page.get_by_text(clean_search, exact=False).first.click(force=True, timeout=4000)
-                    except Exception:
-                        page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_name}')); if(el) el.click(); }}")
-
-            # Helper para retorno de Breadcrumbs (clica no link do breadcrumb no topo da grade)
-            def click_breadcrumb_parent(parent_name):
-                clean_parent = clean_folder_name(parent_name).upper()
-                js_code = '''() => {
-                    const clean_parent = "___PARENT___";
-                    const elements = Array.from(document.querySelectorAll('div, span, p, a'))
-                        .filter(el => {
-                            const text = el.innerText;
-                            return text && text.toUpperCase() === clean_parent && 
-                                   Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
-                        });
-                    if (elements.length > 0) {
-                        elements[0].click();
-                        return true;
-                    }
-                    return false;
-                }'''.replace('___PARENT___', clean_parent)
-                success = page.evaluate(js_code)
-                if not success:
-                    # Fallback
-                    try:
-                        page.get_by_text(parent_name, exact=False).first.click(force=True, timeout=4000)
-                    except Exception:
-                        page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_parent}')); if(el) el.click(); }}")
-
             # Clica no nó raiz "MEDICINA" para iniciar
             try:
                 old_items = get_current_items()
-                click_folder_in_grid('MEDICINA')
+                page.get_by_text('MEDICINA').first.click(force=True, timeout=5000)
                 wait_for_transition(old_items)
                 self.stdout.write("📂 Entrou na pasta raiz 'MEDICINA'.")
             except Exception as e:
@@ -266,24 +208,9 @@ class Command(BaseCommand):
                             pdf_url = dl.url
                             dl.cancel()
                         except Exception:
-                            # Fallback JS Click para arquivos (direcionado especificamente para a linha)
-                            clean_file_search = clean_folder_name(file_name).upper()
+                            # Fallback JS Click para arquivos
                             with page.expect_download(timeout=12000) as dl_info:
-                                js_file_click = '''() => {
-                                    const clean_file_search = "___FILE___";
-                                    const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
-                                        .filter(el => {
-                                            const text = el.innerText;
-                                            return text && text.includes('\\n') && 
-                                                   (text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
-                                                   text.toUpperCase().includes(clean_file_search);
-                                        });
-                                    if (elements.length > 0) {
-                                        elements.sort((a, b) => a.innerText.length - b.innerText.length);
-                                        elements[0].click();
-                                    }
-                                }'''.replace('___FILE___', clean_file_search)
-                                page.evaluate(js_file_click)
+                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{file_name}'); if(el) el.click(); }}")
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
@@ -330,14 +257,12 @@ class Command(BaseCommand):
                     try:
                         old_items_list = get_current_items()
                         
-                        # Clique cirúrgico na pasta dentro do grid
-                        click_folder_in_grid(folder_name)
+                        # Clique simples e direto por texto que funcionava na task-814
+                        page.get_by_text(folder_name).first.click(force=True, timeout=5000)
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
                         new_items = wait_for_transition(old_items_list)
                         
-                        # VALIDAÇÃO DE TRANSIÇÃO: se os itens continuam os mesmos da pasta anterior,
-                        # significa que o clique falhou (pasta não abriu). Pulamos a recursão!
                         if set(new_items) == set(old_items_list):
                             self.stderr.write(f"      ⚠️ Falha ao abrir a pasta {folder_name} (transição de tela falhou). Pulando pasta.")
                             continue
@@ -345,33 +270,14 @@ class Command(BaseCommand):
                         # Chamada recursiva
                         scan_folder(path + [folder_name])
                         
-                        # Retorna ao nível anterior usando o breadcrumb ou botão voltar físico
+                        # Retorna ao nível anterior usando breadcrumb
                         parent_folder_name = path[-1]
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         
                         old_items_list = get_current_items()
                         
-                        # Tenta primeiro clicar no botão Voltar físico do widget Wix
-                        back_clicked = page.evaluate('''() => {
-                            const elements = Array.from(document.querySelectorAll('button, div, span, svg, a'))
-                                .filter(el => {
-                                    const label = el.getAttribute('aria-label') || '';
-                                    const text = el.innerText || '';
-                                    return label.toUpperCase().includes('VOLVER') || 
-                                           label.toUpperCase().includes('BACK') || 
-                                           text.toUpperCase().trim() === 'VOLVER' ||
-                                           text.toUpperCase().trim() === 'ATRÁS';
-                                });
-                            if (elements.length > 0) {
-                                elements[0].click();
-                                return true;
-                            }
-                            return false;
-                        }''')
-                        
-                        if not back_clicked:
-                            # Se não achou botão voltar físico, clica no Breadcrumb
-                            click_breadcrumb_parent(parent_folder_name)
+                        # Retorno simples e direto por clique no texto do breadcrumb
+                        page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
