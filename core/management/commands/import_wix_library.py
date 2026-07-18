@@ -99,12 +99,9 @@ class Command(BaseCommand):
                         return str.normalize("NFD")
                                   .replace(/[\\u0300-\\u036f]/g, "")
                                   .replace(/[\\u2700-\\u27BF]|[\\uE000-\\uF8FF]|\\uD83C[\\uDC00-\\uDFFF]|\\uD83D[\\uDC00-\\uDFFF]|[\\u2011-\\u26FF]|\\uD83E[\\uDD10-\\uDDFF]/g, "")
+                                  .replace(/[\\u200b-\\u200d\\ufeff]/g, "")
                                   .toUpperCase()
                                   .trim();
-                    };
-                    
-                    const isInsideNavigation = (el) => {
-                        return el.closest('nav, [class*="breadcrumb"], [class*="navigation"], [class*="popover"], [class*="dropdown"], [class*="menu"]') !== null;
                     };
 
                     const safeClick = (el) => {
@@ -118,18 +115,18 @@ class Command(BaseCommand):
 
                     const norm_parent = normalizeString(clean_parent);
 
-                    // 1. Busca elemento contido dentro do breadcrumb ou popover que corresponda à pasta pai
+                    // 1. Busca elemento visível cujo texto normalizado seja exatamente igual ao nome da pasta pai
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a, button'))
                         .filter(el => {
-                            if (!isInsideNavigation(el)) return false;
+                            const rect = el.getBoundingClientRect();
+                            const is_visible = rect.width > 0 && rect.height > 0;
+                            if (!is_visible) return false;
+                            
                             const text = el.innerText || '';
                             const norm_text = normalizeString(text);
-                            return norm_text.includes(norm_parent) && 
-                                   !text.includes('\\n') && 
-                                   !text.includes('\\r');
+                            return norm_text === norm_parent;
                         });
                     if (breadcrumbElements.length > 0) {
-                        breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
                         safeClick(breadcrumbElements[0]);
                         return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
@@ -192,7 +189,7 @@ class Command(BaseCommand):
                                     tagName: el.tagName,
                                     text: text.replace(/\\n/g, '[NL]'),
                                     length: text.length,
-                                    is_nav: isInsideNavigation(el)
+                                    is_nav: el.closest('nav, [class*="breadcrumb"], [class*="navigation"]') !== null
                                 });
                             }
                         });
