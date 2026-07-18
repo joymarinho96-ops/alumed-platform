@@ -38,12 +38,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Viewport Ampla 1080p...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com suporte a Breadcrumbs Colapsados...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            
-            # Força janela larga (1920x1080) para impedir que o Wix colapse os breadcrumbs em "..."
             page = browser.new_page(viewport={"width": 1920, "height": 1080})
             
             # Vai até a biblioteca virtual
@@ -91,13 +89,13 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper para retorno de Breadcrumbs preciso baseando-se em comprimento de texto na tela cheia
+            # Helper para retorno de Breadcrumbs preciso baseando-se em comprimento de texto e reticências colapsadas
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
                 js_code = '''() => {
                     const clean_parent = "___PARENT___";
                     
-                    // 1. Busca elemento curto sem quebra de linha que contêm o nome da pasta pai (exclui a grade de arquivos)
+                    // 1. Busca elemento curto sem quebra de linha que contem o nome da pasta pai (seja direto ou aberto no popover)
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
                             const text = el.innerText || '';
@@ -108,10 +106,21 @@ class Command(BaseCommand):
                     if (breadcrumbElements.length > 0) {
                         breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
                         breadcrumbElements[0].click();
-                        return { success: true, method: 'breadcrumb', debug: [] };
+                        return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
                     
-                    // 2. Coleta candidatos em caso de falhas
+                    // 2. Se não achou direto, procura por "..." (reticências de breadcrumb colapsado do Wix)
+                    const dotsElements = Array.from(document.querySelectorAll('div, span, a, p'))
+                        .filter(el => {
+                            const text = el.innerText || '';
+                            return text.trim() === '...' && el.getBoundingClientRect().width > 0;
+                        });
+                    if (dotsElements.length > 0) {
+                        dotsElements[0].click();
+                        return { success: true, method: 'breadcrumb_dots_clicked', debug: [] };
+                    }
+                    
+                    // 3. Coleta candidatos em caso de falhas
                     const candidates = [];
                     Array.from(document.querySelectorAll('*'))
                         .forEach(el => {
@@ -350,8 +359,13 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb na janela 1080p
+                        # Retorno cirúrgico via Breadcrumb / Botão de reticências
                         res = click_breadcrumb_parent(parent_folder_name)
+                        
+                        if res['success'] and res['method'] == 'breadcrumb_dots_clicked':
+                            # Se clicou no "...", aguarda 1.5s para renderizar o menu popover e clica no link pai
+                            page.wait_for_timeout(1500)
+                            res = click_breadcrumb_parent(parent_folder_name)
                         
                         if res['success']:
                             self.stdout.write(f"      ✅ Voltou para {parent_folder_name} via {res['method']}")
