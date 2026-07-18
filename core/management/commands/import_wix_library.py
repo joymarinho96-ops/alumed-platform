@@ -131,12 +131,9 @@ class Command(BaseCommand):
                         return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
                     
-                    // 2. Se não achou direto, procura pelo botão de reticências colapsado usando data-hook do Wix
-                    const dotsElements = Array.from(document.querySelectorAll('[data-hook="breadcrumbButton"]'))
-                        .filter(el => {
-                            const text = el.innerText || '';
-                            return text.trim() !== 'Archivos y carpetas' && el.getBoundingClientRect().width > 0;
-                        });
+                    // 2. Se não achou direto, procura pelo botão de reticências colapsado usando seletores de popover específicos do React/Wix
+                    const dotsElements = Array.from(document.querySelectorAll('[data-hook="popover-element"] button, button[aria-describedby*="popover"]'))
+                        .filter(el => el.getBoundingClientRect().width > 0);
                     if (dotsElements.length > 0) {
                         safeClick(dotsElements[0]);
                         return { success: true, method: 'breadcrumb_dots_clicked', debug: [] };
