@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Elipses Unicodes de Breadcrumbs...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Sincronização Inteligente de Transições...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -401,18 +401,26 @@ class Command(BaseCommand):
                         parent_folder_name = path[-1]
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         
+                        # Referência inicial de itens para transição
                         old_items_list = get_current_items()
                         
                         # Retorno cirúrgico via Breadcrumb / Botão de reticências tolerante a elipse Unicode
                         res = click_breadcrumb_parent(parent_folder_name)
                         
                         if res['success'] and res['method'] in ('breadcrumb_dots_clicked', 'breadcrumb_positional'):
-                            # Se clicou no "..." (ou posicional equivalente), aguarda 1.5s para renderizar o menu popover e clica no link pai
+                            # Se clicou no "..." (ou posicional equivalente), aguarda 1.5s para renderizar o menu popover
                             page.wait_for_timeout(1500)
+                            # Atualiza a referência de itens com o popover aberto para evitar detecção prematura de transição
+                            old_items_list = get_current_items()
+                            # Clica no link pai real no popover
                             res = click_breadcrumb_parent(parent_folder_name)
                         
                         if res['success']:
                             self.stdout.write(f"      ✅ Voltou para {parent_folder_name} via {res['method']}")
+                            # Espera a transição real de tela baseando-se na referência correta
+                            wait_for_transition(old_items_list)
+                            # Aplica estabilização obrigatória pós-retorno de 3s
+                            page.wait_for_timeout(3000)
                         else:
                             self.stderr.write(f"      ⚠️ Falha ao voltar para {parent_folder_name} (método: {res['method']})")
                             self.stderr.write("      🔍 Candidatos encontrados no DOM:")
@@ -427,10 +435,6 @@ class Command(BaseCommand):
                                     printed_count += 1
                                     if printed_count >= 15:
                                         break
-                        
-                        # Sincroniza, espera retornar para a pasta pai e aplica estabilização obrigatória pós-retorno de 3s
-                        wait_for_transition(old_items_list)
-                        page.wait_for_timeout(3000)
                             
                     except Exception as err:
                         self.stderr.write(f"      ❌ Falha na navegação da pasta {folder_name}: {err}")
