@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs e Depurador DOM...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Estabilização e Dedup...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -187,6 +187,16 @@ class Command(BaseCommand):
                     elif any(unit in meta for unit in ('MB', 'KB', 'GB')):
                         files_to_download.append(name)
                 
+                # Dedup rigoroso de pastas usando string limpa sem emojis para evitar duplicidades do DOM do Wix
+                seen_folders = set()
+                deduped_folders = []
+                for f in folders_to_visit:
+                    clean_f = clean_folder_name(f).upper()
+                    if clean_f not in seen_folders:
+                        seen_folders.add(clean_f)
+                        deduped_folders.append(f)
+                folders_to_visit = deduped_folders
+
                 self.stdout.write(f"   Encontrados: {len(folders_to_visit)} pastas e {len(files_to_download)} arquivos.")
                 
                 # 1. Processa arquivos no nível atual
@@ -370,8 +380,9 @@ class Command(BaseCommand):
                                     if printed_count >= 15:
                                         break
                         
-                        # Sincroniza e espera retornar para a pasta pai
+                        # Sincroniza, espera retornar para a pasta pai e aplica estabilização obrigatória pós-retorno de 3s
                         wait_for_transition(old_items_list)
+                        page.wait_for_timeout(3000)
                             
                     except Exception as err:
                         self.stderr.write(f"      ❌ Falha na navegação da pasta {folder_name}: {err}")
