@@ -169,8 +169,8 @@ class Command(BaseCommand):
                     name = lines[0].strip()
                     meta = lines[1].strip()
                     
-                    # Ignora pastas de controle ou navegação interna
-                    if name in ('Nombre del ítem', 'MI Biblioteca', 'Archivos y carpetas'):
+                    # Ignora pastas de controle, navegação interna ou qualquer pasta que já esteja no caminho atual
+                    if name in ('Nombre del ítem', 'MI Biblioteca', 'Archivos y carpetas') or name.upper() in [p.upper() for p in path]:
                         continue
                         
                     if 'ítem' in meta:
