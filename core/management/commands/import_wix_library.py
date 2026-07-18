@@ -109,17 +109,49 @@ class Command(BaseCommand):
                         return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
                     
-                    // 2. Se não achou direto, procura por reticências ou elipse horizontal Unicode (\u2026 / 8230)
-                    const dotsElements = Array.from(document.querySelectorAll('div, span, a, p'))
+                    // 2. Se não achou direto, procura por reticências ou elipse horizontal Unicode (\u2026 / 8230) por texto ou classe/ID
+                    const dotsElements = Array.from(document.querySelectorAll('button, div, span, a, p, svg'))
                         .filter(el => {
                             const text = el.innerText || '';
                             const t = text.trim();
-                            const has_ellipsis = t === '...' || t === '…' || t.includes('...') || t.includes('…') || t.charCodeAt(0) === 8230;
-                            return has_ellipsis && el.getBoundingClientRect().width > 0;
+                            const testid = el.getAttribute('data-testid') || '';
+                            const className = (typeof el.className === 'string') ? el.className : '';
+                            const id = el.getAttribute('id') || '';
+                            
+                            const has_dots_text = t === '...' || t === '…' || t.includes('...') || t.includes('…') || t.charCodeAt(0) === 8230;
+                            const has_dots_attr = testid.toUpperCase().includes('ELLIPSIS') || 
+                                                  className.toUpperCase().includes('ELLIPSIS') || 
+                                                  id.toUpperCase().includes('ELLIPSIS') ||
+                                                  className.toUpperCase().includes('DOTS') ||
+                                                  className.toUpperCase().includes('BREADCRUMB_COLLAPSED');
+                            return (has_dots_text || has_dots_attr) && el.getBoundingClientRect().width > 0;
                         });
                     if (dotsElements.length > 0) {
                         dotsElements[0].click();
                         return { success: true, method: 'breadcrumb_dots_clicked', debug: [] };
+                    }
+                    
+                    // 3. Fallback Posicional: se não achou por texto nem atributo, busca no container do breadcrumb
+                    const rootLink = Array.from(document.querySelectorAll('*'))
+                        .find(el => el.innerText && el.innerText.trim() === 'Archivos y carpetas');
+                    if (rootLink) {
+                        const container = rootLink.closest('nav, [class*="breadcrumb"], [class*="navigation"]');
+                        if (container) {
+                            const breadcrumbItems = Array.from(container.querySelectorAll('button, a, span, div, svg'))
+                                .filter(el => {
+                                    const text = el.innerText || '';
+                                    const rect = el.getBoundingClientRect();
+                                    const is_clickable = rect.width > 0 && rect.height > 0;
+                                    return is_clickable && 
+                                           text.trim() !== 'Archivos y carpetas' && 
+                                           !text.includes(clean_parent) &&
+                                           !text.includes('\\n');
+                                });
+                            if (breadcrumbItems.length > 0) {
+                                breadcrumbItems[0].click();
+                                return { success: true, method: 'breadcrumb_positional', debug: [] };
+                            }
+                        }
                     }
                     
                     // 3. Coleta candidatos em caso de falhas
@@ -364,8 +396,8 @@ class Command(BaseCommand):
                         # Retorno cirúrgico via Breadcrumb / Botão de reticências tolerante a elipse Unicode
                         res = click_breadcrumb_parent(parent_folder_name)
                         
-                        if res['success'] and res['method'] == 'breadcrumb_dots_clicked':
-                            # Se clicou no "...", aguarda 1.5s para renderizar o menu popover e clica no link pai
+                        if res['success'] and res['method'] in ('breadcrumb_dots_clicked', 'breadcrumb_positional'):
+                            # Se clicou no "..." (ou posicional equivalente), aguarda 1.5s para renderizar o menu popover e clica no link pai
                             page.wait_for_timeout(1500)
                             res = click_breadcrumb_parent(parent_folder_name)
                         
