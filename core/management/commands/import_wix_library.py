@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Cliques Limpos de Emojis...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs Cirúrgicos...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -88,6 +88,47 @@ class Command(BaseCommand):
                     page.wait_for_timeout(500)
                 page.wait_for_timeout(2000)
                 return get_current_items()
+
+            # Helper para retorno de Breadcrumbs ou botão voltar físico (seguro contra texto de grade)
+            def click_breadcrumb_parent(parent_name):
+                clean_parent = clean_folder_name(parent_name).upper()
+                js_code = '''() => {
+                    const clean_parent = "___PARENT___";
+                    // 1. Tenta achar o botão de voltar físico do Wix File Share
+                    const backElements = Array.from(document.querySelectorAll('button, div, span, svg, a'))
+                        .filter(el => {
+                            const label = el.getAttribute('aria-label') || '';
+                            const testid = el.getAttribute('data-testid') || '';
+                            const className = (typeof el.className === 'string') ? el.className : '';
+                            const text = el.innerText || '';
+                            
+                            return label.toUpperCase().includes('VOLVER') || 
+                                   label.toUpperCase().includes('BACK') || 
+                                   testid.toUpperCase().includes('BACK') ||
+                                   className.toUpperCase().includes('BACK') ||
+                                   text.toUpperCase().trim() === 'VOLVER' ||
+                                   text.toUpperCase().trim() === '<';
+                        });
+                    if (backElements.length > 0) {
+                        backElements[0].click();
+                        return true;
+                    }
+                    
+                    // 2. Fallback: procura o breadcrumb no topo da grade (ignora itens multilinha da grade de arquivos)
+                    const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
+                        .filter(el => {
+                            const text = el.innerText || '';
+                            return text.toUpperCase().trim() === clean_parent && 
+                                   !text.includes('\\n') &&
+                                   Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
+                        });
+                    if (breadcrumbElements.length > 0) {
+                        breadcrumbElements[0].click();
+                        return true;
+                    }
+                    return false;
+                }'''.replace('___PARENT___', clean_parent)
+                return page.evaluate(js_code)
 
             # Clica no nó raiz "MEDICINA" para iniciar
             try:
@@ -284,20 +325,17 @@ class Command(BaseCommand):
                         # Chamada recursiva
                         scan_folder(path + [folder_name])
                         
-                        # Retorna ao nível anterior usando breadcrumb
+                        # Retorna ao nível anterior usando breadcrumb cirúrgico
                         parent_folder_name = path[-1]
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         
                         old_items_list = get_current_items()
                         
-                        # Limpa emojis da pasta pai e clica para voltar
-                        clean_parent_search = clean_folder_name(parent_folder_name)
+                        # Retorno cirúrgico via Breadcrumb / Botão de voltar
+                        success_back = click_breadcrumb_parent(parent_folder_name)
                         
-                        try:
-                            page.get_by_text(clean_parent_search, exact=False).first.click(force=True, timeout=5000)
-                        except Exception:
-                            # Fallback JS Click com Includes para voltar
-                            page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_parent_search.upper()}')); if(el) el.click(); }}")
+                        if not success_back:
+                            self.stderr.write(f"      ⚠️ Falha ao clicar para voltar para {parent_folder_name}.")
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
