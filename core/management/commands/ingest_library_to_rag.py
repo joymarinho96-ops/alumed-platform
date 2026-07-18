@@ -73,10 +73,11 @@ class Command(BaseCommand):
                 # Extrai texto usando a função do ingest_documents
                 text = extract_text_from_pdf_url(book.pdf_url)
                 if not text or len(text.strip()) < 50:
-                    self.stderr.write("   ❌ Texto extraído muito curto ou inválido. Pulando.")
-                    continue
-                    
-                self.stdout.write(f"   📄 Texto extraído com sucesso ({len(text)} caracteres).")
+                    self.stdout.write(self.style.WARNING(f"   ⚠️ [ESCANEADO] PDF de imagem sem texto extraível. Usando metadados do livro para RAG."))
+                    # Constrói um texto sintético com palavras-chave do título e matéria para permitir busca semântica
+                    text = f"Material de estudio: {book.title}. Materia / Cátedra: {book.subject or 'Medicina'}. Año académico: {book.year or '1'}. Documento disponible para descarga completa en el enlace oficial de la biblioteca: {book.pdf_url}"
+                else:
+                    self.stdout.write(f"   📄 Texto extraído com sucesso ({len(text)} caracteres).")
                 
                 # Divide o texto em chunks
                 chunks = split_into_chunks(text, chunk_size=500, overlap=50)
