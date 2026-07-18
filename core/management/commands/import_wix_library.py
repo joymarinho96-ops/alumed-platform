@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs Inteligentes...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs e Depurador DOM...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -89,11 +89,12 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper para retorno de Breadcrumbs ou botão voltar físico (seguro contra texto longo da grade)
+            # Helper para retorno de Breadcrumbs ou botão voltar físico (com captura de depuração)
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
                 js_code = '''() => {
                     const clean_parent = "___PARENT___";
+                    
                     // 1. Tenta achar o botão de voltar físico do Wix File Share
                     const backElements = Array.from(document.querySelectorAll('button, div, span, svg, a'))
                         .filter(el => {
@@ -111,10 +112,27 @@ class Command(BaseCommand):
                         });
                     if (backElements.length > 0) {
                         backElements[0].click();
-                        return true;
+                        return { success: true, method: 'back_button', debug: [] };
                     }
                     
-                    // 2. Fallback Breadcrumb: busca elemento curto sem quebra de linha que contêm o nome pai
+                    // 2. Captura candidatos para depurar no Python
+                    const candidates = [];
+                    Array.from(document.querySelectorAll('*'))
+                        .forEach(el => {
+                            const text = el.innerText || '';
+                            const rect = el.getBoundingClientRect();
+                            const is_visible = rect.width > 0 && rect.height > 0;
+                            if (is_visible && text.toUpperCase().includes(clean_parent) && text.length < 150) {
+                                candidates.push({
+                                    tagName: el.tagName,
+                                    text: text.replace(/\\n/g, '[NL]'),
+                                    length: text.length,
+                                    has_nl: text.includes('\\n')
+                                });
+                            }
+                        });
+                    
+                    // 3. Fallback Breadcrumb: busca elemento curto sem quebra de linha que contêm o nome pai
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
                             const text = el.innerText || '';
@@ -125,9 +143,9 @@ class Command(BaseCommand):
                     if (breadcrumbElements.length > 0) {
                         breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
                         breadcrumbElements[0].click();
-                        return true;
+                        return { success: true, method: 'breadcrumb', debug: candidates };
                     }
-                    return false;
+                    return { success: false, method: 'none', debug: candidates };
                 }'''.replace('___PARENT___', clean_parent)
                 return page.evaluate(js_code)
 
@@ -332,11 +350,25 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb / Botão de voltar (sem emojis e filtrando por length)
-                        success_back = click_breadcrumb_parent(parent_folder_name)
+                        # Retorno cirúrgico via Breadcrumb / Botão de voltar
+                        res = click_breadcrumb_parent(parent_folder_name)
                         
-                        if not success_back:
-                            self.stderr.write(f"      ⚠️ Falha ao clicar para voltar para {parent_folder_name}.")
+                        if res['success']:
+                            self.stdout.write(f"      ✅ Voltou para {parent_folder_name} via {res['method']}")
+                        else:
+                            self.stderr.write(f"      ⚠️ Falha ao voltar para {parent_folder_name} (método: {res['method']})")
+                            self.stderr.write("      🔍 Candidatos encontrados no DOM:")
+                            # Dedup debug list
+                            seen_candidates = set()
+                            printed_count = 0
+                            for item in res['debug']:
+                                cand_str = f"<{item['tagName']}> (len: {item['length']}, has_nl: {item['has_nl']}): '{item['text']}'"
+                                if cand_str not in seen_candidates:
+                                    seen_candidates.add(cand_str)
+                                    self.stderr.write(f"         - {cand_str}")
+                                    printed_count += 1
+                                    if printed_count >= 15:
+                                        break
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
