@@ -36,7 +36,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Cliques Cirúrgicos em Grade...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Validação de Transições...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -334,19 +334,44 @@ class Command(BaseCommand):
                         click_folder_in_grid(folder_name)
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
-                        wait_for_transition(old_items_list)
+                        new_items = wait_for_transition(old_items_list)
+                        
+                        # VALIDAÇÃO DE TRANSIÇÃO: se os itens continuam os mesmos da pasta anterior,
+                        # significa que o clique falhou (pasta não abriu). Pulamos a recursão!
+                        if set(new_items) == set(old_items_list):
+                            self.stderr.write(f"      ⚠️ Falha ao abrir a pasta {folder_name} (transição de tela falhou). Pulando pasta.")
+                            continue
                         
                         # Chamada recursiva
                         scan_folder(path + [folder_name])
                         
-                        # Retorna ao nível anterior usando o breadcrumb
+                        # Retorna ao nível anterior usando o breadcrumb ou botão voltar físico
                         parent_folder_name = path[-1]
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb do topo da grade
-                        click_breadcrumb_parent(parent_folder_name)
+                        # Tenta primeiro clicar no botão Voltar físico do widget Wix
+                        back_clicked = page.evaluate('''() => {
+                            const elements = Array.from(document.querySelectorAll('button, div, span, svg, a'))
+                                .filter(el => {
+                                    const label = el.getAttribute('aria-label') || '';
+                                    const text = el.innerText || '';
+                                    return label.toUpperCase().includes('VOLVER') || 
+                                           label.toUpperCase().includes('BACK') || 
+                                           text.toUpperCase().trim() === 'VOLVER' ||
+                                           text.toUpperCase().trim() === 'ATRÁS';
+                                });
+                            if (elements.length > 0) {
+                                elements[0].click();
+                                return true;
+                            }
+                            return false;
+                        }''')
+                        
+                        if not back_clicked:
+                            # Se não achou botão voltar físico, clica no Breadcrumb
+                            click_breadcrumb_parent(parent_folder_name)
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
