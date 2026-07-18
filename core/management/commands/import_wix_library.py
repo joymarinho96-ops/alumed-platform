@@ -18,6 +18,11 @@ logger = logging.getLogger(__name__)
 # Configura encoding do console para evitar erros de emoji no Windows
 sys.stdout.reconfigure(encoding='utf-8')
 
+# Função auxiliar para limpar emojis e caracteres especiais do nome para fins de clique
+def clean_folder_name(name):
+    cleaned = re.sub(r'[^\w\s\dáéíóúÁÉÍÓÚñÑüÜ°]', '', name)
+    return re.sub(r'\s+', ' ', cleaned).strip()
+
 class Command(BaseCommand):
     help = "Varre a Biblioteca Virtual do Wix usando Playwright e importa todos os livros/apuntes para o banco de dados."
 
@@ -31,7 +36,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Filtro de Visibilidade de DOM...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Filtro de Emojis e Visibilidade de DOM...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -76,19 +81,24 @@ class Command(BaseCommand):
                 while time.time() - start < timeout_sec:
                     current = get_current_items()
                     if set(current) != set(old_items):
-                        page.wait_for_timeout(2000) # delay de segurança para render total dos arquivos novos
+                        page.wait_for_timeout(2500) # delay de segurança para render total
                         return current
                     page.wait_for_timeout(500)
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
+            # Helper de clique resiliente (sem emojis)
+            def click_element_resilient(name):
+                clean_search = clean_folder_name(name)
+                try:
+                    page.get_by_text(clean_search, exact=False).first.click(force=True, timeout=5000)
+                except Exception:
+                    page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_search.upper()}')); if(el) el.click(); }}")
+
             # Clica no nó raiz "MEDICINA" para iniciar
             try:
                 old_items = get_current_items()
-                try:
-                    page.get_by_text('MEDICINA').first.click(force=True, timeout=5000)
-                except Exception:
-                    page.evaluate("() => { const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === 'MEDICINA'); if(el) el.click(); }")
+                click_element_resilient('MEDICINA')
                 wait_for_transition(old_items)
                 self.stdout.write("📂 Entrou na pasta raiz 'MEDICINA'.")
             except Exception as e:
@@ -211,9 +221,10 @@ class Command(BaseCommand):
                             pdf_url = dl.url
                             dl.cancel()
                         except Exception:
-                            # Fallback JS Click para arquivos
+                            # Fallback JS Click para arquivos (usando text matching com includes)
+                            clean_file_search = clean_folder_name(file_name)
                             with page.expect_download(timeout=12000) as dl_info:
-                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{file_name}'); if(el) el.click(); }}")
+                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_file_search.toUpperCase()}')); if(el) el.click(); }}")
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
@@ -259,10 +270,9 @@ class Command(BaseCommand):
                     self.stdout.write(f"   📂 [ENTRAR] Abrindo pasta: {folder_name}")
                     try:
                         old_items_list = get_current_items()
-                        try:
-                            page.get_by_text(folder_name).first.click(force=True, timeout=5000)
-                        except Exception:
-                            page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{folder_name}'); if(el) el.click(); }}")
+                        
+                        # Clique resiliente sem emojis
+                        click_element_resilient(folder_name)
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
                         wait_for_transition(old_items_list)
@@ -275,10 +285,9 @@ class Command(BaseCommand):
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
                         
                         old_items_list = get_current_items()
-                        try:
-                            page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
-                        except Exception:
-                            page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{parent_folder_name}'); if(el) el.click(); }}")
+                        
+                        # Retorno resiliente sem emojis
+                        click_element_resilient(parent_folder_name)
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
