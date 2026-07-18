@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com suporte a Breadcrumbs Colapsados...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Elipses Unicodes de Breadcrumbs...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -89,7 +89,7 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper para retorno de Breadcrumbs preciso baseando-se em comprimento de texto e reticências colapsadas
+            # Helper para retorno de Breadcrumbs preciso tolerante a reticências e elipses Unicode
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
                 js_code = '''() => {
@@ -109,11 +109,13 @@ class Command(BaseCommand):
                         return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
                     
-                    // 2. Se não achou direto, procura por "..." (reticências de breadcrumb colapsado do Wix)
+                    // 2. Se não achou direto, procura por reticências ou elipse horizontal Unicode (\u2026 / 8230)
                     const dotsElements = Array.from(document.querySelectorAll('div, span, a, p'))
                         .filter(el => {
                             const text = el.innerText || '';
-                            return text.trim() === '...' && el.getBoundingClientRect().width > 0;
+                            const t = text.trim();
+                            const has_ellipsis = t === '...' || t === '…' || t.includes('...') || t.includes('…') || t.charCodeAt(0) === 8230;
+                            return has_ellipsis && el.getBoundingClientRect().width > 0;
                         });
                     if (dotsElements.length > 0) {
                         dotsElements[0].click();
@@ -359,7 +361,7 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb / Botão de reticências
+                        # Retorno cirúrgico via Breadcrumb / Botão de reticências tolerante a elipse Unicode
                         res = click_breadcrumb_parent(parent_folder_name)
                         
                         if res['success'] and res['method'] == 'breadcrumb_dots_clicked':
