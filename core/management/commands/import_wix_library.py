@@ -90,24 +90,23 @@ class Command(BaseCommand):
             # Helper de clique cirúrgico direcionado para a grade de arquivos
             def click_folder_in_grid(folder_name):
                 clean_name = clean_folder_name(folder_name).upper()
-                success = page.evaluate(f'''() => {{
-                    // Busca elementos na tabela que contêm quebras de linha (multilinhas das linhas)
-                    // e possuem a string de metadados e o nome procurado
+                js_code = '''() => {
+                    const clean_name = "___NAME___";
                     const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
-                        .filter(el => {{
+                        .filter(el => {
                             const text = el.innerText;
                             return text && text.includes('\\n') && 
                                    (text.includes('ítem') || text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
-                                   text.toUpperCase().includes('{clean_name}');
-                        }});
+                                   text.toUpperCase().includes(clean_name);
+                        });
                     if (elements.length > 0) {
-                        // Encontra o elemento mais específico (menor texto)
                         elements.sort((a, b) => a.innerText.length - b.innerText.length);
                         elements[0].click();
                         return true;
                     }
                     return false;
-                }}''')
+                }'''.replace('___NAME___', clean_name)
+                success = page.evaluate(js_code)
                 if not success:
                     # Fallback clicando por texto geral
                     try:
@@ -119,20 +118,21 @@ class Command(BaseCommand):
             # Helper para retorno de Breadcrumbs (clica no link do breadcrumb no topo da grade)
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
-                success = page.evaluate(f'''() => {{
-                    // Procura o breadcrumb exato no topo. Breadcrumbs no Wix contêm " > "
+                js_code = '''() => {
+                    const clean_parent = "___PARENT___";
                     const elements = Array.from(document.querySelectorAll('div, span, p, a'))
-                        .filter(el => {{
+                        .filter(el => {
                             const text = el.innerText;
-                            return text && text.toUpperCase() === '{clean_parent}' && 
+                            return text && text.toUpperCase() === clean_parent && 
                                    Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
-                        }});
+                        });
                     if (elements.length > 0) {
                         elements[0].click();
                         return true;
                     }
                     return false;
-                }}''')
+                }'''.replace('___PARENT___', clean_parent)
+                success = page.evaluate(js_code)
                 if not success:
                     # Fallback
                     try:
@@ -269,19 +269,21 @@ class Command(BaseCommand):
                             # Fallback JS Click para arquivos (direcionado especificamente para a linha)
                             clean_file_search = clean_folder_name(file_name).upper()
                             with page.expect_download(timeout=12000) as dl_info:
-                                page.evaluate(f'''() => {{
+                                js_file_click = '''() => {
+                                    const clean_file_search = "___FILE___";
                                     const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
-                                        .filter(el => {{
+                                        .filter(el => {
                                             const text = el.innerText;
                                             return text && text.includes('\\n') && 
                                                    (text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
-                                                   text.toUpperCase().includes('{clean_file_search}');
-                                        }});
-                                    if (elements.length > 0) {{
+                                                   text.toUpperCase().includes(clean_file_search);
+                                        });
+                                    if (elements.length > 0) {
                                         elements.sort((a, b) => a.innerText.length - b.innerText.length);
                                         elements[0].click();
-                                    }}
-                                }}''')
+                                    }
+                                }'''.replace('___FILE___', clean_file_search)
+                                page.evaluate(js_file_click)
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
