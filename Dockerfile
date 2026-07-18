@@ -20,4 +20,4 @@ COPY . .
 # Coletar arquivos estaticos
 RUN python manage.py collectstatic --noinput || true
 
-CMD gunicorn alumed.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+CMD ["sh", "-c", "gunicorn alumed.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"]

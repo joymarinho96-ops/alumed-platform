@@ -206,7 +206,9 @@ def logout_view(request):
     return redirect('home')
 
 def student_dashboard_view(request):
-    # Versao publica: usuario nao autenticado ve dashboard vazio
+    # Dashboard pessoal ALUMED — requer login
+    if not request.user.is_authenticated:
+        return redirect(f'/login/?next={request.path}')
     # Busca TODAS as matrículas, ordenadas por expiração (as que vencem primeiro ou já venceram aparecem antes)
     enrollments = Enrollment.objects.filter(user=request.user).order_by('expiration_date')
     courses_with_progress = []

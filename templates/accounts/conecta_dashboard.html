@@ -485,15 +485,22 @@ body {
     <!-- User Profile -->
     <div class="sidebar-profile">
         <div class="avatar-circle">
-            {% if user.profile.photo %}
+            {% if user.is_authenticated and user.profile.photo %}
                 <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
-            {% else %}
+            {% elif user.is_authenticated %}
                 {{ user.username|first|upper }}
+            {% else %}
+                <i class="fas fa-user-graduate"></i>
             {% endif %}
         </div>
         <div class="sidebar-profile-info">
-            <span class="sidebar-profile-name" style="font-family: 'Outfit', sans-serif;">{{ user.first_name }} {{ user.last_name }}</span>
-            <span class="sidebar-profile-role">@{{ user.username }}</span>
+            {% if user.is_authenticated %}
+                <span class="sidebar-profile-name" style="font-family: 'Outfit', sans-serif;">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="sidebar-profile-role">@{{ user.username }}</span>
+            {% else %}
+                <span class="sidebar-profile-name" style="font-family: 'Outfit', sans-serif;">Invitado</span>
+                <span class="sidebar-profile-role" style="font-size:.7rem;color:rgba(245,200,66,.5);">Explorando sin cuenta</span>
+            {% endif %}
         </div>
     </div>
 
@@ -631,7 +638,7 @@ body {
       <div class="cx-hero-badge" style="margin-bottom:14px;display:inline-flex;">
         <span class="dot"></span> Centro de Control Académico
       </div>
-      <h1>Buenas, <span class="gold">{{ request.user.first_name|default:request.user.username }}</span> 👋</h1>
+      <h1>Buenas, <span class="gold">{% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% else %}Estudiante{% endif %}</span> 👋</h1>
       <p>
         {% if new_notices_count > 0 %}
           Hay <strong style="color:var(--cx-gold);">{{ new_notices_count }} avisos</strong> en la cartelera
