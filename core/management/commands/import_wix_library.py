@@ -95,6 +95,15 @@ class Command(BaseCommand):
                 js_code = '''() => {
                     const clean_parent = "___PARENT___";
                     
+                    const safeClick = (el) => {
+                        if (typeof el.click === 'function') {
+                            el.click();
+                        } else {
+                            const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+                            el.dispatchEvent(evt);
+                        }
+                    };
+
                     // 1. Busca elemento curto sem quebra de linha que contem o nome da pasta pai (seja direto ou aberto no popover)
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
@@ -105,7 +114,7 @@ class Command(BaseCommand):
                         });
                     if (breadcrumbElements.length > 0) {
                         breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
-                        breadcrumbElements[0].click();
+                        safeClick(breadcrumbElements[0]);
                         return { success: true, method: 'breadcrumb_direct', debug: [] };
                     }
                     
@@ -126,8 +135,9 @@ class Command(BaseCommand):
                                                   className.toUpperCase().includes('BREADCRUMB_COLLAPSED');
                             return (has_dots_text || has_dots_attr) && el.getBoundingClientRect().width > 0;
                         });
+
                     if (dotsElements.length > 0) {
-                        dotsElements[0].click();
+                        safeClick(dotsElements[0]);
                         return { success: true, method: 'breadcrumb_dots_clicked', debug: [] };
                     }
                     
@@ -148,7 +158,7 @@ class Command(BaseCommand):
                                            !text.includes('\\n');
                                 });
                             if (breadcrumbItems.length > 0) {
-                                breadcrumbItems[0].click();
+                                safeClick(breadcrumbItems[0]);
                                 return { success: true, method: 'breadcrumb_positional', debug: [] };
                             }
                         }
