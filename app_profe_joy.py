@@ -1,5 +1,10 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
+
+# Carrega as variáveis do arquivo .env automaticamente
+load_dotenv()
+
 from supabase import create_client, Client
 from openai import OpenAI
 import anthropic
