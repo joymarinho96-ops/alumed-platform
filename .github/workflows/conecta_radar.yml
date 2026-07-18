@@ -1,0 +1,39 @@
+name: Conecta Radar Scraper
+
+on:
+  schedule:
+    # Se ejecuta cada 30 minutos (la hora de GitHub Actions puede tener ligeros retrasos de cola)
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    # Permite activar el scraper manualmente desde la pestaña Actions en GitHub
+
+jobs:
+  scrape-and-notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Código del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Ejecutar Scraper de Cartelera
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DEBUG: "False"
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        ALUMED_SSO_SECRET: ${{ secrets.ALUMED_SSO_SECRET }}
+        ALUMED_WEBHOOK_SECRET: ${{ secrets.ALUMED_WEBHOOK_SECRET }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      run: |
+        python manage.py scrape_cartelera --notify
