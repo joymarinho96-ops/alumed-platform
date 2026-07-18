@@ -196,7 +196,7 @@ def biblioteca(request):
     library_payload = build_library_payload(books)
     return render(
         request,
-        'core/biblioteca.html',
+        'core/conecta_biblioteca.html',
         {
             'library_payload': library_payload,
             'library_summary': library_payload['summary'],
