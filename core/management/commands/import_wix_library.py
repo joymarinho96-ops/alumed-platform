@@ -18,6 +18,13 @@ logger = logging.getLogger(__name__)
 # Configura encoding do console para evitar erros de emoji no Windows
 sys.stdout.reconfigure(encoding='utf-8')
 
+# Função para limpar emojis e deixar apenas o texto limpo para buscas do Playwright
+def clean_folder_name(name):
+    # Remove emojis usando expressões regulares Unicode de emoji comuns
+    cleaned = re.sub(r'[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]', '', name)
+    # Remove espaços duplos
+    return re.sub(r'\s+', ' ', cleaned).strip()
+
 class Command(BaseCommand):
     help = "Varre a Biblioteca Virtual do Wix usando Playwright e importa todos os livros/apuntes para o banco de dados."
 
@@ -31,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Cliques Limpos de Emojis...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -201,16 +208,17 @@ class Command(BaseCommand):
                     self.stdout.write(f"   ⚡ [DOWNLOAD] Obtendo link de: {file_name}")
                     try:
                         pdf_url = None
+                        clean_file_search = clean_folder_name(file_name)
                         try:
                             with page.expect_download(timeout=10000) as dl_info:
-                                page.get_by_text(file_name).first.click(force=True, timeout=5000)
+                                page.get_by_text(clean_file_search, exact=False).first.click(force=True, timeout=5000)
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
                         except Exception:
                             # Fallback JS Click para arquivos
                             with page.expect_download(timeout=12000) as dl_info:
-                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{file_name}'); if(el) el.click(); }}")
+                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_file_search.upper()}')); if(el) el.click(); }}")
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
@@ -257,8 +265,14 @@ class Command(BaseCommand):
                     try:
                         old_items_list = get_current_items()
                         
-                        # Clique simples e direto por texto que funcionava na task-814
-                        page.get_by_text(folder_name).first.click(force=True, timeout=5000)
+                        # Limpa emojis do nome da pasta para a busca e clica
+                        clean_search = clean_folder_name(folder_name)
+                        
+                        try:
+                            page.get_by_text(clean_search, exact=False).first.click(force=True, timeout=5000)
+                        except Exception:
+                            # Fallback JS Click com Includes
+                            page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_search.upper()}')); if(el) el.click(); }}")
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
                         new_items = wait_for_transition(old_items_list)
@@ -276,8 +290,14 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno simples e direto por clique no texto do breadcrumb
-                        page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
+                        # Limpa emojis da pasta pai e clica para voltar
+                        clean_parent_search = clean_folder_name(parent_folder_name)
+                        
+                        try:
+                            page.get_by_text(clean_parent_search, exact=False).first.click(force=True, timeout=5000)
+                        except Exception:
+                            # Fallback JS Click com Includes para voltar
+                            page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_parent_search.upper()}')); if(el) el.click(); }}")
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
