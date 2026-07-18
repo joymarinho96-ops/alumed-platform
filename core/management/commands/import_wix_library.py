@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Estabilização e Dedup...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Screenshots de Debug...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -349,6 +349,14 @@ class Command(BaseCommand):
                         
                         if set(new_items) == set(old_items_list):
                             self.stderr.write(f"      ⚠️ Falha ao abrir a pasta {folder_name} (transição de tela falhou). Pulando pasta.")
+                            # Salva screenshot de debug com caminho absoluto
+                            screenshot_name = f"debug_failed_enter_{clean_search.lower().replace(' ', '_')}.png"
+                            screenshot_path = os.path.join(r"C:\Users\joyce\.gemini\antigravity\brain\8a1780fe-1455-435b-a0d8-ac4e3242f802", screenshot_name)
+                            try:
+                                page.screenshot(path=screenshot_path)
+                                self.stderr.write(f"      📷 Screenshot de debug salvo: {screenshot_path}")
+                            except Exception as s_err:
+                                self.stderr.write(f"      ⚠️ Não pôde tirar screenshot: {s_err}")
                             continue
                         
                         # Chamada recursiva
