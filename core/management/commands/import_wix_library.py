@@ -36,7 +36,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Filtro de Emojis e Visibilidade de DOM...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Cliques Cirúrgicos em Grade...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -87,18 +87,63 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper de clique resiliente (sem emojis)
-            def click_element_resilient(name):
-                clean_search = clean_folder_name(name)
-                try:
-                    page.get_by_text(clean_search, exact=False).first.click(force=True, timeout=5000)
-                except Exception:
-                    page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_search.upper()}')); if(el) el.click(); }}")
+            # Helper de clique cirúrgico direcionado para a grade de arquivos
+            def click_folder_in_grid(folder_name):
+                clean_name = clean_folder_name(folder_name).upper()
+                success = page.evaluate(f'''() => {{
+                    // Busca elementos na tabela que contêm quebras de linha (multilinhas das linhas)
+                    // e possuem a string de metadados e o nome procurado
+                    const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
+                        .filter(el => {{
+                            const text = el.innerText;
+                            return text && text.includes('\\n') && 
+                                   (text.includes('ítem') || text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
+                                   text.toUpperCase().includes('{clean_name}');
+                        }});
+                    if (elements.length > 0) {
+                        // Encontra o elemento mais específico (menor texto)
+                        elements.sort((a, b) => a.innerText.length - b.innerText.length);
+                        elements[0].click();
+                        return true;
+                    }
+                    return false;
+                }}''')
+                if not success:
+                    # Fallback clicando por texto geral
+                    try:
+                        clean_search = clean_folder_name(folder_name)
+                        page.get_by_text(clean_search, exact=False).first.click(force=True, timeout=4000)
+                    except Exception:
+                        page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_name}')); if(el) el.click(); }}")
+
+            # Helper para retorno de Breadcrumbs (clica no link do breadcrumb no topo da grade)
+            def click_breadcrumb_parent(parent_name):
+                clean_parent = clean_folder_name(parent_name).upper()
+                success = page.evaluate(f'''() => {{
+                    // Procura o breadcrumb exato no topo. Breadcrumbs no Wix contêm " > "
+                    const elements = Array.from(document.querySelectorAll('div, span, p, a'))
+                        .filter(el => {{
+                            const text = el.innerText;
+                            return text && text.toUpperCase() === '{clean_parent}' && 
+                                   Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
+                        }});
+                    if (elements.length > 0) {
+                        elements[0].click();
+                        return true;
+                    }
+                    return false;
+                }}''')
+                if not success:
+                    # Fallback
+                    try:
+                        page.get_by_text(parent_name, exact=False).first.click(force=True, timeout=4000)
+                    except Exception:
+                        page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_parent}')); if(el) el.click(); }}")
 
             # Clica no nó raiz "MEDICINA" para iniciar
             try:
                 old_items = get_current_items()
-                click_element_resilient('MEDICINA')
+                click_folder_in_grid('MEDICINA')
                 wait_for_transition(old_items)
                 self.stdout.write("📂 Entrou na pasta raiz 'MEDICINA'.")
             except Exception as e:
@@ -221,10 +266,22 @@ class Command(BaseCommand):
                             pdf_url = dl.url
                             dl.cancel()
                         except Exception:
-                            # Fallback JS Click para arquivos (usando text matching com includes)
-                            clean_file_search = clean_folder_name(file_name)
+                            # Fallback JS Click para arquivos (direcionado especificamente para a linha)
+                            clean_file_search = clean_folder_name(file_name).upper()
                             with page.expect_download(timeout=12000) as dl_info:
-                                page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.toUpperCase().includes('{clean_file_search.toUpperCase()}')); if(el) el.click(); }}")
+                                page.evaluate(f'''() => {{
+                                    const elements = Array.from(document.querySelectorAll('div, span, p, [role="row"], tr'))
+                                        .filter(el => {{
+                                            const text = el.innerText;
+                                            return text && text.includes('\\n') && 
+                                                   (text.includes('MB') || text.includes('KB') || text.includes('GB')) &&
+                                                   text.toUpperCase().includes('{clean_file_search}');
+                                        }});
+                                    if (elements.length > 0) {{
+                                        elements.sort((a, b) => a.innerText.length - b.innerText.length);
+                                        elements[0].click();
+                                    }}
+                                }}''')
                             dl = dl_info.value
                             pdf_url = dl.url
                             dl.cancel()
@@ -271,8 +328,8 @@ class Command(BaseCommand):
                     try:
                         old_items_list = get_current_items()
                         
-                        # Clique resiliente sem emojis
-                        click_element_resilient(folder_name)
+                        # Clique cirúrgico na pasta dentro do grid
+                        click_folder_in_grid(folder_name)
                         
                         # Sincroniza e espera a transição da tabela para a nova pasta
                         wait_for_transition(old_items_list)
@@ -286,8 +343,8 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno resiliente sem emojis
-                        click_element_resilient(parent_folder_name)
+                        # Retorno cirúrgico via Breadcrumb do topo da grade
+                        click_breadcrumb_parent(parent_folder_name)
                         
                         # Sincroniza e espera retornar para a pasta pai
                         wait_for_transition(old_items_list)
