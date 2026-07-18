@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
                             const text = el.innerText || '';
-                            return text.toUpperCase().trim() === clean_parent && 
+                            return text.toUpperCase().trim().includes(clean_parent) && 
                                    !text.includes('\\n') &&
                                    Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
                         });
