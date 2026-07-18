@@ -12,7 +12,7 @@ def conecta_biblioteca_view(request):
     
     return render(
         request,
-        'core/conecta_biblioteca.html',
+        'core/biblioteca.html',
         {
             'library_payload': library_payload,
             'library_summary': library_payload['summary'],
