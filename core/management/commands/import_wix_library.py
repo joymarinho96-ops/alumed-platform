@@ -4,7 +4,7 @@ os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 import re
 import sys
-import json
+import time
 import logging
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Sincronia Dinâmica de DOM...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -44,14 +44,44 @@ class Command(BaseCommand):
             self.stdout.write("⏳ Aguardando widget carregar...")
             page.wait_for_timeout(8000)
             
+            # Helper para capturar os dados brutos da lista atual
+            def get_current_items():
+                items_data = page.evaluate('''() => {
+                    return Array.from(document.querySelectorAll('div, span, p'))
+                        .filter(d => d.innerText && (d.innerText.includes('ítem') || d.innerText.includes('MB') || d.innerText.includes('KB') || d.innerText.includes('GB')) && d.innerText.length < 150)
+                        .map(d => d.innerText.trim());
+                }''')
+                # Dedup
+                unique_items = []
+                seen_texts = set()
+                for item in items_data:
+                    if item not in seen_texts:
+                        seen_texts.add(item)
+                        unique_items.append(item)
+                return unique_items
+
+            # Helper que espera até o DOM de fato mudar após um clique
+            def wait_for_transition(old_items, timeout_sec=10):
+                start = time.time()
+                while time.time() - start < timeout_sec:
+                    current = get_current_items()
+                    # Se o conjunto de itens mudou, a transição ocorreu!
+                    if set(current) != set(old_items):
+                        page.wait_for_timeout(2000) # delay de segurança para garantir render total
+                        return current
+                    page.wait_for_timeout(500)
+                # Fallback: se der timeout, apenas espera mais 2 segundos e retorna
+                page.wait_for_timeout(2000)
+                return get_current_items()
+
             # Clica no nó raiz "MEDICINA" para iniciar
             try:
+                old_items = get_current_items()
                 try:
                     page.get_by_text('MEDICINA').first.click(force=True, timeout=5000)
-                    page.wait_for_timeout(4000)
                 except Exception:
                     page.evaluate("() => { const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === 'MEDICINA'); if(el) el.click(); }")
-                    page.wait_for_timeout(5000)
+                wait_for_transition(old_items)
                 self.stdout.write("📂 Entrou na pasta raiz 'MEDICINA'.")
             except Exception as e:
                 self.stderr.write(f"❌ Não conseguiu abrir a pasta raiz 'MEDICINA': {e}")
@@ -64,21 +94,7 @@ class Command(BaseCommand):
             def scan_folder(path):
                 self.stdout.write(f"📂 [SCAN] Varrendo: {' > '.join(path)}")
                 
-                # Coleta todos os elementos de texto da tabela de arquivos
-                items_data = page.evaluate('''() => {
-                    return Array.from(document.querySelectorAll('div, span, p'))
-                        .filter(d => d.innerText && (d.innerText.includes('ítem') || d.innerText.includes('MB') || d.innerText.includes('KB') || d.innerText.includes('GB')) && d.innerText.length < 150)
-                        .map(d => d.innerText.trim());
-                }''')
-                
-                # Dedup dos textos coletados
-                unique_items = []
-                seen_texts = set()
-                for item in items_data:
-                    if item not in seen_texts:
-                        seen_texts.add(item)
-                        unique_items.append(item)
-                
+                unique_items = get_current_items()
                 folders_to_visit = []
                 files_to_download = []
                 
@@ -126,7 +142,6 @@ class Command(BaseCommand):
                     if 'anatom' in path_str:
                         subject = 'anato'
                     elif 'histol' in path_str or 'histo' in path_str:
-                        # Mapeia entre histologia ou embriologia se estiver na pasta combinada
                         if 'embrio' in file_name.lower() or 'embrio' in path_str:
                             subject = 'embrio'
                         else:
@@ -215,22 +230,18 @@ class Command(BaseCommand):
                 for folder_name in folders_to_visit:
                     self.stdout.write(f"   📂 [ENTRAR] Abrindo pasta: {folder_name}")
                     try:
+                        old_items_list = get_current_items()
+                        
+                        # Tenta clicar pelo texto
                         try:
+                            # Busca elemento que contenha o nome exato e clica nele
                             page.get_by_text(folder_name).first.click(force=True, timeout=5000)
                         except Exception:
                             # Fallback JS Click para pastas
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{folder_name}'); if(el) el.click(); }}")
                         
-                        # Sincroniza e espera o Wix carregar a nova pasta
-                        try:
-                            # Espera a barra de caminho atualizar mostrando a nova pasta
-                            page.wait_for_function(
-                                f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.includes(' > ') && e.innerText.includes('{folder_name}')); return !!el; }}",
-                                timeout=8000
-                            )
-                        except Exception:
-                            pass
-                        page.wait_for_timeout(3500) # delay de segurança garantido para terminar o render
+                        # Sincroniza e espera a transição da tabela para a nova pasta
+                        wait_for_transition(old_items_list)
                         
                         # Chamada recursiva
                         scan_folder(path + [folder_name])
@@ -238,6 +249,8 @@ class Command(BaseCommand):
                         # Retorna ao nível anterior usando o breadcrumb
                         parent_folder_name = path[-1]
                         self.stdout.write(f"   ↩️ [VOLTAR] Retornando para: {parent_folder_name}")
+                        
+                        old_items_list = get_current_items()
                         try:
                             page.get_by_text(parent_folder_name).first.click(force=True, timeout=5000)
                         except Exception:
@@ -245,14 +258,7 @@ class Command(BaseCommand):
                             page.evaluate(f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.trim() === '{parent_folder_name}'); if(el) el.click(); }}")
                         
                         # Sincroniza e espera retornar para a pasta pai
-                        try:
-                            page.wait_for_function(
-                                f"() => {{ const el = Array.from(document.querySelectorAll('div, span, p')).find(e => e.innerText && e.innerText.includes(' > ') && e.innerText.includes('{parent_folder_name}')); return !!el; }}",
-                                timeout=8000
-                            )
-                        except Exception:
-                            pass
-                        page.wait_for_timeout(3500)
+                        wait_for_transition(old_items_list)
                             
                     except Exception as err:
                         self.stderr.write(f"      ❌ Falha na navegação da pasta {folder_name}: {err}")
