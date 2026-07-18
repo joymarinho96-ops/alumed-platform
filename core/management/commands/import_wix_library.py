@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs Cirúrgicos...")
+        self.stdout.write("🚀 Iniciando o robô de varredura recursiva do Wix com Breadcrumbs Inteligentes...")
         
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -89,7 +89,7 @@ class Command(BaseCommand):
                 page.wait_for_timeout(2000)
                 return get_current_items()
 
-            # Helper para retorno de Breadcrumbs ou botão voltar físico (seguro contra texto de grade)
+            # Helper para retorno de Breadcrumbs ou botão voltar físico (seguro contra texto longo da grade)
             def click_breadcrumb_parent(parent_name):
                 clean_parent = clean_folder_name(parent_name).upper()
                 js_code = '''() => {
@@ -114,15 +114,16 @@ class Command(BaseCommand):
                         return true;
                     }
                     
-                    // 2. Fallback: procura o breadcrumb no topo da grade (ignora itens multilinha da grade de arquivos)
+                    // 2. Fallback Breadcrumb: busca elemento curto sem quebra de linha que contêm o nome pai
                     const breadcrumbElements = Array.from(document.querySelectorAll('div, span, p, a'))
                         .filter(el => {
                             const text = el.innerText || '';
                             return text.toUpperCase().trim().includes(clean_parent) && 
-                                   !text.includes('\\n') &&
-                                   Array.from(document.querySelectorAll('div, span, p')).some(b => b.innerText && b.innerText.includes(' > '));
+                                   text.length < 25 &&
+                                   !text.includes('\\n');
                         });
                     if (breadcrumbElements.length > 0) {
+                        breadcrumbElements.sort((a, b) => a.innerText.length - b.innerText.length);
                         breadcrumbElements[0].click();
                         return true;
                     }
@@ -331,7 +332,7 @@ class Command(BaseCommand):
                         
                         old_items_list = get_current_items()
                         
-                        # Retorno cirúrgico via Breadcrumb / Botão de voltar
+                        # Retorno cirúrgico via Breadcrumb / Botão de voltar (sem emojis e filtrando por length)
                         success_back = click_breadcrumb_parent(parent_folder_name)
                         
                         if not success_back:
