@@ -8,6 +8,7 @@ import time
 import logging
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.db import close_old_connections
 from playwright.sync_api import sync_playwright
 
 from core.models import DigitalBook
@@ -181,9 +182,19 @@ class Command(BaseCommand):
                     elif 'APUNTES' in path:
                         badge = "Apunte"
                     
-                    # Verifica se o arquivo já existe na base de dados
+                    # Verifica se o arquivo já existe na base de dados (com reconexão automática)
                     clean_title = re.sub(r'\.[a-zA-Z0-9]+$', '', file_name).strip()
-                    exists = DigitalBook.objects.filter(title=clean_title).exists()
+                    
+                    exists = False
+                    for attempt in range(3):
+                        try:
+                            close_old_connections()
+                            exists = DigitalBook.objects.filter(title=clean_title).exists()
+                            break
+                        except Exception as db_exc:
+                            if attempt == 2:
+                                self.stderr.write(f"   ⚠️ Falha definitiva ao checar existência no banco: {db_exc}")
+                            time.sleep(1)
                     
                     if exists:
                         self.stdout.write(f"   ℹ️ [EXISTE] {clean_title} já cadastrado. Pulando.")
@@ -211,19 +222,32 @@ class Command(BaseCommand):
                             self.stdout.write(f"      🔗 Link obtido: {pdf_url[:80]}...")
                             if not dry_run:
                                 year_str = f"{year}º Año"
-                                DigitalBook.objects.create(
-                                    title=clean_title,
-                                    author="Cátedra UNLP",
-                                    subject=subject,
-                                    category="Libro" if badge == "Libro" else "Apunte Completo",
-                                    pdf_url=pdf_url,
-                                    description=f"Material de estudio de {subject.upper()} para {year_str}. Migrado dinámicamente de Conecta FCM.",
-                                    status="confirmado",
-                                    year=year_str,
-                                    platform="Conecta FCM"
-                                )
-                                self.books_imported += 1
-                                self.stdout.write(f"      💾 [SALVO] {clean_title} inserido no banco.")
+                                saved = False
+                                for attempt in range(3):
+                                    try:
+                                        close_old_connections()
+                                        DigitalBook.objects.create(
+                                            title=clean_title,
+                                            author="Cátedra UNLP",
+                                            subject=subject,
+                                            category="Libro" if badge == "Libro" else "Apunte Completo",
+                                            pdf_url=pdf_url,
+                                            description=f"Material de estudio de {subject.upper()} para {year_str}. Migrado dinámicamente de Conecta FCM.",
+                                            status="confirmado",
+                                            year=year_str,
+                                            platform="Conecta FCM"
+                                        )
+                                        saved = True
+                                        break
+                                    except Exception as db_err:
+                                        self.stderr.write(f"      ⚠️ Falha ao salvar no banco, tentando reconectar: {db_err}")
+                                        time.sleep(1.5)
+                                
+                                if saved:
+                                    self.books_imported += 1
+                                    self.stdout.write(f"      💾 [SALVO] {clean_title} inserido no banco.")
+                                else:
+                                    self.stderr.write(f"      ❌ Erro definitivo ao salvar {clean_title} no banco.")
                             else:
                                 self.stdout.write(f"      🧪 [DRY-RUN] {clean_title} seria salvo.")
                         
