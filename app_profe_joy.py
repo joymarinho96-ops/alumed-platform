@@ -1,186 +1,140 @@
 import streamlit as st
 import os
-from dotenv import load_dotenv
+from supabase import create_client, Client
 from openai import OpenAI
 import anthropic
 
-# 🎨 1. Configuração da Interfaz (ALUMED OS) - Deve ser chamado antes de qualquer elemento Streamlit
-st.set_page_config(page_title="IA Profe Joy - ALUMED OS", page_icon="👩‍🏫", layout="centered")
+# 🎨 Configuración Global de la Interfaz
+st.set_page_config(page_title="ALUMED OS - Profe Joy", page_icon="👩\u200d🏫", layout="wide")
 
-# Lazy import de psycopg2 para evitar quebras de binários no Linux do Streamlit Cloud
-try:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
-    HAS_PSYCOPG = True
-except ImportError:
-    HAS_PSYCOPG = False
+# 🗂️ MENÚ DE NAVEGACIÓN LATERAL (Sidebar)
+with st.sidebar:
+    st.markdown("### 🧠 ALUMED OS")
+    pagina_seleccionada = st.radio(
+        "Navegación del Ecosistema",
+        ["💬 Chat con Profe Joy", "🚨 Pré-Parcial ALUMED (Zona de Rescate)"]
+    )
+    st.divider()
+    st.markdown("*Tu GPS Universitario para Anatomía, Histología y Embriología en la UNLP.*")
 
-# Import do Supabase SDK
-try:
-    from supabase import create_client, Client
-    HAS_SUPABASE = True
-except ImportError:
-    HAS_SUPABASE = False
-
-# Carrega as variáveis do arquivo .env automaticamente
-load_dotenv()
-
-# ⚙️ 2. Conexões ao Cérebro Central
-url_supabase = os.environ.get("SUPABASE_URL")
-key_supabase = os.environ.get("SUPABASE_KEY")
-database_url = os.environ.get("DATABASE_URL") or "postgresql://postgres:xaKXWitVrOXmyOVHRppFZPIRMmKTEegS@kodama.proxy.rlwy.net:23469/railway"
-openai_key = os.environ.get("OPENAI_API_KEY")
-anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
-
-# Verifica chaves mínimas necessárias
-if not openai_key or not anthropic_key:
-    st.error("🚨 **Error de Configuración:** Por favor, asegúrate de configurar `OPENAI_API_KEY` y `ANTHROPIC_API_KEY` en tus Secrets (Streamlit Cloud) o en tu archivo `.env` local.")
-    st.info("💡 **Tip:** Abre los Secrets de Streamlit Cloud y añade las variables de entorno.")
-    st.stop()
-
-# Inicializa clientes de APIs
-client_openai = OpenAI(api_key=openai_key)
-client_claude = anthropic.Anthropic(api_key=anthropic_key)
-
-# Determina o modo de conexão ao banco de dados RAG de forma ultra-resiliente
-db_mode = None
-supabase_client = None
-
-if url_supabase and key_supabase and HAS_SUPABASE:
+# ==========================================
+# 💬 PESTAÑA 1: CHAT CON PROFE JOY (Motor RAG)
+# ==========================================
+if pagina_seleccionada == "💬 Chat con Profe Joy":
+    st.title("✨ IA Profe Joy - Tu Inteligencia Académica 24/7")
+    
+    # Manejo seguro de las conexiones a las APIs
     try:
-        supabase_client = create_client(url_supabase, key_supabase)
-        db_mode = "supabase"
+        supabase: Client = create_client(os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY"))
+        client_openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        client_claude = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        apis_activas = True
     except Exception as e:
-        st.warning(f"⚠️ Erro ao inicializar Supabase SDK, tentando Postgres: {e}")
+        apis_activas = False
+        st.error("🚨 La IA Profe Joy está descansando. (Falta de créditos o claves API no configuradas).")
 
-if not db_mode and HAS_PSYCOPG:
-    db_mode = "postgres"
+    # Memoria del chat
+    if "mensajes" not in st.session_state:
+        st.session_state.mensajes = []
 
-if not db_mode:
-    st.error("🚨 **Error de Conectores:** No se pudo inicializar ningún conector de base de dados. "
-             "Instala `psycopg2-binary` para modo local o define `SUPABASE_URL` y `SUPABASE_KEY` para modo HTTP nube.")
-    st.stop()
+    for msg in st.session_state.mensajes:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-def buscar_documentos(vector_pregunta, match_threshold=0.3, match_count=3):
-    """Busca fragmentos relevantes de forma híbrida no Supabase (HTTP) ou Postgres (SQL)."""
-    if db_mode == "supabase":
-        try:
-            resposta = supabase_client.rpc('match_documentos', {
-                'query_embedding': vector_pregunta,
-                'match_threshold': match_threshold,
-                'match_count': match_count
-            }).execute()
-            return resposta.data
-        except Exception as e:
-            st.error(f"🚨 **Error en consulta RAG Supabase:** {e}")
-            return []
-    elif db_mode == "postgres":
-        try:
-            conn = psycopg2.connect(database_url)
-            cur = conn.cursor(cursor_factory=RealDictCursor)
-            cur.execute("""
-                SELECT id, titulo, conteudo, materia, url_wix, similarity
-                FROM match_documentos(%s::vector, %s, %s);
-            """, (vector_pregunta, match_threshold, match_count))
-            rows = cur.fetchall()
-            cur.close()
-            conn.close()
-            return rows
-        except Exception as e:
-            st.error(f"🚨 **Error en consulta RAG Postgres:** {e}")
-            return []
-    return []
+    pregunta_alumno = st.chat_input("Escribe tu duda médica aquí...")
 
-st.title("✨ IA Profe Joy - Tu Inteligencia Académica 24/7")
-st.markdown("Tu GPS Universitario para Anatomía, Histología y Embriología en la UNLP.")
+    if pregunta_alumno and apis_activas:
+        with st.chat_message("user"):
+            st.markdown(pregunta_alumno)
+        st.session_state.mensajes.append({"role": "user", "content": pregunta_alumno})
 
-# Memoria del chat en Streamlit
-if "mensajes" not in st.session_state:
-    st.session_state.mensajes = []
+        with st.chat_message("assistant"):
+            with st.spinner("Analizando la biblioteca ALUMED..."):
+                try:
+                    # RAG Pipeline (Protegido contra falta de créditos)
+                    respuesta_embed = client_openai.embeddings.create(input=pregunta_alumno, model="text-embedding-3-small")
+                    vector_pregunta = respuesta_embed.data.embedding
 
-# Renderiza histórico de chat
-for msg in st.session_state.mensajes:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# 💬 3. Interceptando la pregunta del estudante
-pregunta_alumno = st.chat_input("Escribe tu duda médica aquí...")
-
-if pregunta_alumno:
-    # Mostrar la pregunta en pantalla
-    with st.chat_message("user"):
-        st.markdown(pregunta_alumno)
-    st.session_state.mensajes.append({"role": "user", "content": pregunta_alumno})
-
-    with st.chat_message("assistant"):
-        with st.spinner("Analizando la biblioteca ALUMED..."):
-            try:
-                # 🧠 Fase A: Transformar la pregunta en vetor
-                resposta_embed = client_openai.embeddings.create(
-                    input=pregunta_alumno,
-                    model="text-embedding-3-small"
-                )
-                vector_pregunta = resposta_embed.data.embedding
-
-                # 🔎 Fase B: Búsqueda Semántica Híbrida
-                resultados_rag = buscar_documentos(
-                    vector_pregunta, 
-                    match_threshold=0.3, 
-                    match_count=3
-                )
-
-                contexto_medico = ""
-                enlaces_fuente = []
-                
-                if resultados_rag:
-                    for doc in resultados_rag:
-                        contexto_medico += f"Extracto de {doc['titulo']} (Materia: {doc.get('materia', 'Medicina')}):\n{doc['conteudo']}\n\n"
-                        if doc.get('url_wix'):
+                    resultados_rag = supabase.rpc('match_documentos', {'query_embedding': vector_pregunta, 'match_threshold': 0.75, 'match_count': 3}).execute()
+                    
+                    contexto_medico = ""
+                    enlaces_fuente = []
+                    if resultados_rag.data:
+                        for doc in resultados_rag.data:
+                            contexto_medico += f"Extracto de {doc['titulo']}:\n{doc['conteudo']}\n\n"
                             enlaces_fuente.append(f"- **Fuente Oficial:** [{doc['titulo']}]({doc['url_wix']})")
 
-                # 🛡️ Fase C: Aislamiento de Contexto (Blindaje anti-alucinación)
-                prompt_sistema = f"""
-                Asumes el rol de IA Profe Joy, el motor definitivo de ALUMED OS.
-                Sua missão não é apenas responder perguntas: você acompanha, ensina e ajuda estudantes do primeiro ano de Medicina da UNLP a compreender de verdade as matérias.
-                
-                PERSONALIDAD:
-                - Habla en español, adaptado a la Facultad de Ciencias Médicas de la UNLP (español argentino).
-                - Tu tono debe ser sumamente afectuoso, empático, motivador y lúdico ("GPS Universitario").
-                - Puedes llamar al alumno: "corazón", "mis amores", "doc".
-                - A veces finaliza frases con: "allright", "¿entendiste, sí o no?", "¿pudiste?", "estoy eh".
-                
-                REGLA CRÍTICA: Responde ÚNICAMENTE utilizando el contexto de la biblioteca. 
-                Si la respuesta no se encuentra en el contexto, responde exactamente: "Corazón, todavía no tengo PDFs cargados sobre este tema 😢, pero podemos trabajarlo juntos con lo que sé. Mientras tanto, pedile al administrador que suba el material para darte una explicación más completa."
-                Luego, puedes complementar brevemente la explicación utilizando conocimiento científico general.
-                
-                CONTEXTO DE LA BIBLIOTECA ALUMED:
-                {contexto_medico}
-                """
+                    prompt_sistema = f"Asumes el rol de IA Profe Joy de ALUMED OS. Responde ÚNICAMENTE usando este contexto:\n{contexto_medico}"
 
-                # ⚡ Fase D: Claude procesa y redacta
-                respuesta_claude = client_claude.messages.create(
-                    model="claude-3-5-sonnet-20240620",
-                    max_tokens=1500,
-                    system=prompt_sistema,
-                    messages=[{"role": "user", "content": pregunta_alumno}]
-                )
-
-                respuesta_final = respuesta_claude.content[0].text
-
-                # 🔗 Fase E: Inyección cruzada y links de descarga
-                if enlaces_fuente:
-                    respuesta_final += "\n\n---\n### 📚 Enlaces de Descarga Directa\n"
-                    respuesta_final += "\n".join(list(set(enlaces_fuente)))
+                    respuesta_claude = client_claude.messages.create(
+                        model="claude-3-5-sonnet-20240620", max_tokens=1500, system=prompt_sistema,
+                        messages=[{"role": "user", "content": pregunta_alumno}]
+                    )
                     
-                    # Efecto Ecosistema: Venta cruzada
-                    respuesta_final += "\n\n💡 *Tip ALUMED: ¿Quieres consolidar este tema? Te recomiendo practicar la visualización interactiva en el Microscopio Virtual o blindar tu preparação en la pestaña PRÉ-PARCIAL ALUMED.*"
-                else:
-                    if "todavía no tengo PDFs cargados" not in respuesta_final:
-                        respuesta_final += "\n\n💡 *Tip ALUMED: Te recomiendo practicar la visualización interactiva en el Microscopio Virtual o repasar los atlas de anatomía 3D en la plataforma.*"
+                    respuesta_final = respuesta_claude.content.text
+                    if enlaces_fuente:
+                        respuesta_final += "\n\n---\n### 📚 Enlaces de Descarga\n" + "\n".join(list(set(enlaces_fuente)))
+                        
+                    st.markdown(respuesta_final)
+                    st.session_state.mensajes.append({"role": "assistant", "content": respuesta_final})
+                    
+                except Exception as e:
+                    st.error(f"⚠️ Hubo un error procesando tu consulta con la IA. Por favor verifica los créditos de las APIs. Detalle: {e}")
 
-                # Renderizar en la UI
-                st.markdown(respuesta_final)
-                st.session_state.mensajes.append({"role": "assistant", "content": respuesta_final})
-                
-            except Exception as e:
-                st.error(f"🚨 **Error durante el procesamiento:** {e}")
+# ==========================================
+# 🚨 PESTAÑA 2: PRÉ-PARCIAL ALUMED (Conversión)
+# ==========================================
+elif pagina_seleccionada == "🚨 Pré-Parcial ALUMED (Zona de Rescate)":
+    st.markdown("## 🚨 PRÉ-PARCIAL ALUMED: Tu zona de rescate antes del parcial")
+    st.markdown("*Primero entendé cómo explicamos. Después decidís hasta dónde querés llegar.*")
+    st.divider()
+
+    # 🎬 FASE 1: A Isca de Conteúdo
+    st.markdown("### 🎬 Clases de Rescate Gratuitas")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.video(os.environ.get("URL_VIDEO_TEJIDO_NERVIOSO", "https://www.youtube.com/watch?v=dQw4w9WgXcQ")) 
+        st.info("**Histología:** Tejido nervioso parte 1 y 2")
+        
+    with col2:
+        st.video(os.environ.get("URL_VIDEO_MEMBRANA", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+        st.info("**Biología:** Transporte de Membrana - Parte 1")
+
+    with col3:
+        st.video(os.environ.get("URL_VIDEO_EMBRIO", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+        st.info("**Embriología:** Repaso Embrio - HYE 1er Parcial")
+
+    st.divider()
+
+    # 🎯 FASE 2: A Segmentação Cirúrgica (Venta Cruzada)
+    st.markdown("### ⚡ Seguí preparando este parcial (Intensivos 4ta Fecha)")
+    st.markdown("Elegí tu materia o cátedra. Nosotros tenemos el mapa exacto para vos.")
+
+    tab_anato, tab_histo, tab_bio = st.tabs(["🦴 Anatomía", "🧫 Histo y Embrio", "🦠 Biología"])
+
+    with tab_anato:
+        st.markdown("#### ¿En qué cátedra cursás?")
+        colA, colB, colC = st.columns(3)
+        with colA:
+            st.success("ANATOMÍA CÁTEDRA A | 2026")
+            st.write("**$ 25.800,00**")
+            st.link_button("Prepararme para Cátedra A", os.environ.get("LINK_CHECKOUT_CATEDRA_A", "#"), use_container_width=True)
+        with colB:
+            st.success("ANATOMÍA CÁTEDRA B 🧠")
+            st.write("**$ 25.800,00**")
+            st.link_button("Prepararme para Cátedra B", os.environ.get("LINK_CHECKOUT_CATEDRA_B", "#"), use_container_width=True)
+        with colC:
+            st.success("ANATOMÍA CÁTEDRA C")
+            st.write("**$ 25.800,00**")
+            st.link_button("Prepararme para Cátedra C", os.environ.get("LINK_CHECKOUT_CATEDRA_C", "#"), use_container_width=True)
+
+    with tab_histo:
+        st.info("HISTO Y EMBRIO - CURSO ANUAL 2026 🔬 UNLP")
+        st.write("**$ 24.300,00**")
+        st.link_button("Continuar mi preparación en Histo y Embrio", os.environ.get("LINK_CHECKOUT_HISTO", "#"), use_container_width=True)
+
+    with tab_bio:
+        st.info("BIOLOGIA - CURSO ANUAL 2026 🦠 UNLP")
+        st.write("**$ 22.800,00**")
+        st.link_button("Ver recorrido completo de Biología", os.environ.get("LINK_CHECKOUT_BIO", "#"), use_container_width=True)
