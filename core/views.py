@@ -339,7 +339,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
             print("DB fallback failed:", e)
             pass
 
-        if not questions and base_subject == "Anatomía":
+        if not questions and mapped_subject == "Anatomía Cátedra C":
             questions = [
                 type('obj', (object,), {
                     'id': 1,
@@ -390,6 +390,114 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'option_d': "Parieto-occipital",
                     'correct_option': "B",
                     'explanation': "El lóbulo de la ínsula está oculto en el fondo del surco lateral o cisura de Silvio."
+                })
+            ]
+            
+        elif not questions and mapped_subject == "Anatomía Cátedra A":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "El polígono de Willis (Círculo arterial cerebral) se forma principalmente por la anastomosis de:",
+                    'option_a': "Arterias vertebrales y arterias cerebelosas.",
+                    'option_b': "Arterias carótidas externas y arterias vertebrales.",
+                    'option_c': "Arterias carótidas internas y arterias vertebrales (sistema vertebrobasilar).",
+                    'option_d': "Arterias meníngeas medias y carótidas internas.",
+                    'correct_option': "C",
+                    'explanation': "El polígono de Willis resulta de la unión de los sistemas carotídeo interno y vertebrobasilar en la base del cerebro."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "En la vía piramidal (haz corticoespinal), la decusación de la mayor parte de las fibras ocurre a nivel de:",
+                    'option_a': "La protuberancia.",
+                    'option_b': "El bulbo raquídeo (pirámides bulbares).",
+                    'option_c': "La médula espinal (comisura blanca anterior).",
+                    'option_d': "El mesencéfalo (pedúnculos cerebrales).",
+                    'correct_option': "B",
+                    'explanation': "El 75-90% de las fibras del haz corticoespinal se decusan en el límite inferior del bulbo raquídeo (decusación piramidal)."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "La vena porta hepática se forma típicamente por la unión de:",
+                    'option_a': "Vena mesentérica superior y tronco esplenomesentérico (vena esplénica + VMI).",
+                    'option_b': "Vena cava inferior y vena esplénica.",
+                    'option_c': "Venas hepáticas derecha e izquierda.",
+                    'option_d': "Vena gástrica izquierda y vena mesentérica superior.",
+                    'correct_option': "A",
+                    'explanation': "La vena porta se forma detrás del cuello del páncreas por la confluencia de la vena mesentérica superior y el tronco esplenomesentérico."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "¿Qué estructura forma el límite anterior del foramen epiploico (Hiato de Winslow)?",
+                    'option_a': "Vena cava inferior.",
+                    'option_b': "Peritoneo parietal posterior.",
+                    'option_c': "Pedículo hepático (en el borde libre del epiplón menor).",
+                    'option_d': "Lóbulo caudado del hígado.",
+                    'correct_option': "C",
+                    'explanation': "El límite anterior del foramen omental está dado por el ligamento hepatoduodenal que contiene al pedículo hepático."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "El bronquio principal derecho se diferencia del izquierdo en que es:",
+                    'option_a': "Más largo, más horizontal y de menor calibre.",
+                    'option_b': "Más corto, más vertical y de mayor calibre.",
+                    'option_c': "Más largo, más vertical y de mayor calibre.",
+                    'option_d': "Más corto, más horizontal y de menor calibre.",
+                    'correct_option': "B",
+                    'explanation': "El bronquio derecho es más corto, ancho y vertical (casi continuación de la tráquea), lo que facilita que los cuerpos extraños se alojen allí."
+                })
+            ]
+            
+        elif not questions and mapped_subject == "Anatomía Cátedra B":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "El nervio mediano se forma a partir de:",
+                    'option_a': "El fascículo posterior del plexo braquial exclusivamente.",
+                    'option_b': "La unión de una raíz del fascículo lateral y una raíz del fascículo medial.",
+                    'option_c': "La unión de las raíces C5 y C6.",
+                    'option_d': "El fascículo medial del plexo braquial exclusivamente.",
+                    'correct_option': "B",
+                    'explanation': "El nervio mediano se forma por delante de la arteria axilar por la unión de la raíz lateral (del fascículo lateral) y la raíz medial (del fascículo medial)."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "¿Cuál de los siguientes músculos NO pertenece al manguito de los rotadores?",
+                    'option_a': "Supraespinoso.",
+                    'option_b': "Infraespinoso.",
+                    'option_c': "Redondo mayor.",
+                    'option_d': "Subescapular.",
+                    'correct_option': "C",
+                    'explanation': "El manguito rotador está formado por el supraespinoso, infraespinoso, redondo menor y subescapular. El redondo mayor no forma parte de este complejo."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "En la articulación coxofemoral, el ligamento más potente y que evita la hiperextensión de la cadera es:",
+                    'option_a': "Ligamento iliofemoral (Y de Bertin).",
+                    'option_b': "Ligamento pubofemoral.",
+                    'option_c': "Ligamento isquiofemoral.",
+                    'option_d': "Ligamento redondo (de la cabeza del fémur).",
+                    'correct_option': "A",
+                    'explanation': "El ligamento iliofemoral tiene forma de Y o V invertida; es el ligamento más fuerte del cuerpo y su función principal es limitar la extensión de la cadera."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "La arteria mesentérica inferior irriga principalmente:",
+                    'option_a': "Yeyuno, íleon y mitad derecha del colon.",
+                    'option_b': "Duodeno y páncreas.",
+                    'option_c': "Estómago y bazo.",
+                    'option_d': "Tercio distal del colon transverso, colon descendente, colon sigmoideo y parte superior del recto.",
+                    'correct_option': "D",
+                    'explanation': "La AMI se encarga de la irrigación del intestino grueso izquierdo (derivados del intestino posterior embrionario)."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "¿Qué arterias forman la curvatura menor del estómago (Círculo arterial de la curvatura menor)?",
+                    'option_a': "Arteria gástrica derecha (pilórica) y arteria gástrica izquierda (coronaria estomáquica).",
+                    'option_b': "Arteria gastroomental derecha e izquierda.",
+                    'option_c': "Arterias gástricas cortas.",
+                    'option_d': "Arteria esplénica y arteria hepática común.",
+                    'correct_option': "A",
+                    'explanation': "El arco vascular de la curvatura menor está formado por la anastomosis entre la arteria gástrica izquierda (rama del tronco celíaco) y la derecha (rama de la hepática propia)."
                 })
             ]
             
