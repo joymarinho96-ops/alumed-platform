@@ -4,1523 +4,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard - ALUMED{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{% block title %}ALUMED OS Dashboard{% endblock %}</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Bootstrap 5 + Chartist (arquivos locais) -->
-    <link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/plugins/chartist-js/dist/chartist.min.css' %}" rel="stylesheet">
+
+    {% block extra_head %}{% endblock %}
 
     <style>
-        /* --- PALETA DE CORES HARMONIZADA (ALUMED PREMIUM) --- */
+        /* ==========================================
+           VARIABLES Y RESET
+           ========================================== */
         :root {
-            /* Base Roxa Escura */
-            --bg: #120924;
-            --panel: rgba(30, 17, 59, 0.85);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #f8fafc;
-            --muted: #94a3b8;
-
-            /* Cores de Destaque */
-            --accent: #FFE600; /* Amarelo Brilhante Oficial */
-            --accent-hover: #FFF066;
-            --dourado: #FFE600;
-            --laranja: #f97316;
-
-            /* Cores de Cards (CRÍTICO - cards brancos premium) */
-            --branco: #ffffff;
-            --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --card-text: #0f172a;
-            --card-subtext: #475569;
-            
-            /* Cores Secundárias */
-            --roxo-neon: #7c3aed;
-            --roxo-mid: #1e113b;
-            --ciano-neon: #00d4ff;
-            --green: #10b981;
-            --danger: #ef4444;
-            --blue: #7c3aed;
-
-            /* Utilitários de Sombra e Espaçamento */
-            --sombra-suave: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-            --sombra-media: 0 10px 25px rgba(0,0,0,0.10);
-            --raio: 20px;
+            --bg-dark: #0B0C10;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --purple-main: #8a2be2;
+            --gold-main: #ffd700;
+            --text-light: #ffffff;
+            --text-muted: #a0aec0;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); height: 100vh; overflow: hidden; display: flex; }
+        a { text-decoration: none; color: inherit; }
 
-        * { box-sizing: border-box; font-family: "Outfit", "Poppins", sans-serif; }
-
-        body {
-            margin: 0;
-            background: radial-gradient(ellipse at top left, #1e0f40 0%, #0f061d 60%, #120924 100%);
-            color: var(--text);
-            overflow-x: hidden;
-            padding-top: 80px; /* Space for Top Nav */
-        }
-
-        .app { display: flex; min-height: calc(100vh - 80px); position: relative; }
-
-        /* --- TOP NAV (MENU SUPERIOR) --- */
-        .top-navbar {
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background: transparent;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid transparent;
-        }
-
-        .top-navbar.scrolled {
-            background: linear-gradient(135deg, rgba(18, 9, 36, 0.7) 0%, rgba(30, 17, 59, 0.8) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        /* --- GLASSMORPHISM CLASSES --- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            color: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-card.simulacro:hover {
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(138, 43, 226, 0.4);
-            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.2);
-        }
-
-        .glass-card.radar {
-            animation: pulsar-radar 3s infinite alternate;
-        }
-
-        @keyframes pulsar-radar {
-            0% { box-shadow: 0 0 15px rgba(255, 165, 0, 0.1); }
-            100% { box-shadow: 0 0 25px rgba(255, 165, 0, 0.4); }
-        }
-
-        .glass-card.joy-glow {
-            animation: pulsar-joy 3s infinite alternate;
-            background: linear-gradient(135deg, rgba(30, 17, 59, 0.6), rgba(124, 58, 237, 0.15));
-        }
-
-        @keyframes pulsar-joy {
-            0% { box-shadow: 0 0 15px rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.2); }
-            100% { box-shadow: 0 0 30px rgba(255, 230, 0, 0.15), 0 0 20px rgba(124, 58, 237, 0.3); border-color: rgba(124, 58, 237, 0.5); }
-        }
-
-        .top-nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: #fff;
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .top-nav-brand i { color: var(--accent); }
-
-        .top-nav-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 6px;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .top-nav-links a {
-            color: #c0cbe0;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            padding: 10px 18px;
-            border-radius: 999px;
-            transition: all 0.2s;
-        }
-
-        .top-nav-links a:hover {
-            color: #fff;
-            background: rgba(124, 58, 237, 0.2);
-        }
-
-        .top-nav-links a.active {
-            color: #fff;
-            background: linear-gradient(135deg, var(--roxo-neon), #4f46e5);
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-        }
-
-        .top-nav-links a.conecta {
-            color: var(--accent);
-        }
-        .top-nav-links a.conecta:hover, .top-nav-links a.conecta.active {
-            background: rgba(255, 230, 0, 0.15);
-            box-shadow: 0 4px 15px rgba(255, 230, 0, 0.2);
-        }
-
-        /* SIDEBAR (ALUMED PREMIUM) */
+        /* ==========================================
+           SIDEBAR (MENÚ LATERAL)
+           ========================================== */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #180d30, #0f061d);
-            border-right: 1px solid rgba(255, 230, 0, 0.15);
-            padding: 24px;
-            display: flex; flex-direction: column;
-            position: fixed; height: calc(100vh - 80px); top: 80px; z-index: 100;
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 8px 0 30px rgba(0,0,0,0.35);
-        }
-
-        .sidebar-brand {
-            margin-bottom: 16px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(255, 230, 0, 0.15);
-        }
-
-        .sidebar-brand .brand-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #f8fafc;
-            font-family: "Outfit", sans-serif;
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-
-        .sidebar-brand .brand-row i {
-            color: var(--accent); /* Ícono amarillo brillante */
-            font-size: 1.4rem;
-        }
-
-        .sidebar-premium {
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: rgba(255, 230, 0, 0.15);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        /* Sidebar Profile */
-        .sidebar-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-        }
-        
-        .sidebar-profile .avatar-circle {
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--roxo-mid), var(--roxo-neon));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: white; font-size: 1.1rem;
-            overflow: hidden; border: 2px solid rgba(255,255,255,0.2);
-            flex-shrink: 0;
-        }
-        
-        .sidebar-profile .avatar-circle img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
-        .sidebar-profile-info {
-            display: flex; flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .sidebar-profile-name {
-            color: white; font-weight: 700; font-size: 1rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        
-        .sidebar-profile-role {
-            color: var(--muted); font-size: 0.8rem;
-        }
-
-        .sidebar nav {
-            flex-grow: 1;
+            width: 250px;
+            background: var(--glass-bg);
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+            padding: 20px 0;
+            height: 100%;
         }
-
-        .sidebar nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-        }
-
-        .sidebar nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .sidebar nav a {
-            display: flex; align-items: center; gap: 12px;
-            color: #c0cbe0;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            border: 1px solid transparent;
-            position: relative; /* Para o badge */
-            font-weight: 500;
-        }
-
-        .sidebar nav a:hover {
-            background: rgba(124, 58, 237, 0.15);
-            color: #ffffff;
-            border-color: rgba(255, 230, 0, 0.35);
-        }
-
-        .sidebar nav a.active {
-            background: linear-gradient(135deg, var(--roxo-neon), #4f46e5);
-            color: #ffffff;
-            border: 1px solid var(--accent);
-            font-weight: 600;
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
-        }
-
-        .sidebar nav a i {
-            transition: transform 0.2s ease;
-        }
-
-        .sidebar nav a:hover i, .sidebar nav a.active i {
-            transform: scale(1.1);
-            color: var(--accent); /* Cambia el icono a amarillo al estar activo o en hover */
-        }
-
-        /* Badge de Notificação (Estilo WhatsApp) */
-        .notification-badge {
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            background-color: var(--green); /* Verde WhatsApp */
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 12px;
-            min-width: 20px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            display: none; /* Oculto por padrão */
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .notification-badge.active {
-            display: inline-block;
-        }
-
-        @keyframes popIn {
-            from { transform: translateY(-50%) scale(0); }
-            to { transform: translateY(-50%) scale(1); }
-        }
-
-        /* MAIN */
-        .main {
-            flex: 1;
-            padding: 32px 40px;
-            margin-left: 280px;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        /* --- CARDS GERAIS (ALUMED PREMIUM - SOLID WHITE STYLE) --- */
-        .card {
-            background: var(--branco);
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 24px;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-            display: flex; flex-direction: column;
-            position: relative; overflow: hidden;
-            color: #475569; /* Slate 600 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-            /* Animação de entrada */
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(124, 58, 237, 0.2);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+        .sidebar-logo { font-size: 20px; font-weight: 800; color: var(--gold-main); padding: 0 20px 20px; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px;}
+        .sidebar-logo span { color: var(--text-light); }
         
-        /* Ajustes de texto para cards claros */
-        .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: #0f172a !important; }
-        .card p, .card span, .card div { color: #475569; }
+        .menu-section { padding: 0 20px; margin-bottom: 30px; }
+        .menu-section h4 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px;}
+        .menu-list { list-style: none; }
+        .menu-list li { margin-bottom: 10px; }
+        .menu-list a { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 10px; border-radius: 8px; transition: 0.3s; color: var(--text-muted); }
+        .menu-list a:hover, .menu-list a.active { background: rgba(138, 43, 226, 0.15); color: var(--text-light); }
+        .menu-conecta a:hover { background: rgba(255, 215, 0, 0.1); color: var(--gold-main); }
 
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        /* ==========================================
+           CONTENIDO PRINCIPAL
+           ========================================== */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-        /* MOBILE MENU TOGGLE */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: var(--panel);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
+        /* TOP NAV */
+        .topnav { height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(10px); }
+        .nav-pills { display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        .nav-pills a { padding: 8px 20px; border-radius: 50px; font-size: 14px; transition: 0.3s; }
+        .nav-pills a.active { background: var(--purple-main); font-weight: bold; }
+        .user-profile { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--purple-main); display: flex; justify-content: center; align-items: center; font-weight: bold;}
 
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 90;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+        /* DASHBOARD SCROLL AREA */
+        .dashboard-content { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 30px; }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .sidebar { 
-                transform: translateX(-100%); 
-                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            }
-            .sidebar.active { transform: translateX(0); }
-            
-            .main { margin-left: 0; padding: 80px 20px 20px; } /* Padding top para o botão */
-            
-            .mobile-menu-toggle { display: block; }
-            
-            .sidebar-overlay.active { display: block; opacity: 1; }
+        /* ==========================================
+           COMPONENTES DEL GRID
+           ========================================== */
+        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; backdrop-filter: blur(16px); }
+        
+        .top-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        
+        /* HERO */
+        .hero-card { background: linear-gradient(135deg, rgba(138,43,226,0.1), rgba(0,0,0,0)); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; min-height: 250px;}
+        .hero-title { font-size: 36px; font-weight: 800; margin-bottom: 10px; line-height: 1.2; z-index: 2;}
+        .hero-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 30px; max-width: 80%; z-index: 2;}
+        .hero-buttons { display: flex; gap: 15px; z-index: 2;}
+        .btn-primary { background: var(--purple-main); color: white; padding: 12px 25px; border-radius: 12px; font-weight: 600; display: inline-block; text-align: center; border: none; cursor: pointer;}
+        .btn-outline { background: transparent; border: 1px solid var(--purple-main); color: white; padding: 12px 25px; border-radius: 12px; font-weight: 600; display: inline-block; text-align: center; border: none; cursor: pointer;}
+        .btn-outline-purple { background: transparent; border: 1px solid var(--purple-main); color: white; padding: 12px 25px; border-radius: 12px; font-weight: 600; display: inline-block; text-align: center; transition: 0.3s; }
+        .btn-outline-purple:hover { background: rgba(138,43,226,0.2); }
+
+        /* CONECTA RADAR */
+        .radar-card { border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.05); }
+        .radar-card h3 { color: var(--gold-main); font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
+        .radar-alert h4 { font-size: 18px; margin-bottom: 10px; }
+        .badge-gold { background: linear-gradient(135deg, #ff8c00, #ffd700); color: black; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+        .btn-gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: black; padding: 12px; border-radius: 12px; font-weight: bold; text-align: center; display: block; margin-top: 20px; border: none; cursor: pointer;}
+
+        /* SIMULACROS GRID */
+        .section-title { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .curso-card { padding: 20px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); transition: 0.3s; }
+        .curso-card:hover { transform: translateY(-5px); border-color: var(--purple-main); }
+        .curso-card h4 { font-size: 16px; margin-bottom: 5px; }
+        .curso-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; }
+        .badge-purple { background: rgba(138,43,226,0.2); color: #dda0dd; padding: 4px 10px; border-radius: 10px; font-size: 11px; }
+
+        @media (max-width: 968px) {
+            body { flex-direction: column; overflow: auto; height: auto; }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--glass-border); }
+            .top-grid { grid-template-columns: 1fr; }
+            .main-wrapper { overflow: visible; height: auto; }
+            .dashboard-content { overflow: visible; }
         }
     </style>
-    {% block extra_head %}{% endblock %}
 </head>
 <body>
 
-<!-- TOP NAVBAR (Mundos) -->
-<nav class="top-navbar">
-    <a href="{% url 'home' %}" class="top-nav-brand">
-        <i class="fas fa-layer-group"></i> ALUMED OS
-    </a>
+<!-- SIDEBAR IZQUIERDO -->
+<aside class="sidebar">
+    <div class="sidebar-logo"><span>ALUMED</span> OS</div>
     
-    <div class="top-nav-links">
-        <a href="{% url 'home' %}">Inicio</a>
-        <a href="https://www.alumedestudiantes.com/miscursos" target="_blank">Cursos</a>
-        <a href="{% url 'student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">Dashboard</a>
-        <a href="{% url 'conecta_biblioteca' %}">Biblioteca</a>
-        <a href="#" onclick="toggleProfeJoyChat(); return false;">IA Profe Joy</a>
-        <a href="{% url 'conecta_dashboard' %}" class="conecta">Conecta FCM</a>
+    <div class="menu-section">
+        <ul class="menu-list">
+            <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 Inicio</a></li>
+            <li><a href="https://www.alumedestudiantes.com/miscursos" target="_blank">📚 Mis cursos</a></li>
+            <li><a href="{% url 'simulacros' %}" class="{% if request.resolver_match.url_name == 'simulacros' %}active{% endif %}">🎯 Simulacros</a></li>
+            <li><a href="{% url 'conecta_biblioteca' %}">📁 Biblioteca</a></li>
+            <li><a href="{% url 'microscopio_virtual' %}">🔬 Microscopio</a></li>
+            <li><a href="{% url 'anatomia_3d' %}">🦴 Atlas 3D</a></li>
+            <li><a href="{% url 'profe_joy' %}">👩‍🏫 IA Profe Joy</a></li>
+        </ul>
     </div>
 
-    <div class="top-nav-profile">
-        <!-- Auth Profile Dropdown can go here -->
+    <!-- HEMISFERIO DORADO EN EL MENU -->
+    <div class="menu-section menu-conecta">
+        <h4 style="color: var(--gold-main);">⚡ Conecta FCM</h4>
+        <ul class="menu-list">
+            <li><a href="{% url 'cartelera_view' %}">📢 Cartelera en Vivo</a></li>
+            <li><a href="{% url 'cronograma_finales' %}">📅 Parciales y Finales</a></li>
+            <li><a href="{% url 'comisiones' %}">👥 Comisiones</a></li>
+            <li><a href="{% url 'cronograma_tps' %}">⏱️ Horarios</a></li>
+            <li><a href="{% url 'mapa_facultad' %}">📍 Mapa Facultad</a></li>
+        </ul>
     </div>
-</nav>
+</aside>
 
-<div class="app">
-    <!-- MOBILE MENU TOGGLE -->
-    <button class="mobile-menu-toggle" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-    </button>
+<!-- CONTENIDO CENTRAL -->
+<div class="main-wrapper">
+    
+    <!-- TOP NAV -->
+    <nav class="topnav">
+        <div class="nav-pills">
+            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a>
+            <a href="https://www.alumedestudiantes.com/miscursos" target="_blank">Cursos</a>
+            <a href="{% url 'simulacros' %}" class="{% if request.resolver_match.url_name == 'simulacros' %}active{% endif %}">Simulacros</a>
+            <a href="{% url 'conecta_biblioteca' %}">Biblioteca</a>
+            <a href="{% url 'profe_joy' %}">IA Profe Joy</a>
+            <a href="{% url 'conecta_fcm' %}">Conecta FCM</a>
+        </div>
+        <div class="user-profile">
+            <span>🔔</span>
+            <span>📅</span>
+            <div class="user-avatar">
+                <img src="{% static 'img/profe_joy_avatar.png' %}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            </div>
+            <span>¡Hola, Alumno! <br><small style="color:var(--text-muted);">Mi perfil ⌄</small></span>
+        </div>
+    </nav>
 
-    <!-- SIDEBAR OVERLAY -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- SIDEBAR -->
-    {% block sidebar_content %}
-        {% include 'components/sidebar.html' %}
-    {% endblock %}
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
+    <!-- DASHBOARD SCROLL AREA -->
+    <main class="dashboard-content">
         {% block main_content %}{% endblock %}
     </main>
 </div>
 
-<!-- CHATMED FLOATING ICON -->
-<!-- Verifica se o usuário está logado E se NÃO está na página do curso 9 -->
-{% if request.user.is_authenticated and '/courses/9/' not in request.path and '/cursos/9/' not in request.path %}
-<div id="chatmed-floating-icon" class="chatmed-floating-icon">
-    <i class="fas fa-comments"></i>
-    <div class="chatmed-tooltip" id="chatmed-tooltip">
-        <span id="chatmed-tooltip-text">Chatmed</span>
-    </div>
-    <span class="chatmed-badge" id="chatmed-badge" style="display: none;">0</span>
-</div>
-
-<!-- CHATMED POPUP CONTAINER -->
-<div id="chatmed-popup-container" class="chatmed-popup-container">
-    <div class="chatmed-popup-header">
-        <span>Chatmed</span>
-        <button onclick="toggleChatmedPopup()" class="close-chat-btn"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="chatmed-popup-body">
-        <iframe src="{% url 'chatmed' %}" id="chatmed-iframe" frameborder="0"></iframe>
-    </div>
-</div>
-
-<style>
-    .chatmed-floating-icon {
-        position: fixed;
-        bottom: 90px; /* Acima do WhatsApp se houver, ou ajustável */
-        right: 30px;
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #9d00ff, #4a0075);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 24px;
-        box-shadow: 0 10px 25px rgba(157, 0, 255, 0.4);
-        cursor: pointer;
-        z-index: 999;
-        transition: transform 0.3s, box-shadow 0.3s;
-        /* Impede seleção de texto ao arrastar */
-        user-select: none;
-        touch-action: none; /* Importante para drag no mobile */
-    }
-
-    .chatmed-floating-icon:hover {
-        transform: scale(1.1);
-        box-shadow: 0 15px 35px rgba(157, 0, 255, 0.6);
-    }
-
-    .chatmed-floating-icon:active {
-        transform: scale(0.95);
-    }
-
-    .chatmed-badge {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: #ef4444;
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 4px 8px;
-        border-radius: 50%;
-        border: 2px solid #0f0518;
-        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        pointer-events: none;
-    }
-
-    .chatmed-tooltip {
-        position: absolute;
-        right: 70px;
-        background: white;
-        color: #333;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateX(10px);
-        transition: all 0.3s ease;
-        pointer-events: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .chatmed-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: -6px;
-        transform: translateY(-50%);
-        border-width: 6px;
-        border-style: solid;
-        border-color: transparent transparent transparent white;
-    }
-
-    .chatmed-floating-icon:hover .chatmed-tooltip,
-    .chatmed-floating-icon.has-new-message .chatmed-tooltip {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(0);
-    }
-
-    /* POPUP STYLES */
-    .chatmed-popup-container {
-        position: fixed;
-        bottom: 100px;
-        right: 30px;
-        width: 380px;
-        height: 550px;
-        background: #0f0518;
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        box-shadow: 0 15px 50px rgba(0,0,0,0.5);
-        z-index: 998;
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-        animation: slideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .chatmed-popup-container.active {
-        display: flex;
-    }
-
-    .chatmed-popup-header {
-        background: linear-gradient(135deg, #4a0075, #240b3b);
-        padding: 12px 16px;
-        color: white;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .close-chat-btn {
-        background: none;
-        border: none;
-        color: rgba(255,255,255,0.7);
-        cursor: pointer;
-        font-size: 1.1rem;
-        transition: color 0.2s;
-    }
-    .close-chat-btn:hover { color: white; }
-
-    .chatmed-popup-body {
-        flex: 1;
-        background: #0f0518;
-    }
-
-    #chatmed-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* RESPONSIVE POPUP */
-    @media (max-width: 480px) {
-        .chatmed-popup-container {
-            width: 100%;
-            height: 100%;
-            bottom: 0;
-            right: 0;
-            border-radius: 0;
-        }
-        .chatmed-floating-icon {
-            /* Oculta o botão flutuante quando o popup está aberto em tela cheia no mobile */
-            z-index: 997;
-        }
-    }
-</style>
-
-<script>
-    function toggleChatmedPopup() {
-        const popup = document.getElementById('chatmed-popup-container');
-        const icon = document.getElementById('chatmed-floating-icon');
-        const body = document.body;
-
-        if (popup.classList.contains('active')) {
-            popup.classList.remove('active');
-            body.classList.remove('chat-open'); // Remove classe para controle do pomodoro
-        } else {
-            popup.classList.add('active');
-            body.classList.add('chat-open'); // Adiciona classe para controle do pomodoro
-            // Remove notificação visual ao abrir
-            icon.classList.remove('has-new-message');
-            document.getElementById('chatmed-badge').style.display = 'none';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const badge = document.getElementById('chatmed-badge');
-        const tooltip = document.getElementById('chatmed-tooltip');
-        const tooltipText = document.getElementById('chatmed-tooltip-text');
-        const icon = document.getElementById('chatmed-floating-icon');
-        let lastCount = 0;
-
-        // --- DRAGGABLE LOGIC ---
-        if (icon) {
-            let isDragging = false;
-            let hasMoved = false;
-            let startX, startY, initialLeft, initialTop;
-
-            // Mouse Events
-            icon.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
-
-            // Touch Events
-            icon.addEventListener('touchstart', dragStart, {passive: false});
-            document.addEventListener('touchmove', drag, {passive: false});
-            document.addEventListener('touchend', dragEnd);
-
-            function dragStart(e) {
-                if (e.target.closest('.close-chat-btn')) return; // Ignore close button if inside
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-
-                startX = clientX;
-                startY = clientY;
-
-                const rect = icon.getBoundingClientRect();
-                initialLeft = rect.left;
-                initialTop = rect.top;
-
-                isDragging = true;
-                hasMoved = false;
-
-                // Remove transições durante o arraste para ser instantâneo
-                icon.style.transition = 'none';
-            }
-
-            function drag(e) {
-                if (!isDragging) return;
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-
-                const deltaX = clientX - startX;
-                const deltaY = clientY - startY;
-
-                // Se moveu mais que 5px, considera como arraste e não clique
-                if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-                    hasMoved = true;
-                    e.preventDefault(); // Previne scroll no mobile
-                }
-
-                // Atualiza posição
-                icon.style.left = `${initialLeft + deltaX}px`;
-                icon.style.top = `${initialTop + deltaY}px`;
-                icon.style.right = 'auto'; // Remove right/bottom fixos
-                icon.style.bottom = 'auto';
-            }
-
-            function dragEnd(e) {
-                if (!isDragging) return;
-                isDragging = false;
-
-                // Restaura transição suave (opcional, para hover effects)
-                icon.style.transition = 'transform 0.3s, box-shadow 0.3s';
-            }
-
-            // Click Handler (Manual)
-            icon.addEventListener('click', (e) => {
-                if (hasMoved) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                }
-                toggleChatmedPopup();
-            });
-        }
-
-        function checkUnreadMessages() {
-            // Não verifica se o popup estiver aberto
-            const popup = document.getElementById('chatmed-popup-container');
-            if (popup && popup.classList.contains('active')) return;
-
-            fetch('/chatmed/check-unread/')
-                .then(response => response.json())
-                .then(data => {
-                    const count = data.count;
-                    const senderName = data.latest_sender;
-
-                    if (count > 0) {
-                        badge.style.display = 'block';
-                        badge.textContent = count > 99 ? '99+' : count;
-
-                        if (count > lastCount) {
-                            // Nova mensagem chegou
-                            icon.classList.add('has-new-message');
-                            if (senderName) {
-                                tooltipText.textContent = `Nueva mensaje de ${senderName}`;
-                            } else {
-                                tooltipText.textContent = `${count} mensajes nuevos`;
-                            }
-
-                            // Remove a classe de destaque após alguns segundos
-                            setTimeout(() => {
-                                icon.classList.remove('has-new-message');
-                                tooltipText.textContent = 'Chatmed';
-                            }, 5000);
-                        }
-                    } else {
-                        badge.style.display = 'none';
-                        tooltipText.textContent = 'Chatmed';
-                    }
-                    lastCount = count;
-                })
-                .catch(err => console.error('Erro ao verificar mensagens:', err));
-        }
-
-        // Verifica a cada 10 segundos
-        setInterval(checkUnreadMessages, 10000);
-        // Verifica imediatamente ao carregar
-        checkUnreadMessages();
-    });
-</script>
-{% endif %}
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('sidebar');
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        const overlay = document.getElementById('sidebarOverlay');
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            // Muda ícone
-            const icon = mobileBtn.querySelector('i');
-            if (sidebar.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        }
-
-        function closeSidebar() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            const icon = mobileBtn.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
-
-        mobileBtn.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', closeSidebar);
-
-        // Gestos de Toque (Swipe)
-        document.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, {passive: true});
-
-        document.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, {passive: true});
-
-        function handleSwipe() {
-            const swipeThreshold = 50; // Mínimo de pixels para considerar swipe
-            const edgeThreshold = 30; // Zona ativa na borda esquerda para abrir
-
-            // Swipe da esquerda para direita (Abrir)
-            if (touchEndX > touchStartX + swipeThreshold) {
-                // Só abre se o toque começou perto da borda esquerda OU se o menu já estiver visível (mas não deveria acontecer swipe right com menu aberto normalmente)
-                if (touchStartX < edgeThreshold && !sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            }
-            
-            // Swipe da direita para esquerda (Fechar)
-            if (touchStartX > touchEndX + swipeThreshold) {
-                if (sidebar.classList.contains('active')) {
-                    closeSidebar();
-                }
-            }
-        }
-
-        // --- CLICK SOUND EFFECT ---
-        // Tenta carregar o áudio. Se falhar, loga o erro.
-        const clickSound = new Audio('{% static "sound/clicando.mp3" %}');
-        clickSound.volume = 0.2; // Volume baixo
-
-        // Pré-carrega o áudio para evitar delay no primeiro clique
-        clickSound.load();
-
-        document.addEventListener('click', (e) => {
-            // Verifica se o clique foi dentro do popup do chat
-            if (e.target.closest('#chatmed-popup-container') || e.target.closest('#chatmed-floating-icon')) {
-                return; // Não toca som se for no chat
-            }
-
-            // Verifica se o elemento clicado é interativo ou está dentro de um
-            const interactiveElement = e.target.closest('a, button, input, select, textarea, .card, .menu-item, .header-icon-btn, .course-card-saas');
-
-            // Verifica se o elemento tem cursor pointer (indicativo de interatividade)
-            const computedStyle = window.getComputedStyle(e.target);
-            const isPointer = computedStyle.cursor === 'pointer';
-
-            if (interactiveElement || isPointer) {
-                // Clona o nó de áudio para permitir reprodução simultânea rápida
-                const soundClone = clickSound.cloneNode();
-                soundClone.volume = 0.2;
-                soundClone.play().catch((error) => {
-                    // Autoplay policy pode bloquear o som se não houver interação prévia do usuário
-                    console.log("Erro ao reproduzir som de clique:", error);
-                });
-            }
-        });
-    });
-</script>
-
-<!-- ── WIDGET FLOTANTE DE PROFE JOY IA — ALUMED OS ── -->
-<style>
-/* Floating Chat Button */
-#profe-joy-chat-btn {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c6bff 0%, #a594ff 100%);
-    box-shadow: 0 4px 16px rgba(124, 107, 255, 0.4), 0 0 0 0px rgba(124, 107, 255, 0.4);
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: joy-btn-pulse 2s infinite;
-}
-#profe-joy-chat-btn:hover {
-    transform: scale(1.08) rotate(5deg);
-    box-shadow: 0 6px 20px rgba(124, 107, 255, 0.6);
-}
-#profe-joy-chat-btn i {
-    font-size: 24px;
-    color: white;
-}
-#profe-joy-chat-btn img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-@keyframes joy-btn-pulse {
-    0% {
-        box-shadow: 0 4px 16px rgba(124, 107, 255, 0.4), 0 0 0 0px rgba(124, 107, 255, 0.4);
-    }
-    70% {
-        box-shadow: 0 4px 16px rgba(124, 107, 255, 0.4), 0 0 0 12px rgba(124, 107, 255, 0);
-    }
-    100% {
-        box-shadow: 0 4px 16px rgba(124, 107, 255, 0.4), 0 0 0 0px rgba(124, 107, 255, 0);
-    }
-}
-
-/* Chat Window */
-#profe-joy-chat-window {
-    position: fixed;
-    bottom: 96px;
-    right: 24px;
-    width: 380px;
-    height: 520px;
-    background: rgba(30, 18, 51, 0.9);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 230, 0, 0.2);
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(124, 107, 255, 0.15);
-    z-index: 99999;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform: scale(0) translateY(40px);
-    transform-origin: bottom right;
-    opacity: 0;
-    pointer-events: none;
-}
-#profe-joy-chat-window.open {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* Chat Header */
-.joy-chat-hd {
-    background: linear-gradient(135deg, rgba(26, 18, 51, 0.95) 0%, rgba(38, 26, 77, 0.95) 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-.joy-chat-hd-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c6bff, #00d4aa);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    box-shadow: 0 0 12px rgba(124,107,255,0.4);
-}
-.joy-chat-hd-info {
-    flex: 1;
-}
-.joy-chat-hd-info h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin: 0;
-    color: #e8eaf6;
-    letter-spacing: 0.5px;
-}
-.joy-chat-hd-info .status {
-    font-size: 11px;
-    color: #00d4aa;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 2px;
-}
-.joy-chat-hd-info .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #00d4aa;
-    animation: blink 2s infinite;
-}
-.joy-chat-close {
-    background: transparent;
-    border: none;
-    color: #8892b0;
-    font-size: 18px;
-    cursor: pointer;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-}
-.joy-chat-close:hover {
-    color: #ff6b6b;
-    background: rgba(255, 255, 255, 0.05);
-}
-
-/* Chat Body */
-.joy-chat-bd {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: rgba(15, 11, 23, 0.4);
-}
-.joy-chat-bd::-webkit-scrollbar {
-    width: 5px;
-}
-.joy-chat-bd::-webkit-scrollbar-track {
-    background: transparent;
-}
-.joy-chat-bd::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-/* Messages */
-.joy-msg {
-    display: flex;
-    gap: 8px;
-    max-width: 85%;
-    animation: joy-slide-up .25s ease;
-}
-@keyframes joy-slide-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
-}
-.joy-msg.user {
-    align-self: flex-end;
-    flex-direction: row-reverse;
-}
-.joy-msg.ai {
-    align-self: flex-start;
-}
-.joy-msg-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-}
-.joy-msg.user .joy-msg-avatar {
-    background: #2d3561;
-}
-.joy-msg.ai .joy-msg-avatar {
-    background: linear-gradient(135deg, #7c6bff, #00d4aa);
-}
-.joy-msg-bubble {
-    padding: 10px 14px;
-    border-radius: 14px;
-    line-height: 1.5;
-    font-size: 13px;
-    color: #e8eaf6;
-    word-break: break-word;
-}
-.joy-msg.user .joy-msg-bubble {
-    background: #2d3561;
-    border-radius: 14px 4px 14px 14px;
-}
-.joy-msg.ai .joy-msg-bubble {
-    background: #1e1233;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 4px 14px 14px 14px;
-}
-.joy-msg-bubble strong {
-    color: #a594ff;
-}
-.joy-msg-bubble em {
-    color: #8892b0;
-    font-style: italic;
-}
-.joy-msg-bubble code {
-    background: rgba(124, 107, 255, 0.15);
-    padding: 1px 4px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 11.5px;
-}
-
-/* Typing Indicator */
-.joy-typing-dots {
-    display: flex;
-    gap: 4px;
-    padding: 4px 0;
-}
-.joy-typing-dots span {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #7c6bff;
-    animation: joy-bounce 1.2s infinite;
-}
-.joy-typing-dots span:nth-child(2) { animation-delay: .2s; }
-.joy-typing-dots span:nth-child(3) { animation-delay: .4s; }
-@keyframes joy-bounce {
-    0%,60%,100% { transform: translateY(0); }
-    30% { transform: translateY(-6px); }
-}
-
-/* Chat Footer */
-.joy-chat-ft {
-    background: rgba(26, 18, 51, 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 10px 14px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-shrink: 0;
-}
-.joy-chat-input-wrap {
-    flex: 1;
-    background: rgba(15, 11, 23, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    transition: border-color 0.2s;
-}
-.joy-chat-input-wrap:focus-within {
-    border-color: #7c6bff;
-}
-#joy-chat-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #e8eaf6;
-    font-size: 13.5px;
-    resize: none;
-    max-height: 80px;
-    font-family: inherit;
-    line-height: 1.4;
-}
-#joy-chat-input::placeholder {
-    color: #8892b0;
-}
-#joy-chat-send {
-    background: linear-gradient(135deg, #7c6bff, #5b4bd4);
-    border: none;
-    border-radius: 8px;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    color: white;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-#joy-chat-send:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(124, 107, 255, 0.3);
-}
-#joy-chat-send:disabled {
-    opacity: 0.4;
-    cursor: default;
-    transform: none;
-}
-
-/* Suggestion Chips */
-.joy-suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-}
-.joy-suggestion-chip {
-    background: rgba(124, 107, 255, 0.1);
-    border: 1px solid rgba(124, 107, 255, 0.2);
-    border-radius: 14px;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: #a594ff;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.joy-suggestion-chip:hover {
-    background: rgba(124, 107, 255, 0.2);
-    border-color: #7c6bff;
-}
-
-/* Sources */
-.joy-sources {
-    margin-top: 8px;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-.joy-source-tag {
-    background: rgba(0, 212, 170, 0.08);
-    border: 1px solid rgba(0, 212, 170, 0.2);
-    border-radius: 10px;
-    padding: 2px 8px;
-    font-size: 10px;
-    color: #00d4aa;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-.joy-source-tag:hover {
-    background: rgba(0, 212, 170, 0.15);
-}
-
-/* Mobile responsive */
-@media (max-width: 480px) {
-    #profe-joy-chat-window {
-        width: calc(100vw - 32px);
-        height: 480px;
-        right: 16px;
-        bottom: 80px;
-    }
-    #profe-joy-chat-btn {
-        width: 52px;
-        height: 52px;
-        bottom: 16px;
-        right: 16px;
-    }
-}
-</style>
-
-<!-- Botón Flotante de Profe Joy IA -->
-<div id="profe-joy-chat-btn" onclick="toggleProfeJoyChat()" title="Chatear con Profe Joy IA">
-    <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy IA" onerror="this.style.display='none'; document.getElementById('profe-joy-chat-icon').style.display='block';">
-    <i class="fas fa-robot" id="profe-joy-chat-icon" style="display: none;"></i>
-</div>
-
-<!-- Ventana de Chat de Profe Joy IA -->
-<div id="profe-joy-chat-window">
-    <div class="joy-chat-hd">
-        <div class="joy-chat-hd-avatar">
-            <img src="{% static 'img/profe_joy.jpg' %}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" onerror="this.outerHTML='🎓';">
-        </div>
-        <div class="joy-chat-hd-info">
-            <h4>Profe Joy IA</h4>
-            <div class="status">
-                <span class="status-dot"></span>
-                Disponible · Online
-            </div>
-        </div>
-        <button class="joy-chat-close" onclick="toggleProfeJoyChat()" title="Cerrar">×</button>
-    </div>
-    
-    <div class="joy-chat-bd" id="joy-chat-body">
-        <div class="joy-msg ai">
-            <div class="joy-msg-avatar">
-                <img src="{% static 'img/profe_joy.jpg' %}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.outerHTML='🎓';">
-            </div>
-            <div class="joy-msg-bubble">
-                ¡Holis, doc! ¿Cómo estás, corazón? 😍<br><br>
-                Soy la <strong>Profe Joy</strong>, tu tutora de medicina de la UNLP. Contame, ¿en qué te puedo ayudar hoy con Histología, Embriología, Citología, Anatomía, Química o Biología?<br><br>
-                <em>Estoy eh, allright?</em>
-                <div class="joy-suggestions">
-                    <span class="joy-suggestion-chip" onclick="useJoySuggestion('¿Qué es la mitosis?')">Mitosis</span>
-                    <span class="joy-suggestion-chip" onclick="useJoySuggestion('Explícame los planos anatómicos')">Planos anatómicos</span>
-                    <span class="joy-suggestion-chip" onclick="useJoySuggestion('¿Cómo funciona el ciclo cardíaco?')">Ciclo cardíaco</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="joy-chat-ft">
-        <div class="joy-chat-input-wrap">
-            <textarea id="joy-chat-input" rows="1" placeholder="Pregúntale algo a la Profe Joy..." onkeydown="handleJoyKey(event)"></textarea>
-        </div>
-        <button id="joy-chat-send" onclick="sendJoyMessage()" disabled>➤</button>
-    </div>
-</div>
-
-<script>
-let isJoyChatOpen = false;
-let joyChatHistory = [];
-let isJoyLoading = false;
-
-function toggleProfeJoyChat() {
-    const win = document.getElementById('profe-joy-chat-window');
-    isJoyChatOpen = !isJoyChatOpen;
-    if (isJoyChatOpen) {
-        win.classList.add('open');
-        document.getElementById('joy-chat-input').focus();
-    } else {
-        win.classList.remove('open');
-    }
-}
-
-function handleJoyKey(e) {
-    const input = document.getElementById('joy-chat-input');
-    const sendBtn = document.getElementById('joy-chat-send');
-    
-    // Auto-resize input
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 80) + 'px';
-    
-    // Toggle send button
-    sendBtn.disabled = !input.value.trim();
-
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendJoyMessage();
-    }
-}
-
-// Enable send button on input
-document.getElementById('joy-chat-input').addEventListener('input', function() {
-    document.getElementById('joy-chat-send').disabled = !this.value.trim();
-});
-
-function useJoySuggestion(text) {
-    document.getElementById('joy-chat-input').value = text;
-    document.getElementById('joy-chat-send').disabled = false;
-    sendJoyMessage();
-}
-
-function addJoyMessage(role, content, sources = []) {
-    const chatBody = document.getElementById('joy-chat-body');
-    const div = document.createElement('div');
-    div.className = `joy-msg ${role}`;
-
-    const avatar = document.createElement('div');
-    avatar.className = 'joy-msg-avatar';
-    
-    if (role === 'user') {
-        avatar.textContent = '👤';
-    } else {
-        avatar.innerHTML = `<img src="{% static 'img/profe_joy.jpg' %}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.outerHTML='🎓';">`;
-    }
-
-    const bubble = document.createElement('div');
-    bubble.className = 'joy-msg-bubble';
-    bubble.innerHTML = formatJoyText(content);
-
-    if (sources && sources.length > 0) {
-        const srcsDiv = document.createElement('div');
-        srcsDiv.className = 'joy-sources';
-        sources.forEach(s => {
-            const tag = document.createElement(s.url ? 'a' : 'span');
-            tag.className = 'joy-source-tag';
-            tag.textContent = '📄 ' + (s.subject || s.title);
-            if (s.url) {
-                tag.href = s.url;
-                tag.target = '_blank';
-            }
-            srcsDiv.appendChild(tag);
-        });
-        bubble.appendChild(srcsDiv);
-    }
-
-    div.appendChild(avatar);
-    div.appendChild(bubble);
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
-    return div;
-}
-
-function formatJoyText(text) {
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/\n/g, '<br>');
-}
-
-function showJoyTyping() {
-    const chatBody = document.getElementById('joy-chat-body');
-    const div = document.createElement('div');
-    div.className = 'joy-msg ai';
-    div.id = 'joy-typing-indicator';
-    div.innerHTML = `
-        <div class="joy-msg-avatar">
-            <img src="{% static 'img/profe_joy.jpg' %}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.outerHTML='🎓';">
-        </div>
-        <div class="joy-msg-bubble">
-            <div class="joy-typing-dots">
-                <span></span><span></span><span></span>
-            </div>
-        </div>`;
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function removeJoyTyping() {
-    const t = document.getElementById('joy-typing-indicator');
-    if (t) t.remove();
-}
-
-async function sendJoyMessage() {
-    if (isJoyLoading) return;
-    const input = document.getElementById('joy-chat-input');
-    const question = input.value.trim();
-    if (!question) return;
-
-    isJoyLoading = true;
-    input.value = '';
-    input.style.height = 'auto';
-    document.getElementById('joy-chat-send').disabled = true;
-
-    addJoyMessage('user', question);
-    joyChatHistory.push({ role: 'user', content: question });
-
-    showJoyTyping();
-
-    // Get CSRF Token
-    let csrfToken = '';
-    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (csrfInput) {
-        csrfToken = csrfInput.value;
-    } else {
-        // Fallback cookie reader
-        const match = document.cookie.match(/csrftoken=([^;]+)/);
-        if (match) csrfToken = match[1];
-    }
-
-    try {
-        const resp = await fetch('/profe-joy/chat/', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({ question, history: joyChatHistory.slice(-6) }),
-        });
-        const data = await resp.json();
-        removeJoyTyping();
-
-        if (data.error) {
-            addJoyMessage('ai', '❌ Error: ' + data.error);
-        } else {
-            addJoyMessage('ai', data.answer, data.sources || []);
-            joyChatHistory.push({ role: 'assistant', content: data.answer });
-        }
-    } catch (err) {
-        removeJoyTyping();
-        addJoyMessage('ai', '❌ Conexión fallida. Reintentá, por favor.');
-    }
-
-    isJoyLoading = false;
-    document.getElementById('joy-chat-input').focus();
-}
-</script>
-
-{% block extra_js %}{% endblock %}
-
-<script>
-    // Blur do Menu Superior dinâmico
-    window.addEventListener('scroll', function() {
-        const nav = document.querySelector('.top-navbar');
-        if (window.scrollY > 10) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
-    });
-</script>
+{% block extra_scripts %}{% endblock %}
 
 </body>
 </html>
