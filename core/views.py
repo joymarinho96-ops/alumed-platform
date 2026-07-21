@@ -500,6 +500,60 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'explanation': "Los astrocitos son los responsables de la gliosis reactiva, formando la cicatriz glial tras una lesión en el sistema nervioso central."
                 })
             ]
+            
+        elif not questions and base_subject == "Embriología":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "Indique cómo se denomina el proceso por el cual el espermatozoide adquiere movilidad anterógrada y dónde ocurre:",
+                    'option_a': "Capacitación, y ocurre en el epidídimo.",
+                    'option_b': "Capacitación, y ocurre en el túbulo seminífero.",
+                    'option_c': "Maduración, y ocurre en el epidídimo.",
+                    'option_d': "Reacción acrosómica, y ocurre en la ampolla uterina.",
+                    'correct_option': "C",
+                    'explanation': "La maduración espermática ocurre en el epidídimo (especialmente en la cola) y es el proceso mediante el cual los espermatozoides adquieren la capacidad de movimiento."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "La capacitación de un espermatozoide ocurre principalmente por:",
+                    'option_a': "Cambios en la polaridad del acrosoma por enzimas prostáticas.",
+                    'option_b': "Pérdida de colesterol de la membrana plasmática en el tracto genital femenino.",
+                    'option_c': "Adición de colesterol a la membrana en el tracto genital masculino.",
+                    'option_d': "Pérdida de la cola del espermatozoide en la cavidad uterina.",
+                    'correct_option': "B",
+                    'explanation': "Durante la capacitación en el tracto femenino, se elimina colesterol y glicoproteínas de la membrana plasmática del espermatozoide, preparándolo para la reacción acrosómica."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "Indique qué eventos favorecen el transporte de espermatozoides en el tracto genital femenino:",
+                    'option_a': "Acidez vaginal intensa.",
+                    'option_b': "Contracciones musculares del útero y trompas estimuladas por prostaglandinas y oxitocina.",
+                    'option_c': "Relajación total de la musculatura uterina.",
+                    'option_d': "Cierre del canal cervical y aumento de la viscosidad del moco.",
+                    'correct_option': "B",
+                    'explanation': "Las prostaglandinas del semen y la oxitocina liberada por la mujer estimulan las contracciones del miometrio y las trompas, facilitando el ascenso espermático."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "El acrosoma es una modificación de cuál de estas organelas celulares:",
+                    'option_a': "Aparato de Golgi.",
+                    'option_b': "Lisosomas.",
+                    'option_c': "Mitocondrias.",
+                    'option_d': "Retículo endoplasmático rugoso.",
+                    'correct_option': "A",
+                    'explanation': "El acrosoma se forma a partir de vesículas provenientes del Aparato de Golgi durante la espermiogénesis, y contiene enzimas vitales para la fecundación."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "¿En qué porción de las trompas de Falopio suele ocurrir normalmente la fecundación?",
+                    'option_a': "En el istmo.",
+                    'option_b': "En la porción intramural (intersticial).",
+                    'option_c': "En la ampolla.",
+                    'option_d': "En las fimbrias del infundíbulo.",
+                    'correct_option': "C",
+                    'explanation': "La fecundación ocurre más frecuentemente en la región de la ampolla (tercio externo) de la trompa uterina."
+                })
+            ]
         
         data = []
         for q in questions:
