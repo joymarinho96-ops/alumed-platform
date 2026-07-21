@@ -15,7 +15,7 @@ urlpatterns = [
     path('pagamento/', include('payments.urls', namespace='payments')),
     path('foro/', include('forum.urls', namespace='forum')),
     path('', include('flashcards.urls', namespace='flashcards')), # <- Rotas e API do Joy Recall
-    # path('medlatin/', include('medlatin.urls', namespace='medlatin')), # Desativado temporariamente
+    path('medlatin/', include('medlatin.urls', namespace='medlatin')),
 
     path('', home, name='home'),
     path('guia-supervivencia/', guia_supervivencia_view, name='guia_supervivencia'),
