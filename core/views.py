@@ -498,6 +498,56 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'option_d': "Arteria esplénica y arteria hepática común.",
                     'correct_option': "A",
                     'explanation': "El arco vascular de la curvatura menor está formado por la anastomosis entre la arteria gástrica izquierda (rama del tronco celíaco) y la derecha (rama de la hepática propia)."
+                }),
+                type('obj', (object,), {
+                    'id': 6,
+                    'question_text': "¿Cuáles son los tendones que conforman la llamada 'pata de ganso' en la cara medial de la tibia?",
+                    'option_a': "Sartorio, Recto interno (Grácil) y Semitendinoso.",
+                    'option_b': "Semimembranoso, Semitendinoso y Bíceps femoral.",
+                    'option_c': "Sartorio, Recto anterior y Vasto interno.",
+                    'option_d': "Recto interno, Semimembranoso y Aductor mayor.",
+                    'correct_option': "A",
+                    'explanation': "La pata de ganso está formada por las inserciones distales de los músculos Sartorio, Recto interno (Grácil) y Semitendinoso."
+                }),
+                type('obj', (object,), {
+                    'id': 7,
+                    'question_text': "El nervio musculocutáneo, responsable de la inervación del compartimento anterior del brazo, perfora al músculo:",
+                    'option_a': "Bíceps braquial.",
+                    'option_b': "Coracobraquial.",
+                    'option_c': "Braquial anterior.",
+                    'option_d': "Deltoides.",
+                    'correct_option': "B",
+                    'explanation': "El nervio musculocutáneo es conocido como el nervio perforante de Casserio porque atraviesa el vientre del músculo coracobraquial."
+                }),
+                type('obj', (object,), {
+                    'id': 8,
+                    'question_text': "El seno del tarso es un conducto anatómico formado por la articulación de los huesos:",
+                    'option_a': "Astrágalo y Calcáneo.",
+                    'option_b': "Astrágalo y Escafoides (Navicular).",
+                    'option_c': "Calcáneo y Cuboides.",
+                    'option_d': "Tibia y Astrágalo.",
+                    'correct_option': "A",
+                    'explanation': "El seno del tarso se encuentra entre el surco del astrágalo y el surco del calcáneo, en la articulación subastragalina."
+                }),
+                type('obj', (object,), {
+                    'id': 9,
+                    'question_text': "La porción larga del músculo tríceps braquial tiene su origen (inserción proximal) en:",
+                    'option_a': "El tubérculo supraglenoideo de la escápula.",
+                    'option_b': "El tubérculo infraglenoideo de la escápula.",
+                    'option_c': "La corredera bicipital del húmero.",
+                    'option_d': "La apófisis coracoides de la escápula.",
+                    'correct_option': "B",
+                    'explanation': "El tríceps braquial tiene tres cabezas; su porción larga se inserta en el tubérculo infraglenoideo de la escápula."
+                }),
+                type('obj', (object,), {
+                    'id': 10,
+                    'question_text': "La arteria femoral es la continuación directa de la arteria:",
+                    'option_a': "Ilíaca interna (Hipogástrica).",
+                    'option_b': "Ilíaca externa.",
+                    'option_c': "Obturatriz.",
+                    'option_d': "Femoral profunda.",
+                    'correct_option': "B",
+                    'explanation': "La arteria ilíaca externa pasa por debajo del ligamento inguinal (arco crural) y a partir de ese punto cambia su nombre a arteria femoral."
                 })
             ]
             
