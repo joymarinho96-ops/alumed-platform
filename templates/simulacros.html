@@ -42,6 +42,55 @@
 .oral-textarea { width: 100%; height: 150px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; color: #fff; font-size: 1rem; resize: vertical; margin-bottom: 15px; }
 .oral-textarea:focus { outline: none; border-color: var(--purple-main); }
 .pinche-image { max-width: 100%; max-height: 450px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: 0 5px 15px rgba(0,0,0,0.3); object-fit: contain; background: #000; }
+
+/* Intelligence Report Upgrades */
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 15px rgba(138,43,226,0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 30px rgba(138,43,226,0.8), 0 0 20px rgba(255,215,0,0.4); transform: scale(1.02); }
+    100% { box-shadow: 0 0 15px rgba(138,43,226,0.4); transform: scale(1); }
+}
+.intelligence-banner {
+    background: linear-gradient(135deg, rgba(138,43,226,0.7), rgba(0,0,0,0.8));
+    border: 2px solid #ffd700;
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+    animation: pulse-glow 2.5s infinite;
+    transition: 0.3s;
+}
+.intelligence-banner:hover {
+    background: linear-gradient(135deg, rgba(138,43,226,0.9), rgba(0,0,0,0.9));
+}
+.intelligence-banner h3 {
+    color: #ffd700;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+.intelligence-banner p {
+    color: #f3f4f6;
+    font-size: 1.05rem;
+}
+.prog-container {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    height: 10px;
+    width: 100%;
+    margin: 8px 0 15px 0;
+    overflow: hidden;
+}
+.prog-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 1.5s ease-in-out;
+}
+.prog-red { background: linear-gradient(90deg, #ef4444, #f87171); }
+.prog-orange { background: linear-gradient(90deg, #f97316, #fb923c); }
+.prog-green { background: linear-gradient(90deg, #10b981, #34d399); }
 </style>
 {% endblock %}
 
@@ -60,14 +109,9 @@
             <h1 class="hero-title" style="font-size: 28px; margin-bottom: 10px;">Simulacros de Combate</h1>
             <p style="color: var(--text-muted);">Elige tu materia para iniciar la simulación. Entrena con las preguntas que más caen en los exámenes oficiales.</p>
         </div>
-        <div style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
-            <h3 style="color: #ef4444; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.5rem;">🚨</span> Triángulo de Sobrevivencia
-            </h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; margin-bottom: 15px;">Las materias filtro de La Plata. Diagnóstico exhaustivo recomendado.</p>
-            <button onclick="openInteligencia()" class="btn-gold" style="padding: 10px 20px; font-size: 0.95rem;">
-                📊 Ver Reporte de Inteligencia y Probabilidades
-            </button>
+        <div class="intelligence-banner" onclick="openInteligencia()">
+            <h3>🚨 Reporte de Inteligencia Estratégica 🚨</h3>
+            <p><strong>[NUEVO]</strong> Análisis predictivo y probabilidades de temas para tus parciales. ¡Toca aquí!</p>
         </div>
 
         <div class="cards-row" style="margin-bottom: 40px;">
@@ -205,33 +249,106 @@
         <p style="color: var(--text-muted); margin-bottom: 30px;">Análisis predictivo basado en frecuencias históricas, PDFs de la cátedra y cronograma oficial de Trabajos Prácticos.</p>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444;">
-                <h4 style="color: #fca5a5; margin-bottom: 10px;">ANATOMÍA (Cátedras A, B, C)</h4>
-                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
-                    <li><strong>85-90% Probabilidad:</strong> Neuroanatomía (Pares craneales, Polígono de Willis, Vías piramidales).</li>
-                    <li><strong>80% Probabilidad:</strong> Esplacnología (Irrigación gástrica, Segmentación hepática, Peritoneo).</li>
-                    <li><strong>75% Probabilidad:</strong> Locomotor (Triángulos del cuello, Pata de ganso, Manguito rotador).</li>
-                    <li style="color: #fbbf24; margin-top: 5px;"><em>⚠️ Tip: En Anato B, es altísima la probabilidad de examen práctico con preparados (Pinches) de Locomotor.</em></li>
-                </ul>
-            </div>
             
-            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
-                <h4 style="color: #6ee7b7; margin-bottom: 10px;">HISTOLOGÍA Y EMBRIOLOGÍA</h4>
-                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
-                    <li><strong>92% Probabilidad (Embrio):</strong> 1ra a 3ra semana (Fecundación, Capacitación espermática, Gastrulación, Derivados de hojas germinativas).</li>
-                    <li><strong>88% Probabilidad (Histo):</strong> Tejido Epitelial (Especializaciones apicales) y Sangre (Fórmula leucocitaria).</li>
-                    <li><strong>75% Probabilidad:</strong> Tejido Nervioso (Glía, Sinapsis).</li>
-                </ul>
+            <!-- Anatomia A -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                <h4 style="color: #fca5a5; margin-bottom: 15px; font-size: 1.2rem;">ANATOMÍA CÁTEDRA A</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Neuroanatomía (Pares craneales, Vías)</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>85%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 85%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Esplacnología (Órganos, Pelvis)</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>80%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-orange" style="width: 80%;"></div></div>
             </div>
 
-            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6;">
-                <h4 style="color: #93c5fd; margin-bottom: 10px;">BIOLOGÍA</h4>
-                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
-                    <li><strong>85% Probabilidad:</strong> Membrana Plasmática (Ósmosis, Transporte activo y pasivo, Coeficiente de reflexión).</li>
-                    <li><strong>80% Probabilidad:</strong> Ciclo Celular y Mitosis/Meiosis (Regulación, Puntos de control).</li>
-                    <li><strong>70% Probabilidad:</strong> Organelas (Mitocondria, Fosforilación oxidativa, REL/RER).</li>
-                </ul>
+            <!-- Anatomia B -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                <h4 style="color: #fca5a5; margin-bottom: 15px; font-size: 1.2rem;">ANATOMÍA CÁTEDRA B</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Práctico Locomotor (Pinches)</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>95%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 95%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Esplacnología Integrada</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>80%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-orange" style="width: 80%;"></div></div>
             </div>
+
+            <!-- Anatomia C -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                <h4 style="color: #fca5a5; margin-bottom: 15px; font-size: 1.2rem;">ANATOMÍA CÁTEDRA C</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Pares Craneales e Irrigación</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>90%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 90%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Diafragma y Vasos del Cuello</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>85%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 85%;"></div></div>
+            </div>
+
+            <!-- Histologia -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
+                <h4 style="color: #6ee7b7; margin-bottom: 15px; font-size: 1.2rem;">HISTOLOGÍA</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Tejido Epitelial y Conectivo</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>88%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 88%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Sangre (Fórmula Leucocitaria)</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>85%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 85%;"></div></div>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Tejido Nervioso</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>75%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-green" style="width: 75%;"></div></div>
+            </div>
+
+            <!-- Embriologia -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
+                <h4 style="color: #6ee7b7; margin-bottom: 15px; font-size: 1.2rem;">EMBRIOLOGÍA</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Fecundación y 1ra a 3ra Semana</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>92%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 92%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Anexos Extraembrionarios</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>80%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-orange" style="width: 80%;"></div></div>
+            </div>
+
+            <!-- Biologia -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                <h4 style="color: #93c5fd; margin-bottom: 15px; font-size: 1.2rem;">BIOLOGÍA</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Membrana Plasmática (Ósmosis)</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>85%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 85%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Ciclo Celular y Mitosis</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>80%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-orange" style="width: 80%;"></div></div>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Organelas y Fosforilación</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>70%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-green" style="width: 70%;"></div></div>
+            </div>
+            
+            <!-- Bioquimica -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #fcd34d; margin-bottom: 15px; font-size: 1.2rem;">BIOQUÍMICA</h4>
+                
+                <div style="color: var(--text-light); font-size: 0.95rem;">Cinética Enzimática</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>90%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 90%;"></div></div>
+
+                <div style="color: var(--text-light); font-size: 0.95rem;">Vías Metabólicas y Regulación</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;"><span>Probabilidad de examen</span><span>85%</span></div>
+                <div class="prog-container"><div class="prog-bar prog-red" style="width: 85%;"></div></div>
+            </div>
+
         </div>
     </div>
 </div>
