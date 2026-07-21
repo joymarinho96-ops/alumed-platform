@@ -1,0 +1,33 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="68" y1="22" x2="584" y2="394" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#150D19"/>
+      <stop offset="0.48" stop-color="#251221"/>
+      <stop offset="1" stop-color="#0E1219"/>
+    </linearGradient>
+    <radialGradient id="heart" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(198 122) rotate(40) scale(234 164)">
+      <stop stop-color="#FB7185" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#FB7185" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pulse" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(500 292) rotate(180) scale(220 150)">
+      <stop stop-color="#22D3EE" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="420" rx="28" fill="url(#heart)"/>
+  <rect width="640" height="420" rx="28" fill="url(#pulse)"/>
+  <g>
+    <rect x="86" y="88" width="210" height="226" rx="28" fill="rgba(20,13,22,0.56)" stroke="rgba(255,255,255,0.11)"/>
+    <path d="M190 244C190 244 130 204 130 164C130 143 146 126 167 126C181 126 192 135 198 147C204 135 215 126 229 126C250 126 266 143 266 164C266 204 206 244 206 244L198 250L190 244Z" fill="rgba(251,113,133,0.16)" stroke="#FDA4AF" stroke-width="3"/>
+    <path d="M126 212H156L170 188L188 226L208 168L224 210H266" stroke="#67E8F9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g>
+    <rect x="332" y="112" width="222" height="176" rx="28" fill="rgba(14,13,20,0.58)" stroke="rgba(255,255,255,0.11)"/>
+    <path d="M374 164H514" stroke="#E2E8F0" stroke-opacity="0.72" stroke-width="7" stroke-linecap="round"/>
+    <path d="M374 206H436L452 186L470 228L494 162L514 206H520" stroke="#7DD3FC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M374 248H468" stroke="#FBCFE8" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text x="86" y="344" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="18" letter-spacing="3.2">ALUMED</text>
+  <text x="86" y="376" fill="#FDA4AF" font-family="Outfit, Arial, sans-serif" font-size="40" font-weight="700">Fisiología</text>
+</svg>

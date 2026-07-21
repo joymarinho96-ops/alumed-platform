@@ -1,0 +1,170 @@
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 120px 20px 40px; /* Adicionado padding-top para não ficar atrás do navbar */
+    background: transparent; /* O background já vem do body do base.html */
+}
+
+.auth-container {
+    background: rgba(11, 16, 32, 0.8); /* --bg com alpha */
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    color: var(--dark);
+    position: relative;
+    z-index: 2; /* Garante que fique acima de qualquer background */
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h2 {
+    font-family: 'Inter', sans-serif; /* Alterado para Inter, igual aos títulos da página principal */
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.auth-header p {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.auth-form .form-group {
+    margin-bottom: 20px;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--dark);
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.auth-form input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 10px rgba(157, 0, 255, 0.3);
+    outline: none;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(157, 0, 255, 0.4);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 6px;
+}
+
+.forgot-password-link {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+.forgot-password-link a {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+.forgot-password-link a:hover {
+    color: var(--accent);
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+.social-login p {
+    color: var(--muted);
+    margin-bottom: 15px;
+}
+
+/* Botão Google Estilizado */
+.google-btn {
+    display: flex;
+    width: 100%; /* Extendido */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #db4437; /* Vermelho Google */
+    color: white;
+    padding: 14px; /* Mesmo padding do auth-btn */
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.google-btn:hover {
+    background: #c53929;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(219, 68, 55, 0.4);
+}
+
+.google-btn i {
+    font-size: 1.2rem;
+}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Oxanium:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 /* TIPOGRAFIA */
 html, body {
@@ -7,25 +7,37 @@ html, body {
 
 body {
     margin: 0;
-    font-family: 'Oxanium', cursive !important;
-    background: var(--preto);
+    font-family: 'Outfit', 'Rajdhani', sans-serif !important;
+    background: var(--roxo-1);
     color: #f2f2f2;
     scroll-behavior: smooth;
-    font-size: 1.2rem;
-    font-weight: 400;
+    font-size: 1.5rem;
+    font-weight: 500;
 }
 
 h1, h2, h3 {
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 1px;
+    font-family: 'Outfit', 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+    font-weight: 700;
 }
 
-/* PALETA */
+/* PALETA ALUMED PREMIUM */
 :root {
-    --roxo-1: #20002c;
-    --roxo-2: #4a0075;
-    --dourado: #f5c542;
-    --preto: #0a000f;
+    --roxo-1: #120924; /* Fondo noche violeta ultra oscuro */
+    --roxo-2: #1e113b; /* Fondo medio translúcido */
+    --roxo-acento: #7c3aed; /* Violeta brillante de acento */
+    --dourado: #FFE600; /* Amarillo brillante oficial */
+    --laranja: #FF9900; /* Naranja secundario para degradados */
+    --preto: #0a000f; /* Negro puro */
+    --branco: #ffffff; /* Blanco puro para cards */
+    --cinza-claro: #f3f4f6; /* Fondo de cards claros */
+    --texto-escuro: #120924; /* Texto sobre fondo claro */
+    --texto-claro: #f3f4f6; /* Texto sobre fondo oscuro */
+    
+    /* Sombras Premium */
+    --sombra-suave: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --sombra-media: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --sombra-card: 0 20px 25px -5px rgba(18, 9, 36, 0.25), 0 10px 10px -5px rgba(18, 9, 36, 0.2);
 }
 
 /* ==========================================
@@ -151,20 +163,38 @@ h1, h2, h3 {
 
 
 /* ==========================================
-   1. NAVBAR
+   1. NAVBAR (ESTILO ILHA FLUTUANTE)
 ========================================== */
 
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 18px 0;
+    top: 20px; /* Afasta do topo */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza */
+    width: 90%; /* Não ocupa tudo */
+    padding: 15px 0;
     z-index: 1000;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 50%, rgba(0, 0, 0, 0.9) 100%);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(245, 197, 66, 0.2);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    
+    /* Estilo Vidro/Ilha */
+    background: rgba(32, 0, 44, 0.85); /* Roxo Escuro com transparência */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(245, 197, 66, 0.15); /* Borda sutil dourada */
+    border-radius: 50px; /* Bordas bem redondas */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra forte para dar profundidade */
+    
+    transition: all 0.3s ease;
+}
+
+/* Ajuste para mobile: volta a ser 100% e colado no topo */
+@media (max-width: 900px) {
+    .navbar {
+        top: 0;
+        width: 100%;
+        border-radius: 0;
+        padding: 15px 0;
+        background: rgba(32, 0, 44, 0.95); /* Roxo Escuro mais opaco */
+    }
 }
 
 .nav-container {
@@ -176,8 +206,8 @@ h1, h2, h3 {
 }
 
 .nav-left { flex: 1; display: flex; justify-content: flex-start; }
-.nav-center { flex: 2; display: flex; justify-content: center; gap: 48px; }
-.nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+.nav-center { flex: 2; display: flex; justify-content: center; gap: 30px; }
+.nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 35px; }
 
 .logo {
     color: var(--dourado);
@@ -212,73 +242,42 @@ h1, h2, h3 {
     to { stroke-dashoffset: 0; }
 }
 
-/* --- EFEITO DE HOVER CRIATIVO (Abdel Rhman Style) --- */
+/* --- EFEITO DE HOVER SIMPLES (High Tech Clean) --- */
 .nav-center a {
     color: #ffffff;
     text-decoration: none;
     font-weight: 600;
-    padding: 6px 12px; /* Padding reduzido */
+    padding: 6px 12px;
     position: relative;
-    transition: color 0.3s ease;
-    font-size: 1.1rem;
-    overflow: hidden;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    font-size: 1.2rem;
     z-index: 1;
-}
-
-/* Linhas de Borda (Top/Bottom) que escalam */
-.nav-center a::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-top: 2px solid var(--dourado);
-    border-bottom: 2px solid var(--dourado);
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.3s ease;
-    z-index: -1;
-}
-
-/* Fundo que expande */
-.nav-center a::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dourado);
-    transform: scaleY(0);
-    transform-origin: center;
-    transition: transform 0.3s ease;
-    z-index: -1;
-    transition-delay: 0.1s;
+    
+    /* Fonte Nova */
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
 }
 
 /* Estado Hover */
 .nav-center a:hover {
-    color: var(--preto);
-}
-
-.nav-center a:hover::before {
-    transform: scaleX(1);
-}
-
-.nav-center a:hover::after {
-    transform: scaleY(1);
+    color: var(--dourado);
+    text-shadow: 0 0 12px rgba(245, 197, 66, 0.7); /* Glow dourado */
 }
 
 .nav-center a.active {
-    color: var(--preto);
+    color: var(--dourado);
+    text-shadow: 0 0 12px rgba(245, 197, 66, 0.7);
 }
-.nav-center a.active::before { transform: scaleX(1); }
-.nav-center a.active::after { transform: scaleY(1); }
 
 /* Animações de entrada */
-.navbar { opacity: 0; transform: translateY(-20px); animation: navbarReveal 0.8s ease-out forwards; }
-@keyframes navbarReveal { to { opacity: 1; transform: translateY(0); } }
+.navbar { opacity: 0; transform: translateY(-20px) translateX(-50%); animation: navbarReveal 0.8s ease-out forwards; }
+@keyframes navbarReveal { to { opacity: 1; transform: translateY(0) translateX(-50%); } }
+
+/* Ajuste da animação para mobile onde não tem translateX */
+@media (max-width: 900px) {
+    .navbar { animation: navbarRevealMobile 0.8s ease-out forwards; }
+    @keyframes navbarRevealMobile { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+}
 
 .nav-center a, .btn-login, .btn-register {
     opacity: 0; transform: translateY(-10px); animation: navItemReveal 1s ease-out forwards; animation-delay: .25s;
@@ -298,31 +297,53 @@ h1, h2, h3 {
    2. BOTÕES E MENU DROPDOWN
 ========================================== */
 
-.btn-login {
-    padding: 8px 18px;
-    border-radius: 6px;
-    color: var(--dourado);
-    border: 2px solid var(--dourado);
+/* Estilo 3D para os botões de login e registro (igual ao btn-3d-buy) */
+.btn-login, .btn-register {
+    position: relative;
+    background: var(--roxo-2); /* Roxo Principal (#4a0075) */
+    color: #fff; /* Texto Branco para contraste */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 20px; /* Ajustado para navbar */
+    text-align: center;
     text-decoration: none;
-    font-weight: 600;
-    transition: 0.3s;
-    font-size: 1.1rem;
-    background: transparent;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem; /* Fonte um pouco menor para navbar */
+    
+    /* Sombra 3D Roxa Escura */
+    box-shadow: 0 4px 0 #2a0045; /* Sombra um pouco menor */
+    transition: all 0.15s ease-in-out;
+    display: inline-block;
+    opacity: 1 !important; /* Força a opacidade para evitar sumir */
+    visibility: visible !important; /* Força a visibilidade */
 }
-.btn-login:hover { background: var(--dourado); color: var(--preto); box-shadow: 0 0 12px rgba(245, 197, 66, 0.7); }
 
-.btn-register {
-    padding: 10px 20px;
-    border-radius: 6px;
-    background: var(--dourado);
-    color: var(--preto);
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.3s;
-    font-size: 1.1rem;
-    border: none;
+.btn-login:hover, .btn-register:hover {
+    background: #6a00a0; /* Roxo um pouco mais claro no hover */
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #2a0045;
+    /* Efeito de brilho roxo/neon */
+    animation: pulse-glow-purple 1.5s infinite;
+    opacity: 1 !important; /* Garante que não suma no hover */
 }
-.btn-register:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(245, 197, 66, 0.8); color: var(--preto); }
+
+.btn-login:active, .btn-register:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2a0045;
+    animation: none;
+}
+
+/* Ajuste específico para o botão de login para diferenciar se quiser, ou manter igual */
+.btn-login {
+    /* Se quiser diferenciar, pode mudar a cor de fundo aqui */
+    /* Exemplo: background: transparent; border: 1px solid var(--dourado); color: var(--dourado); box-shadow: 0 4px 0 rgba(245, 197, 66, 0.3); */
+    /* Mas o pedido foi para deixar igual ao 3D dos cards */
+}
+
 
 .user-menu { position: relative; display: inline-block; }
 .user-menu-btn {
@@ -348,11 +369,11 @@ h1, h2, h3 {
     right: 0;
     top: 100%;
     padding-top: 10px;
-    background-color: rgba(25, 25, 25, 0.95);
+    background-color: rgba(32, 0, 44, 0.95); /* Roxo Escuro igual ao modal */
     backdrop-filter: blur(8px);
     min-width: 220px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(74, 0, 117, 0.5); /* Borda roxa sutil */
     border-radius: 6px;
     z-index: 1001;
     overflow: hidden;
@@ -518,93 +539,173 @@ h1, h2, h3 {
 }
 
 /* ==========================================
-   TECNOLOGIA (MINIMALIST GRID)
+   TECNOLOGIA (NOVO ESTILO: TECH SHOWCASE)
 ========================================== */
-.tech-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+.tech-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1300px; /* Um pouco mais largo para caber as setas */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.tech-showcase {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: flex-start; /* Importante para o scroll funcionar corretamente */
+    align-items: center;
+    gap: 30px;
+    flex-wrap: nowrap !important;
     width: 100%;
     max-width: 1200px;
     margin-top: 50px;
+    overflow-x: hidden; /* Esconde a barra de rolagem */
+    scroll-behavior: smooth; /* Rolagem suave */
+    padding: 20px 5px; /* Espaço para sombras não cortarem */
 }
 
-.tech-card {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(245, 197, 66, 0.2);
-    border-radius: 16px;
-    padding: 40px;
-    text-align: center;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+.tech-nav-btn {
+    background: rgba(10, 10, 15, 0.8);
+    border: 1px solid var(--dourado);
+    color: var(--dourado);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Impede que o botão encolha */
+    margin-top: 50px; /* Alinha com o container que tem margin-top */
 }
 
-.tech-card::before {
+.tech-nav-btn:hover {
+    background: var(--dourado);
+    color: var(--preto);
+    box-shadow: 0 0 15px var(--dourado);
+    transform: scale(1.1);
+}
+
+.tech-item {
+    position: relative;
+    width: 350px; /* Aumentado para acomodar fonte maior */
+    height: 400px; /* Aumentado para acomodar fonte maior */
+    background: rgba(20, 20, 25, 0.4);
+    border: 1px solid rgba(245, 197, 66, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    flex-shrink: 0; /* Impede que os cards encolham demais */
+}
+
+.tech-item::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(0deg, transparent, rgba(245, 197, 66, 0.3), transparent);
-    transform-origin: bottom right;
-    animation: hologram-rotate 4s linear infinite;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(245, 197, 66, 0.1) 0%, transparent 100%);
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s ease;
 }
 
-.tech-card:hover::before {
+.tech-item:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: var(--dourado);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(245, 197, 66, 0.2);
+}
+
+.tech-item:hover::before {
     opacity: 1;
 }
 
-@keyframes hologram-rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.tech-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(245, 197, 66, 0.6);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 20px rgba(245, 197, 66, 0.2);
-}
-
-.tech-icon {
-    font-size: 3.5rem;
-    color: var(--dourado);
+.tech-icon-wrapper {
+    width: 90px; /* Aumentado */
+    height: 90px; /* Aumentado */
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 25px;
-    text-shadow: 0 0 15px rgba(245, 197, 66, 0.6);
-    animation: float 3s ease-in-out infinite;
+    border: 1px solid rgba(245, 197, 66, 0.3);
+    box-shadow: 0 0 15px rgba(245, 197, 66, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 2;
 }
 
-.tech-grid .tech-card:nth-child(1) .tech-icon {
-    animation-delay: 0s;
+.tech-item:hover .tech-icon-wrapper {
+    background: var(--dourado);
+    border-color: var(--dourado);
+    box-shadow: 0 0 30px rgba(245, 197, 66, 0.6);
+    transform: rotateY(180deg);
 }
 
-.tech-grid .tech-card:nth-child(2) .tech-icon {
-    animation-delay: 1s;
+.tech-icon-wrapper i {
+    font-size: 3rem; /* Aumentado */
+    color: var(--dourado);
+    transition: color 0.4s ease;
 }
 
-.tech-grid .tech-card:nth-child(3) .tech-icon {
-    animation-delay: 2s;
+.tech-item:hover .tech-icon-wrapper i {
+    color: var(--preto);
+    transform: rotateY(-180deg); /* Mantém o ícone virado corretamente */
 }
 
-.tech-card h3 {
-    font-size: 1.6rem;
+.tech-item h3 {
+    font-size: 1.8rem; /* Aumentado */
     margin-bottom: 15px;
+    color: var(--dourado); /* Alterado para dourado */
+    z-index: 2;
+    transition: color 0.3s ease;
+    /* Efeito Neon */
+    text-shadow: 0 0 8px rgba(245, 197, 66, 0.7), 0 0 16px rgba(245, 197, 66, 0.5), 0 0 32px rgba(245, 197, 66, 0.3);
+    animation: neonPulse 2.5s ease-in-out infinite;
 }
 
-.tech-card p {
-    font-size: 1.1rem;
-    line-height: 1.7;
+.tech-item:hover h3 {
+    color: var(--dourado);
+    text-shadow: 0 0 10px rgba(245, 197, 66, 0.5);
+}
+
+.tech-item p {
+    font-size: 1.2rem; /* Aumentado */
+    line-height: 1.6;
     color: #ccc;
+    z-index: 2;
+    text-align: center;
+}
+
+/* Efeito de Circuito no Fundo do Card */
+.tech-circuit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 50% 50%, transparent 0%, transparent 100%),
+        linear-gradient(0deg, transparent 49%, rgba(245, 197, 66, 0.05) 50%, transparent 51%),
+        linear-gradient(90deg, transparent 49%, rgba(245, 197, 66, 0.05) 50%, transparent 51%);
+    background-size: 20px 20px;
+    opacity: 0.3;
+    z-index: 1;
+    pointer-events: none;
 }
 
 
@@ -891,18 +992,64 @@ h1, h2, h3 {
     background: linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(25,25,25,0.95) 40%, rgba(45,45,45,0.90) 70%, rgba(0,0,0,0.92) 100%);
     margin: 10% auto; padding: 40px; border: 1px solid var(--dourado); border-radius: 15px;
     width: 80%; max-width: 600px; box-shadow: 0 0 25px rgba(245, 197, 66, 0.4); position: relative; animation: slideIn 0.4s ease-out;
+    
+    /* AJUSTE DE FONTE PARA O MODAL (SOLICITADO) */
+    font-size: 1rem; /* Reduz a fonte base do modal para 16px (ao invés de herdar 1.5rem do body) */
 }
 @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; transition: 0.3s; }
 .close-button:hover, .close-button:focus { color: var(--dourado); text-decoration: none; cursor: pointer; }
-.modal-content h1, .modal-content h2 { text-align: center; }
+
+/* Ajuste dos títulos dentro do modal */
+.modal-content h1 { text-align: center; font-size: 1.8rem; margin-bottom: 25px; }
+.modal-content h2 { text-align: center; font-size: 1.4rem; margin-top: 25px; margin-bottom: 15px; }
+
 .modal-content ul { list-style: none; padding: 0; }
 .modal-content ul li { background: rgba(255, 255, 255, 0.05); margin: 5px 0; padding: 10px; border-radius: 5px; text-align: center; font-size: 1.2rem; }
 
+/* Estilo para a lista de informações do usuário (Novo) */
+.account-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.3s ease;
+}
+
+.info-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.info-label {
+    color: var(--dourado);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.info-value {
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+}
+
+/* Botão Whatsapp Reduzido */
 .whatsapp-support-btn {
-    display: block; width: 60px; height: 60px; background-color: #25D366; color: white;
-    border-radius: 50%; text-align: center; line-height: 60px; font-size: 30px;
+    display: block; width: 45px; height: 45px; background-color: #25D366; color: white;
+    border-radius: 50%; text-align: center; line-height: 45px; font-size: 24px;
     margin: 20px auto 0; transition: transform 0.3s, box-shadow 0.3s;
 }
 .whatsapp-support-btn:hover {
@@ -912,129 +1059,85 @@ h1, h2, h3 {
 }
 
 /* ==========================================
-   RESPONSIVIDADE (MOBILE)
+   STATUS CARD STYLES
 ========================================== */
-@media (max-width: 900px) {
-    /* Ajuste de Padding das Seções */
-    .section, #tecnologia {
-        padding: 80px 20px;
-    }
-
-    /* Ajuste de Fontes */
-    h1 { font-size: 2.5rem !important; }
-    h2 { font-size: 2rem !important; }
-    .section p, .tech-card p { font-size: 1.1rem; }
-
-    /* Empilhamento de Conteúdo (Tecnologia e Cursos) */
-    .tech-grid {
-        grid-template-columns: 1fr; /* Coluna única em telas pequenas */
-    }
-
-    .course-showcase-item,
-    .course-showcase-item:nth-child(even),
-    .section-content-flex {
-        flex-direction: column;
-        text-align: center;
-        gap: 30px;
-    }
-
-    .tech-feature-text, .section-text {
-        text-align: center;
-        left: 0; /* Remove deslocamento */
-        top: 0;
-    }
-
-    .tech-feature-image {
-        max-width: 100%;
-        width: 100%;
-    }
-
-    /* Ajuste do Navbar para Mobile (Scroll Horizontal Simples) */
-    .nav-center {
-        gap: 20px;
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding-bottom: 10px;
-        width: 100%;
-        -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
-    }
-
-    .nav-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .nav-right {
-        width: 100%;
-        justify-content: center;
-    }
+.status-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Reduzido o gap */
+    margin-top: 15px;
 }
 
-@keyframes float {
-	0% {
-		transform: translatey(0px);
-	}
-	50% {
-		transform: translatey(-10px);
-	}
-	100% {
-		transform: translatey(0px);
-	}
+.status-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px 15px; /* Padding reduzido */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid transparent; /* Borda mais fina */
+    transition: transform 0.2s ease;
 }
 
-/* ==========================================
-   ANIMAÇÃO MENU DROPDOWN
-========================================== */
-
-.user-menu:hover .user-menu-content {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
+.status-card:hover {
+    transform: translateX(5px);
 }
 
-.user-menu-content {
-    transform: translateX(-100%);
-    transition: transform 0.4s ease, opacity 0.4s ease;
+.status-active {
+    border-left-color: #25D366; /* Verde */
+    background: linear-gradient(90deg, rgba(37, 211, 102, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
-.user-menu:hover .user-menu-content {
-    transform: translateX(0);
+.status-warning {
+    border-left-color: #f5c542; /* Amarelo/Dourado */
+    background: linear-gradient(90deg, rgba(245, 197, 66, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
-.menu-item {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+.status-expired {
+    border-left-color: #555; /* Cinza Escuro */
+    background: linear-gradient(90deg, rgba(50, 50, 50, 0.3) 0%, rgba(20, 20, 20, 0.8) 100%);
+    filter: grayscale(100%); /* Preto e Branco */
+    opacity: 0.7;
 }
 
-.user-menu:hover .menu-item:nth-of-type(1) {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.1s;
+.course-name {
+    font-weight: bold;
+    font-size: 1rem; /* Fonte reduzida */
+    color: #fff;
 }
 
-.user-menu:hover .menu-item:nth-of-type(2) {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.2s;
+.status-info {
+    text-align: right;
 }
 
-.user-menu:hover .menu-item:nth-of-type(3) {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.3s;
+.status-text {
+    display: block;
+    font-weight: bold;
+    font-size: 0.85rem; /* Fonte reduzida */
+    margin-bottom: 3px;
 }
 
-.user-menu:hover .menu-item:nth-of-type(4) {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.4s;
+.status-active .status-text { color: #25D366; }
+.status-warning .status-text { color: #f5c542; }
+.status-expired .status-text { color: #aaa; } /* Texto cinza para expirado */
+
+.expiration-date {
+    display: block;
+    font-size: 0.75rem; /* Fonte reduzida */
+    color: #ccc;
 }
 
-.user-menu:hover .menu-item:nth-of-type(5) {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.5s;
+/* Botão renovar menor */
+.btn-renew {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    background: var(--dourado);
+    color: var(--preto);
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 /* ==========================================
@@ -1136,4 +1239,59 @@ h1, h2, h3 {
 
 .btn-3d-buy:hover {
     background: rgba(245, 197, 66, 0.1);
+}
+
+/* Variação Amarela Brilhante para o Botão Home */
+.btn-3d-buy.yellow-neon {
+    color: #ffe600; /* Amarelo mais vivo */
+    text-shadow: none;
+}
+
+.btn-3d-buy.yellow-neon::before {
+    border-top-color: #ffe600;
+    border-left-color: #ffe600;
+    filter: none;
+}
+
+.btn-3d-buy.yellow-neon::after {
+    border-bottom-color: #ffe600;
+    border-right-color: #ffe600;
+    filter: none;
+}
+
+.btn-3d-buy.yellow-neon:hover {
+    background: rgba(255, 230, 0, 0.1);
+    box-shadow: none;
+}
+
+/* ==========================================
+   BOTÃO 3D VERMELHO (SOLICITADO)
+========================================== */
+.btn-3d-red {
+    display: inline-block;
+    background-color: #d90429;
+    color: #fff;
+    padding: 15px 40px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 1px solid #8a001a;
+    box-shadow: 0 6px 0 #6d0015;
+    margin-top: 30px;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    transition: all 0.1s ease; /* Transição rápida para o efeito de clique */
+}
+
+.btn-3d-red:hover {
+    background-color: #ef233c;
+    transform: translateY(-2px); /* Leve subida no hover */
+    box-shadow: 0 8px 0 #6d0015;
+}
+
+.btn-3d-red:active {
+    transform: translateY(4px); /* Desce ao clicar */
+    box-shadow: 0 2px 0 #6d0015;
 }
