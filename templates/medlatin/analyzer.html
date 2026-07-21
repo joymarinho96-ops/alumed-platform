@@ -1,0 +1,59 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · Analyzer{% endblock %}
+
+{% block content %}
+<section class="ml-panel">
+    <span class="ml-kicker">Word analyzer</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Type a term and inspect its likely construction.</h1>
+    <p class="ml-section-copy">Automated etymological decomposition can require expert review. When evidence is insufficient, MedLatin labels the result as uncertain instead of forcing a split.</p>
+    <form method="get" class="ml-searchbar">
+        <input type="text" name="q" value="{{ query }}" placeholder="sternocleidomastoideus, gastrocnemius, pericarditis, adenocarcinoma">
+        <button type="submit">Analyze</button>
+    </form>
+    <div class="ml-tags">
+        {% for item in examples %}
+            <a class="ml-tag" href="?q={{ item }}">{{ item }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+{% if analysis %}
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Confidence</h3>
+        <p style="text-transform:capitalize;">{{ analysis.confidence }}</p>
+        {% if analysis.warning %}<p style="margin-top:14px;">{{ analysis.warning }}</p>{% endif %}
+        {% if analysis.literal_construction %}<p style="margin-top:14px;"><strong>Literal construction:</strong> {{ analysis.literal_construction }}</p>{% endif %}
+        {% if analysis.possible_meaning %}<p style="margin-top:14px;"><strong>Possible meaning:</strong> {{ analysis.possible_meaning }}</p>{% endif %}
+    </div>
+    <div class="ml-panel">
+        <h3>Detected parts</h3>
+        <div class="ml-part-row">
+            {% for part in analysis.parts %}
+                <div class="ml-part">
+                    <strong>{{ part.form }}</strong>
+                    <div>{{ part.meaning }}</div>
+                    <small style="color:var(--ml-muted);">{{ part.part_type }} · {{ part.origin_language }}</small>
+                </div>
+            {% empty %}
+                <div class="ml-empty">No reliable decomposition parts found.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Related terms</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for term in analysis.related_terms %}
+                {% include "medlatin/partials/term_card.html" with term=term %}
+            {% empty %}
+                <div class="ml-empty">No linked terms were found from the detected roots.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

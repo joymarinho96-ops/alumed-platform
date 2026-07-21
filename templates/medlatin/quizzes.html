@@ -1,0 +1,25 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · Quizzes{% endblock %}
+
+{% block content %}
+<section class="ml-panel">
+    <span class="ml-kicker">Quizzes</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Test naming logic, decomposition, and common traps.</h1>
+</section>
+
+<section class="ml-grid ml-grid-3" style="margin-top:24px;">
+    {% for quiz in quizzes %}
+        <a class="ml-term-card" href="{% url 'medlatin:quiz-detail' quiz_id=quiz.id %}">
+            <h3>{{ quiz.title }}</h3>
+            <div class="ml-literal">{{ quiz.subject }} · Difficulty {{ quiz.difficulty }}</div>
+            <div class="ml-excerpt">{{ quiz.description|default:"Practice the logic behind the terms in this set." }}</div>
+            <div class="ml-meta">
+                <span>{{ quiz.question_total }} questions</span>
+            </div>
+        </a>
+    {% empty %}
+        <div class="ml-empty">No quizzes are available yet.</div>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · Favorites{% endblock %}
+
+{% block content %}
+<section class="ml-panel">
+    <span class="ml-kicker">Favorites</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Saved terminology for later review.</h1>
+</section>
+
+<section style="margin-top:24px;">
+    <div class="ml-card-list">
+        {% for item in favorites %}
+            {% include "medlatin/partials/term_card.html" with term=item.term %}
+        {% empty %}
+            <div class="ml-empty">You have not favorited any term yet.</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

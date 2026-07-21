@@ -1,0 +1,128 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · {{ term.latin_name }}{% endblock %}
+
+{% block content %}
+<section class="ml-grid ml-grid-2">
+    <div class="ml-hero-card">
+        <span class="ml-kicker">Term entry</span>
+        <h1 class="ml-title" style="font-size:3.2rem;">{{ term.latin_name }}</h1>
+        <p class="ml-subtitle">{{ term.literal_translation }}</p>
+        <div class="ml-meta">
+            {% if term.standard_term %}<span>{{ term.standard_term }}</span>{% endif %}
+            {% if term.grammatical_class %}<span>{{ term.grammatical_class }}</span>{% endif %}
+            {% if term.gender %}<span>{{ term.gender }}</span>{% endif %}
+            {% if term.declension %}<span>{{ term.declension }}</span>{% endif %}
+            {% if term.origin_language %}<span>{{ term.origin_language }}</span>{% endif %}
+            {% if term.anatomical_system %}<span>{{ term.anatomical_system }}</span>{% endif %}
+            <span>{{ term.get_validation_status_display }}</span>
+        </div>
+        {% if user.is_authenticated %}
+            <div class="ml-tags">
+                <form class="ml-inline-form" method="post" action="{% url 'medlatin:toggle-favorite' slug=term.slug %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="ml-fav-btn" type="submit">{% if is_favorited %}Remove favorite{% else %}Add favorite{% endif %}</button>
+                </form>
+                {% if progress %}<span class="ml-tag">Study status: {{ progress.get_status_display }}</span>{% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="ml-panel">
+        <h3>Medical definition</h3>
+        <p>{{ term.medical_definition }}</p>
+        <div class="ml-meta">
+            {% if term.subject %}<span>{{ term.subject }}</span>{% endif %}
+            {% if term.specialty %}<span>{{ term.specialty }}</span>{% endif %}
+            {% if term.naming_category %}<span>{{ term.naming_category }}</span>{% endif %}
+            <span>Difficulty {{ term.difficulty }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Word decomposition</h3>
+        <div class="ml-part-row">
+            {% for part in term.word_parts.all %}
+                <div class="ml-part">
+                    <strong>{{ part.form }}</strong>
+                    <div>{{ part.meaning }}</div>
+                    <small style="color:var(--ml-muted);">{{ part.get_part_type_display }} · {{ part.origin_language }}</small>
+                </div>
+            {% empty %}
+                <div class="ml-empty">This entry is best treated as a lexical unit and not safely split into smaller parts.</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ml-panel">
+        <h3>Etymology</h3>
+        <p>{{ term.etymology }}</p>
+    </div>
+</section>
+
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Naming logic</h3>
+        <p>{{ term.naming_logic }}</p>
+    </div>
+    <div class="ml-panel">
+        <h3>Method Joy</h3>
+        <p><strong>Mnemonic:</strong> {{ term.mnemonic }}</p>
+        {% if term.mnemonic_spanish %}<p style="margin-top:12px;"><strong>Spanish-friendly:</strong> {{ term.mnemonic_spanish }}</p>{% endif %}
+        {% if term.mnemonic_portuguese %}<p style="margin-top:12px;"><strong>Portuguese-friendly:</strong> {{ term.mnemonic_portuguese }}</p>{% endif %}
+        {% if term.exam_trap %}<p style="margin-top:12px;"><strong>Exam trap:</strong> {{ term.exam_trap }}</p>{% endif %}
+        {% if term.rapid_review %}<p style="margin-top:12px;"><strong>Rapid review:</strong> {{ term.rapid_review }}</p>{% endif %}
+    </div>
+</section>
+
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Translations</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for language, translation in translations.items %}
+                <div class="ml-term-card">
+                    <h3 style="font-size:1.4rem;">{{ translation.get_language_display }}</h3>
+                    <div class="ml-literal">{{ translation.text }}</div>
+                    {% if translation.notes %}<div class="ml-excerpt">{{ translation.notes }}</div>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ml-panel">
+        <h3>Related terminology</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for relationship_type, items in relationships_by_type.items %}
+                {% for relation in items %}
+                    <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=relation.target_term.slug %}">
+                        <h3 style="font-size:1.4rem;">{{ relation.target_term.latin_name }}</h3>
+                        <div class="ml-literal">{{ relationship_type }}</div>
+                        <div class="ml-excerpt">{{ relation.description|default:relation.target_term.literal_translation }}</div>
+                    </a>
+                {% endfor %}
+            {% empty %}
+                <div class="ml-empty">No related terms linked yet for this entry.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if examples_by_context %}
+<section style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Medical contexts</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for context_name, items in examples_by_context.items %}
+                {% for example in items %}
+                    <div class="ml-term-card">
+                        <h3 style="font-size:1.45rem;">{{ example.title }}</h3>
+                        <div class="ml-literal">{{ context_name }} · {{ example.get_language_display }}</div>
+                        <div class="ml-excerpt">{{ example.content }}</div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

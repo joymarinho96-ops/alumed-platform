@@ -1,0 +1,46 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<section class="ml-panel">
+    <span class="ml-kicker">Quiz</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">{{ quiz.title }}</h1>
+    <p class="ml-section-copy">{{ quiz.description|default:"Answer each question and submit to calculate your score." }}</p>
+</section>
+
+{% if result %}
+    <section class="ml-grid ml-grid-3" style="margin-top:24px;">
+        <div class="ml-stat"><strong>{{ result.correct }}</strong><span>Correct answers</span></div>
+        <div class="ml-stat"><strong>{{ result.total }}</strong><span>Total questions</span></div>
+        <div class="ml-stat"><strong>{{ result.accuracy }}%</strong><span>Accuracy</span></div>
+    </section>
+{% endif %}
+
+<section style="margin-top:24px;">
+    <form method="post" class="ml-card-list">
+        {% csrf_token %}
+        {% for question in quiz.questions.all %}
+            <article class="ml-term-card">
+                <h3 style="font-size:1.5rem;">Question {{ forloop.counter }}</h3>
+                <div class="ml-excerpt" style="margin-bottom:12px;">{{ question.prompt }}</div>
+                {% for option in question.options %}
+                    <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;color:var(--ml-muted);">
+                        <input type="radio" name="question_{{ question.id }}" value="{{ option }}">
+                        <span>{{ option }}</span>
+                    </label>
+                {% empty %}
+                    <input class="ml-select" type="text" name="question_{{ question.id }}" placeholder="Type your answer">
+                {% endfor %}
+                {% if result %}
+                    <div class="ml-meta" style="margin-top:12px;">
+                        <span>Correct answer: {{ question.correct_answer.value|default:question.correct_answer }}</span>
+                    </div>
+                    {% if question.explanation %}<div class="ml-excerpt" style="margin-top:12px;">{{ question.explanation }}</div>{% endif %}
+                {% endif %}
+            </article>
+        {% endfor %}
+        <button class="ml-btn-submit" type="submit">Submit quiz</button>
+    </form>
+</section>
+{% endblock %}

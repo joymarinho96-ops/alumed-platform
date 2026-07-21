@@ -51,20 +51,47 @@ if pagina_seleccionada == "💬 Chat con Profe Joy":
         with st.chat_message("assistant"):
             with st.spinner("Analizando la biblioteca ALUMED..."):
                 try:
-                    # RAG Pipeline (Protegido contra falta de créditos)
+                    # RAG Pipeline (Medicina via Supabase + Legal via FAISS local)
                     respuesta_embed = client_openai.embeddings.create(input=pregunta_alumno, model="text-embedding-3-small")
                     vector_pregunta = respuesta_embed.data.embedding
 
-                    resultados_rag = supabase.rpc('match_documentos', {'query_embedding': vector_pregunta, 'match_threshold': 0.75, 'match_count': 3}).execute()
-                    
-                    contexto_medico = ""
+                    contexto_unificado = ""
                     enlaces_fuente = []
+                    
+                    # 1. Búsqueda Médica (Supabase)
+                    resultados_rag = supabase.rpc('match_documentos', {'query_embedding': vector_pregunta, 'match_threshold': 0.75, 'match_count': 3}).execute()
                     if resultados_rag.data:
                         for doc in resultados_rag.data:
-                            contexto_medico += f"Extracto de {doc['titulo']}:\n{doc['conteudo']}\n\n"
-                            enlaces_fuente.append(f"- **Fuente Oficial:** [{doc['titulo']}]({doc['url_wix']})")
+                            contexto_unificado += f"Extracto Médico ({doc['titulo']}):\n{doc['conteudo']}\n\n"
+                            enlaces_fuente.append(f"- **Fuente Oficial Médica:** [{doc['titulo']}]({doc['url_wix']})")
 
-                    prompt_sistema = f"Asumes el rol de IA Profe Joy de ALUMED OS. Responde ÚNICAMENTE usando este contexto:\n{contexto_medico}"
+                    # 2. Búsqueda Legal (Escudo UNLP via FAISS)
+                    try:
+                        from langchain_community.vectorstores import FAISS
+                        from langchain_openai import OpenAIEmbeddings
+                        current_dir = os.path.dirname(os.path.abspath(__file__))
+                        db_path = os.path.join(current_dir, "vector_store", "estatuto_index")
+                        
+                        if os.path.exists(db_path):
+                            embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ.get("OPENAI_API_KEY"))
+                            vectorstore = FAISS.load_local(db_path, embeddings, allow_dangerous_deserialization=True)
+                            # Buscar documentos legales relevantes
+                            docs_legales = vectorstore.similarity_search(pregunta_alumno, k=3)
+                            if docs_legales:
+                                contexto_unificado += "\n\n--- REGLAMENTOS Y ESTATUTO UNLP ---\n"
+                                for d in docs_legales:
+                                    contexto_unificado += f"{d.page_content}\n\n"
+                                enlaces_fuente.append("- **Fuente Legal:** Escudo UNLP (Estatuto Oficial)")
+                    except Exception as e:
+                        print("FAISS error:", e)
+
+                    prompt_sistema = f"""Asumes el rol de IA Profe Joy de ALUMED OS. 
+Tienes dos funciones principales:
+1. Profesora Médica: Explicar anatomía, histología o embriología de forma clara y empática.
+2. Defensora Estudiantil (Escudo Legal): Defender los derechos del alumno basándote estrictamente en el Estatuto de la UNLP si preguntan sobre faltas, exámenes o normativas.
+
+Responde ÚNICAMENTE usando este contexto (si está vacío, responde usando tu conocimiento general, pero aclara que no está en la base de datos de ALUMED):
+{contexto_unificado}"""
 
                     respuesta_claude = client_claude.messages.create(
                         model="claude-3-5-sonnet-20240620", max_tokens=1500, system=prompt_sistema,

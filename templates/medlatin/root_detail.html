@@ -1,0 +1,39 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · {{ root.form }}{% endblock %}
+
+{% block content %}
+<section class="ml-grid ml-grid-2">
+    <div class="ml-hero-card">
+        <span class="ml-kicker">Root entry</span>
+        <h1 class="ml-title" style="font-size:3rem;">{{ root.form }}</h1>
+        <p class="ml-subtitle">{{ root.core_meaning }}</p>
+        <div class="ml-meta">
+            <span>{{ root.get_root_type_display }}</span>
+            <span>{{ root.origin_language }}</span>
+            {% if root.original_script %}<span>{{ root.original_script }}</span>{% endif %}
+            {% if root.term_total %}<span>{{ root.term_total }} linked terms</span>{% endif %}
+        </div>
+    </div>
+    <div class="ml-panel">
+        <h3>Explanation</h3>
+        <p>{{ root.explanation|default:"This root is used in medical terminology to carry the semantic value shown here." }}</p>
+        {% if root.variants %}<p style="margin-top:14px;"><strong>Variants:</strong> {{ root.variants }}</p>{% endif %}
+        {% if root.common_combinations %}<p style="margin-top:14px;"><strong>Common combinations:</strong> {{ root.common_combinations }}</p>{% endif %}
+        {% if root.mnemonic %}<p style="margin-top:14px;"><strong>Memory hook:</strong> {{ root.mnemonic }}</p>{% endif %}
+    </div>
+</section>
+
+<section style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Related terms</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for term in related_terms %}
+                {% include "medlatin/partials/term_card.html" with term=term %}
+            {% empty %}
+                <div class="ml-empty">No terms linked to this root yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

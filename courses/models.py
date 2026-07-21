@@ -41,7 +41,7 @@ class Lesson(models.Model):
         ('html', 'HTML'),
         ('podcast', 'Podcast'),
         ('simulacro', 'Simulacro'),
-        ('special_content', 'Conteúdo Especial'),
+        ('special_content', 'ConteÃºdo Especial'),
     ]
     VIDEO_PROVIDER_CHOICES = [
         ('auto', 'Detectar automaticamente'),
@@ -51,7 +51,7 @@ class Lesson(models.Model):
     ]
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons')
     title = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True, help_text="Descrição da aula (pode conter links e texto).")
+    description = models.TextField(blank=True, null=True, help_text="DescriÃ§Ã£o da aula (pode conter links e texto).")
     lesson_type = models.CharField(max_length=15, choices=LESSON_TYPE_CHOICES, default='video')
     video_provider = models.CharField(
         max_length=20,
@@ -60,12 +60,12 @@ class Lesson(models.Model):
         verbose_name="Origem do video",
         help_text="Use Auto para detectar pelo link, ou escolha YouTube/Google Drive/Google Cloud manualmente.",
     )
-    video_url = models.URLField(blank=True, null=True, help_text="URL do vídeo (Vimeo, YouTube, etc.)")
-    file = models.FileField(upload_to='lessons/files/', blank=True, null=True, help_text="Arquivo da aula (vídeo, PDF, etc.)")
-    html_content = models.TextField(blank=True, help_text="Cole o conteúdo HTML aqui.")
-    html_url = models.URLField(blank=True, null=True, help_text="URL do arquivo HTML hospedado (ex: Google Cloud). Se preenchido, o conteúdo HTML será carregado via iframe.")
-    simulacro_url = models.URLField(blank=True, null=True, help_text="URL do Simulacro (HTML externo ou arquivo hospedado). Será exibido em iframe.")
-    special_content_url = models.URLField(blank=True, null=True, help_text="URL para redirecionamento (Conteúdo Especial).")
+    video_url = models.URLField(blank=True, null=True, help_text="URL do vÃ­deo (Vimeo, YouTube, etc.)")
+    file = models.FileField(upload_to='lessons/files/', blank=True, null=True, help_text="Arquivo da aula (vÃ­deo, PDF, etc.)")
+    html_content = models.TextField(blank=True, help_text="Cole o conteÃºdo HTML aqui.")
+    html_url = models.URLField(blank=True, null=True, help_text="URL do arquivo HTML hospedado (ex: Google Cloud). Se preenchido, o conteÃºdo HTML serÃ¡ carregado via iframe.")
+    simulacro_url = models.URLField(blank=True, null=True, help_text="URL do Simulacro (HTML externo ou arquivo hospedado). SerÃ¡ exibido em iframe.")
+    special_content_url = models.URLField(blank=True, null=True, help_text="URL para redirecionamento (ConteÃºdo Especial).")
     order = models.PositiveIntegerField(default=0)
     duration_in_minutes = models.PositiveIntegerField(default=0)
 
@@ -107,15 +107,15 @@ class Lesson(models.Model):
 
 class PodcastEpisode(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='podcast_episodes')
-    title = models.CharField(max_length=200, verbose_name="Título do Áudio")
-    audio_url = models.URLField(verbose_name="URL do Áudio (Cloud)", help_text="Link direto para o arquivo de áudio.")
-    duration = models.CharField(max_length=10, blank=True, null=True, verbose_name="Duração (ex: 05:30)", help_text="Opcional")
+    title = models.CharField(max_length=200, verbose_name="TÃ­tulo do Ãudio")
+    audio_url = models.URLField(verbose_name="URL do Ãudio (Cloud)", help_text="Link direto para o arquivo de Ã¡udio.")
+    duration = models.CharField(max_length=10, blank=True, null=True, verbose_name="DuraÃ§Ã£o (ex: 05:30)", help_text="Opcional")
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['order']
-        verbose_name = "Episódio de Podcast"
-        verbose_name_plural = "Episódios de Podcast"
+        verbose_name = "EpisÃ³dio de Podcast"
+        verbose_name_plural = "EpisÃ³dios de Podcast"
 
     @property
     def audio_url_ativa(self):
@@ -139,7 +139,7 @@ class Enrollment(models.Model):
         choices=[
             ('wix', 'Wix Webhook'),
             ('transferencia', 'Transferencia Bancaria'),
-            ('cortesia', 'Cortesía/Beca'),
+            ('cortesia', 'CortesÃ­a/Beca'),
             ('ajuste_manual', 'Ajuste Manual Staff')
         ],
         default='wix'
@@ -172,10 +172,10 @@ class EnrollmentHistory(models.Model):
     action = models.CharField(
         max_length=20,
         choices=[
-            ('create', 'Creación'),
-            ('extend', 'Extensión'),
-            ('revoke', 'Revocación'),
-            ('expire', 'Expiración')
+            ('create', 'CreaciÃ³n'),
+            ('extend', 'ExtensiÃ³n'),
+            ('revoke', 'RevocaciÃ³n'),
+            ('expire', 'ExpiraciÃ³n')
         ]
     )
     access_source = models.CharField(max_length=20)
@@ -191,8 +191,8 @@ class EnrollmentHistory(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Historial de Matrícula"
-        verbose_name_plural = "Historiales de Matrículas"
+        verbose_name = "Historial de MatrÃ­cula"
+        verbose_name_plural = "Historiales de MatrÃ­culas"
         ordering = ['-timestamp']
 
     def __str__(self):
@@ -207,8 +207,8 @@ class PaymentHistory(models.Model):
     payment_id = models.CharField(max_length=100, unique=True, null=True, blank=True, help_text="ID do pagamento no Mercado Pago")
 
     class Meta:
-        verbose_name = "Histórico de Pagamento"
-        verbose_name_plural = "Histórico de Pagamentos"
+        verbose_name = "HistÃ³rico de Pagamento"
+        verbose_name_plural = "HistÃ³rico de Pagamentos"
         ordering = ['-payment_date']
 
     def __str__(self):
@@ -245,8 +245,8 @@ class Like(models.Model):
 
 class Deck(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='decks')
-    title = models.CharField(max_length=200, verbose_name="Título del Mazo")
-    category = models.CharField(max_length=100, verbose_name="Categoría", default="General")
+    title = models.CharField(max_length=200, verbose_name="TÃ­tulo del Mazo")
+    category = models.CharField(max_length=100, verbose_name="CategorÃ­a", default="General")
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -260,3 +260,20 @@ class Flashcard(models.Model):
 
     def __str__(self):
         return f"{self.deck.title} - {self.front[:30]}..."
+
+
+
+class SimulacroQuestion(models.Model):
+    SUBJECT_CHOICES = [('Anatomía', 'Anatomía'), ('Histología', 'Histología'), ('Biología', 'Biología'), ('Embriología', 'Embriología')]
+    subject = models.CharField(max_length=50, choices=SUBJECT_CHOICES)
+    question_text = models.TextField()
+    option_a = models.CharField(max_length=255)
+    option_b = models.CharField(max_length=255)
+    option_c = models.CharField(max_length=255)
+    option_d = models.CharField(max_length=255)
+    CORRECT_CHOICES = [('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')]
+    correct_option = models.CharField(max_length=1, choices=CORRECT_CHOICES)
+    explanation = models.TextField(blank=True, null=True, help_text='Explicación mostrada tras fallar')
+
+    def __str__(self):
+        return f'[{self.subject}] {self.question_text[:50]}...'

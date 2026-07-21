@@ -1,0 +1,232 @@
+{% extends "dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Simulacros de Combate - ALUMED OS{% endblock %}
+
+{% block extra_head %}
+<style>
+/* CSS definitions for ALUMED OS aesthetic */
+.sim-container { max-width: 900px; margin: 40px auto; padding: 0 20px; color: #fff; font-family: 'Open Sans', sans-serif; }
+.glass-card { background: rgba(15, 17, 26, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(138, 43, 226, 0.2); border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); text-align: center; }
+.question-text { font-size: 1.4rem; font-weight: 600; margin-bottom: 30px; line-height: 1.5; color: #fff; }
+.option-btn { display: block; width: 100%; text-align: left; padding: 18px 24px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: #e2e8f0; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; }
+.option-btn:hover:not(:disabled) { background: rgba(138, 43, 226, 0.1); border-color: rgba(138, 43, 226, 0.5); }
+.option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #fff; }
+.option-btn.incorrect { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fff; }
+.btn-primary { background: linear-gradient(135deg, #8a2be2, #4b0082); color: #fff; padding: 15px 30px; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; display: inline-block; text-decoration: none; font-size: 1.1rem; transition: transform 0.3s ease; }
+.btn-primary:hover { transform: translateY(-3px); }
+.btn-gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; padding: 15px 30px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; display: inline-block; text-decoration: none; font-size: 1.1rem; transition: transform 0.3s ease; }
+.risk-map { margin: 30px 0; padding: 20px; border-radius: 16px; text-align: center; }
+.risk-map.dominado { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; }
+.risk-map.progreso { background: rgba(251, 191, 36, 0.1); border: 1px solid #fbbf24; }
+.risk-map.urgente { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="sim-container">
+    
+    <!-- Loading State -->
+    <div id="loading-state" class="glass-card" style="display: none;">
+        <h2 style="color: #a855f7;">Iniciando Motor de Simulación...</h2>
+        <p style="color: #a0aec0; margin-top: 15px;">Extrayendo preguntas del banco de datos de ALUMED OS.</p>
+    </div>
+
+    <!-- Pre-selection Error State -->
+    <div id="selection-state" class="glass-card" style="display: none;">
+        <h2>Selecciona un Simulacro</h2>
+        <p style="color: #a0aec0; margin-bottom: 30px;">Vuelve al Dashboard y selecciona tu materia para comenzar.</p>
+        <a href="{% url 'conecta_dashboard' %}" class="btn-primary">Volver al Radar</a>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quiz-area" class="glass-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <span id="quiz-subject-badge" style="background: rgba(138,43,226,0.2); color: #dda0dd; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;"></span>
+            <span id="quiz-progress" style="color: #a0aec0; font-weight: 600;"></span>
+        </div>
+
+        <div id="question-text" class="question-text"></div>
+        <div id="options-container"></div>
+
+        <div id="feedback-area" style="display: none; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 16px; text-align: left;">
+            <h3 id="feedback-title" style="margin-bottom: 10px; font-size: 1.2rem;"></h3>
+            <p id="feedback-explanation" style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
+            <button onclick="nextQuestion()" class="btn-primary" style="width: 100%; border-radius: 12px;">Siguiente Pregunta ➔</button>
+        </div>
+    </div>
+
+    <!-- Results Area (Triaje) -->
+    <div id="results-area" class="glass-card" style="display: none;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Diagnóstico Completado</h2>
+        <p style="color: #a0aec0; font-size: 1.1rem; margin-bottom: 30px;">Análisis de puntos débiles generado con éxito.</p>
+        
+        <div style="font-size: 4rem; font-weight: 900; color: #fff; margin-bottom: 10px;" id="final-score"></div>
+        <div style="font-size: 1.2rem; color: #a0aec0; margin-bottom: 20px;">Aciertos</div>
+
+        <!-- Mapa de Riesgo -->
+        <div id="risk-map" class="risk-map">
+            <h3 id="risk-title" style="font-size: 1.5rem; margin-bottom: 10px;"></h3>
+            <p id="risk-desc" style="color: #e2e8f0; font-size: 1.05rem;"></p>
+        </div>
+
+        <!-- Conversión / Caballo de Troya -->
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 40px;">
+            <a href="{% url 'profe_joy' %}" class="btn-primary" style="background: rgba(20, 10, 40, 0.8); border: 1px solid #8a2be2;">
+                👩‍🏫 Analizar errores con IA Profe Joy
+            </a>
+            <a href="#" id="checkout-btn" class="btn-gold">
+                🚀 Acceder a la Resolución Completa (Curso)
+            </a>
+            <a href="{% url 'conecta_dashboard' %}" style="color: #a0aec0; margin-top: 15px; text-decoration: underline;">
+                Volver al Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const subjectSlug = "{{ materia_preseleccionada|default:'' }}";
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!subjectSlug) {
+            document.getElementById('selection-state').style.display = 'block';
+        } else {
+            startSimulacro(subjectSlug);
+        }
+    });
+
+    async function startSimulacro(subject) {
+        document.getElementById('loading-state').style.display = 'block';
+        
+        try {
+            const res = await fetch(`/api/simulacros/${subject}/`);
+            const data = await res.json();
+            
+            if (data.questions && data.questions.length > 0) {
+                questions = data.questions;
+                currentQuestionIndex = 0;
+                score = 0;
+                
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('quiz-area').style.display = 'block';
+                
+                // Formatear el nombre en el badge
+                let displayName = subject.replace('-', ' ').toUpperCase();
+                document.getElementById('quiz-subject-badge').innerText = `SIMULACRO: ${displayName}`;
+                
+                // Configurar link de checkout dinámicamente
+                const checkoutUrl = "{% url 'checkout_intensivo' 'DUMMY' %}".replace('DUMMY', subject);
+                document.getElementById('checkout-btn').href = checkoutUrl;
+
+                renderQuestion();
+            } else {
+                alert("Todavía no hay preguntas cargadas para esta materia. ¡El equipo está subiendo los PDFs!");
+                window.location.href = "{% url 'conecta_dashboard' %}";
+            }
+        } catch (e) {
+            alert("Error conectando con el servidor de simulacros.");
+            window.location.href = "{% url 'conecta_dashboard' %}";
+        }
+    }
+
+    function renderQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+
+        const q = questions[currentQuestionIndex];
+        document.getElementById('quiz-progress').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        document.getElementById('question-text').innerText = q.question_text;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        ['A', 'B', 'C', 'D'].forEach(letter => {
+            if (q.options[letter] && q.options[letter].trim() !== '') {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<strong style="color: #a855f7; margin-right: 10px;">${letter})</strong> ${q.options[letter]}`;
+                btn.onclick = () => checkAnswer(letter, btn);
+                container.appendChild(btn);
+            }
+        });
+
+        document.getElementById('feedback-area').style.display = 'none';
+    }
+
+    function checkAnswer(selectedLetter, btnElement) {
+        const buttons = document.getElementById('options-container').querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true); // Bloquear respuestas
+
+        const q = questions[currentQuestionIndex];
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExp = document.getElementById('feedback-explanation');
+
+        let isCorrect = selectedLetter === q.correct_option;
+
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            score++;
+            feedbackTitle.innerText = "✅ Respuesta Correcta";
+            feedbackTitle.style.color = "#10b981";
+        } else {
+            btnElement.classList.add('incorrect');
+            
+            // Highlight the correct option
+            buttons.forEach(b => {
+                if (b.innerHTML.includes(`>${q.correct_option})<`)) {
+                    b.classList.add('correct');
+                }
+            });
+
+            feedbackTitle.innerText = "❌ Respuesta Incorrecta";
+            feedbackTitle.style.color = "#ef4444";
+        }
+
+        feedbackExp.innerHTML = `<strong>Explicación:</strong> ${q.explanation || 'Revisa este concepto en la bibliografía oficial.'}`;
+        feedbackArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        renderQuestion();
+    }
+
+    function showResults() {
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('results-area').style.display = 'block';
+        
+        const percentage = Math.round((score / questions.length) * 100);
+        document.getElementById('final-score').innerText = `${percentage}%`;
+
+        const riskMap = document.getElementById('risk-map');
+        const riskTitle = document.getElementById('risk-title');
+        const riskDesc = document.getElementById('risk-desc');
+
+        // Lógica de Triaje (Triage)
+        riskMap.className = 'risk-map'; // Reset clases
+        if (percentage >= 80) {
+            riskMap.classList.add('dominado');
+            riskTitle.innerHTML = '✅ Nivel de Riesgo: Dominado';
+            riskTitle.style.color = '#10b981';
+            riskDesc.innerText = 'Estás en condiciones óptimas para el parcial. ¡Mantené el foco!';
+        } else if (percentage >= 50) {
+            riskMap.classList.add('progreso');
+            riskTitle.innerHTML = '⚠️ Nivel de Riesgo: En Progreso';
+            riskTitle.style.color = '#fbbf24';
+            riskDesc.innerText = 'Tenés conceptos clave claros, pero hay dudas peligrosas. Te sugerimos revisar las explicaciones.';
+        } else {
+            riskMap.classList.add('urgente');
+            riskTitle.innerHTML = '🚨 Riesgo Alto: Intervención Urgente';
+            riskTitle.style.color = '#ef4444';
+            riskDesc.innerText = 'Tus bases están fallando en temas críticos del examen. Necesitás una reestructuración de estudio urgente.';
+        }
+    }
+</script>
+{% endblock %}

@@ -417,6 +417,140 @@
         from { transform: scale(.95); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
     }
+
+    /* =========================================
+       METODOLOGIA DO COR E GLASSMORPHISM
+       Tons frios (Azul/Verde) para Foco e Calma
+       ========================================= */
+
+    .biblioteca-inteligente-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        /* Fundo escuro do dashboard para dar contraste ao vidro */
+        background-color: transparent; /* Adaptado para combinar con el dashboard */
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .glass-search-box {
+        width: 100%;
+        max-width: 800px;
+        background: rgba(13, 25, 48, 0.4); /* Fundo azul muito escuro e transparente */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 255, 170, 0.15); /* Borda com toque de verde para acalmar */
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 
+                    inset 0 0 30px rgba(0, 191, 255, 0.05); /* Glow azul interno */
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* O "respiro" visual quando o aluno passa o mouse (Glow de Memorização) */
+    .glass-search-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4), 
+                    0 0 40px rgba(0, 191, 255, 0.15); /* Brilho azul se expande */
+    }
+
+    .search-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .search-header h2 {
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .search-header p {
+        color: #a0aec0;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* A Barra de Busca RAG */
+    .search-input-group {
+        display: flex;
+        position: relative;
+        margin-bottom: 24px;
+    }
+
+    .glass-input {
+        width: 100%;
+        padding: 20px 60px 20px 25px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        font-size: 16px;
+        color: #ffffff;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .glass-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Foco na barra: ativação da cor verde para eficiência e concentração */
+    .glass-input:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 255, 170, 0.5); /* Verde tecnológico */
+        box-shadow: 0 0 20px rgba(0, 255, 170, 0.2);
+    }
+
+    .glass-submit-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #00bfff, #00ffaa); /* Gradiente Azul e Verde */
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #000;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .glass-submit-btn:hover {
+        box-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    /* Filtros / Tags Rápidas */
+    .smart-tags {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .glass-tag {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 8px 16px;
+        border-radius: 20px;
+        color: #c3d4e6;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .glass-tag:hover {
+        background: rgba(0, 191, 255, 0.15); /* Fundo azul ao passar o mouse */
+        border-color: rgba(0, 191, 255, 0.4);
+        color: #ffffff;
+    }
 </style>
 {% endblock %}
 
@@ -453,38 +587,29 @@
 
     <!-- Main Layout -->
     <div class="library-split-layout">
-        <!-- 1. The Shelf/Cabinet System -->
-        <div class="glass-cabinet-panel">
-            <!-- Sidebar Navigation index -->
-            <aside class="cabinet-sidebar">
-                <h3 class="sidebar-section-title"><i class="fas fa-book-open"></i> Catálogo</h3>
-                <div id="sidebarTreeContainer">
-                    <div class="tree-node active" id="node-root" onclick="selectRootNode()">
-                        <i class="fas fa-university" style="color: var(--cx-gold); font-size: 13px;"></i>
-                        <span class="tree-label">MEDICINA</span>
-                    </div>
-                    <div class="tree-children" id="treeChildrenRoot">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Library shelves Main cabinet -->
-            <main class="cabinet-main">
-                <div class="cabinet-header">
-                    <div class="cabinet-breadcrumb" id="cabinetBreadcrumb">
-                        <span class="clickable" onclick="selectRootNode()">MEDICINA</span>
-                    </div>
-                    <div class="cabinet-search">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="cabinetSearchInput" placeholder="Buscar libro o apunte..." oninput="handleSearch()">
-                    </div>
+        <!-- 1. Biblioteca Inteligente IA (Sustituye la vieja grade de pastas) -->
+        <div class="biblioteca-inteligente-wrapper">
+            <!-- Caixa de Busca com Efeito Glassmorphism -->
+            <div class="glass-search-box">
+                <div class="search-header">
+                    <h2>🧠 Biblioteca Inteligente IA</h2>
+                    <p>El conocimiento de más de 500 PDFs de la UNLP en 0.5 segundos. Preguntale a Profe Joy.</p>
                 </div>
 
-                <div class="cabinet-grid" id="cabinetGrid">
-                    <!-- Populated dynamically with folders or books -->
+                <div class="search-input-group">
+                    <input type="text" id="ragSearchInput" class="glass-input" placeholder="Ex: ¿Cuál es la histología de la capa muscular del esófago?" onkeydown="if(event.key==='Enter') document.getElementById('chatInputText').value=this.value; if(event.key==='Enter') sendChatMessage();">
+                    <button class="glass-submit-btn" onclick="document.getElementById('chatInputText').value=document.getElementById('ragSearchInput').value; sendChatMessage();">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
                 </div>
-            </main>
+
+                <!-- Filtros Inteligentes (Tags) -->
+                <div class="smart-tags">
+                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Anatomía Cátedra A: '">🦴 Anatomía Cátedra A</button>
+                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Histo y Embrio: '">🧫 Histo y Embrio</button>
+                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Biología: '">🦠 Biología</button>
+                </div>
+            </div>
         </div>
 
         <!-- 2. Integrated Profe Joy IA Chat -->

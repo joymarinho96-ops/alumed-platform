@@ -2,11 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view
+from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view, simulacros_view, api_get_simulacro_questions, checkout_intensivo
 from core.telegram_views import telegram_webhook, setup_webhook
 from core.library_views import conecta_biblioteca_view, conecta_biblioteca_lector_view
 from core.profe_joy_views import profe_joy_chat, profe_joy_page, profe_joy_stats
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,8 +15,13 @@ urlpatterns = [
     path('pagamento/', include('payments.urls', namespace='payments')),
     path('foro/', include('forum.urls', namespace='forum')),
     path('', include('flashcards.urls', namespace='flashcards')), # <- Rotas e API do Joy Recall
+    path('medlatin/', include('medlatin.urls', namespace='medlatin')),
 
     path('', home, name='home'),
+    path('simulacros/', simulacros_view, name='simulacros'),
+    path('simulacros/<slug:materia>/', simulacros_view, name='simulacro_materia'),
+    path('api/simulacros/<str:subject>/', api_get_simulacro_questions, name='api_get_simulacro_questions'),
+    path('checkout/<slug:curso>/', checkout_intensivo, name='checkout_intensivo'),
 
     path('unlp/', unlp, name='unlp'),
     path('uba/', uba, name='uba'),

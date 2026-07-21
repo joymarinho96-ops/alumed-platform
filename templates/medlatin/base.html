@@ -1,0 +1,405 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedLatin{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ml-bg: #0f1319;
+            --ml-panel: #151c24;
+            --ml-panel-soft: rgba(32, 39, 49, 0.75);
+            --ml-border: rgba(220, 194, 132, 0.18);
+            --ml-text: #f3efe7;
+            --ml-muted: #b2ac9f;
+            --ml-gold: #d8b36b;
+            --ml-burgundy: #6f2934;
+            --ml-parchment: #e9dcc2;
+            --ml-ink: #201711;
+            --ml-success: #80c29b;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(111, 41, 52, 0.18), transparent 28%),
+                radial-gradient(circle at 80% 0%, rgba(216, 179, 107, 0.12), transparent 25%),
+                linear-gradient(180deg, #0f1319 0%, #0b1015 100%);
+            color: var(--ml-text);
+            font-family: "Manrope", sans-serif;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        .ml-shell { max-width: 1240px; margin: 0 auto; padding: 24px; }
+        .ml-nav {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(16px);
+            background: rgba(11, 16, 21, 0.78);
+            border-bottom: 1px solid rgba(216, 179, 107, 0.12);
+        }
+        .ml-nav-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .ml-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .ml-brand-mark {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(216, 179, 107, 0.26);
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            color: var(--ml-gold);
+            background: linear-gradient(180deg, rgba(216, 179, 107, 0.12), rgba(111, 41, 52, 0.16));
+            font-size: 1.2rem;
+        }
+        .ml-brand-copy strong {
+            display: block;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.7rem;
+            letter-spacing: 0.02em;
+        }
+        .ml-brand-copy span {
+            display: block;
+            color: var(--ml-muted);
+            font-size: 0.8rem;
+            margin-top: -2px;
+        }
+        .ml-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .ml-pill,
+        .ml-btn {
+            border: 1px solid rgba(216, 179, 107, 0.18);
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 0.88rem;
+            transition: 0.2s ease;
+        }
+        .ml-pill:hover,
+        .ml-btn:hover {
+            border-color: rgba(216, 179, 107, 0.34);
+            transform: translateY(-1px);
+        }
+        .ml-btn-primary {
+            background: linear-gradient(135deg, rgba(216, 179, 107, 0.18), rgba(111, 41, 52, 0.26));
+            color: var(--ml-text);
+        }
+
+        .ml-hero-card,
+        .ml-panel {
+            border: 1px solid var(--ml-border);
+            border-radius: 28px;
+            background: var(--ml-panel-soft);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+        }
+        .ml-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .ml-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .ml-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .ml-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+        .ml-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(216, 179, 107, 0.08);
+            border: 1px solid rgba(216, 179, 107, 0.16);
+            color: var(--ml-gold);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-weight: 700;
+        }
+        .ml-title {
+            font-family: "Cormorant Garamond", serif;
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            margin: 12px 0 12px;
+            line-height: 0.95;
+        }
+        .ml-subtitle {
+            color: var(--ml-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 700px;
+        }
+        .ml-section-title {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 2rem;
+            margin: 0 0 8px;
+        }
+        .ml-section-copy {
+            color: var(--ml-muted);
+            margin: 0;
+        }
+        .ml-hero-card {
+            padding: 38px;
+            overflow: hidden;
+            position: relative;
+        }
+        .ml-hero-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(216, 179, 107, 0.06), transparent 40%, rgba(111, 41, 52, 0.08) 100%);
+            pointer-events: none;
+        }
+        .ml-searchbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 24px;
+            padding: 10px;
+            border-radius: 20px;
+            background: rgba(8, 10, 14, 0.72);
+            border: 1px solid rgba(216, 179, 107, 0.14);
+        }
+        .ml-searchbar input,
+        .ml-select,
+        .ml-textarea {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            color: var(--ml-text);
+            font-size: 1rem;
+            outline: none;
+            font-family: inherit;
+        }
+        .ml-select,
+        .ml-textarea {
+            border: 1px solid rgba(216, 179, 107, 0.16);
+            border-radius: 16px;
+            padding: 12px 14px;
+            background: rgba(8, 10, 14, 0.45);
+        }
+        .ml-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .ml-searchbar button,
+        .ml-btn-submit {
+            background: linear-gradient(135deg, rgba(216, 179, 107, 0.24), rgba(111, 41, 52, 0.32));
+            border: 1px solid rgba(216, 179, 107, 0.22);
+            color: var(--ml-text);
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .ml-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+        .ml-tag {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(233, 220, 194, 0.08);
+            color: var(--ml-parchment);
+            font-size: 0.84rem;
+            border: 1px solid rgba(233, 220, 194, 0.12);
+        }
+        .ml-panel {
+            padding: 22px;
+        }
+        .ml-panel h3 {
+            margin: 0 0 8px;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.7rem;
+        }
+        .ml-panel p {
+            margin: 0;
+            color: var(--ml-muted);
+            line-height: 1.65;
+        }
+        .ml-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .ml-meta span {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(216, 179, 107, 0.08);
+            border: 1px solid rgba(216, 179, 107, 0.12);
+            color: var(--ml-gold);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .ml-card-list {
+            display: grid;
+            gap: 16px;
+        }
+        .ml-term-card {
+            padding: 20px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(19, 25, 31, 0.92), rgba(15, 19, 25, 0.92));
+            border: 1px solid rgba(216, 179, 107, 0.14);
+        }
+        .ml-term-card h3 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.8rem;
+            margin: 0 0 6px;
+        }
+        .ml-term-card .ml-literal {
+            color: var(--ml-gold);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .ml-term-card .ml-excerpt {
+            color: var(--ml-muted);
+            font-size: 0.94rem;
+            line-height: 1.65;
+        }
+        .ml-term-card .ml-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .ml-part-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .ml-part {
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: rgba(216, 179, 107, 0.08);
+            border: 1px solid rgba(216, 179, 107, 0.14);
+            min-width: 150px;
+        }
+        .ml-part strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ml-parchment);
+        }
+        .ml-empty {
+            padding: 26px;
+            border-radius: 24px;
+            background: rgba(111, 41, 52, 0.08);
+            border: 1px dashed rgba(216, 179, 107, 0.18);
+            color: var(--ml-muted);
+            text-align: center;
+        }
+        .ml-footer {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px 40px;
+            color: var(--ml-muted);
+            font-size: 0.84rem;
+        }
+        .ml-disclaimer {
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: 20px;
+            background: rgba(111, 41, 52, 0.08);
+            border: 1px solid rgba(216, 179, 107, 0.12);
+        }
+        .ml-stat {
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(216, 179, 107, 0.12);
+            background: rgba(8, 10, 14, 0.42);
+        }
+        .ml-stat strong {
+            display: block;
+            font-size: 2rem;
+            font-family: "Cormorant Garamond", serif;
+        }
+        .ml-stat span {
+            color: var(--ml-muted);
+        }
+        .ml-inline-form { display: inline; }
+        .ml-fav-btn {
+            background: transparent;
+            color: var(--ml-gold);
+            border: 1px solid rgba(216, 179, 107, 0.18);
+            border-radius: 999px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 960px) {
+            .ml-grid-2,
+            .ml-grid-3,
+            .ml-grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .ml-nav-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .ml-nav-links {
+                justify-content: flex-start;
+            }
+            .ml-searchbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="ml-nav">
+        <div class="ml-nav-inner">
+            <a href="{% url 'medlatin:home' %}" class="ml-brand">
+                <div class="ml-brand-mark">ML</div>
+                <div class="ml-brand-copy">
+                    <strong>MedLatin</strong>
+                    <span>Understand the language behind medicine.</span>
+                </div>
+            </a>
+            <div class="ml-nav-links">
+                <a class="ml-pill" href="{% url 'medlatin:dictionary' %}">Dictionary</a>
+                <a class="ml-pill" href="{% url 'medlatin:analyzer' %}">Word Analyzer</a>
+                <a class="ml-pill" href="{% url 'medlatin:roots' %}">Roots Explorer</a>
+                <a class="ml-pill" href="{% url 'medlatin:quizzes' %}">Quiz</a>
+                <a class="ml-pill" href="{% url 'medlatin:flashcards' %}">Flashcards</a>
+                <a class="ml-btn ml-btn-primary" href="{% url 'home' %}">Back to ALUMED</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="ml-shell">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="ml-footer">
+        <div class="ml-disclaimer">
+            MedLatin is an educational terminology platform and does not replace medical textbooks, official anatomical nomenclature, professional instruction, diagnosis, or clinical advice.
+        </div>
+    </div>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

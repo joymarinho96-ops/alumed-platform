@@ -1,98 +1,238 @@
 {% load static %}
-    <div class="sidebar-brand">
-        <div class="brand-row">
-            <i class="fas fa-layer-group" style="color: var(--dourado);"></i> 
-            <span style="font-family: 'Outfit', sans-serif; font-weight: 800; tracking: -0.5px;">ALUMED</span>
-        </div>
-        <div class="sidebar-premium"><i class="fas fa-crown"></i> Premium</div>
+<!-- ==========================================
+     MENU LATERAL DINÁMICO (GLASSMORPHISM)
+     ========================================== -->
+<aside class="glass-sidebar" id="sidebar">
+    <!-- Cabeçalho / Logo -->
+    <div class="sidebar-header">
+        <div class="logo-glow"></div>
+        <h2>ALUMED <span>OS</span></h2>
     </div>
 
-    <!-- User Profile in Sidebar -->
-    <div class="sidebar-profile">
-        <div class="avatar-circle">
-            {% if user.profile.photo %}
-                <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
-            {% else %}
-                {{ user.username|first|upper }}
-            {% endif %}
-        </div>
-        <div class="sidebar-profile-info">
-            <span class="sidebar-profile-name" style="font-family: 'Outfit', sans-serif;">{{ user.first_name }} {{ user.last_name }}</span>
-            <span class="sidebar-profile-role">@{{ user.username }}</span>
-        </div>
+    <!-- Container Dinâmico: O JS vai trocar os links aqui dentro -->
+    <ul class="nav-list" id="dynamic-nav">
+        <!-- O conteúdo inicial será renderizado pelo JavaScript -->
+    </ul>
+
+    <!-- Rodapé Fixo da Lateral -->
+    <div class="sidebar-footer">
+        <hr class="glass-divider">
+        
+        <!-- Club ALUMED -->
+        <a href="{% url 'club' %}" class="nav-item">
+            <span class="icon">⭐</span>
+            <span class="text">Club ALUMED</span>
+        </a>
+
+        {% if request.user.is_authenticated %}
+            <!-- Mostra Perfil se estiver logado -->
+            <a href="{% url 'account_details' %}" class="nav-item">
+                <span class="icon">⚙️</span>
+                <span class="text">Configuración</span>
+            </a>
+            <a href="{% url 'logout' %}" class="nav-item">
+                <span class="icon">🚪</span>
+                <span class="text">Cerrar Sesión</span>
+            </a>
+        {% else %}
+            <!-- Mostra Login se for visitante -->
+            <a href="{% url 'login' %}" class="nav-item">
+                <span class="icon">🔑</span>
+                <span class="text">Iniciar Sesión</span>
+            </a>
+        {% endif %}
     </div>
-
-    <!-- CONECTA FCM — Botão de destaque dourado → direto pro Dashboard -->
-    <a href="/conecta/dashboard/" style="
-        display:flex; align-items:center; gap:10px;
-        padding: 12px 14px; border-radius: 12px; margin-bottom: 14px;
-        background: linear-gradient(135deg, rgba(245,200,66,.18), rgba(245,200,66,.08));
-        border: 1px solid rgba(245,200,66,.35);
-        color: #f5c842; font-weight: 900; font-size: 13px; letter-spacing: .03em;
-        text-decoration: none; transition: all .25s;
-        box-shadow: 0 0 16px rgba(245,200,66,.1), inset 0 1px 0 rgba(255,255,255,.06);
-        position: relative; overflow: hidden;
-    " onmouseover="this.style.background='linear-gradient(135deg,rgba(245,200,66,.28),rgba(245,200,66,.15))';this.style.boxShadow='0 0 28px rgba(245,200,66,.25), inset 0 1px 0 rgba(255,255,255,.08)';"
-       onmouseout="this.style.background='linear-gradient(135deg,rgba(245,200,66,.18),rgba(245,200,66,.08))';this.style.boxShadow='0 0 16px rgba(245,200,66,.1), inset 0 1px 0 rgba(255,255,255,.06)';">
-        <span style="width:28px;height:28px;border-radius:8px;background:rgba(245,200,66,.2);border:1px solid rgba(245,200,66,.3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">⚡</span>
-        <span>CONECTA FCM</span>
-        <span style="margin-left:auto;font-size:10px;opacity:.6;">→</span>
-    </a>
-
-    <nav>
-        <!-- ALUMED OS: Estudo -->
-        <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,160,255,.4);padding:0 4px 8px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.04);">
-            🟣 ALUMED OS · Estudo
-        </div>
-
-        <a href="{% url 'student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
-            <i class="fas fa-home"></i> Dashboard
-            {% if has_new_announcements %}
-                <span class="notification-badge active" title="Nuevos avisos">!</span>
-            {% endif %}
-        </a>
-        <!-- Mis Cursos -->
-        <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" rel="noopener noreferrer" style="position:relative;">
-            <i class="fas fa-graduation-cap"></i> Mis Cursos
-            <span style="margin-left:auto;font-size:9px;padding:2px 6px;background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(124,58,237,.15));border:1px solid rgba(124,58,237,.3);border-radius:99px;color:#c4b5fd;font-weight:700;letter-spacing:.03em;">WIX</span>
-        </a>
-        <a href="{% url 'conecta_biblioteca' %}" class="{% if request.resolver_match.url_name == 'conecta_biblioteca' %}active{% endif %}">
-            <i class="fas fa-book"></i> Biblioteca Inteligente
-        </a>
-        <a href="{% url 'courses:flashcards_dashboard' %}" class="{% if request.resolver_match.url_name == 'flashcards_dashboard' %}active{% endif %}">
-            <i class="fas fa-clone"></i> Flashcards
-        </a>
-        <a href="{% url 'microscopio_virtual' %}" class="{% if request.path == '/microscopio-virtual/' %}active{% endif %}">
-            <i class="fas fa-microscope"></i> Microscopio Virtual
-        </a>
-        <a href="{% url 'anatomia_3d' %}" class="{% if request.path == '/anatomia-3d/' %}active{% endif %}">
-            <i class="fas fa-cube"></i> Anatomía 3D
-        </a>
-        <a href="/favoritos/" class="{% if request.path == '/favoritos/' %}active{% endif %}">
-            <i class="fas fa-star"></i> Favoritos
-        </a>
-        <a href="/club/" class="{% if request.path == '/club/' %}active{% endif %}" style="{% if request.path == '/club/' %}{% else %}position:relative;{% endif %}">
-            <i class="fas fa-graduation-cap"></i>
-            <span style="font-weight:800;letter-spacing:.03em;">CURSOS</span>
-            <span style="font-size:.55rem;padding:2px 6px;border-radius:99px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-weight:900;letter-spacing:.05em;margin-left:auto;">ALUMED</span>
-        </a>
-        <a href="/foro/" class="{% if request.path|slice:':5' == '/foro' %}active{% endif %}">
-            <i class="fas fa-comments"></i> Foro / Testimonios
-        </a>
-
-        <!-- Separator -->
-        <div style="height:1px;background:rgba(255,255,255,.05);margin:10px 0;"></div>
-
-        <!-- Utilitários -->
-        <a href="https://wa.me/5492215448983?text=Hola!%20Necesito%20soporte%20con%20la%20plataforma%20ALUMED" target="_blank">
-            <i class="fab fa-whatsapp"></i> Soporte
-        </a>
-        <a href="/">
-            <i class="fas fa-arrow-left"></i> Volver al Sitio
-        </a>
-        <a href="{% url 'logout' %}" style="color: var(--danger); margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
-            <i class="fas fa-sign-out-alt"></i> Salir
-        </a>
-    </nav>
 </aside>
 
+<style>
+/* =========================================
+   ESTILOS GLASSMORPHISM E NEUROCIÊNCIA
+   ========================================= */
+.glass-sidebar {
+    width: 260px;
+    height: 100vh;
+    background: rgba(15, 17, 26, 0.6); /* Fundo escuro premium */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding-left: 8px;
+}
+
+.sidebar-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-header h2 span {
+    color: #8a2be2; /* Roxo ALUMED */
+}
+
+/* O brilho do Logo */
+.logo-glow {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #8a2be2, #00bfff);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Empurra o rodapé para baixo */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Estilo Base dos Links */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #a0aec0;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+/* Efeito Hover (Foco e Memória - Tons Frios) */
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background: rgba(138, 43, 226, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    box-shadow: inset 0 0 20px rgba(138, 43, 226, 0.1);
+}
+
+/* Bloco Conecta FCM (Alerta Dopaminérgico - Tons Quentes) */
+.conecta-alert {
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.conecta-alert:hover {
+    background: rgba(255, 215, 0, 0.15);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.3);
+}
+
+.glass-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+</style>
+
+<!-- ==========================================
+     O CÉREBRO: JAVASCRIPT DINÂMICO
+     ========================================== -->
+<script>
+// 1. O Mapa da Plataforma
+const mundos = {
+    // Menu Padrão (Inicio)
+    inicio: [
+        { icon: '🏠', text: 'Inicio', link: "{% url 'home' %}", active: true },
+        { icon: '📚', text: 'Mis Cursos', link: "{% url 'student_dashboard' %}" },
+        { icon: '🎯', text: 'Simulacros', link: "{% url 'simulacros' %}" },
+        { icon: '🧠', text: 'Biblioteca IA', link: "{% url 'biblioteca' %}" },
+        { icon: '👩‍🏫', text: 'IA Profe Joy', link: "{% url 'profe_joy_chat' %}" },
+        { icon: '🔬', text: 'Microscopio', link: "{% url 'microscopio_virtual' %}" },
+        { icon: '🧬', text: 'Anatomía 3D', link: "{% url 'anatomia_3d' %}" }
+    ],
+    // Menu quando o aluno entra nos Simulacros
+    simulacros: [
+        { icon: '⬅️', text: 'Volver a Inicio', link: "#", action: "changeWorld('inicio')" },
+        { icon: '🎯', text: 'Panel de Simulacros', link: "{% url 'student_dashboard' %}", active: true },
+        { icon: '🧫', text: 'Histo y Embrio', link: "{% url 'student_dashboard' %}" },
+        { icon: '🦴', text: 'Anatomía Cátedra A', link: "{% url 'student_dashboard' %}" },
+        { icon: '🦴', text: 'Anatomía Cátedra B', link: "{% url 'student_dashboard' %}" },
+        { icon: '🦴', text: 'Anatomía Cátedra C', link: "{% url 'student_dashboard' %}" },
+        { icon: '📊', text: 'Mis Resultados', link: "{% url 'student_dashboard' %}" }
+    ],
+    // Menu quando o aluno clica no Conecta FCM
+    conecta: [
+        { icon: '⬅️', text: 'Volver a ALUMED', link: "{% url 'home' %}" },
+        { icon: '📢', text: 'Cartelera en Vivo', link: "{% url 'cartelera_view' %}", active: true },
+        { icon: '🚨', text: 'Parciales y Finales', link: "{% url 'cronograma_finales' %}" },
+        { icon: '👥', text: 'Comisiones', link: "{% url 'comisiones' %}" },
+        { icon: '🗓️', text: 'Cronograma de TPs', link: "{% url 'cronograma_tps' %}" },
+        { icon: '📍', text: 'Mapa de la Facultad', link: "{% url 'mapa_facultad' %}" },
+        { icon: '🧠', text: 'Apoyo Psicológico', link: "{% url 'apoyo_psicologico' %}" }
+    ]
+};
+
+// 2. A Função de Renderização
+function renderMenu(mundo) {
+    const navContainer = document.getElementById('dynamic-nav');
+    if(!navContainer) return;
+    navContainer.innerHTML = ''; // Limpa o menu atual
+
+    // Gera os novos links dinamicamente
+    mundos[mundo].forEach(item => {
+        const li = document.createElement('li');
+        
+        // Se o item tem uma ação (trocar de mundo), injeta o onclick
+        const clickAction = item.action ? `onclick="event.preventDefault(); ${item.action}"` : '';
+        const activeClass = item.active ? 'active' : '';
+
+        li.innerHTML = `
+            <a href="${item.link}" class="nav-item ${activeClass}" ${clickAction}>
+                <span class="icon">${item.icon}</span>
+                <span class="text">${item.text}</span>
+            </a>
+        `;
+        navContainer.appendChild(li);
+    });
+}
+
+// 3. Função para trocar de mundo (acionada pelos botões)
+window.changeWorld = function(mundo) {
+    renderMenu(mundo);
+};
+
+// Inicia a plataforma com o menu padrão
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize based on current URL or default to 'inicio'
+    let initialWorld = 'inicio';
+    const currentPath = window.location.pathname;
+    
+    if(currentPath.includes('/conecta') || currentPath.includes('/cartelera') || currentPath.includes('/comisiones') || currentPath.includes('/cronograma')) {
+        initialWorld = 'conecta';
+    } else if (currentPath.includes('/simulacros') || currentPath.includes('/dashboard')) {
+        initialWorld = 'simulacros';
+    }
+    
+    renderMenu(initialWorld);
+});
+</script>

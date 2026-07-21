@@ -1,0 +1,60 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · Progress{% endblock %}
+
+{% block content %}
+<section class="ml-grid ml-grid-4">
+    <div class="ml-stat"><strong>{{ snapshot.terms_studied }}</strong><span>Terms studied</span></div>
+    <div class="ml-stat"><strong>{{ snapshot.terms_mastered }}</strong><span>Terms mastered</span></div>
+    <div class="ml-stat"><strong>{{ snapshot.flashcards_due }}</strong><span>Flashcards due</span></div>
+    <div class="ml-stat"><strong>{{ snapshot.quiz_accuracy }}%</strong><span>Quiz accuracy</span></div>
+</section>
+
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Recent study activity</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for item in recent_progress %}
+                <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=item.term.slug %}">
+                    <h3 style="font-size:1.5rem;">{{ item.term.latin_name }}</h3>
+                    <div class="ml-literal">{{ item.get_status_display }}</div>
+                    <div class="ml-excerpt">Mastery {{ item.mastery_score }} · Views {{ item.study_count }}</div>
+                </a>
+            {% empty %}
+                <div class="ml-empty">Your study progress will appear here after you open terms.</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ml-panel">
+        <h3>Due flashcards</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for review in due_reviews %}
+                <div class="ml-term-card">
+                    <h3 style="font-size:1.5rem;">{{ review.flashcard.term.latin_name }}</h3>
+                    <div class="ml-literal">{{ review.flashcard.card_type }}</div>
+                    <div class="ml-excerpt">{{ review.flashcard.question }}</div>
+                </div>
+            {% empty %}
+                <div class="ml-empty">No flashcards are due right now.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Recent quiz attempts</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for item in quiz_attempts %}
+                <div class="ml-term-card">
+                    <h3 style="font-size:1.5rem;">{{ item.quiz.title }}</h3>
+                    <div class="ml-literal">{{ item.accuracy }}% accuracy</div>
+                    <div class="ml-excerpt">Score {{ item.score }} · {{ item.started_at }}</div>
+                </div>
+            {% empty %}
+                <div class="ml-empty">You have not completed a quiz yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

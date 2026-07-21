@@ -192,16 +192,17 @@ def mapa_facultad_view(request):
 
 
 def biblioteca(request):
-    books = DigitalBook.objects.all().order_by('subject', 'title')
-    library_payload = build_library_payload(books)
-    return render(
-        request,
-        'core/conecta_biblioteca.html',
-        {
-            'library_payload': library_payload,
-            'library_summary': library_payload['summary'],
-        },
-    )
+    """Renderiza a Biblioteca de IA (RAG) sem redirecionar."""
+    return render(request, 'biblioteca_ia.html')
+
+def simulacros_view(request, materia=None):
+    """Renderiza el portal de simulacros público (Caballo de Troya)."""
+    return render(request, 'simulacros.html', {'materia_preseleccionada': materia})
+
+def checkout_intensivo(request, curso):
+    """Redirige al checkout del intensivo correspondiente."""
+    return render(request, 'simulacros.html')  # Mock view for now
+
 
 
 def cronograma_tps(request):
@@ -255,3 +256,40 @@ def becas_view(request):
     Acceso libre — sin necesidad de login.
     """
     return render(request, 'core/becas.html')
+
+from django.http import JsonResponse
+from courses.models import SimulacroQuestion
+import random
+
+def api_get_simulacro_questions(request, subject):
+    slug_map = {
+        'histologia': 'Histología',
+        'embriologia': 'Embriología',
+        'anatomia': 'Anatomía',
+        'biologia': 'Biología',
+        'anatomia-a': 'Anatomía',
+        'anatomia-b': 'Anatomía',
+        'anatomia-c': 'Anatomía',
+        'histo-embrio': 'Histología',
+    }
+    mapped_subject = slug_map.get(subject, subject)
+    
+    questions = list(SimulacroQuestion.objects.filter(subject__icontains=mapped_subject))
+    if len(questions) > 10:
+        questions = random.sample(questions, 10)
+    
+    data = []
+    for q in questions:
+        data.append({
+            'id': q.id,
+            'question_text': q.question_text,
+            'options': {
+                'A': q.option_a,
+                'B': q.option_b,
+                'C': q.option_c,
+                'D': q.option_d
+            },
+            'correct_option': q.correct_option,
+            'explanation': q.explanation
+        })
+    return JsonResponse({'ok': True, 'subject': subject, 'questions': data})

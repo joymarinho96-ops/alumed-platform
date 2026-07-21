@@ -1,0 +1,42 @@
+{% extends "medlatin/base.html" %}
+
+{% block title %}MedLatin · Flashcards{% endblock %}
+
+{% block content %}
+<section class="ml-panel">
+    <span class="ml-kicker">Flashcards</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Daily review with spaced repetition.</h1>
+    <p class="ml-section-copy">The API updates intervals with an SM-2 inspired schedule. This page shows due cards and new cards available for study.</p>
+</section>
+
+<section class="ml-grid ml-grid-2" style="margin-top:24px;">
+    <div class="ml-panel">
+        <h3>Due cards</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for review in due_reviews %}
+                <div class="ml-term-card">
+                    <h3 style="font-size:1.5rem;">{{ review.flashcard.term.latin_name }}</h3>
+                    <div class="ml-literal">{{ review.flashcard.card_type }}</div>
+                    <div class="ml-excerpt">{{ review.flashcard.question }}</div>
+                    <div class="ml-meta">
+                        <span>Interval {{ review.interval }} day{{ review.interval|pluralize }}</span>
+                        <span>Ease {{ review.ease_factor }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="ml-empty">No flashcards due.</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ml-panel">
+        <h3>New card terms</h3>
+        <div class="ml-card-list" style="margin-top:14px;">
+            {% for term in new_cards %}
+                {% include "medlatin/partials/term_card.html" with term=term %}
+            {% empty %}
+                <div class="ml-empty">No new terms available for flashcard onboarding.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

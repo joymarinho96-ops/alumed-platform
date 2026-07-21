@@ -1,0 +1,1485 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Mi Panel — ALUMED OS{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   ALUMED OS — Dashboard v3.0
+   Tema: Roxo · Violeta · Tecnologia · Medicina
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --al-purple:    #7c3aed;
+  --al-violet:    #6d28d9;
+  --al-neon:      #a855f7;
+  --al-gold:      #f5c842;
+  --al-gold2:     #fbbf24;
+  --al-dark:      #07030f;
+  --al-panel:     rgba(20, 10, 45, 0.75);
+  --al-panel2:    rgba(30, 15, 60, 0.6);
+  --al-border:    rgba(168, 85, 247, 0.18);
+  --al-border2:   rgba(255,255,255,0.06);
+  --al-text:      #f1eeff;
+  --al-muted:     rgba(200,180,255,0.55);
+  --al-green:     #4ade80;
+  --al-yellow:    #fde047;
+  --al-red:       #f87171;
+  --al-cyan:      #22d3ee;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 90% 60% at 15% 0%,    rgba(124,58,237,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 20%,   rgba(109,40,217,.14) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 50% 100%,  rgba(168,85,247,.10) 0%, transparent 60%),
+    linear-gradient(160deg, #0d0720 0%, #070310 60%, #0a0520 100%);
+}
+
+/* ── Partículas flutuantes de fundo ── */
+.al-particles {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.al-particle {
+  position: absolute; border-radius: 50%;
+  animation: al-float linear infinite;
+  opacity: 0;
+}
+@keyframes al-float {
+  0%   { transform: translateY(100vh) rotate(0deg);  opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+.al-atom {
+  position: absolute; opacity: 0.04;
+  animation: al-drift 18s ease-in-out infinite;
+}
+@keyframes al-drift {
+  0%,100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  33%  { transform: translate(40px,-30px) rotate(120deg) scale(1.05); }
+  66%  { transform: translate(-20px,25px) rotate(240deg) scale(.95); }
+}
+
+/* ── Grid de fundo sutil ── */
+.al-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(168,85,247,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── Wrapper principal ── */
+.al-wrap {
+  position: relative; z-index: 1;
+  max-width: 1260px; margin: 0 auto;
+  padding: 0 24px 60px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO HEADER
+   ══════════════════════════════════════════════════════ */
+.al-hero {
+  background: linear-gradient(135deg,
+    rgba(124,58,237,.28) 0%,
+    rgba(109,40,217,.18) 40%,
+    rgba(168,85,247,.12) 100%);
+  border: 1px solid rgba(168,85,247,.3);
+  border-radius: 22px; padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(124,58,237,.12);
+}
+.al-hero::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(245,200,66,.04), transparent 50%);
+  pointer-events:none;
+}
+.al-hero-shimmer {
+  position:absolute; top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent);
+  animation: shimmer 4s ease-in-out infinite 1s;
+}
+@keyframes shimmer { to { left: 160%; } }
+
+.al-hero-left h1 {
+  font-family: 'Outfit',sans-serif; font-weight:900;
+  font-size: clamp(1.5rem,3vw,2.2rem); margin:0 0 6px; color:#fff;
+}
+.al-hero-left h1 .grad {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 40%, #f5c842 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter: drop-shadow(0 0 20px rgba(168,85,247,.5));
+}
+.al-hero-left p { font-size:.88rem; color:var(--al-muted); margin:0; }
+.al-hero-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 14px; border-radius:99px; margin-top:10px;
+  background:rgba(74,222,128,.07); border:1px solid rgba(74,222,128,.25);
+  font-size:.65rem; font-weight:800; letter-spacing:.08em; color:#4ade80;
+  text-transform:uppercase;
+}
+.al-hero-badge .dot {
+  width:5px; height:5px; border-radius:50%; background:#4ade80;
+  box-shadow:0 0 6px #4ade80; animation:blink 1.2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+.al-hero-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; flex-shrink:0; min-width:280px;
+}
+.al-hero-stat {
+  background:rgba(0,0,0,.3); border:1px solid rgba(168,85,247,.15);
+  border-radius:14px; padding:14px; text-align:center;
+}
+.al-hero-stat-n { font-size:1.7rem; font-weight:900; color:#c084fc; line-height:1; }
+.al-hero-stat-l { font-size:.6rem; color:var(--al-muted); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+/* ══════════════════════════════════════════════════════
+   LABELS
+   ══════════════════════════════════════════════════════ */
+.al-label {
+  font-size:.6rem; font-weight:900; letter-spacing:.2em;
+  text-transform:uppercase; display:block; margin-bottom:8px;
+}
+.lbl-purple { color:var(--al-neon); }
+.lbl-gold   { color:var(--al-gold); }
+.lbl-green  { color:var(--al-green); }
+.lbl-red    { color:var(--al-red); }
+.lbl-cyan   { color:var(--al-cyan); }
+
+.al-title { font-size:clamp(1.1rem,2vw,1.5rem); font-weight:900; color:#fff; margin:0 0 4px; }
+.al-sub   { font-size:.82rem; color:var(--al-muted); margin:0 0 18px; line-height:1.5; }
+
+/* ══════════════════════════════════════════════════════
+   CARDS BASE
+   ══════════════════════════════════════════════════════ */
+.al-card {
+  background:var(--al-panel);
+  border:1px solid var(--al-border);
+  border-radius:20px;
+  backdrop-filter:blur(18px);
+  padding:24px 26px;
+  position:relative; overflow:hidden;
+  transition: border-color .3s, box-shadow .3s;
+  box-shadow: 0 4px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.al-card:hover {
+  border-color: rgba(168,85,247,.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 0 30px rgba(124,58,237,.1), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.al-card-glow {
+  position:absolute; inset:0; border-radius:20px; pointer-events:none;
+  background: radial-gradient(ellipse 70% 50% at 20% 0%, rgba(168,85,247,.06), transparent 60%);
+}
+
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 1 — ALERTAS
+   ══════════════════════════════════════════════════════ */
+.al-alerts-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px;
+  margin-bottom:16px;
+}
+.al-alert-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:14px 16px; border-radius:14px;
+  background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.06);
+  transition: all .25s;
+}
+.al-alert-item:hover { transform:translateX(4px); }
+.al-alert-dot {
+  width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px;
+  box-shadow:0 0 8px currentColor;
+}
+.dot-green  { background:#4ade80; color:#4ade80; }
+.dot-yellow { background:#fde047; color:#fde047; }
+.dot-red    { background:#f87171; color:#f87171; animation:blink 1s infinite; }
+
+.al-alert-info-title { font-size:.82rem; font-weight:700; color:#f1eeff; line-height:1.35; }
+.al-alert-info-sub   { font-size:.65rem; color:var(--al-muted); margin-top:3px; }
+.al-alert-badge {
+  margin-left:auto; flex-shrink:0; padding:2px 8px; border-radius:6px;
+  font-size:.55rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+}
+.badge-ok  { background:rgba(74,222,128,.1);  color:#4ade80; border:1px solid rgba(74,222,128,.2); }
+.badge-att { background:rgba(253,224,71,.1);  color:#fde047; border:1px solid rgba(253,224,71,.2); }
+.badge-urg { background:rgba(248,113,113,.12); color:#f87171; border:1px solid rgba(248,113,113,.25); }
+
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 2+3 GRID — Calendário + Pomodoro
+   ══════════════════════════════════════════════════════ */
+.al-mid-grid {
+  display:grid; grid-template-columns:1fr 340px; gap:18px;
+}
+@media(max-width:900px){ .al-mid-grid{ grid-template-columns:1fr; } }
+
+/* Mini Calendar */
+.al-cal-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+}
+.al-cal-nav {
+  width:30px; height:30px; border-radius:8px;
+  background:rgba(168,85,247,.12); border:1px solid rgba(168,85,247,.25);
+  color:#c084fc; cursor:pointer; font-size:.8rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.al-cal-nav:hover { background:rgba(168,85,247,.25); }
+.al-cal-month { font-weight:800; color:#fff; font-size:.95rem; }
+.al-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.al-cal-day-name { text-align:center; font-size:.58rem; font-weight:700; color:var(--al-muted); padding:4px 0; letter-spacing:.05em; text-transform:uppercase; }
+.al-cal-cell {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  border-radius:8px; font-size:.72rem; font-weight:600; cursor:default;
+  color:rgba(200,180,255,.6); transition:all .2s; position:relative;
+}
+.al-cal-cell.other-month { opacity:.25; }
+.al-cal-cell.today { background:rgba(124,58,237,.35); color:#c084fc; border:1px solid rgba(168,85,247,.4); font-weight:900; }
+.al-cal-cell.has-event::after {
+  content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--al-gold);
+}
+.al-cal-cell.event-exam { background:rgba(248,113,113,.12); color:#f87171; }
+.al-cal-cell.event-parcial { background:rgba(253,224,71,.08); color:#fde047; }
+.al-cal-cell.event-tp { background:rgba(124,58,237,.15); color:#c084fc; }
+.al-cal-cell:not(.other-month):hover { background:rgba(168,85,247,.1); color:#fff; }
+
+/* Event list */
+.al-event-list { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+.al-event-row {
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  border-radius:10px; background:rgba(0,0,0,.2);
+  border-left:3px solid transparent; transition:all .2s;
+}
+.al-event-row:hover { background:rgba(0,0,0,.3); transform:translateX(3px); }
+.al-event-row.ev-final   { border-color:#f87171; }
+.al-event-row.ev-parcial { border-color:#fde047; }
+.al-event-row.ev-tp      { border-color:#c084fc; }
+.al-event-date { font-size:.65rem; font-weight:900; color:var(--al-muted); min-width:40px; }
+.al-event-name { font-size:.78rem; font-weight:700; color:#f1eeff; }
+.al-event-badge { margin-left:auto; font-size:.55rem; font-weight:800; padding:2px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:.06em; }
+
+/* ── POMODORO ── */
+.al-pomo { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.al-pomo-modes { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+.al-pomo-mode {
+  padding:5px 12px; border-radius:99px; font-size:.65rem; font-weight:800;
+  background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.2);
+  color:var(--al-muted); cursor:pointer; transition:all .2s; letter-spacing:.04em;
+}
+.al-pomo-mode.active, .al-pomo-mode:hover {
+  background:rgba(168,85,247,.25); border-color:rgba(168,85,247,.5); color:#c084fc;
+}
+
+.al-pomo-ring {
+  position:relative; width:170px; height:170px;
+}
+.al-pomo-ring svg { transform:rotate(-90deg); }
+.al-pomo-track { fill:none; stroke:rgba(168,85,247,.12); stroke-width:8; }
+.al-pomo-fill  { fill:none; stroke:url(#pomoGrad); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
+.al-pomo-time {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.al-pomo-time-num {
+  font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:700;
+  color:#c084fc; line-height:1;
+  text-shadow:0 0 30px rgba(168,85,247,.8), 0 0 60px rgba(168,85,247,.4);
+}
+.al-pomo-time-label { font-size:.6rem; color:var(--al-muted); margin-top:4px; letter-spacing:.1em; text-transform:uppercase; }
+
+.al-pomo-btns { display:flex; gap:10px; }
+.al-pomo-btn {
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(168,85,247,.35); background:rgba(168,85,247,.12);
+  color:#c084fc; font-size:1rem; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.al-pomo-btn:hover { background:rgba(168,85,247,.28); box-shadow:0 0 20px rgba(168,85,247,.3); transform:scale(1.08); }
+.al-pomo-btn.play { width:56px; height:56px; font-size:1.2rem;
+  background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(168,85,247,.3));
+  border-color:rgba(168,85,247,.5);
+  box-shadow:0 0 20px rgba(124,58,237,.25);
+}
+.al-pomo-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:100%;
+}
+.al-pomo-stat {
+  background:rgba(0,0,0,.25); border:1px solid rgba(168,85,247,.1);
+  border-radius:10px; padding:10px 8px; text-align:center;
+}
+.al-pomo-stat-n { font-size:1.1rem; font-weight:900; color:#c084fc; }
+.al-pomo-stat-l { font-size:.58rem; color:var(--al-muted); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 4 — PROGRESSO + IA (grid)
+   ══════════════════════════════════════════════════════ */
+.al-bot-grid {
+  display:grid; grid-template-columns:1fr 320px; gap:18px;
+}
+@media(max-width:900px){ .al-bot-grid{ grid-template-columns:1fr; } }
+
+/* Progress bars */
+.al-materia-row { margin-bottom:14px; }
+.al-materia-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+.al-materia-name { font-size:.82rem; font-weight:700; color:#f1eeff; }
+.al-materia-pct  { font-size:.75rem; font-weight:800; color:#c084fc; }
+.al-materia-bar  { height:7px; background:rgba(168,85,247,.12); border-radius:99px; overflow:hidden; }
+.al-materia-fill {
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
+  box-shadow:0 0 10px rgba(168,85,247,.4);
+  transition: width 1.2s cubic-bezier(.4,0,.2,1);
+  width:0%;
+}
+
+/* ── IA Profe Joy ── */
+.al-ia-card { text-align:center; }
+.al-ia-avatar {
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg, rgba(124,58,237,.3), rgba(168,85,247,.2));
+  border:2px solid rgba(168,85,247,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; margin:0 auto 14px;
+  box-shadow:0 0 30px rgba(124,58,237,.3), 0 0 60px rgba(124,58,237,.1);
+  animation:joyPulse 3s ease-in-out infinite;
+}
+@keyframes joyPulse {
+  0%,100% { box-shadow:0 0 30px rgba(124,58,237,.3), 0 0 60px rgba(124,58,237,.1); }
+  50% { box-shadow:0 0 50px rgba(168,85,247,.5), 0 0 90px rgba(124,58,237,.2); }
+}
+.al-ia-name { font-size:.6rem; font-weight:900; letter-spacing:.15em; color:var(--al-neon); text-transform:uppercase; margin-bottom:4px; }
+.al-ia-q { font-size:.95rem; font-weight:700; color:#f1eeff; margin:0 0 16px; }
+.al-ia-chips { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+.al-ia-chip {
+  padding:8px 14px; border-radius:10px;
+  background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.15);
+  color:var(--al-muted); font-size:.75rem; cursor:pointer; transition:all .2s;
+  text-align:left;
+}
+.al-ia-chip:hover {
+  background:rgba(168,85,247,.18); border-color:rgba(168,85,247,.35); color:#c084fc;
+  transform:translateX(4px);
+}
+.al-ia-btn {
+  display:block; width:100%; padding:12px 0; border-radius:12px; border:none;
+  background:linear-gradient(135deg, #7c3aed, #6d28d9);
+  color:#fff; font-weight:800; font-size:.85rem; cursor:pointer;
+  text-decoration:none; text-align:center; transition:all .25s;
+  box-shadow:0 4px 20px rgba(124,58,237,.35);
+}
+.al-ia-btn:hover { background:linear-gradient(135deg,#8b47ed,#7c3aed); transform:translateY(-2px); box-shadow:0 8px 30px rgba(124,58,237,.5); }
+
+/* ══════════════════════════════════════════════════════
+   SEÇÃO 5 — CURSOS
+   ══════════════════════════════════════════════════════ */
+.al-courses-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+.al-course-card {
+  background:rgba(0,0,0,.3); border:1px solid rgba(168,85,247,.12);
+  border-radius:16px; padding:18px; transition:all .3s; position:relative; overflow:hidden;
+}
+.al-course-card:hover { transform:translateY(-4px); border-color:rgba(168,85,247,.3); box-shadow:0 12px 35px rgba(0,0,0,.4); }
+.al-course-tag {
+  display:inline-block; padding:3px 10px; border-radius:6px; font-size:.58rem;
+  font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px;
+  background:rgba(124,58,237,.15); border:1px solid rgba(168,85,247,.25); color:#c084fc;
+}
+.al-course-name { font-size:.9rem; font-weight:800; color:#f1eeff; margin:0 0 8px; }
+.al-course-sub  { font-size:.72rem; color:var(--al-muted); margin:0 0 12px; line-height:1.4; }
+.al-course-bar  { height:5px; background:rgba(168,85,247,.12); border-radius:99px; overflow:hidden; margin-bottom:14px; }
+.al-course-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7c3aed,#a855f7); }
+.al-course-meta { display:flex; justify-content:space-between; font-size:.62rem; color:var(--al-muted); margin-bottom:14px; }
+.al-course-btn {
+  display:block; text-align:center; padding:9px; border-radius:10px;
+  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(168,85,247,.2));
+  border:1px solid rgba(168,85,247,.35); color:#c084fc;
+  font-weight:800; font-size:.75rem; text-decoration:none; transition:all .2s;
+}
+.al-course-btn:hover { background:linear-gradient(135deg,rgba(124,58,237,.5),rgba(168,85,247,.35)); color:#fff; }
+
+/* Curso vazio */
+.al-no-courses {
+  text-align:center; padding:32px;
+  border:2px dashed rgba(168,85,247,.18); border-radius:16px; color:var(--al-muted);
+}
+
+/* ══════════════════════════════════════════════════════
+   BOTÃO PADRÃO
+   ══════════════════════════════════════════════════════ */
+.al-btn {
+  display:inline-flex; align-items:center; gap:8px; padding:10px 20px;
+  border-radius:12px; border:1px solid rgba(168,85,247,.35);
+  background:rgba(124,58,237,.15); color:#c084fc; font-weight:800; font-size:.78rem;
+  text-decoration:none; cursor:pointer; transition:all .25s;
+}
+.al-btn:hover { background:rgba(124,58,237,.3); box-shadow:0 4px 20px rgba(124,58,237,.25); transform:translateY(-2px); }
+.al-btn-gold { background:rgba(245,200,66,.1); border-color:rgba(245,200,66,.3); color:var(--al-gold); }
+.al-btn-gold:hover { background:rgba(245,200,66,.2); }
+</style>
+{% endblock %}
+
+{% block main_content %}
+
+<!-- ── Partículas ── -->
+<div class="al-particles" id="alParticles"></div>
+<div class="al-grid"></div>
+
+<!-- SVG atoms flutuantes -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <svg class="al-atom" style="width:220px;top:10%;right:8%;opacity:.035;" viewBox="0 0 200 200" fill="none">
+    <circle cx="100" cy="100" r="30" stroke="#a855f7" stroke-width="2"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" transform="rotate(60 100 100)" stroke-dasharray="4 3"/>
+    <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#a855f7" stroke-width="1.5" transform="rotate(-60 100 100)" stroke-dasharray="4 3"/>
+  </svg>
+  <svg class="al-atom" style="width:160px;bottom:15%;left:5%;opacity:.03;animation-delay:-6s;" viewBox="0 0 100 100" fill="none">
+    <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" stroke="#f5c842" stroke-width="1.5" fill="none"/>
+    <circle cx="50" cy="50" r="15" stroke="#f5c842" stroke-width="1.5"/>
+  </svg>
+  <svg class="al-atom" style="width:140px;top:55%;right:3%;opacity:.025;animation-delay:-3s;" viewBox="0 0 100 100" fill="none">
+    <circle cx="50" cy="50" r="40" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <circle cx="50" cy="50" r="20" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="10" y1="50" x2="90" y2="50" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="50" y1="10" x2="50" y2="90" stroke="#22d3ee" stroke-width="1"/>
+  </svg>
+</div>
+
+<div class="al-wrap">
+
+  <!-- ════════════════════════════════════
+       HERO PRINCIPAL (La Promesa)
+       ════════════════════════════════════ -->
+  <div class="al-hero" style="background: linear-gradient(135deg, rgba(124,58,237,.28) 0%, rgba(30,17,59,.8) 100%); text-align: center;">
+    <div class="al-hero-shimmer"></div>
+    <div class="al-card-glow"></div>
+    <div class="al-hero-left" style="width: 100%;">
+      <h4 class="marcas-fusion" style="color: #a78bfa; font-size: 1.3rem; margin-bottom: 10px; font-weight: 800; letter-spacing: 2px;">ALUMED OS <span class="plus" style="color: #fbbf24;">+</span> Conecta FCM</h4>
+      <h1 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); color: #fff; margin-bottom: 15px; font-weight: 900;">Sabé qué cae. <span class="grad">Practicá.</span> Entendé. Aprobá.</h1>
+      <p class="hero-subtitle" style="font-size: 1.15rem; color: #e2e8f0; max-width: 700px; margin: 0 auto;">Simulacros inteligentes, información académica en vivo y acompañamiento para Anatomía, Histología y Embriología UNLP.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       BLOQUE 1: CONECTA RADAR (Supervivencia)
+       ════════════════════════════════════ -->
+  <section class="hemisferio conecta-radar">
+      <div class="section-header" style="margin-bottom: 16px;">
+          <h2 style="color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--laranja);">📢</span> Conecta Radar · En vivo
+          </h2>
+          <p style="color: var(--text-muted);">Lo próximo en tu carrera</p>
+      </div>
+      
+      <div class="cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+          <!-- Alerta de Parcial -->
+          <div class="glass-card card-alerta" style="border-left: 3px solid var(--laranja); position: relative; padding: 20px;">
+              <div class="card-badge pulse-gold" style="position: absolute; top: 12px; right: 12px; background: rgba(251,191,36,0.2); color: #fbbf24; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Faltan 12 días</div>
+              <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 1.1rem;">1º Parcial: Histología y Embriología</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Fecha oficial confirmada. Verificá tu comisión y temas previstos.</p>
+              <a href="{% url 'cronograma_finales' %}" class="btn-gold al-btn" style="display:block; text-align:center; background: var(--accent); color: #000; border: none; font-weight: 800; text-decoration: none;">Ver información oficial</a>
+          </div>
+
+          <!-- Alerta de Burocracia/Cartelera -->
+          <div class="glass-card card-info" style="border-left: 3px solid #60a5fa; position: relative; padding: 20px;">
+              <div class="card-badge" style="position: absolute; top: 12px; right: 12px; background: rgba(96,165,250,0.2); color: #60a5fa; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Actualización</div>
+              <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 1.1rem;">Cambio de Aula - Cátedra A</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">La clase de Anatomía se traslada al Anfiteatro principal.</p>
+              <a href="{% url 'cartelera_view' %}" class="btn-outline-gold al-btn" style="display:block; text-align:center; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-weight: 600; text-decoration: none;">Ver cartelera en vivo</a>
+          </div>
+      </div>
+  </section>
+
+  <!-- ════════════════════════════════════
+       BLOQUE 2: SIMULACROS INTELIGENTES (El Corazón)
+       ════════════════════════════════════ -->
+  <div class="al-card" style="border-color: rgba(168,85,247,0.4); margin-bottom: 24px;">
+    <div class="al-card-glow"></div>
+    <div style="text-align: center; margin-bottom: 24px;">
+      <span class="al-label lbl-purple" style="font-size: 0.8rem;">🎯 Simulacros Inteligentes</span>
+      <h2 class="al-title" style="font-size: 2rem;">¿Estás listo para el parcial?</h2>
+      <p style="color: var(--al-muted);">Descubrí tu nivel real resolviendo preguntas basadas en los exámenes anteriores.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+      
+      <!-- Card Histo -->
+      <div class="glass-card simulacro" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+        <h3 style="color: #10b981; font-weight: 800; margin: 0 0 10px 0;"><i class="fas fa-microscope"></i> Histología</h3>
+        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px;">Probabilidad de temas: Tejido Epitelial (80%), Conectivo (90%).</p>
+        <a href="{% url 'simulacro_materia' 'histologia' %}" class="al-btn" style="width: 100%; justify-content: center; background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">Resolver Simulacro</a>
+      </div>
+
+      <!-- Card Embrio -->
+      <div class="glass-card simulacro" style="background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.2);">
+        <h3 style="color: #3b82f6; font-weight: 800; margin: 0 0 10px 0;"><i class="fas fa-baby"></i> Embriología</h3>
+        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px;">Probabilidad de temas: 1ra a 3ra semana (95%), Placenta (70%).</p>
+        <a href="{% url 'simulacro_materia' 'embriologia' %}" class="al-btn" style="width: 100%; justify-content: center; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">Resolver Simulacro</a>
+      </div>
+
+      <!-- Card Anato -->
+      <div class="glass-card simulacro" style="background: rgba(139, 92, 246, 0.05); border-color: rgba(139, 92, 246, 0.2);">
+        <h3 style="color: #8b5cf6; font-weight: 800; margin: 0 0 10px 0;"><i class="fas fa-bone"></i> Anatomía</h3>
+        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px;">Probabilidad de temas: Locomotor (100%), Esplacnología (60%).</p>
+        <a href="{% url 'simulacro_materia' 'anatomia' %}" class="al-btn" style="width: 100%; justify-content: center; background: rgba(139, 92, 246, 0.2); color: #a78bfa; border-color: rgba(139, 92, 246, 0.4);">Resolver Simulacro</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       BLOQUE 3: DIAGNÓSTICO Y PROFE JOY (Rescate)
+       ════════════════════════════════════ -->
+  <div class="al-mid-grid" style="grid-template-columns: 1fr 340px;">
+    
+    <!-- Mapa de Riesgo -->
+    <div class="al-card">
+      <div class="al-card-glow"></div>
+      <span class="al-label lbl-cyan">📊 Diagnóstico</span>
+      <h2 class="al-title">Tu Mapa de Riesgo</h2>
+      <p style="color: var(--al-muted); font-size: 0.85rem; margin-bottom: 20px;">Basado en tus últimos simulacros, esto es lo que necesitas repasar urgentemente.</p>
+      
+      <div class="al-materia-row">
+        <div class="al-materia-header">
+          <span class="al-materia-name">Epitelial (Histología)</span>
+          <span class="al-materia-pct" style="color: var(--danger);">Urgente (30%)</span>
+        </div>
+        <div class="al-materia-bar"><div class="al-materia-fill" style="background: var(--danger); width: 30%;"></div></div>
+      </div>
+      
+      <div class="al-materia-row">
+        <div class="al-materia-header">
+          <span class="al-materia-name">Fecundación (Embriología)</span>
+          <span class="al-materia-pct" style="color: var(--laranja);">Necesita Intervención (55%)</span>
+        </div>
+        <div class="al-materia-bar"><div class="al-materia-fill" style="background: var(--laranja); width: 55%;"></div></div>
+      </div>
+
+      <div class="al-materia-row">
+        <div class="al-materia-header">
+          <span class="al-materia-name">Miembro Superior (Anatomía)</span>
+          <span class="al-materia-pct" style="color: var(--green);">Fuerte (85%)</span>
+        </div>
+        <div class="al-materia-bar"><div class="al-materia-fill" style="background: var(--green); width: 85%;"></div></div>
+      </div>
+    </div>
+
+    <!-- IA Profe Joy Rescue -->
+    <div class="glass-card joy-glow al-ia-card">
+      <div class="al-ia-avatar" style="animation: none;">
+        <img src="{% static 'img/profe_joy.jpg' %}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='🎓';">
+      </div>
+      <h3 style="color: #fff; font-weight: 800; font-size: 1.2rem; margin: 0 0 10px;">¡Cuidado con Epitelial!</h3>
+      <p style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px;">
+        Vi que te costó el tema de epitelio glandular en el simulacro. ¿Hacemos un repaso rápido juntas antes de que sigas?
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="{% url 'profe_joy' %}" class="al-btn" style="width: 100%; justify-content: center; background: var(--roxo-neon); color: #fff; text-decoration: none;">
+          <i class="fas fa-bolt"></i> Repaso Express (Gratis)
+        </a>
+        <a href="https://www.alumedestudiantes.com/miscursos" target="_blank" class="al-btn" style="width: 100%; justify-content: center; background: transparent; border-color: rgba(255,255,255,0.2); color: #e2e8f0;">
+          <i class="fas fa-graduation-cap"></i> Ver Clase Completa
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /al-wrap -->
+
+<!-- ══════════════════════════════════════════════════════════════
+     BIBLIOTECA INTELIGENTE — Banner en Dashboard ALUMED OS
+     Acceso rápido destacado para todos los usuarios
+     ══════════════════════════════════════════════════════════════ -->
+<div style="max-width:900px;margin:32px auto 0;padding:0 20px;">
+  <!-- Banner card dorado -->
+  <a href="{% url 'conecta_biblioteca' %}" style="text-decoration:none;display:block;" id="alumed-biblioteca-banner">
+    <div style="
+      position:relative; overflow:hidden;
+      background: linear-gradient(135deg, rgba(245,200,66,.12) 0%, rgba(180,83,9,.08) 40%, rgba(124,58,237,.1) 100%);
+      border: 1px solid rgba(245,200,66,.3);
+      border-radius: 20px;
+      padding: 28px 32px;
+      display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,.3), 0 0 40px rgba(245,200,66,.06);
+      transition: all .3s ease;
+      cursor: pointer;
+    "
+    onmouseover="this.style.borderColor='rgba(245,200,66,.55)';this.style.boxShadow='0 12px 48px rgba(0,0,0,.4), 0 0 60px rgba(245,200,66,.12)';this.style.transform='translateY(-2px)';"
+    onmouseout="this.style.borderColor='rgba(245,200,66,.3)';this.style.boxShadow='0 8px 32px rgba(0,0,0,.3), 0 0 40px rgba(245,200,66,.06)';this.style.transform='translateY(0)';">
+
+      <!-- Glow bg -->
+      <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,.08),transparent 70%);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-40px;left:30%;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.06),transparent 70%);pointer-events:none;"></div>
+
+      <!-- Icon -->
+      <div style="
+        width:72px; height:72px; flex-shrink:0;
+        border-radius:18px;
+        background: linear-gradient(135deg, rgba(245,200,66,.25), rgba(245,200,66,.1));
+        border: 1.5px solid rgba(245,200,66,.35);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 4px 20px rgba(245,200,66,.15);
+      ">📚</div>
+
+      <!-- Text -->
+      <div style="flex:1;min-width:200px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+          <span style="font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,200,66,.7);padding:3px 10px;border-radius:8px;background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);">📡 CONECTA FCM · Nuevo</span>
+          <span style="font-size:.65rem;font-weight:700;color:rgba(200,180,120,.5);">Actualizado automáticamente</span>
+        </div>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.45rem;font-weight:800;color:#f5e8c0;margin:0 0 6px;line-height:1.2;">
+          Biblioteca Inteligente FCM
+        </h2>
+        <p style="font-size:.88rem;color:rgba(200,180,120,.7);margin:0;line-height:1.5;">
+          Libros, apuntes y recursos médicos organizados por materia con IA. Búsqueda inteligente, lector integrado y más.
+        </p>
+      </div>
+
+      <!-- CTA -->
+      <div style="flex-shrink:0;">
+        <span style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 12px 22px; border-radius: 12px;
+          background: linear-gradient(135deg, #f5c842, #e8a020);
+          color: #1a0a00; font-weight: 900; font-size: .88rem; letter-spacing: .03em;
+          box-shadow: 0 4px 16px rgba(245,200,66,.3);
+          white-space: nowrap;
+        ">
+          <i class="fas fa-book-open"></i> Explorar Biblioteca
+        </span>
+      </div>
+    </div>
+  </a>
+</div>
+
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     DICCIONARIO MED — ALUMED OS
+     Raíces, Prefijos y Sufijos · integrado al dashboard
+     ══════════════════════════════════════════════════════════════ -->
+<div style="max-width:900px;margin:40px auto 0;padding:0 20px 60px;">
+
+  <!-- Header -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <span style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:16px;">📖</span>
+      <span style="font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,160,255,.5);">ALUMED OS · Herramientas</span>
+    </div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:800;color:#f8fafc;margin:0 0 4px;">Diccionario Med</h2>
+    <p style="color:var(--muted);font-size:.92rem;margin:0;">Raíces, Prefijos y Sufijos de la Cursada · búsqueda instantánea</p>
+  </div>
+
+  <!-- Search -->
+  <div style="position:relative;margin-bottom:20px;">
+    <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(200,160,255,.4);font-size:.9rem;pointer-events:none;"></i>
+    <input id="alDictSearch" type="text" placeholder="Buscar términos, raíces, prefijos o sufijos (ej: itis, hepato, cito)..."
+      style="width:100%;padding:14px 20px 14px 44px;background:rgba(30,17,59,.7);border:1.5px solid rgba(124,58,237,.25);border-radius:16px;color:#f8fafc;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;box-sizing:border-box;transition:all .3s;backdrop-filter:blur(8px);"
+      onfocus="this.style.borderColor='rgba(124,58,237,.6)';this.style.boxShadow='0 0 0 3px rgba(124,58,237,.12)'"
+      onblur="this.style.borderColor='rgba(124,58,237,.25)';this.style.boxShadow='none'">
+  </div>
+
+  <!-- Filters -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+    <button class="al-dict-btn active" onclick="alDictMode('todos',this)" style="background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.35);color:#c084fc;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.82rem;font-weight:700;letter-spacing:.02em;transition:all .2s;">Todos</button>
+    <button class="al-dict-btn" onclick="alDictMode('Anatomía',this)" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;">Anatomía</button>
+    <button class="al-dict-btn" onclick="alDictMode('Histología',this)" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;">Histología</button>
+    <button class="al-dict-btn" onclick="alDictMode('Embriología',this)" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;">Embriología</button>
+    <button class="al-dict-btn" onclick="alDictMode('afijos',this)" style="background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(234,88,12,.12));border:1px solid rgba(245,158,11,.3);color:#fbbf24;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.82rem;font-weight:700;transition:all .2s;margin-left:auto;">🔗 Raíces y Afijos</button>
+  </div>
+
+  <!-- Word list -->
+  <div id="alDictWords" style="display:flex;flex-direction:column;gap:14px;"></div>
+  <!-- Afijos list -->
+  <div id="alDictAfijos" style="display:flex;flex-direction:column;gap:14px;display:none;"></div>
+  <!-- No results -->
+  <div id="alDictEmpty" style="display:none;text-align:center;padding:40px;color:var(--muted);font-size:1rem;">No se encontraron términos con ese criterio.</div>
+
+</div>
+
+<style>
+.al-dict-btn.active { background:rgba(124,58,237,.35)!important; border-color:rgba(124,58,237,.6)!important; color:#d8b4fe!important; }
+.al-dict-btn:hover:not(.active) { background:rgba(255,255,255,.08)!important; color:#f8fafc!important; }
+.al-dict-card { background:rgba(30,17,59,.6); border:1px solid rgba(124,58,237,.18); border-radius:14px; padding:22px 24px; transition:all .25s; backdrop-filter:blur(8px); }
+.al-dict-card:hover { transform:translateY(-2px); border-color:rgba(124,58,237,.4); box-shadow:0 8px 24px rgba(124,58,237,.12); }
+.al-afijo-card { background:rgba(30,17,59,.6); border:1px solid rgba(245,158,11,.18); border-radius:14px; padding:22px 24px; transition:all .25s; backdrop-filter:blur(8px); }
+.al-afijo-card:hover { transform:translateY(-2px); border-color:rgba(245,158,11,.35); box-shadow:0 8px 24px rgba(245,158,11,.1); }
+</style>
+
+<script>
+(function(){
+  var alDictCurrentMode = 'todos';
+
+  var alDictData = [
+    { palabra:"Gastroenteritis", catedra:"Anatomía", significado:"Inflamación simultánea de la membrana mucosa del estómago y de los intestinos.", prefijo:"gastro- (griego: gaster - estómago)", sufijo:"-enter- (griego: enteron - intestino) e -itis (griego: inflamación)", ejemplo:"El paciente presenta un cuadro clínico compatible con gastroenteritis infecciosa." },
+    { palabra:"Eritrocito", catedra:"Histología", significado:"Célula sanguínea madura de color rojo que contiene hemoglobina y transporta oxígeno.", prefijo:"eritro- (griego: erythros - rojo)", sufijo:"-cito (griego: kytos - célula hueca)", ejemplo:"El recuento periférico muestra eritrocitos con morfología bicóncava normal." },
+    { palabra:"Hepatomegalia", catedra:"Anatomía", significado:"Agrandamiento patológico o anormal del tamaño del hígado.", prefijo:"hepato- (griego: hepatos - hígado)", sufijo:"-megalia (griego: megas - grande)", ejemplo:"Durante la palpación del hipocondrio derecho se detectó hepatomegalia franca." },
+    { palabra:"Anencefalia", catedra:"Embriología", significado:"Defecto del tubo neural grave caracterizado por la ausencia de una gran parte del cerebro y del cráneo.", prefijo:"an- (griego: privación, sin) y encéfalo (griego: enkephalos - dentro de la cabeza)", sufijo:"-ia (griego: cualidad/condición)", ejemplo:"La falla en el cierre del neuroporo craneal durante la cuarta semana provoca anencefalia." },
+    { palabra:"Condrocito", catedra:"Histología", significado:"Célula madura del tejido cartilaginoso alojada en lagunas o condroplastos.", prefijo:"condro- (griego: chondros - cartílago)", sufijo:"-cito (griego: kytos - célula)", ejemplo:"Los condrocitos secretan los componentes orgánicos de la matriz cartilaginosa." },
+    { palabra:"Esplacnología", catedra:"Anatomía", significado:"Rama de la anatomía que se encarga del estudio científico de las vísceras y órganos internos.", prefijo:"esplacno- (griego: splachnon - víscera)", sufijo:"-logía (griego: logos - estudio o tratado)", ejemplo:"En el segundo módulo de anatomía práctica nos adentraremos en el área de la esplacnología." },
+    { palabra:"Miofibroblasto", catedra:"Histología", significado:"Célula con características intermedias entre fibroblasto y célula muscular lisa, clave en la retracción de heridas.", prefijo:"mio- (griego: mys - músculo)", sufijo:"-blasto (griego: blastos - célula inmadura)", ejemplo:"Los miofibroblastos actúan contrayendo los bordes de la herida durante el proceso reparativo." }
+  ];
+
+  var alAfijosData = [
+    { termino:"Gastro-", tipo:"Prefijo (Griego)", significado:"Relativo al estómago.", asociaciones:"Gastritis, Gastroenterología, Gastroesofágico.", tip:"Asócialo siempre con la digestión alta y la mucosa gástrica." },
+    { termino:"-itis", tipo:"Sufijo (Griego)", significado:"Inflamación o infección.", asociaciones:"Apendicitis, Artritis, Otitis, Meningitis, Hepatitis.", tip:"Si termina en -itis, el órgano afectado está sufriendo una respuesta inmunológica inflamatoria." },
+    { termino:"Condro-", tipo:"Prefijo (Griego)", significado:"Relativo al cartílago.", asociaciones:"Condrocito, Condrogénesis, Condrosarcoma.", tip:"Clave para Histología. Te sirve para rastrear todo el tejido conectivo especializado cartilaginoso." },
+    { termino:"-blasto", tipo:"Sufijo (Griego)", significado:"Célula germinal, inmadura ou formadora de matriz.", asociaciones:"Osteoblasto, Fibroblasto, Trofoblasto, Mioblasto.", tip:"Indica una célula 'joven' o metabólicamente muy activa que construye tejido." },
+    { termino:"-cito", tipo:"Sufijo (Griego)", significado:"Célula madura o receptáculo celular.", asociaciones:"Osteocito, Linfocito, Hepatocito, Adipocito.", tip:"A diferencia del -blasto, el -cito ya alcanzó su madurez y mantiene la homeostasis celular del tejido." },
+    { termino:"Hepato-", tipo:"Prefijo (Griego)", significado:"Relativo al hígado.", asociaciones:"Hepatocito, Hepatitis, Hepatomegalia, Hepatotóxico.", tip:"Crucial para los preparados de glándulas anexas en Histología y anatomía abdominal." },
+    { termino:"-megalia", tipo:"Sufijo (Griego)", significado:"Agrandamiento anormal o hipertrofia de tamaño.", asociaciones:"Esplenomegalia (bazo), Cardiomegalia (corazón), Acromegalia.", tip:"Término semiológico clínico súper común en las discusiones de casos anatomo-clínicos." },
+    { termino:"Mio-", tipo:"Prefijo (Griego)", significado:"Relativo al músculo.", asociaciones:"Miocardio, Miocito, Miometrio, Miopatía.", tip:"Indica siempre contractilidad. Úsalo para identificar capas musculares en órganos huecos de Histología." }
+  ];
+
+  function alDictRender(q) {
+    q = (q||'').toLowerCase();
+    var wDiv = document.getElementById('alDictWords');
+    var aDiv = document.getElementById('alDictAfijos');
+    var empty = document.getElementById('alDictEmpty');
+
+    if (alDictCurrentMode === 'afijos') {
+      wDiv.style.display = 'none';
+      aDiv.style.display = 'flex';
+      var filtered = alAfijosData.filter(function(it){
+        return !q || it.termino.toLowerCase().includes(q) || it.significado.toLowerCase().includes(q) || it.asociaciones.toLowerCase().includes(q);
+      });
+      aDiv.innerHTML = '';
+      if (!filtered.length) { empty.style.display='block'; return; }
+      empty.style.display='none';
+      filtered.forEach(function(it){
+        aDiv.innerHTML += '<div class="al-afijo-card">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+            '<span style="font-family:\'Outfit\',sans-serif;font-size:1.35rem;font-weight:800;color:#fbbf24;">' + it.termino + '</span>' +
+            '<span style="font-size:.7rem;background:rgba(245,158,11,.15);padding:4px 10px;border-radius:10px;color:#fbbf24;font-weight:700;">' + it.tipo + '</span>' +
+          '</div>' +
+          '<p style="color:#f1f5f9;font-size:.93rem;margin:0 0 12px;line-height:1.5;"><strong style="color:rgba(255,255,255,.6);">Significado:</strong> ' + it.significado + '</p>' +
+          '<div style="background:rgba(245,158,11,.06);border-left:3px solid rgba(245,158,11,.4);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;">' +
+            '<div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(245,158,11,.7);margin-bottom:4px;">Palabras de asociación</div>' +
+            '<div style="font-size:.9rem;color:#fde68a;font-weight:600;">' + it.asociaciones + '</div>' +
+          '</div>' +
+          '<p style="color:var(--muted);font-size:.85rem;font-style:italic;margin:0;border-top:1px solid rgba(255,255,255,.06);padding-top:10px;">💡 ' + it.tip + '</p>' +
+        '</div>';
+      });
+    } else {
+      aDiv.style.display = 'none';
+      wDiv.style.display = 'flex';
+      var filtered = alDictData.filter(function(it){
+        var catOk = alDictCurrentMode === 'todos' || it.catedra === alDictCurrentMode;
+        var textOk = !q || it.palabra.toLowerCase().includes(q) || it.significado.toLowerCase().includes(q) || it.prefijo.toLowerCase().includes(q) || it.sufijo.toLowerCase().includes(q);
+        return catOk && textOk;
+      });
+      wDiv.innerHTML = '';
+      if (!filtered.length) { empty.style.display='block'; return; }
+      empty.style.display='none';
+      filtered.forEach(function(it){
+        var catColor = it.catedra === 'Anatomía' ? '#818cf8' : it.catedra === 'Histología' ? '#34d399' : '#f472b6';
+        wDiv.innerHTML += '<div class="al-dict-card">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+            '<span style="font-family:\'Outfit\',sans-serif;font-size:1.35rem;font-weight:800;color:#f8fafc;">' + it.palabra + '</span>' +
+            '<span style="font-size:.7rem;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:10px;color:' + catColor + ';font-weight:700;">' + it.catedra + '</span>' +
+          '</div>' +
+          '<p style="color:#cbd5e1;font-size:.93rem;margin:0 0 12px;line-height:1.5;">' + it.significado + '</p>' +
+          '<div style="background:rgba(124,58,237,.08);border-left:3px solid rgba(124,58,237,.4);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;">' +
+            '<div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(192,132,252,.6);margin-bottom:6px;">Análisis de raíces (Griego / Latín)</div>' +
+            '<div style="font-size:.88rem;color:#e2d9f5;margin-bottom:3px;"><strong style="color:rgba(255,255,255,.5);">Prefijo/Raíz:</strong> ' + it.prefijo + '</div>' +
+            '<div style="font-size:.88rem;color:#e2d9f5;"><strong style="color:rgba(255,255,255,.5);">Sufijo/Componente:</strong> ' + it.sufijo + '</div>' +
+          '</div>' +
+          '<p style="color:var(--muted);font-size:.85rem;font-style:italic;margin:0;border-top:1px solid rgba(255,255,255,.06);padding-top:10px;"><strong style="color:rgba(255,255,255,.4);">Clínica / Cursada:</strong> "' + it.ejemplo + '"</p>' +
+        '</div>';
+      });
+    }
+  }
+
+  window.alDictMode = function(mode, btn) {
+    alDictCurrentMode = mode;
+    document.querySelectorAll('.al-dict-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    alDictRender(document.getElementById('alDictSearch').value);
+  };
+
+  document.getElementById('alDictSearch').addEventListener('input', function(){ alDictRender(this.value); });
+  alDictRender('');
+})();
+</script>
+
+
+<script>
+(function(){
+'use strict';
+
+// ── FRQ — Frecuencias ALUMED (Web Audio API) ─────────────────────────
+var FRQ = (function(){
+  var ctx = null;
+  var _osc = null, _gain = null, _osc2 = null, _activeBtn = null;
+
+  function getCtx(){
+    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function stop(){
+    if(_osc){ try{ _osc.stop(); }catch(e){} _osc=null; }
+    if(_osc2){ try{ _osc2.stop(); }catch(e){} _osc2=null; }
+    if(_gain){ _gain.disconnect(); _gain=null; }
+    if(_activeBtn){
+      _activeBtn.innerHTML = '<i class="fas fa-play"></i>';
+      _activeBtn.closest('.frq-item').classList.remove('playing');
+      _activeBtn = null;
+    }
+    document.getElementById('frqCurrentHz').textContent = '—';
+  }
+
+  function play(btn, hz, vol){
+    var ac = getCtx();
+    _gain = ac.createGain();
+    _gain.gain.value = parseFloat(vol)||0.4;
+    _gain.connect(ac.destination);
+
+    // For very low hz (binaural), use two slightly offset oscillators
+    if(hz < 20){
+      // Left channel: 200Hz base
+      _osc = ac.createOscillator();
+      _osc.type = 'sine';
+      _osc.frequency.value = 200;
+      // Right channel: 200 + hz
+      _osc2 = ac.createOscillator();
+      _osc2.type = 'sine';
+      _osc2.frequency.value = 200 + parseFloat(hz);
+      var merger = ac.createChannelMerger(2);
+      var g1 = ac.createGain(); g1.gain.value = 0.5; _osc.connect(g1); g1.connect(merger, 0, 0);
+      var g2 = ac.createGain(); g2.gain.value = 0.5; _osc2.connect(g2); g2.connect(merger, 0, 1);
+      merger.connect(_gain);
+      _osc.start(); _osc2.start();
+    } else {
+      _osc = ac.createOscillator();
+      _osc.type = 'sine';
+      _osc.frequency.value = parseFloat(hz);
+      _osc.connect(_gain);
+      _osc.start();
+    }
+
+    _activeBtn = btn;
+    btn.innerHTML = '<i class="fas fa-pause"></i>';
+    btn.closest('.frq-item').classList.add('playing');
+    document.getElementById('frqCurrentHz').textContent = hz + ' Hz';
+  }
+
+  return {
+    toggle: function(btn){
+      var item = btn.closest('.frq-item');
+      var hz   = item.dataset.hz;
+      var vol  = item.querySelector('.frq-vol').value;
+      if(_activeBtn === btn){ stop(); return; }
+      stop();
+      play(btn, hz, vol);
+    },
+    vol: function(slider){
+      var vol = parseFloat(slider.value);
+      if(_gain) _gain.gain.setTargetAtTime(vol, ctx.currentTime, 0.015);
+    }
+  };
+})();
+window.FRQ = FRQ;
+
+// ── FRQ Tab switcher ─────────────────────────────────────────────────
+document.querySelectorAll('.frq-tab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.frq-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.frq-panel').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('frq-' + tab.dataset.cat);
+    if(panel) panel.classList.add('active');
+  });
+});
+
+// ── Partículas ──────────────────────────────────────────
+(function spawnParticles(){
+  var container = document.getElementById('alParticles');
+  var colors = ['rgba(168,85,247,.5)','rgba(245,200,66,.4)','rgba(34,211,238,.3)','rgba(192,132,252,.4)'];
+  for(var i=0;i<25;i++){
+    var p = document.createElement('div');
+    p.className = 'al-particle';
+    var size = Math.random()*3+1;
+    p.style.cssText = [
+      'width:'+size+'px','height:'+size+'px',
+      'left:'+Math.random()*100+'%',
+      'background:'+colors[Math.floor(Math.random()*colors.length)],
+      'border-radius:50%',
+      'animation-duration:'+(15+Math.random()*20)+'s',
+      'animation-delay:'+(-Math.random()*20)+'s',
+      'box-shadow:0 0 '+(size*3)+'px currentColor'
+    ].join(';');
+    container.appendChild(p);
+  }
+})();
+
+// ── Calendário ─────────────────────────────────────────
+// ── MODAL de anotações ──────────────────────────────────────────────
+var NOTES_KEY = 'alumed_cal_notes';
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem(NOTES_KEY)||'{}'); }catch(e){ return {}; } }
+function saveNotes(n){ localStorage.setItem(NOTES_KEY, JSON.stringify(n)); }
+
+// Inject modal HTML once
+(function injectModal(){
+  if(document.getElementById('calModal')) return;
+  var html = `
+  <style>
+  .cal-modal-overlay{
+    position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  }
+  .cal-modal-overlay.open{display:flex;}
+  .cal-modal{
+    background:linear-gradient(135deg,rgba(20,10,45,.98),rgba(15,8,35,.98));
+    border:1px solid rgba(168,85,247,.35);border-radius:22px;padding:28px;
+    width:100%;max-width:420px;position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 60px rgba(124,58,237,.15);
+    animation:modalIn .25s ease;
+  }
+  @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:none;}}
+  .cal-modal-date{font-size:.65rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:#a855f7;margin-bottom:12px;}
+  .cal-modal-title{font-size:1.1rem;font-weight:900;color:#f1eeff;margin-bottom:20px;}
+  .cal-modal-close{
+    position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:8px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:rgba(200,180,255,.6);cursor:pointer;font-size:.9rem;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .cal-modal-close:hover{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.3);color:#f87171;}
+  .cal-modal label{display:block;font-size:.65rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:rgba(200,180,255,.6);margin-bottom:6px;}
+  .cal-modal-types{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .cal-type-btn{
+    padding:7px 14px;border-radius:9px;font-size:.72rem;font-weight:800;cursor:pointer;
+    background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.18);
+    color:rgba(200,180,255,.6);transition:all .2s;
+  }
+  .cal-type-btn.sel,.cal-type-btn:hover{background:rgba(168,85,247,.22);border-color:rgba(168,85,247,.5);color:#c084fc;}
+  .cal-type-btn[data-t="final"].sel{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.4);color:#f87171;}
+  .cal-type-btn[data-t="parcial"].sel{background:rgba(253,224,71,.1);border-color:rgba(253,224,71,.35);color:#fde047;}
+  .cal-type-btn[data-t="tp"].sel{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.45);color:#c084fc;}
+  .cal-type-btn[data-t="nota"].sel{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35);color:#22d3ee;}
+  .cal-input{
+    width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(168,85,247,.2);
+    border-radius:10px;padding:10px 14px;color:#f1eeff;font-family:'Outfit',sans-serif;
+    font-size:.85rem;outline:none;transition:border-color .2s;margin-bottom:14px;box-sizing:border-box;
+  }
+  .cal-input:focus{border-color:rgba(168,85,247,.5);box-shadow:0 0 0 2px rgba(168,85,247,.08);}
+  .cal-input::placeholder{color:rgba(200,180,255,.35);}
+  textarea.cal-input{resize:vertical;min-height:80px;font-size:.82rem;line-height:1.5;}
+  .cal-modal-footer{display:flex;gap:10px;margin-top:4px;}
+  .cal-save-btn{
+    flex:1;padding:11px;border-radius:11px;border:none;cursor:pointer;font-weight:800;font-size:.82rem;
+    background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;
+    box-shadow:0 4px 16px rgba(124,58,237,.35);transition:all .2s;
+  }
+  .cal-save-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,58,237,.5);}
+  .cal-del-btn{
+    padding:11px 16px;border-radius:11px;border:1px solid rgba(248,113,113,.25);
+    background:rgba(248,113,113,.06);color:#f87171;cursor:pointer;font-size:.82rem;
+    font-weight:700;transition:all .2s;
+  }
+  .cal-del-btn:hover{background:rgba(248,113,113,.15);}
+  /* saved events list */
+  .cal-notes-list{margin-top:14px;display:flex;flex-direction:column;gap:6px;max-height:130px;overflow-y:auto;}
+  .cal-note-item{
+    display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;
+    background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);font-size:.73rem;
+  }
+  .cal-note-badge{padding:2px 8px;border-radius:5px;font-size:.55rem;font-weight:900;text-transform:uppercase;flex-shrink:0;}
+  .cnb-final  {background:rgba(248,113,113,.15);color:#f87171;}
+  .cnb-parcial{background:rgba(253,224,71,.1);color:#fde047;}
+  .cnb-tp     {background:rgba(168,85,247,.15);color:#c084fc;}
+  .cnb-nota   {background:rgba(34,211,238,.1);color:#22d3ee;}
+  .cal-note-text{color:#f1eeff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cal-note-time{color:rgba(200,180,255,.5);flex-shrink:0;}
+  .cal-note-del{color:rgba(248,113,113,.5);cursor:pointer;flex-shrink:0;padding:2px 5px;border-radius:4px;transition:all .2s;}
+  .cal-note-del:hover{color:#f87171;background:rgba(248,113,113,.1);}
+  </style>
+
+  <div class="cal-modal-overlay" id="calModal">
+    <div class="cal-modal">
+      <button class="cal-modal-close" id="calModalClose">✕</button>
+      <div class="cal-modal-date" id="calModalDate"></div>
+      <div class="cal-modal-title">📌 Agregar evento</div>
+
+      <label>Tipo</label>
+      <div class="cal-modal-types">
+        <button class="cal-type-btn sel" data-t="final">🔴 Final</button>
+        <button class="cal-type-btn" data-t="parcial">🟡 Parcial</button>
+        <button class="cal-type-btn" data-t="tp">🟣 TP</button>
+        <button class="cal-type-btn" data-t="nota">🔵 Nota</button>
+      </div>
+
+      <label>Materia / Descripción</label>
+      <input class="cal-input" id="calEvTitle" type="text" placeholder="Ej: Anatomía, Histología...">
+
+      <label>Hora (opcional)</label>
+      <input class="cal-input" id="calEvTime" type="time">
+
+      <label>Anotaciones</label>
+      <textarea class="cal-input" id="calEvNotes" placeholder="Sala, tema a estudiar, recordatorios..."></textarea>
+
+      <div id="calNotesList" class="cal-notes-list" style="display:none;"></div>
+
+      <div class="cal-modal-footer">
+        <button class="cal-save-btn" id="calSaveBtn"><i class="fas fa-check"></i> Guardar</button>
+        <button class="cal-del-btn" id="calDelBtn" style="display:none;"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // Close modal
+  document.getElementById('calModalClose').addEventListener('click', closeModal);
+  document.getElementById('calModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+  // Type selector
+  document.querySelectorAll('.cal-type-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.cal-type-btn').forEach(function(b){ b.classList.remove('sel'); });
+      btn.classList.add('sel');
+    });
+  });
+})();
+
+var _openDate = null;
+function openModal(dateStr){
+  _openDate = dateStr;
+  var parts = dateStr.split('-');
+  var weekDay = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'][new Date(dateStr+'T12:00').getDay()];
+  document.getElementById('calModalDate').textContent = weekDay + ' · ' + parts[2] + '/' + parts[1] + '/' + parts[0];
+  document.getElementById('calEvTitle').value = '';
+  document.getElementById('calEvTime').value  = '';
+  document.getElementById('calEvNotes').value = '';
+
+  // Type reset
+  document.querySelectorAll('.cal-type-btn').forEach(function(b,i){ b.classList.toggle('sel', i===0); });
+
+  // Show existing notes for this date
+  renderNotesList(dateStr);
+  document.getElementById('calModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('calEvTitle').focus(); }, 150);
+}
+function closeModal(){
+  document.getElementById('calModal').classList.remove('open');
+  _openDate = null;
+}
+
+function renderNotesList(dateStr){
+  var notes = loadNotes();
+  var dayNotes = notes[dateStr] || [];
+  var listEl = document.getElementById('calNotesList');
+  var delBtn  = document.getElementById('calDelBtn');
+  if(dayNotes.length === 0){
+    listEl.style.display = 'none';
+    delBtn.style.display = 'none';
+    return;
+  }
+  listEl.style.display = 'flex';
+  delBtn.style.display = 'block';
+  listEl.innerHTML = dayNotes.map(function(n, i){
+    return '<div class="cal-note-item">'
+      +'<span class="cal-note-badge cnb-'+n.type+'">'+n.type.toUpperCase()+'</span>'
+      +'<span class="cal-note-text">'+n.title+'</span>'
+      +(n.time ? '<span class="cal-note-time">'+n.time+'</span>' : '')
+      +'<span class="cal-note-del" data-i="'+i+'">✕</span>'
+      +'</div>';
+  }).join('');
+
+  listEl.querySelectorAll('.cal-note-del').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var idx = parseInt(btn.dataset.i);
+      var notes = loadNotes();
+      notes[dateStr].splice(idx, 1);
+      if(notes[dateStr].length === 0) delete notes[dateStr];
+      saveNotes(notes);
+      renderNotesList(dateStr);
+      render();
+    });
+  });
+}
+
+// Save button
+document.getElementById('calSaveBtn').addEventListener('click', function(){
+  var title = document.getElementById('calEvTitle').value.trim();
+  if(!title || !_openDate) return;
+  var type  = document.querySelector('.cal-type-btn.sel').dataset.t;
+  var time  = document.getElementById('calEvTime').value;
+  var note  = document.getElementById('calEvNotes').value.trim();
+  var notes = loadNotes();
+  if(!notes[_openDate]) notes[_openDate] = [];
+  notes[_openDate].push({type:type, title:title, time:time, note:note});
+  saveNotes(notes);
+  renderNotesList(_openDate);
+  document.getElementById('calEvTitle').value = '';
+  document.getElementById('calEvTime').value  = '';
+  document.getElementById('calEvNotes').value = '';
+  render(); // refresh calendar dots
+});
+
+// Delete all for date
+document.getElementById('calDelBtn').addEventListener('click', function(){
+  if(!_openDate) return;
+  var notes = loadNotes();
+  delete notes[_openDate];
+  saveNotes(notes);
+  renderNotesList(_openDate);
+  render();
+});
+
+// ── CALENDAR RENDER ──────────────────────────────────────────────────
+var CAL = (function(){
+  var now = new Date();
+  var year = now.getFullYear(), month = now.getMonth();
+  var rawEvents = {{ events_json|safe }};
+  var dayNames=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  var monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function render(){
+    var label = document.getElementById('calMonthLabel');
+    var daysEl = document.getElementById('calDayNames');
+    var cellsEl = document.getElementById('calCells');
+    var eventsEl = document.getElementById('calEvents');
+
+    label.textContent = monthNames[month] + ' ' + year;
+
+    if(!daysEl.hasChildNodes()){
+      dayNames.forEach(function(d){
+        var el = document.createElement('div');
+        el.className='al-cal-day-name';
+        el.textContent=d;
+        daysEl.appendChild(el);
+      });
+    }
+
+    cellsEl.innerHTML='';
+    var first = new Date(year, month, 1).getDay();
+    var days  = new Date(year, month+1, 0).getDate();
+    var todayStr = now.toISOString().slice(0,10);
+    var userNotes = loadNotes();
+
+    // Build event map
+    var evMap={};
+    rawEvents.forEach(function(e){
+      if(!evMap[e.start]) evMap[e.start]=[];
+      evMap[e.start].push(e);
+    });
+
+    for(var i=0;i<first;i++){
+      var d=document.createElement('div'); d.className='al-cal-cell other-month'; cellsEl.appendChild(d);
+    }
+    for(var d=1;d<=days;d++){
+      var cell=document.createElement('div'); cell.className='al-cal-cell';
+      var dateStr=year+'-'+(month<9?'0':'')+(month+1)+'-'+(d<10?'0':'')+d;
+      cell.textContent=d;
+      cell.style.cursor='pointer';
+      cell.title='Clicá para agregar evento';
+      if(dateStr===todayStr) cell.classList.add('today');
+
+      // Server events
+      if(evMap[dateStr]){
+        var evType=evMap[dateStr][0].type;
+        if(evType==='exam') cell.classList.add('event-exam','has-event');
+        else if(evType==='parcial') cell.classList.add('event-parcial','has-event');
+        else cell.classList.add('event-tp','has-event');
+      }
+
+      // User personal notes — show colored dot(s)
+      if(userNotes[dateStr] && userNotes[dateStr].length){
+        cell.classList.add('has-event');
+        var firstType = userNotes[dateStr][0].type;
+        if(firstType==='final') cell.classList.add('event-exam');
+        else if(firstType==='parcial') cell.classList.add('event-parcial');
+        var dotBar = document.createElement('div');
+        dotBar.style.cssText='position:absolute;bottom:2px;left:50%;transform:translateX(-50%);display:flex;gap:2px;';
+        userNotes[dateStr].slice(0,3).forEach(function(n){
+          var dot=document.createElement('div');
+          var clr=n.type==='final'?'#f87171':n.type==='parcial'?'#fde047':n.type==='tp'?'#c084fc':'#22d3ee';
+          dot.style.cssText='width:4px;height:4px;border-radius:50%;background:'+clr+';box-shadow:0 0 4px '+clr+';';
+          dotBar.appendChild(dot);
+        });
+        cell.style.position='relative';
+        cell.appendChild(dotBar);
+        cell.title = userNotes[dateStr].map(function(n){ return n.type.toUpperCase()+': '+n.title+(n.time?' '+n.time:''); }).join(' | ');
+      }
+
+      // Click → open modal
+      (function(ds){ cell.addEventListener('click', function(){ openModal(ds); }); })(dateStr);
+
+      cellsEl.appendChild(cell);
+    }
+
+    // Event list
+    eventsEl.innerHTML='';
+    var upcoming = rawEvents.filter(function(e){ return e.start >= todayStr; })
+      .sort(function(a,b){ return a.start.localeCompare(b.start); }).slice(0,5);
+
+    if(upcoming.length===0){
+      var placeholder=[
+        {title:'Final Anatomía', start:'2026-08-01', type:'exam'},
+        {title:'Parcial Histología', start:'2026-07-18', type:'parcial'},
+        {title:'TP Biología', start:'2026-07-23', type:'tp'}
+      ];
+      placeholder.forEach(function(e){
+        var row=document.createElement('div');
+        row.className='al-event-row ev-'+(e.type==='exam'?'final':e.type==='parcial'?'parcial':'tp');
+        var parts=e.start.split('-');
+        var icon=e.type==='exam'?'🔴':e.type==='parcial'?'🟡':'🟣';
+        row.innerHTML='<span class="al-event-date">'+parts[2]+'/'+parts[1]+'</span>'
+          +'<span class="al-event-name">'+icon+' '+e.title+'</span>'
+          +'<span class="al-event-badge" style="background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25);">'+(e.type==='exam'?'FINAL':e.type==='parcial'?'PARCIAL':'TP')+'</span>';
+        eventsEl.appendChild(row);
+      });
+    } else {
+      upcoming.forEach(function(e){
+        var row=document.createElement('div');
+        row.className='al-event-row ev-'+(e.type==='exam'?'final':e.type==='parcial'?'parcial':'tp');
+        var parts=e.start.split('-');
+        var icon=e.type==='exam'?'🔴':e.type==='parcial'?'🟡':'🟣';
+        row.innerHTML='<span class="al-event-date">'+parts[2]+'/'+parts[1]+'</span>'
+          +'<span class="al-event-name">'+icon+' '+e.title+'</span>'
+          +'<span class="al-event-badge" style="background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25);">'+(e.type==='exam'?'FINAL':e.type==='parcial'?'PARCIAL':'TP')+'</span>';
+        eventsEl.appendChild(row);
+      });
+    }
+  }
+
+  document.getElementById('calPrev').addEventListener('click',function(){
+    month--; if(month<0){month=11;year--;} render();
+  });
+  document.getElementById('calNext').addEventListener('click',function(){
+    month++; if(month>11){month=0;year++;} render();
+  });
+  render();
+})();
+
+// ── Pomodoro ───────────────────────────────────────────
+(function(){
+  var CIRCUMFERENCE = 2 * Math.PI * 75; // 471
+  var circle = document.getElementById('pomoCircle');
+  circle.style.strokeDasharray = CIRCUMFERENCE;
+
+  var workMin=25, restMin=5;
+  var totalSecs=workMin*60, remainSecs=totalSecs;
+  var isRunning=false, isRest=false, timer=null;
+  var sessions=0, totalStudyMins=0;
+  var pomoDates=JSON.parse(localStorage.getItem('pomoDates')||'[]');
+
+  function today(){ return new Date().toDateString(); }
+  function updateStreak(){
+    var d=today();
+    if(!pomoDates.includes(d)){ pomoDates.push(d); localStorage.setItem('pomoDates',JSON.stringify(pomoDates)); }
+    var streak=1;
+    for(var i=pomoDates.length-2;i>=0;i--){
+      var a=new Date(pomoDates[i]), b=new Date(pomoDates[i+1]);
+      b.setDate(b.getDate()-1);
+      if(a.toDateString()===b.toDateString()) streak++;
+      else break;
+    }
+    document.getElementById('pomoStreak').textContent=streak+'🔥';
+  }
+
+  function fmt(s){ var m=Math.floor(s/60),sec=s%60; return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec; }
+
+  function updateUI(){
+    document.getElementById('pomoDisplay').textContent=fmt(remainSecs);
+    document.getElementById('pomoLabel').textContent=isRest?'DESCANSO':'FOCO';
+    var progress=(remainSecs/totalSecs);
+    var offset=CIRCUMFERENCE*(1-progress);
+    circle.style.strokeDashoffset=offset;
+    document.getElementById('pomoSessions').textContent=sessions;
+    document.getElementById('pomoHours').textContent=Math.floor(totalStudyMins/60)+'h '+Math.floor(totalStudyMins%60)+'m';
+  }
+
+  function startRest(){
+    isRest=true; totalSecs=restMin*60; remainSecs=totalSecs;
+    circle.style.stroke='#4ade80'; updateUI();
+  }
+  function startWork(){
+    isRest=false; totalSecs=workMin*60; remainSecs=totalSecs;
+    circle.style.stroke='url(#pomoGrad)'; updateUI();
+  }
+
+  document.getElementById('pomoPlay').addEventListener('click',function(){
+    var icon=this.querySelector('i');
+    if(isRunning){
+      clearInterval(timer); isRunning=false;
+      icon.className='fas fa-play';
+    } else {
+      isRunning=true; icon.className='fas fa-pause';
+      timer=setInterval(function(){
+        remainSecs--;
+        if(!isRest) totalStudyMins+=1/60;
+        if(remainSecs<=0){
+          if(!isRest){ sessions++; updateStreak(); startRest(); }
+          else { startWork(); }
+        }
+        updateUI();
+      },1000);
+    }
+  });
+
+  document.getElementById('pomoReset').addEventListener('click',function(){
+    clearInterval(timer); isRunning=false;
+    document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+    startWork();
+  });
+  document.getElementById('pomoSkip').addEventListener('click',function(){
+    clearInterval(timer); isRunning=false;
+    document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+    if(isRest) startWork(); else { sessions++; updateStreak(); startRest(); }
+  });
+
+  document.querySelectorAll('.al-pomo-mode').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.al-pomo-mode').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      workMin=parseInt(btn.dataset.work); restMin=parseInt(btn.dataset.rest);
+      clearInterval(timer); isRunning=false;
+      document.getElementById('pomoPlay').querySelector('i').className='fas fa-play';
+      startWork();
+    });
+  });
+
+  updateUI();
+})();
+
+// ── Animate progress bars ─────────────────────────────
+setTimeout(function(){
+  document.querySelectorAll('.al-materia-fill').forEach(function(el){
+    el.style.width = (el.dataset.w||0)+'%';
+  });
+},400);
+
+})();
+
+// ══════════════════════════════════════════════════════
+// 🌧 RAIN — Chuva sintética Web Audio API + Auto Pomodoro
+// ══════════════════════════════════════════════════════
+const RAIN = (function(){
+  let ctx=null,bufSrc=null,gainNode=null,filterNode=null;
+  let playing=false, autoMode=false, currentVol=0.25;
+
+  function getCtx(){
+    if(!ctx) ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
+    return ctx;
+  }
+
+  function buildRain(){
+    const c=getCtx();
+    const N=c.sampleRate*3;
+    const buf=c.createBuffer(2,N,c.sampleRate);
+    for(let ch=0;ch<2;ch++){
+      const d=buf.getChannelData(ch);
+      for(let i=0;i<N;i++) d[i]=Math.random()*2-1;
+    }
+    bufSrc=c.createBufferSource();
+    bufSrc.buffer=buf; bufSrc.loop=true;
+
+    filterNode=c.createBiquadFilter();
+    filterNode.type='bandpass';
+    filterNode.frequency.value=1400;
+    filterNode.Q.value=0.3;
+
+    gainNode=c.createGain();
+    gainNode.gain.setValueAtTime(0.001,c.currentTime);
+    gainNode.gain.linearRampToValueAtTime(currentVol,c.currentTime+1.2);
+
+    bufSrc.connect(filterNode);
+    filterNode.connect(gainNode);
+    gainNode.connect(c.destination);
+    bufSrc.start();
+  }
+
+  function start(){
+    if(playing) return;
+    buildRain(); playing=true; _ui();
+  }
+
+  function stop(){
+    if(!playing) return;
+    if(gainNode&&ctx){
+      gainNode.gain.linearRampToValueAtTime(0.001,ctx.currentTime+0.8);
+      setTimeout(function(){
+        try{bufSrc&&bufSrc.stop();}catch(e){}
+        bufSrc=null;gainNode=null;filterNode=null;
+      },900);
+    }
+    playing=false; _ui();
+  }
+
+  function toggle(){ playing?stop():start(); }
+
+  function setVol(v){
+    currentVol=Math.min(1,Math.max(0,v));
+    if(gainNode&&playing) gainNode.gain.setTargetAtTime(currentVol,ctx.currentTime,0.15);
+    const lbl=document.getElementById('rainVolLabel');
+    if(lbl) lbl.textContent=Math.round(currentVol*100)+'%';
+    const sl=document.getElementById('rainVol');
+    if(sl) sl.value=currentVol;
+  }
+
+  function onPomoState(state){
+    if(!autoMode) return;
+    if(state==='focus'){ setVol(0.20); if(!playing) start(); }
+    else if(state==='rest'){ setVol(0.60); if(!playing) start(); }
+  }
+
+  function toggleAuto(on){
+    autoMode=on;
+    const dot=document.getElementById('rainKnobDot');
+    const knob=document.getElementById('rainAutoKnob');
+    const lbl=document.getElementById('rainAutoLabel');
+    if(on){
+      if(dot)  { dot.style.left='16px';  dot.style.background='#93c5fd'; }
+      if(knob) knob.style.background='rgba(96,165,250,.35)';
+      if(lbl)  lbl.style.color='#93c5fd';
+      onPomoState('focus');
+    } else {
+      if(dot)  { dot.style.left='2px';   dot.style.background='#64748b'; }
+      if(knob) knob.style.background='rgba(96,165,250,.2)';
+      if(lbl)  lbl.style.color='rgba(147,197,253,.5)';
+    }
+  }
+
+  function _ui(){
+    const btn=document.getElementById('rainPlayBtn');
+    const ico=document.getElementById('rainIcon');
+    if(!btn||!ico) return;
+    if(playing){
+      ico.className='fas fa-pause';
+      btn.style.background='rgba(96,165,250,.35)';
+      btn.style.boxShadow='0 0 12px rgba(96,165,250,.3)';
+    } else {
+      ico.className='fas fa-play';
+      btn.style.background='rgba(96,165,250,.15)';
+      btn.style.boxShadow='none';
+    }
+  }
+
+  return { toggle, start, stop, setVol, toggleAuto, onPomoState };
+})();
+
+// Integração RAIN ↔ Pomodoro via MutationObserver no label
+(function(){
+  const lbl=document.getElementById('pomoLabel');
+  if(!lbl) return;
+  new MutationObserver(function(){
+    const t=lbl.textContent.trim().toUpperCase();
+    if(t.includes('FOCO'))   RAIN.onPomoState('focus');
+    if(t.includes('DESCANSO')) RAIN.onPomoState('rest');
+  }).observe(lbl,{childList:true,characterData:true,subtree:true});
+})();
+
+</script>
+{% endblock %}

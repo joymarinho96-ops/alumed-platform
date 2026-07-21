@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'forum',
     'payments',
     'flashcards',
+    'medlatin',
     'rest_framework',
 
 
@@ -101,6 +102,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'core.middleware.AutoLoginMiddleware', # Bypass de login para dev
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',

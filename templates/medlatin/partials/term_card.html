@@ -1,0 +1,34 @@
+<article class="ml-term-card">
+    <div class="ml-actions">
+        <div>
+            <h3><a href="{% url 'medlatin:term-detail' slug=term.slug %}">{{ term.latin_name }}</a></h3>
+            <div class="ml-literal">{{ term.literal_translation }}</div>
+        </div>
+        {% if user.is_authenticated %}
+            <form class="ml-inline-form" method="post" action="{% url 'medlatin:toggle-favorite' slug=term.slug %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="ml-fav-btn">Favorite</button>
+            </form>
+        {% endif %}
+    </div>
+    <div class="ml-excerpt">{{ term.medical_definition|truncatechars:190 }}</div>
+    <div class="ml-part-row">
+        {% for part in term.word_parts.all|slice:":4" %}
+            <div class="ml-part">
+                <strong>{{ part.form }}</strong>
+                <span>{{ part.meaning }}</span>
+            </div>
+        {% empty %}
+            <div class="ml-part">
+                <strong>Whole unit</strong>
+                <span>Historically best treated as a lexical unit.</span>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="ml-meta">
+        {% if term.subject %}<span>{{ term.subject }}</span>{% endif %}
+        {% if term.origin_language %}<span>{{ term.origin_language }}</span>{% endif %}
+        {% if term.difficulty %}<span>Difficulty {{ term.difficulty }}</span>{% endif %}
+    </div>
+</article>

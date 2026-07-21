@@ -114,7 +114,7 @@ class DigitalBook(models.Model):
     category = models.CharField(max_length=50, verbose_name="Tema/Subcategoría", default="Apunte Completo")
     year = models.CharField(max_length=20, verbose_name="Año", default="1º Año")
     platform = models.CharField(max_length=50, verbose_name="Plataforma", default="Studocu")
-    pdf_url = models.URLField(verbose_name="Enlace de la Fuente Original", blank=True)
+    pdf_url = models.URLField(max_length=1500, verbose_name="Enlace de la Fuente Original", blank=True)
     author = models.CharField(max_length=100, verbose_name="Autor", blank=True)
     page_count = models.IntegerField(default=1, verbose_name="Cantidad de Páginas")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='confirmado', verbose_name="Estado")
