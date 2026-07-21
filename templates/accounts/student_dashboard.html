@@ -155,7 +155,7 @@ a { text-decoration: none; }
                 <h3>🦴 Anatomía Cátedra A | 2026</h3>
                 <p style="color: #cbd5e1; font-size: 14px;">Curso Anual + Repasos + Simulacros</p>
                 <div class="precio">$ 25.800,00</div>
-                <a href="{% url 'checkout_intensivo' 'anatomia-a' %}" class="btn-outline-purple">Ver detalles</a>
+                <a href="https://www.alumedestudiantes.com/" target="_blank" class="btn-outline-purple">Ver detalles</a>
             </div>
 
             <!-- Anatomia Cátedra B -->
@@ -163,7 +163,7 @@ a { text-decoration: none; }
                 <h3>🧠 Anatomía Cátedra B | 2026</h3>
                 <p style="color: #cbd5e1; font-size: 14px;">Curso Anual + Repasos + Simulacros</p>
                 <div class="precio">$ 25.800,00</div>
-                <a href="{% url 'checkout_intensivo' 'anatomia-b' %}" class="btn-outline-purple">Ver detalles</a>
+                <a href="https://www.alumedestudiantes.com/" target="_blank" class="btn-outline-purple">Ver detalles</a>
             </div>
 
             <!-- Anatomia Cátedra C -->
@@ -171,7 +171,7 @@ a { text-decoration: none; }
                 <h3>🦴 Anatomía Cátedra C | 2026</h3>
                 <p style="color: #cbd5e1; font-size: 14px;">Curso Anual + Repasos + Simulacros</p>
                 <div class="precio">$ 25.800,00</div>
-                <a href="{% url 'checkout_intensivo' 'anatomia-c' %}" class="btn-outline-purple">Ver detalles</a>
+                <a href="https://www.alumedestudiantes.com/" target="_blank" class="btn-outline-purple">Ver detalles</a>
             </div>
 
             <!-- Histo y Embrio -->
@@ -179,7 +179,7 @@ a { text-decoration: none; }
                 <h3>🧫 Histo y Embrio | 1er Parcial</h3>
                 <p style="color: #cbd5e1; font-size: 14px;">Acceso por 100 días</p>
                 <div class="precio">$ 24.300,00</div>
-                <a href="{% url 'checkout_intensivo' 'histo-embrio' %}" class="btn-outline-purple">Ver detalles</a>
+                <a href="https://www.alumedestudiantes.com/" target="_blank" class="btn-outline-purple">Ver detalles</a>
             </div>
             
             <!-- Biología -->
@@ -187,14 +187,16 @@ a { text-decoration: none; }
                 <h3>🦠 Biología | 1er Parcial</h3>
                 <p style="color: #cbd5e1; font-size: 14px;">Curso Anual 2026 UNLP</p>
                 <div class="precio">$ 22.800,00</div>
-                <a href="{% url 'checkout_intensivo' 'biologia' %}" class="btn-outline-purple">Ver detalles</a>
+                <a href="https://www.alumedestudiantes.com/" target="_blank" class="btn-outline-purple">Ver detalles</a>
             </div>
         </div>
     </section>
 
     <!-- 4. IA PROFE Joy (A Conectora Flutuante) -->
     <div class="profe-joy-floating">
-        <div class="joy-avatar">👩‍🏫</div>
+        <div class="joy-avatar">
+            <img src="{% static 'img/profe_joy_avatar.png' %}" alt="Profe Joy" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 10px rgba(138,43,226,0.6);">
+        </div>
         <div class="joy-mensaje">
             <strong>Profe Joy IA</strong>
             <span>Estoy analizando tu rendimiento. ¿Querés que armemos un repaso para el parcial?</span>
