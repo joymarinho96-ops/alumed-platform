@@ -392,6 +392,60 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'explanation': "El lóbulo de la ínsula está oculto en el fondo del surco lateral o cisura de Silvio."
                 })
             ]
+            
+        elif not questions and base_subject == "Biología":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "El siguiente dispositivo consta de dos compartimentos (A y B) separados por una membrana M. En A se coloca sacarosa 200 mM y en B NaCl 100 mM. ¿Qué ocurre si M es impermeable a la sacarosa y al Na+, y el coeficiente de reflexión para Cl- es 0,5?",
+                    'option_a': "La solución A es hiperosmolar respecto a la B, habrá flujo de agua hacia B.",
+                    'option_b': "La solución A es isoosmolar respecto a la B. La solución A es hipertónica respecto a la B y se observará un incremento del volumen del compartimiento A.",
+                    'option_c': "La solución A es hiperosmolar y habrá incremento de volumen en A.",
+                    'option_d': "La solución A es isoosmolar y habrá flujo neto de agua hacia B.",
+                    'correct_option': "B",
+                    'explanation': "Ambas soluciones tienen 200 mOsm/L (isoosmolar). Como el coeficiente de reflexión del Cl- es 0.5, la osmolaridad efectiva de B es 150 mOsm/L y de A es 200 mOsm/L, por lo que A es hipertónica y atrae agua."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "En A hay sacarosa 150 mM y en B NaCl 100 mM. Si M es impermeable a sacarosa y Na+, y el coeficiente de reflexión para Cl- es 0,5 (σ = 0,5). Señale lo correcto:",
+                    'option_a': "La solución A es hipoosmolar respecto a la B, pero es isotónica respecto a la solución B y no existirá ósmosis.",
+                    'option_b': "La solución A es hiperosmolar respecto a la B y existirá ósmosis hacia B.",
+                    'option_c': "La solución A es hipoosmolar respecto a la B y es hipotónica respecto a B.",
+                    'option_d': "La solución A es isoosmolar respecto a la B y habrá ósmosis hacia A.",
+                    'correct_option': "A",
+                    'explanation': "La osmolaridad de A es 150 y B es 200 (A es hipoosmolar). La osmolaridad efectiva de A es 150, y la de B es 100(1) + 100(0.5) = 150. Por ende, son isotónicas y no hay ósmosis."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "¿Qué organela celular es la principal responsable de la síntesis de ATP mediante la fosforilación oxidativa?",
+                    'option_a': "Retículo Endoplasmático Liso",
+                    'option_b': "Aparato de Golgi",
+                    'option_c': "Mitocondria",
+                    'option_d': "Lisosoma",
+                    'correct_option': "C",
+                    'explanation': "La mitocondria posee la cadena de transporte de electrones y la ATP sintasa en su membrana interna, produciendo la mayor parte del ATP celular."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "¿Cuál es el componente lipídico más abundante en las membranas biológicas eucariotas?",
+                    'option_a': "Triglicéridos",
+                    'option_b': "Fosfolípidos",
+                    'option_c': "Colesterol",
+                    'option_d': "Esfingolípidos",
+                    'correct_option': "B",
+                    'explanation': "Los fosfolípidos forman la bicapa lipídica básica de todas las membranas biológicas debido a su naturaleza anfipática."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "Durante qué fase del ciclo celular se produce la replicación del ADN?",
+                    'option_a': "Fase G1",
+                    'option_b': "Fase S",
+                    'option_c': "Fase G2",
+                    'option_d': "Fase M",
+                    'correct_option': "B",
+                    'explanation': "Durante la fase S (Síntesis) del ciclo celular se replica el ADN, duplicando el material genético de la célula."
+                })
+            ]
 
         
         data = []
