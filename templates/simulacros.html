@@ -29,6 +29,18 @@
 .curso-card h4 { font-size: 16px; margin-bottom: 5px; }
 .curso-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; }
 .badge-purple { background: rgba(138,43,226,0.2); color: #dda0dd; padding: 4px 10px; border-radius: 10px; font-size: 11px; }
+
+/* Setup Options */
+.setup-option { display: flex; gap: 15px; margin-bottom: 25px; }
+.setup-box { flex: 1; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); cursor: pointer; text-align: center; transition: 0.3s; }
+.setup-box:hover { border-color: var(--purple-main); }
+.setup-box.active { background: rgba(138,43,226,0.2); border-color: var(--purple-main); box-shadow: 0 0 15px rgba(138,43,226,0.4); }
+.setup-box h4 { margin-bottom: 5px; font-size: 1.1rem; color: #fff; }
+.setup-box p { font-size: 0.85rem; color: var(--text-muted); }
+
+/* Textarea Modo Oral */
+.oral-textarea { width: 100%; height: 150px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; color: #fff; font-size: 1rem; resize: vertical; margin-bottom: 15px; }
+.oral-textarea:focus { outline: none; border-color: var(--purple-main); }
 </style>
 {% endblock %}
 
@@ -38,7 +50,7 @@
     <!-- Loading State -->
     <div id="loading-state" class="glass-card" style="display: none; text-align: center; padding: 60px;">
         <h2 style="color: var(--purple-main); font-size: 24px;">Iniciando Motor de Simulación...</h2>
-        <p style="color: var(--text-muted); margin-top: 15px;">Extrayendo preguntas del banco de datos de ALUMED OS.</p>
+        <p style="color: var(--text-muted); margin-top: 15px;">Procesando PDFs y generando preguntas dinámicas con IA.</p>
     </div>
 
     <!-- Selection State (Grid) -->
@@ -49,26 +61,67 @@
         </div>
         
         <div class="cards-row">
-            <div class="curso-card" onclick="startSimulacro('anatomia-a')">
+            <div class="curso-card" onclick="openSetup('anatomia-a')">
                 <h4>ANATOMÍA</h4>
                 <p>Simulador Oficial</p>
                 <span class="badge-purple">Alta probabilidad</span>
             </div>
-            <div class="curso-card" onclick="startSimulacro('histo-embrio')">
+            <div class="curso-card" onclick="openSetup('histo-embrio')">
                 <h4>HISTOLOGÍA Y EMBRIOLOGÍA</h4>
                 <p>Simulador Oficial</p>
                 <span class="badge-purple">Alta probabilidad</span>
             </div>
-            <div class="curso-card" onclick="startSimulacro('biologia')">
+            <div class="curso-card" onclick="openSetup('biologia')">
                 <h4>BIOLOGÍA</h4>
                 <p>Simulador Oficial</p>
                 <span class="badge-purple">Muy probable</span>
             </div>
-            <div class="curso-card" onclick="startSimulacro('bioquimica')">
+            <div class="curso-card" onclick="openSetup('bioquimica')">
                 <h4>BIOQUÍMICA</h4>
                 <p>Simulador Oficial</p>
                 <span class="badge-purple">Probable</span>
             </div>
+        </div>
+    </div>
+
+    <!-- Setup State (Lobby AI) -->
+    <div id="setup-state" class="glass-card" style="display: none;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <span class="badge-gold" style="font-size: 12px; padding: 5px 12px;">MOTOR DE IA ALUMED</span>
+            <h2 style="margin-top: 15px; font-size: 2rem; color: #fff;">Configuración de Misión</h2>
+            <p style="color: var(--text-muted);">Personaliza tu simulacro para <strong id="setup-subject-name" style="color: var(--purple-main);"></strong></p>
+        </div>
+
+        <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">1. ¿En qué modalidad lo hacemos?</h3>
+        <div class="setup-option" id="modality-options">
+            <div class="setup-box active" onclick="selectModality('choice')">
+                <h4>🎯 Modo Examen (Choice)</h4>
+                <p>Multiple Choice con corrección teórica al instante.</p>
+            </div>
+            <div class="setup-box" onclick="selectModality('oral')">
+                <h4>🎙️ Modo Oral (Desarrollo)</h4>
+                <p>Casos clínicos y preparados. Vos explicás el paso a paso.</p>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">2. ¿Cuántas preguntas querés para este bloque?</h3>
+        <div class="setup-option" id="quantity-options">
+            <div class="setup-box" onclick="selectQuantity(5)">
+                <h4>5 Preguntas</h4>
+                <p>Sprint rápido (Ideal para repasar un tema)</p>
+            </div>
+            <div class="setup-box active" onclick="selectQuantity(10)">
+                <h4>10 Preguntas</h4>
+                <p>Combate medio (Recomendado)</p>
+            </div>
+            <div class="setup-box" onclick="selectQuantity(15)">
+                <h4>15 Preguntas</h4>
+                <p>Simulación final intensa</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="beginQuiz()" class="btn-primary" style="padding: 15px 40px; font-size: 1.2rem;">🚀 Generar Simulacro con IA</button>
         </div>
     </div>
 
@@ -119,38 +172,65 @@
 </div>
 
 <script>
-    const subjectSlug = "{{ materia_preseleccionada|default:'' }}";
+    const urlSubjectSlug = "{{ materia_preseleccionada|default:'' }}";
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
 
+    // Configuración del setup
+    let currentSubject = "";
+    let selectedModality = "choice";
+    let selectedQuantity = 10;
+
     document.addEventListener("DOMContentLoaded", () => {
-        if (!subjectSlug || subjectSlug === 'None') {
+        if (!urlSubjectSlug || urlSubjectSlug === 'None') {
             document.getElementById('selection-state').style.display = 'block';
         } else {
-            startSimulacro(subjectSlug);
+            openSetup(urlSubjectSlug);
         }
     });
 
-    async function startSimulacro(subject) {
+    function openSetup(subject) {
+        currentSubject = subject;
         document.getElementById('selection-state').style.display = 'none';
+        document.getElementById('setup-state').style.display = 'block';
+        document.getElementById('setup-subject-name').innerText = subject.replace('-', ' ').toUpperCase();
+    }
+
+    function selectModality(modality) {
+        selectedModality = modality;
+        const boxes = document.getElementById('modality-options').querySelectorAll('.setup-box');
+        boxes.forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function selectQuantity(qty) {
+        selectedQuantity = qty;
+        const boxes = document.getElementById('quantity-options').querySelectorAll('.setup-box');
+        boxes.forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    async function beginQuiz() {
+        document.getElementById('setup-state').style.display = 'none';
         document.getElementById('loading-state').style.display = 'block';
         
         try {
-            const res = await fetch(`/api/simulacros/${subject}/`);
+            // Nota: Aquí se conectaría al endpoint RAG en el futuro pasando ?modality=...&qty=...
+            const res = await fetch(`/api/simulacros/${currentSubject}/`);
             const data = await res.json();
             
             if (data.questions && data.questions.length > 0) {
-                questions = data.questions;
+                // Simular recorte de cantidad si hay más disponibles
+                questions = data.questions.slice(0, selectedQuantity);
                 currentQuestionIndex = 0;
                 score = 0;
                 
                 document.getElementById('loading-state').style.display = 'none';
                 document.getElementById('quiz-area').style.display = 'block';
                 
-                // Formatear el nombre en el badge
-                let displayName = subject.replace('-', ' ').toUpperCase();
-                document.getElementById('quiz-subject-badge').innerText = `SIMULACRO: ${displayName}`;
+                let displayName = currentSubject.replace('-', ' ').toUpperCase();
+                document.getElementById('quiz-subject-badge').innerText = `SIMULACRO AI: ${displayName} (${selectedModality.toUpperCase()})`;
 
                 renderQuestion();
             } else {
@@ -159,7 +239,7 @@
                 document.getElementById('selection-state').style.display = 'block';
             }
         } catch (e) {
-            alert("Error conectando con el servidor de simulacros.");
+            alert("Error conectando con el motor de IA.");
             window.location.href = "{% url 'home' %}";
         }
     }
@@ -177,22 +257,36 @@
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         
-        ['A', 'B', 'C', 'D'].forEach(letter => {
-            if (q.options[letter] && q.options[letter].trim() !== '') {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerHTML = `<strong style="color: var(--purple-main); margin-right: 10px;">${letter})</strong> ${q.options[letter]}`;
-                btn.onclick = () => checkAnswer(letter, btn);
-                container.appendChild(btn);
-            }
-        });
+        if (selectedModality === 'choice') {
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                if (q.options[letter] && q.options[letter].trim() !== '') {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<strong style="color: var(--purple-main); margin-right: 10px;">${letter})</strong> ${q.options[letter]}`;
+                    btn.onclick = () => checkAnswerChoice(letter, btn);
+                    container.appendChild(btn);
+                }
+            });
+        } else if (selectedModality === 'oral') {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'oral-textarea';
+            textarea.placeholder = "Escribe tu desarrollo, diagnóstico o paso a paso aquí...";
+            container.appendChild(textarea);
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.style.width = '100%';
+            btn.innerHTML = "📝 Enviar Desarrollo para Corrección";
+            btn.onclick = () => checkAnswerOral(textarea.value);
+            container.appendChild(btn);
+        }
 
         document.getElementById('feedback-area').style.display = 'none';
     }
 
-    function checkAnswer(selectedLetter, btnElement) {
+    function checkAnswerChoice(selectedLetter, btnElement) {
         const buttons = document.getElementById('options-container').querySelectorAll('.option-btn');
-        buttons.forEach(b => b.disabled = true); // Bloquear respuestas
+        buttons.forEach(b => b.disabled = true); 
 
         const q = questions[currentQuestionIndex];
         const feedbackArea = document.getElementById('feedback-area');
@@ -209,7 +303,6 @@
         } else {
             btnElement.classList.add('incorrect');
             
-            // Highlight the correct option
             buttons.forEach(b => {
                 if (b.innerHTML.includes(`>${q.correct_option})<`)) {
                     b.classList.add('correct');
@@ -220,7 +313,30 @@
             feedbackTitle.style.color = "#ef4444";
         }
 
-        feedbackExp.innerHTML = `<strong>Explicación:</strong> ${q.explanation || 'Revisa este concepto en la bibliografía oficial.'}`;
+        feedbackExp.innerHTML = `<strong>Justificación Teórica:</strong> ${q.explanation || 'Revisa este concepto en la bibliografía oficial.'}`;
+        feedbackArea.style.display = 'block';
+    }
+
+    function checkAnswerOral(textValue) {
+        if (!textValue.trim()) {
+            alert("Por favor, escribe un desarrollo antes de enviar.");
+            return;
+        }
+        
+        document.getElementById('options-container').querySelectorAll('button, textarea').forEach(el => el.disabled = true);
+
+        const q = questions[currentQuestionIndex];
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExp = document.getElementById('feedback-explanation');
+
+        // En modo oral sumamos puntaje automáticamente en esta versión de interfaz 
+        // (En el futuro, esto lo corregirá la IA en el backend).
+        score++;
+
+        feedbackTitle.innerText = "👨‍🏫 Devolución de la IA (Referencia)";
+        feedbackTitle.style.color = "#fbbf24";
+        feedbackExp.innerHTML = `<strong>Criterio de Evaluación:</strong> Para que tu respuesta sea correcta, debía mencionar los siguientes puntos clave:<br><br>${q.explanation || 'La respuesta correcta en Choice era la opción ' + q.correct_option}`;
         feedbackArea.style.display = 'block';
     }
 
@@ -240,8 +356,6 @@
         const riskTitle = document.getElementById('risk-title');
         const riskDesc = document.getElementById('risk-desc');
 
-        // Lógica de Triaje (Triage)
-        riskMap.className = 'risk-map'; // Reset clases
         if (percentage >= 80) {
             riskMap.classList.add('dominado');
             riskTitle.innerHTML = '✅ Nivel de Riesgo: Dominado';
