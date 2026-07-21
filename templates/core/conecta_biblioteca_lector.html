@@ -138,56 +138,70 @@
         text-shadow: 0 0 6px var(--cx-gold);
     }
 
-    /* Right panel: Profe Joy Chat */
-    .profe-sidebar-panel {
+    /* ── RIGHT PANEL (Profe Joy Chat) ── */
+    .profe-chat-panel {
         background: var(--cx-dark-card);
         border: 1px solid var(--cx-border);
         border-radius: 20px;
         backdrop-filter: blur(20px);
-        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        box-shadow: 0 10px 40px rgba(0,0,0,.4);
         display: flex;
         flex-direction: column;
         overflow: hidden;
     }
-    .sidebar-chat-header {
-        padding: 14px 16px;
+    .chat-panel-header {
+        padding: 16px;
         border-bottom: 1px solid var(--cx-border);
-        background: rgba(10,5,20,.4);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        background: rgba(10,5,20,.4);
     }
-    .sidebar-chat-avatar {
-        width: 38px; height: 38px;
+    .joy-chat-avatar {
+        width: 44px; height: 44px;
         border-radius: 50%;
         border: 2px solid var(--cx-gold);
         overflow: hidden;
+        box-shadow: 0 0 10px rgba(245,200,66,.3);
     }
-    .sidebar-chat-avatar img {
+    .joy-chat-avatar img {
         width: 100%; height: 100%; object-fit: cover;
     }
-    .sidebar-chat-name {
-        font-weight: 800; font-size: 13.5px; color: #fff;
+    .joy-chat-status {
+        display: flex; flex-direction: column;
+    }
+    .joy-chat-name {
         font-family: 'Outfit', sans-serif;
+        font-weight: 800; font-size: 14px; color: #fff;
     }
-    .sidebar-chat-status {
-        font-size: 10.5px; color: #4ade80; display: flex; align-items: center; gap: 4px;
+    .joy-chat-online {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 11px; color: #4ade80;
     }
-    .sidebar-chat-messages {
+    .chat-online-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #4ade80; box-shadow: 0 0 6px #4ade80;
+        animation: blink 1.5s infinite;
+    }
+
+    /* Messages box */
+    .chat-messages-container {
         flex: 1;
-        padding: 14px;
+        padding: 16px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         background: linear-gradient(180deg, transparent, rgba(10,5,20,.15));
+        scrollbar-width: thin;
+        scrollbar-color: rgba(245,200,66,.15) transparent;
     }
     .chat-bubble {
         max-width: 85%;
-        padding: 8px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-        line-height: 1.45;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 12.5px;
+        line-height: 1.5;
         font-family: 'Outfit', sans-serif;
     }
     .chat-bubble.joy {
@@ -195,81 +209,91 @@
         border: 1px solid rgba(124,58,237,.25);
         color: #f0e8d0;
         align-self: flex-start;
-        border-bottom-left-radius: 2px;
+        border-bottom-left-radius: 3px;
     }
     .chat-bubble.user {
         background: rgba(245,200,66,.12);
         border: 1px solid rgba(245,200,66,.25);
         color: #fff;
         align-self: flex-end;
-        border-bottom-right-radius: 2px;
+        border-bottom-right-radius: 3px;
     }
 
-    /* Suggestion pills */
-    .sidebar-chat-suggestions {
+    /* Suggestion Pills */
+    .chat-suggestions {
         display: flex;
-        gap: 4px;
-        padding: 8px 14px;
+        gap: 6px;
+        padding: 10px 16px;
         overflow-x: auto;
         white-space: nowrap;
-        border-top: 1px solid rgba(255,255,255,.02);
+        border-top: 1px solid rgba(255,255,255,.03);
     }
     .suggestion-pill {
-        padding: 4px 10px;
-        border-radius: 99px;
+        padding: 6px 12px;
+        border-radius: 999px;
         background: rgba(255,255,255,.03);
-        border: 1px solid rgba(245,200,66,.08);
+        border: 1px solid rgba(245,200,66,.1);
         color: var(--cx-muted);
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         transition: all .2s;
     }
     .suggestion-pill:hover {
-        background: rgba(245,200,66,.06);
+        background: rgba(245,200,66,.08);
         border-color: var(--cx-gold);
         color: var(--cx-gold);
     }
 
     /* Input area */
-    .sidebar-chat-input {
-        padding: 10px 14px;
+    .chat-input-bar {
+        padding: 14px;
         border-top: 1px solid var(--cx-border);
         display: flex;
-        gap: 8px;
+        gap: 10px;
         background: rgba(10,5,20,.3);
     }
-    .sidebar-chat-input textarea {
+    .chat-input-bar textarea {
         flex: 1;
         background: rgba(0,0,0,.5);
         border: 1px solid rgba(245,200,66,.2);
-        border-radius: 8px;
+        border-radius: 10px;
         color: #fff;
-        padding: 6px 10px;
-        font-size: 12px;
+        padding: 8px 12px;
+        font-size: 12.5px;
         outline: none;
         resize: none;
-        height: 32px;
+        height: 38px;
+        transition: all .2s;
         font-family: 'Outfit', sans-serif;
     }
-    .sidebar-chat-send {
-        width: 32px; height: 32px;
-        border-radius: 8px;
+    .chat-input-bar textarea:focus {
+        border-color: var(--cx-gold);
+        box-shadow: 0 0 10px rgba(245,200,66,.2);
+    }
+    .chat-send-btn {
+        width: 38px; height: 38px;
+        border-radius: 10px;
         background: linear-gradient(135deg, var(--cx-gold), var(--cx-gold-dark));
-        border: none; color: #000; font-size: 12px; cursor: pointer;
+        border: none;
+        color: #000;
+        font-size: 14px;
+        cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         transition: all .2s;
     }
-    .sidebar-chat-send:hover {
-        transform: scale(1.03);
+    .chat-send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(245,200,66,.4);
     }
 
+    /* Typing bubble */
     .typing-bubble {
-        display: flex; gap: 3px; align-items: center; justify-content: center;
-        padding: 6px 10px;
+        display: flex; gap: 4px; align-items: center; justify-content: center;
+        padding: 10px 14px;
     }
     .typing-dot {
-        width: 5px; height: 5px; border-radius: 50%;
+        width: 6px; height: 6px; border-radius: 50%;
         background: var(--cx-gold);
         animation: typing 1s infinite alternate;
     }
@@ -395,22 +419,24 @@
         </div>
 
         <!-- RIGHT: Profe Joy Chat -->
-        <div class="profe-sidebar-panel">
-            <div class="sidebar-chat-header">
-                <div class="sidebar-chat-avatar">
-                    <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy">
-                </div>
-                <div>
-                    <div class="sidebar-chat-name">Profe Joy IA</div>
-                    <div class="sidebar-chat-status">
-                        <span style="width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow: 0 0 5px #4ade80; display:inline-block;"></span>
-                        Asistente de Lectura
+        <div class="profe-chat-panel">
+            <div class="chat-panel-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="joy-chat-avatar">
+                        <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy">
+                    </div>
+                    <div class="joy-chat-status">
+                        <div class="joy-chat-name">Profe Joy IA</div>
+                        <div class="joy-chat-online">
+                            <span class="chat-online-dot"></span>
+                            Online - Asistente de Lectura
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Messages Log -->
-            <div class="sidebar-chat-messages" id="sidebarChatContainer">
+            <div class="chat-messages-container" id="sidebarChatContainer">
                 <div class="chat-bubble joy">
                     ¡Holis, doc! Qué lindo tenerte estudiando con el libro <strong>"{{ book.title }}"</strong>. 📖
                     <br><br>
@@ -419,16 +445,16 @@
             </div>
 
             <!-- Suggestions -->
-            <div class="sidebar-chat-suggestions">
+            <div class="chat-suggestions">
                 <div class="suggestion-pill" onclick="sendQuickQuestion('Haceme un resumen de este libro')">Resumen general</div>
                 <div class="suggestion-pill" onclick="sendQuickQuestion('Preguntame 3 cosas de este tema para ver si sé')">Hacerme un test</div>
                 <div class="suggestion-pill" onclick="sendQuickQuestion('Explicame el capítulo 1 de forma didáctica')">Capítulo 1</div>
             </div>
 
             <!-- Send Bar -->
-            <div class="sidebar-chat-input">
+            <div class="chat-input-bar">
                 <textarea id="sidebarChatInputText" placeholder="Escribile a la Profe Joy..." onkeydown="handleInputKeydown(event)"></textarea>
-                <button type="button" class="sidebar-chat-send" onclick="sendChatMessage()">
+                <button type="button" class="chat-send-btn" onclick="sendChatMessage()">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
