@@ -270,9 +270,9 @@ def api_get_simulacro_questions(request, subject):
         'embriologia': 'Embriología',
         'anatomia': 'Anatomía',
         'biologia': 'Biología',
-        'anatomia-a': 'Anatomía',
-        'anatomia-b': 'Anatomía',
-        'anatomia-c': 'Anatomía',
+        'anatomia-a': 'Anatomía Cátedra A',
+        'anatomia-b': 'Anatomía Cátedra B',
+        'anatomia-c': 'Anatomía Cátedra C',
         'histo-embrio': 'Histología',
         'bioquimica': 'Bioquímica',
     }
@@ -323,7 +323,8 @@ Devuelve ÚNICAMENTE un JSON estricto con esta estructura exacta, sin texto extr
             pass # Fallback to DB
 
     # 2. Fallback a la Base de Datos Local
-    questions = list(SimulacroQuestion.objects.filter(subject__icontains=mapped_subject))
+    base_subject = mapped_subject.split(' ')[0]
+    questions = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
     if len(questions) > qty:
         questions = random.sample(questions, qty)
     

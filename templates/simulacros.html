@@ -59,26 +59,56 @@
             <h1 class="hero-title" style="font-size: 28px; margin-bottom: 10px;">Simulacros de Combate</h1>
             <p style="color: var(--text-muted);">Elige tu materia para iniciar la simulación. Entrena con las preguntas que más caen en los exámenes oficiales.</p>
         </div>
-        
+        <div style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+            <h3 style="color: #ef4444; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.5rem;">🚨</span> Triángulo de Sobrevivencia
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Las materias filtro de La Plata. Diagnóstico exhaustivo recomendado.</p>
+        </div>
+
+        <div class="cards-row" style="margin-bottom: 40px;">
+            <div class="curso-card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);" onclick="openSetup('anatomia-a')">
+                <h4>ANATOMÍA - CÁTEDRA A</h4>
+                <p>Simulador Oficial (Enfoque Cátedra A)</p>
+                <span class="badge-purple" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Riesgo Crítico</span>
+            </div>
+            <div class="curso-card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);" onclick="openSetup('anatomia-b')">
+                <h4>ANATOMÍA - CÁTEDRA B</h4>
+                <p>Simulador Oficial (Enfoque Cátedra B)</p>
+                <span class="badge-purple" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Riesgo Crítico</span>
+            </div>
+            <div class="curso-card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);" onclick="openSetup('anatomia-c')">
+                <h4>ANATOMÍA - CÁTEDRA C</h4>
+                <p>Simulador Oficial (Enfoque Cátedra C)</p>
+                <span class="badge-purple" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Riesgo Crítico</span>
+            </div>
+            <div class="curso-card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);" onclick="openSetup('histologia')">
+                <h4>HISTOLOGÍA</h4>
+                <p>Tejidos y Reconocimiento de Láminas</p>
+                <span class="badge-purple" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Alta reprobación</span>
+            </div>
+            <div class="curso-card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);" onclick="openSetup('embriologia')">
+                <h4>EMBRIOLOGÍA</h4>
+                <p>Fecundación, Segmentación y Derivados</p>
+                <span class="badge-purple" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Alta reprobación</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid var(--glass-border);">
+            <h3 style="color: var(--text-light); font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.5rem;">📚</span> Ciclo Básico (1º Parcial)
+            </h3>
+        </div>
+
         <div class="cards-row">
-            <div class="curso-card" onclick="openSetup('anatomia-a')">
-                <h4>ANATOMÍA</h4>
-                <p>Simulador Oficial</p>
-                <span class="badge-purple">Alta probabilidad</span>
-            </div>
-            <div class="curso-card" onclick="openSetup('histo-embrio')">
-                <h4>HISTOLOGÍA Y EMBRIOLOGÍA</h4>
-                <p>Simulador Oficial</p>
-                <span class="badge-purple">Alta probabilidad</span>
-            </div>
             <div class="curso-card" onclick="openSetup('biologia')">
                 <h4>BIOLOGÍA</h4>
-                <p>Simulador Oficial</p>
+                <p>Simulador 1º Parcial</p>
                 <span class="badge-purple">Muy probable</span>
             </div>
             <div class="curso-card" onclick="openSetup('bioquimica')">
                 <h4>BIOQUÍMICA</h4>
-                <p>Simulador Oficial</p>
+                <p>Simulador 1º Parcial</p>
                 <span class="badge-purple">Probable</span>
             </div>
         </div>
