@@ -1,17 +1,18 @@
-{% extends "base.html" %}
+{% extends "dashboard_base.html" %}
 {% load static %}
 
-{% block title %}Biblioteca Inteligente - ALUMED OS{% endblock %}
+{% block title %}Profe Joy AI - ALUMED OS{% endblock %}
 
-{% block content %}
+{% block extra_head %}
 <style>
-    .biblioteca-container {
+    /* SaaS Fullscreen Layout Ajustes */
+    .chat-wrapper {
         display: flex;
         flex-direction: column;
-        height: 80vh;
-        max-width: 1200px;
+        height: calc(100vh - 120px); /* Ocupar pantalla menos padding del nav */
+        width: 100%;
+        max-width: 1000px;
         margin: 0 auto;
-        padding: 20px;
     }
     
     .library-header {
@@ -20,16 +21,16 @@
     }
     
     .library-header h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
         background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
     
     .library-header p {
-        color: #a0aec0;
-        font-size: 1.1rem;
+        color: var(--text-muted);
+        font-size: 1rem;
     }
     
     .chat-box {
@@ -37,29 +38,41 @@
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--glass-border);
         border-radius: 24px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
     
     .messages-area {
         flex: 1;
-        padding: 20px;
+        padding: 30px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
+    }
+    
+    /* Scrollbar minimalista */
+    .messages-area::-webkit-scrollbar {
+        width: 8px;
+    }
+    .messages-area::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02); 
+    }
+    .messages-area::-webkit-scrollbar-thumb {
+        background: rgba(138, 43, 226, 0.3); 
+        border-radius: 4px;
     }
     
     .message {
-        max-width: 80%;
-        padding: 15px 20px;
-        border-radius: 18px;
-        line-height: 1.5;
-        font-size: 1rem;
+        max-width: 85%;
+        padding: 18px 24px;
+        border-radius: 20px;
+        line-height: 1.6;
+        font-size: 1.05rem;
         animation: fadeIn 0.3s ease-out;
     }
     
@@ -70,68 +83,71 @@
     
     .message.user {
         align-self: flex-end;
-        background: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
+        background: linear-gradient(135deg, var(--purple-main) 0%, #4b0082 100%);
         color: white;
         border-bottom-right-radius: 4px;
+        box-shadow: 0 4px 15px rgba(138,43,226,0.3);
     }
     
     .message.bot {
         align-self: flex-start;
-        background: rgba(255, 255, 255, 0.05);
-        color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-light);
+        border: 1px solid var(--glass-border);
         border-bottom-left-radius: 4px;
     }
     
     .message.bot pre {
-        background: rgba(0,0,0,0.3);
-        padding: 10px;
-        border-radius: 8px;
+        background: rgba(0,0,0,0.5);
+        padding: 15px;
+        border-radius: 12px;
         overflow-x: auto;
+        border: 1px solid rgba(255,255,255,0.05);
+        margin-top: 10px;
     }
     
     .message.bot code {
-        font-family: monospace;
-        color: #ffd700;
+        font-family: 'Fira Code', monospace;
+        color: #dda0dd; /* Tonos morados para código */
     }
     
     /* Document Sources (Chunks) Styling */
     .sources-box {
-        margin-top: 15px;
+        margin-top: 20px;
         padding-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 0.85rem;
-        color: #94a3b8;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.9rem;
+        color: var(--text-muted);
     }
     
     .sources-title {
         font-weight: 600;
-        color: #7c6bff;
-        margin-bottom: 8px;
+        color: #dda0dd;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
     }
     
     .source-item {
-        background: rgba(0, 0, 0, 0.2);
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin-bottom: 5px;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 8px;
         display: flex;
         flex-direction: column;
-        border-left: 2px solid #7c6bff;
+        border-left: 3px solid var(--purple-main);
     }
     
     .source-name {
-        font-weight: 600;
-        color: #cbd5e1;
+        font-weight: 700;
+        color: #e2e8f0;
     }
     
     .source-excerpt {
         font-style: italic;
-        opacity: 0.8;
-        margin-top: 4px;
+        opacity: 0.7;
+        margin-top: 5px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -139,67 +155,69 @@
     }
     
     .input-area {
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.2);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px 30px;
+        background: rgba(0, 0, 0, 0.3);
+        border-top: 1px solid var(--glass-border);
         display: flex;
         gap: 15px;
+        align-items: center;
     }
     
     .chat-input {
         flex: 1;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 50px;
-        padding: 15px 25px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 16px 25px;
         color: white;
-        font-size: 1rem;
+        font-size: 1.05rem;
         outline: none;
         transition: all 0.3s ease;
     }
     
     .chat-input:focus {
-        border-color: #8a2be2;
+        border-color: var(--purple-main);
         box-shadow: 0 0 15px rgba(138, 43, 226, 0.2);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
     }
     
     .send-btn {
-        background: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
+        background: var(--purple-main);
         color: white;
         border: none;
-        border-radius: 50px;
-        padding: 0 30px;
-        font-weight: 600;
+        border-radius: 50%;
+        width: 55px;
+        height: 55px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        font-size: 1.2rem;
     }
     
     .send-btn:hover {
-        box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
-        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        transform: scale(1.05);
     }
     
     .typing-indicator {
         display: none;
         align-items: center;
-        gap: 5px;
-        padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 18px;
+        gap: 8px;
+        padding: 15px 24px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
         align-self: flex-start;
         border-bottom-left-radius: 4px;
-        color: #a0aec0;
-        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
     }
     
     .typing-indicator span {
-        width: 6px;
-        height: 6px;
-        background: #7c6bff;
+        width: 8px;
+        height: 8px;
+        background: var(--purple-main);
         border-radius: 50%;
         animation: bounce 1.4s infinite ease-in-out both;
     }
@@ -213,31 +231,37 @@
         40% { transform: scale(1); }
     }
 </style>
+{% endblock %}
 
-<div class="biblioteca-container">
+{% block main_content %}
+<div class="chat-wrapper">
     <div class="library-header">
-        <h1>Biblioteca Inteligente (RAG)</h1>
-        <p>Hazle preguntas a la Profe Joy. Ella buscará en toda nuestra base de apuntes y PDFs (100% ALUMED) para darte la respuesta exacta.</p>
+        <h1>Profe Joy AI</h1>
+        <p>Tu mentora personal. Haciendo el estudio médico más empático y eficiente.</p>
     </div>
     
     <div class="chat-box">
         <div class="messages-area" id="messages-area">
             <div class="message bot">
-                ¡Hola futuro colega! Soy la IA Profe Joy. He analizado todos los apuntes, PDFs y presentaciones de ALUMED (Anatomía, Histología, Biología...). ¿Qué duda tienes sobre tus estudios?
+                <strong style="color: var(--purple-main); display:block; margin-bottom: 5px;">👩‍🏫 Profe Joy:</strong>
+                ¡Holis, doc! Soy la IA Profe Joy. He analizado todos los apuntes, PDFs y presentaciones de ALUMED (Anatomía, Histología, Biología...). Estoy aquí para resolver tus dudas y acompañarte en tu estudio. ¿Con qué materia le damos hoy? 💜
             </div>
             <div class="typing-indicator" id="typing-indicator">
-                <span></span><span></span><span></span> Profe Joy está buscando en los archivos...
+                <span></span><span></span><span></span> <i>Revisando la base de datos de ALUMED OS...</i>
             </div>
         </div>
         
         <div class="input-area">
             <input type="text" id="chat-input" class="chat-input" placeholder="Ej: ¿Cuáles son las ramas terminales del plexo braquial?" onkeypress="handleKeyPress(event)">
-            <button class="send-btn" onclick="sendMessage()">
-                Consultar <span>🚀</span>
+            <button class="send-btn" onclick="sendMessage()" title="Enviar mensaje">
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
 </div>
+
+<!-- Import FontAwesome if not globally available, to render the paper plane icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
     const messagesArea = document.getElementById('messages-area');
@@ -318,7 +342,7 @@
             htmlContent += `
                 <div class="sources-box">
                     <div class="sources-title">
-                        <span>📚</span> Fuentes Consultadas:
+                        <i class="fas fa-book-open"></i> Fuentes Consultadas de ALUMED:
                     </div>
             `;
             
