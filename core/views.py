@@ -292,41 +292,52 @@ def api_get_simulacro_questions(request, subject):
             prompt = f"""Eres Profe Joy, tutora IA de medicina de ALUMED OS. 
 Genera exactamente {qty} preguntas del tema {mapped_subject} (nivel parcial universitario).
 Modalidad: {modality} (si es 'oral', las preguntas deben ser planteos de casos clínicos o preparados; si es 'choice', preguntas directas).
-Devuelve ÚNICAMENTE un JSON estricto con esta estructura exacta, sin texto extra:
-[
-  {{
-    "question_text": "Texto de la pregunta...",
-    "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
-    "correct_option": "A",
-    "explanation": "¡Excelente doc! Aquí tienes la explicación didáctica y cálida (estilo Profe Joy)..."
-  }}
-]"""
-            ai_text = ""
+Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" que contenga la lista de preguntas, sin texto extra:
+{{
+  "questions": [
+    {{
+      "question_text": "Texto de la pregunta...",
+      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
+      "correct_option": "A",
+      "explanation": "..."
+    }}
+  ]
+}}"""
+
             if client_type == 'gemini':
-                model = client.GenerativeModel('gemini-1.5-flash')
+                model = client.GenerativeModel('gemini-1.5-pro')
                 response = model.generate_content(prompt)
-                ai_text = response.text
+                resp_text = response.text.replace('```json', '').replace('```', '').strip()
+                data = json.loads(resp_text)
+                return JsonResponse({'questions': data.get('questions', [])})
+
             elif client_type == 'openai':
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "system", "content": prompt}]
+                    model="gpt-4o-mini",
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={ "type": "json_object" }
                 )
-                ai_text = response.choices[0].message.content
-            
-            # Limpiar Markdown json si existe
-            ai_text = ai_text.strip().removeprefix('```json').removesuffix('```').strip()
-            data = json.loads(ai_text)
-            
-            return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
+                resp_text = response.choices[0].message.content
+                data = json.loads(resp_text)
+                return JsonResponse({'questions': data.get('questions', [])})
+                
         except Exception as e:
             print("AI Generation failed, falling back to DB:", e)
             pass # Fallback to DB
 
     # 2. Fallback a la Base de Datos Local
     base_subject = mapped_subject.split(' ')[0]
-    questions = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
-    if len(questions) > qty:
-        questions = random.sample(questions, qty)
+    questions = []
+    try:
+        qs = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
+        if len(qs) > qty:
+            questions = random.sample(qs, qty)
+        else:
+            questions = qs
+    except Exception as e:
+        print("DB fallback failed:", e)
+        # Return empty list safely
+        pass
     
     data = []
     for q in questions:
