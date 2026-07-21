@@ -446,7 +446,60 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'explanation': "Durante la fase S (Síntesis) del ciclo celular se replica el ADN, duplicando el material genético de la célula."
                 })
             ]
-
+            
+        elif not questions and base_subject == "Histología":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "Las fibras elásticas están constituidas por una estructura central:",
+                    'option_a': "Amorfa denominada elaunina y fibrillas externas de fibrilina.",
+                    'option_b': "De fibrillas denominadas fibrilina y una masa amorfa externa de elastina.",
+                    'option_c': "Amorfa denominada elaunina y fibrillas externas de elastina.",
+                    'option_d': "Amorfa denominada elastina y fibrillas externas de fibrilina.",
+                    'correct_option': "D",
+                    'explanation': "Las fibras elásticas tienen un núcleo central amorfo de elastina rodeado por una red de microfibrillas de fibrilina."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "La corteza del cerebelo:",
+                    'option_a': "Es central y con forma ramificada.",
+                    'option_b': "Tiene células de Purkinje en su capa media.",
+                    'option_c': "Es periférica y lisa.",
+                    'option_d': "Está conformada solo por fibras.",
+                    'correct_option': "B",
+                    'explanation': "La corteza cerebelosa se divide en 3 capas: molecular (externa), de Purkinje (media) y granulosa (interna)."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "En el ganglio linfático:",
+                    'option_a': "A través de las vénulas de endotelio alto ingresan los linfocitos de la sangre.",
+                    'option_b': "Los vasos linfáticos aferentes desembocan directamente en los senos medulares.",
+                    'option_c': "Las vénulas de endotelio alto se encuentran predominantemente en la corteza externa.",
+                    'option_d': "La linfa entra a través de los vasos aferentes a través del hilio.",
+                    'correct_option': "A",
+                    'explanation': "Las vénulas de endotelio alto (HEV) ubicadas en la paracorteza permiten el ingreso de los linfocitos circulantes al ganglio."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "Marque la opción correcta, las células musculares lisas:",
+                    'option_a': "Son multinucleadas y sus núcleos están en la periferia.",
+                    'option_b': "Están interconectadas por uniones de hendidura.",
+                    'option_c': "Se ramifican en pantalón.",
+                    'option_d': "Sus medios de unión conforman discos intercalares.",
+                    'correct_option': "B",
+                    'explanation': "Las células musculares lisas se comunican mecánica y eléctricamente a través de uniones en hendidura (gap junctions)."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "¿Qué célula de la glía del SNC se encarga de realizar la cicatrización en el tejido nervioso?",
+                    'option_a': "Oligodendrocito.",
+                    'option_b': "Astrocito.",
+                    'option_c': "Epéndimo.",
+                    'option_d': "Célula Satélite.",
+                    'correct_option': "B",
+                    'explanation': "Los astrocitos son los responsables de la gliosis reactiva, formando la cicatriz glial tras una lesión en el sistema nervioso central."
+                })
+            ]
         
         data = []
         for q in questions:
