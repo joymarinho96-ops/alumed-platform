@@ -711,6 +711,9 @@
             <a id="readerExternalLink" href="#" target="_blank" style="font-size:11px; padding:6px 14px; border-radius:6px; background:rgba(245,200,66,.1); border:1px solid rgba(245,200,66,.3); color:var(--cx-gold); text-decoration:none; font-weight:700; display:none; align-items:center; gap:5px;">
                 <i class="fas fa-external-link-alt"></i> Abrir en Drive
             </a>
+            <a id="readerDownloadLink" href="#" download target="_blank" style="font-size:11px; padding:6px 14px; border-radius:6px; background:rgba(120,230,120,.1); border:1px solid rgba(120,230,120,.3); color:#86efac; text-decoration:none; font-weight:700; display:none; align-items:center; gap:5px;">
+                <i class="fas fa-download"></i> Descargar PDF
+            </a>
             <button onclick="closeReader()" style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:8px; padding:6px 14px; cursor:pointer; font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px;">
                 <i class="fas fa-times"></i> Cerrar
             </button>
@@ -1072,7 +1075,17 @@
         // Convert /view or /edit to /preview
         var fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]{10,})/);
         if (fileMatch) return 'https://drive.google.com/file/d/' + fileMatch[1] + '/preview';
-        // Already preview or other URL
+        return url;
+    }
+
+    function getDriveDownloadUrl(url) {
+        if (!url) return '';
+        // Extract Drive file ID from any format
+        var match = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+        if (match) return 'https://drive.google.com/uc?export=download&id=' + match[1];
+        var fileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]{10,})/);
+        if (fileMatch) return 'https://drive.google.com/uc?export=download&id=' + fileMatch[1];
+        // Non-Drive URL — return as-is for direct download
         return url;
     }
 
@@ -1091,12 +1104,14 @@
         var noLink = document.getElementById('readerNoLink');
         var loading = document.getElementById('readerLoading');
         var extLink = document.getElementById('readerExternalLink');
+        var dlLink = document.getElementById('readerDownloadLink');
 
         // Reset states
         iframe.style.display = 'none';
         noLink.style.display = 'none';
         loading.style.display = 'none';
         extLink.style.display = 'none';
+        dlLink.style.display = 'none';
 
         var url = item.primaryUrl || item.driveUrl || item.sourceUrl || '';
 
@@ -1119,9 +1134,14 @@
                 loading.style.display = 'none';
                 noLink.style.display = 'flex';
             };
-            // Show external link button
+            // Show external link + download buttons
             extLink.href = url;
             extLink.style.display = 'inline-flex';
+            var downloadUrl = getDriveDownloadUrl(url);
+            if (downloadUrl) {
+                dlLink.href = downloadUrl;
+                dlLink.style.display = 'inline-flex';
+            }
             // Fallback: show iframe after 2s regardless
             setTimeout(function() {
                 if (loading.style.display !== 'none') {
