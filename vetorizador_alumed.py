@@ -1,19 +1,14 @@
 import os
 import json
 import requests
-from pypdf import PdfReader  # Versão recomendada e moderna de PyPDF2 usada no ALUMED OS
-from supabase import create_client, Client
+from pypdf import PdfReader
+import psycopg2
+import sys
 from openai import OpenAI
 
-# ⚙️ 1. Configurações do Cérebro Central (Supabase e Embeddings)
-url_supabase: str = os.environ.get("SUPABASE_URL")
-key_supabase: str = os.environ.get("SUPABASE_KEY")
+# ⚙️ 1. Configurações do Cérebro Central (Banco de Dados e Embeddings)
+database_url: str = os.environ.get("DATABASE_URL")
 openai_key: str = os.environ.get("OPENAI_API_KEY")
-
-# Inicializa conexões se as chaves estiverem presentes
-supabase: Client = None
-if url_supabase and key_supabase:
-    supabase = create_client(url_supabase, key_supabase)
 
 client_ai = None
 if openai_key:
@@ -58,8 +53,8 @@ def gerar_vetor(texto):
 def injeção_de_conhecimento(caminho_json):
     print("🚀 [ALUMED OS] Iniciando a Vetorização RAG da Biblioteca...")
     
-    if not supabase or not client_ai:
-        print("🚨 Erro: SUPABASE_URL, SUPABASE_KEY ou OPENAI_API_KEY não configurados no ambiente.")
+    if not database_url or not client_ai:
+        print("🚨 Erro: DATABASE_URL ou OPENAI_API_KEY não configurados no ambiente.")
         return
         
     if not os.path.exists(caminho_json):
@@ -71,6 +66,10 @@ def injeção_de_conhecimento(caminho_json):
         livros = json.load(arquivo)
         
     print(f"📚 Encontrados {len(livros)} livros para processar.")
+    
+    # Conecta ao banco Postgres
+    conn = psycopg2.connect(database_url)
+    cur = conn.cursor()
     
     for livro in livros:
         titulo = livro.get('titulo') or livro.get('title')
@@ -95,21 +94,20 @@ def injeção_de_conhecimento(caminho_json):
             # 2. Conversão Vetorial
             vetor_matematico = gerar_vetor(conteudo_completo)
             
-            # 3. Upload para a tabela biblioteca_documentos no Supabase
-            dados_rag = {
-                "titulo": titulo,
-                "conteudo": conteudo_completo,
-                "embedding": vetor_matematico,
-                "materia": materia,
-                "url_wix": link
-            }
-            
-            # Insere os dados na tabela do Supabase
-            supabase.table('biblioteca_documentos').insert(dados_rag).execute()
+            # 3. Upload para a tabela biblioteca_documentos no Supabase (Railway)
+            cur.execute(
+                "INSERT INTO biblioteca_documentos (titulo, conteudo, embedding, materia, url_wix) VALUES (%s, %s, %s, %s, %s)",
+                (titulo, conteudo_completo, vetor_matematico, materia, link)
+            )
+            conn.commit()
             print(f"   ✅ SUCESSO! {titulo} armazenado no córtex da IA Profe Joy!")
             
         except Exception as erro:
             print(f"   🚨 Falha ao processar '{titulo}': {erro}")
+            conn.rollback()
+
+    cur.close()
+    conn.close()
 
 if __name__ == "__main__":
     # Gatilho de Execução local

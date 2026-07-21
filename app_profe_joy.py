@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from supabase import create_client, Client
+import psycopg2
 from openai import OpenAI
 import anthropic
 
@@ -25,13 +25,14 @@ if pagina_seleccionada == "💬 Chat con Profe Joy":
     
     # Manejo seguro de las conexiones a las APIs
     try:
-        supabase: Client = create_client(os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY"))
+        database_url = os.environ.get("DATABASE_URL", "postgresql://postgres:xaKXWitVrOXmyOVHRppFZPIRMmKTEegS@kodama.proxy.rlwy.net:23469/railway")
+        conn = psycopg2.connect(database_url)
         client_openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         client_claude = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         apis_activas = True
     except Exception as e:
         apis_activas = False
-        st.error("🚨 La IA Profe Joy está descansando. (Falta de créditos o claves API no configuradas).")
+        st.error(f"🚨 La IA Profe Joy está descansando. (Error de conexión: {e})")
 
     # Memoria del chat
     if "mensajes" not in st.session_state:
@@ -55,16 +56,34 @@ if pagina_seleccionada == "💬 Chat con Profe Joy":
                     respuesta_embed = client_openai.embeddings.create(input=pregunta_alumno, model="text-embedding-3-small")
                     vector_pregunta = respuesta_embed.data.embedding
 
-                    resultados_rag = supabase.rpc('match_documentos', {'query_embedding': vector_pregunta, 'match_threshold': 0.75, 'match_count': 3}).execute()
+                    cur = conn.cursor()
+                    cur.execute("SELECT id, titulo, conteudo, materia, url_wix, similarity FROM match_documentos(%s::vector, 0.75, 3)", (str(vector_pregunta),))
+                    resultados_rag = cur.fetchall()
                     
                     contexto_medico = ""
                     enlaces_fuente = []
-                    if resultados_rag.data:
-                        for doc in resultados_rag.data:
-                            contexto_medico += f"Extracto de {doc['titulo']}:\n{doc['conteudo']}\n\n"
-                            enlaces_fuente.append(f"- **Fuente Oficial:** [{doc['titulo']}]({doc['url_wix']})")
+                    if resultados_rag:
+                        for doc in resultados_rag:
+                            # doc is a tuple: (id, titulo, conteudo, materia, url_wix, similarity)
+                            contexto_medico += f"Extracto de {doc[1]}:\n{doc[2]}\n\n"
+                            enlaces_fuente.append(f"- **Fuente Oficial:** {doc[1]}\n- **Enlace de Descarga:** [Descargar Apunte]({doc[4]})")
 
-                    prompt_sistema = f"Asumes el rol de IA Profe Joy de ALUMED OS. Responde ÚNICAMENTE usando este contexto:\n{contexto_medico}"
+                    prompt_sistema = f"""[ REGRAS DE OPERAÇÃO RAG E DIDÁTICA DA IA PROFE JOY ]
+Actúas como la 'IA Profe Joy', la tutora médica y GPS Universitario de ALUMED OS.
+
+CONTEXTO MÉDICO DE LA BIBLIOTECA (Tus únicos conocimientos para esta respuesta):
+{contexto_medico}
+
+REGLAS DE ORO:
+1. La Didáctica ALUMED (Orden de Estudio): Nunca copies y pegues el texto crudo del apunte. Para enseñar Anatomía, Histología o Embriología, debes guiar al alumno paso a paso usando el orden lógico: ¿Qué es? -> ¿Dónde está? -> Estructura / Características -> ¿Qué función tiene?
+2. Blindaje Anti-Alucinación: Responde ÚNICAMENTE utilizando los fragmentos de texto provistos. Si la respuesta no está en el contexto, indica amablemente: "Esa información no se encuentra registrada exactamente en los manuales oficiales de mi biblioteca, pero puedo ayudarte a buscar temas relacionados de la cátedra."
+3. Citación Obligatoria: Toda respuesta teórica DEBE concluir obligatoriamente citando la fuente EXACTAMENTE en el siguiente formato (puedes omitirlo si ya está al final):
+   **Fuente Oficial:** [Título]
+   **Enlace de Descarga:** [URL]
+4. El Efecto Ecosistema (Intervención): 
+   - Si es Histología: Ofrece soporte teórico y sugiere revisar el tejido en la herramienta Microscopio Virtual.
+   - Si es Anatomía o Embriología: Explica citando la página del PDF y dirige al alumno a revisar con el Atlas 3D o con dinámicas lúdicas.
+5. Tono y Personalidad: Mantén un tono profesional, empático, motivador y lúdico. Usa jerga universitaria (Cátedra, Parciales, Finales, Choice, Oral). Presenta la salida en Markdown limpio, usando viñetas y divisorias (---)."""
 
                     respuesta_claude = client_claude.messages.create(
                         model="claude-3-5-sonnet-20240620", max_tokens=1500, system=prompt_sistema,
@@ -73,7 +92,7 @@ if pagina_seleccionada == "💬 Chat con Profe Joy":
                     
                     respuesta_final = respuesta_claude.content.text
                     if enlaces_fuente:
-                        respuesta_final += "\n\n---\n### 📚 Enlaces de Descarga\n" + "\n".join(list(set(enlaces_fuente)))
+                        respuesta_final += "\n\n---\n### 📚 Enlaces de Descarga Automáticos\n" + "\n\n".join(list(set(enlaces_fuente)))
                         
                     st.markdown(respuesta_final)
                     st.session_state.mensajes.append({"role": "assistant", "content": respuesta_final})
