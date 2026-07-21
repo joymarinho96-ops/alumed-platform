@@ -57,13 +57,19 @@ def _get_api_client():
     gemini_key = os.environ.get('GEMINI_API_KEY') or getattr(settings, 'GEMINI_API_KEY', '')
 
     if gemini_key:
-        import google.generativeai as genai
-        genai.configure(api_key=gemini_key)
-        return 'gemini', genai
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=gemini_key)
+            return 'gemini', genai
+        except ImportError:
+            logger.warning("google.generativeai package not found. Falling back to DB.")
 
     if openai_key:
-        from openai import OpenAI
-        return 'openai', OpenAI(api_key=openai_key)
+        try:
+            from openai import OpenAI
+            return 'openai', OpenAI(api_key=openai_key)
+        except ImportError:
+            logger.warning("openai package not found. Falling back to DB.")
 
     return 'mock', None
 

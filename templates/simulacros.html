@@ -135,18 +135,19 @@
         </div>
 
         <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">2. ¿Cuántas preguntas querés para este bloque?</h3>
+        <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 15px;">⚡ Nota: Para garantizar rapidez en el simulacro, seleccioná tandas cortas.</p>
         <div class="setup-option" id="quantity-options">
+            <div class="setup-box active" onclick="selectQuantity(3)">
+                <h4>3 Preguntas</h4>
+                <p>Sprint súper rápido</p>
+            </div>
             <div class="setup-box" onclick="selectQuantity(5)">
                 <h4>5 Preguntas</h4>
-                <p>Sprint rápido (Ideal para repasar un tema)</p>
-            </div>
-            <div class="setup-box active" onclick="selectQuantity(10)">
-                <h4>10 Preguntas</h4>
                 <p>Combate medio (Recomendado)</p>
             </div>
-            <div class="setup-box" onclick="selectQuantity(15)">
-                <h4>15 Preguntas</h4>
-                <p>Simulación final intensa</p>
+            <div class="setup-box" onclick="selectQuantity(7)">
+                <h4>7 Preguntas</h4>
+                <p>Desafío final</p>
             </div>
         </div>
 
@@ -246,8 +247,13 @@
         document.getElementById('loading-state').style.display = 'block';
         
         try {
-            // Nota: Aquí se conectaría al endpoint RAG en el futuro pasando ?modality=...&qty=...
-            const res = await fetch(`/api/simulacros/${currentSubject}/`);
+            // Pasamos los parámetros dinámicos para que el backend lo respete
+            const res = await fetch(`/api/simulacros/${currentSubject}/?modality=${selectedModality}&qty=${selectedQuantity}`);
+            
+            if (!res.ok) {
+                throw new Error(`Error del servidor: ${res.status}`);
+            }
+
             const data = await res.json();
             
             if (data.questions && data.questions.length > 0) {
