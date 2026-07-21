@@ -265,31 +265,32 @@ import json
 from core.profe_joy_views import _get_api_client
 
 def api_get_simulacro_questions(request, subject):
-    slug_map = {
-        'histologia': 'Histología',
-        'embriologia': 'Embriología',
-        'anatomia': 'Anatomía',
-        'biologia': 'Biología',
-        'anatomia-a': 'Anatomía Cátedra A',
-        'anatomia-b': 'Anatomía Cátedra B',
-        'anatomia-c': 'Anatomía Cátedra C',
-        'histo-embrio': 'Histología',
-        'bioquimica': 'Bioquímica',
-    }
-    mapped_subject = slug_map.get(subject, subject)
-    
-    # Leer Modalidad y Cantidad
-    modality = request.GET.get('modality', 'choice')
     try:
-        qty = int(request.GET.get('qty', 10))
-    except ValueError:
-        qty = 10
-
-    # 1. Intentar Generar con Motor RAG / IA
-    client_type, client = _get_api_client()
-    if client_type != 'mock' and client is not None:
+        slug_map = {
+            'histologia': 'Histología',
+            'embriologia': 'Embriología',
+            'anatomia': 'Anatomía',
+            'biologia': 'Biología',
+            'anatomia-a': 'Anatomía Cátedra A',
+            'anatomia-b': 'Anatomía Cátedra B',
+            'anatomia-c': 'Anatomía Cátedra C',
+            'histo-embrio': 'Histología',
+            'bioquimica': 'Bioquímica',
+        }
+        mapped_subject = slug_map.get(subject, subject)
+        
+        # Leer Modalidad y Cantidad
+        modality = request.GET.get('modality', 'choice')
         try:
-            prompt = f"""Eres Profe Joy, tutora IA de medicina de ALUMED OS. 
+            qty = int(request.GET.get('qty', 10))
+        except ValueError:
+            qty = 10
+
+        # 1. Intentar Generar con Motor RAG / IA
+        client_type, client = _get_api_client()
+        if client_type != 'mock' and client is not None:
+            try:
+                prompt = f"""Eres Profe Joy, tutora IA de medicina de ALUMED OS. 
 Genera exactamente {qty} preguntas del tema {mapped_subject} (nivel parcial universitario).
 Modalidad: {modality} (si es 'oral', las preguntas deben ser planteos de casos clínicos o preparados; si es 'choice', preguntas directas).
 Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" que contenga la lista de preguntas, sin texto extra:
@@ -304,56 +305,59 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
   ]
 }}"""
 
-            if client_type == 'gemini':
-                model = client.GenerativeModel('gemini-1.5-pro')
-                response = model.generate_content(prompt)
-                resp_text = response.text.replace('```json', '').replace('```', '').strip()
-                data = json.loads(resp_text)
-                return JsonResponse({'questions': data.get('questions', [])})
+                if client_type == 'gemini':
+                    model = client.GenerativeModel('gemini-1.5-pro')
+                    response = model.generate_content(prompt)
+                    resp_text = response.text.replace('```json', '').replace('```', '').strip()
+                    data = json.loads(resp_text)
+                    return JsonResponse({'questions': data.get('questions', [])})
 
-            elif client_type == 'openai':
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt}],
-                    response_format={ "type": "json_object" }
-                )
-                resp_text = response.choices[0].message.content
-                data = json.loads(resp_text)
-                return JsonResponse({'questions': data.get('questions', [])})
-                
+                elif client_type == 'openai':
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": prompt}],
+                        response_format={ "type": "json_object" }
+                    )
+                    resp_text = response.choices[0].message.content
+                    data = json.loads(resp_text)
+                    return JsonResponse({'questions': data.get('questions', [])})
+                    
+            except Exception as e:
+                print("AI Generation failed, falling back to DB:", e)
+                pass # Fallback to DB
+
+        # 2. Fallback a la Base de Datos Local
+        base_subject = mapped_subject.split(' ')[0]
+        questions = []
+        try:
+            qs = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
+            if len(qs) > qty:
+                questions = random.sample(qs, qty)
+            else:
+                questions = qs
         except Exception as e:
-            print("AI Generation failed, falling back to DB:", e)
-            pass # Fallback to DB
-
-    # 2. Fallback a la Base de Datos Local
-    base_subject = mapped_subject.split(' ')[0]
-    questions = []
-    try:
-        qs = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
-        if len(qs) > qty:
-            questions = random.sample(qs, qty)
-        else:
-            questions = qs
-    except Exception as e:
-        print("DB fallback failed:", e)
-        # Return empty list safely
-        pass
-    
-    data = []
-    for q in questions:
-        data.append({
-            'id': q.id,
-            'question_text': q.question_text,
-            'options': {
-                'A': q.option_a,
-                'B': q.option_b,
-                'C': q.option_c,
-                'D': q.option_d
-            },
-            'correct_option': q.correct_option,
-            'explanation': q.explanation
-        })
-    return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
+            print("DB fallback failed:", e)
+            # Return empty list safely
+            pass
+        
+        data = []
+        for q in questions:
+            data.append({
+                'id': q.id,
+                'question_text': q.question_text,
+                'options': {
+                    'A': q.option_a,
+                    'B': q.option_b,
+                    'C': q.option_c,
+                    'D': q.option_d
+                },
+                'correct_option': q.correct_option,
+                'explanation': q.explanation
+            })
+        return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
+    except Exception as outer_e:
+        import traceback
+        return JsonResponse({'error_msg': str(outer_e), 'traceback': traceback.format_exc()}, status=500)
 
 
 def guia_supervivencia_view(request):
