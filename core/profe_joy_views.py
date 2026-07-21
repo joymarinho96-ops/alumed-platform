@@ -88,17 +88,27 @@ def _cosine_similarity(a: list[float], b: list[float]) -> float:
 
 
 def _embed_query(client_type, client, question: str) -> list[float]:
-    """Sempre usa o FastEmbed local grátis, ignorando a API paga para embeddings."""
-    try:
-        from fastembed import TextEmbedding
-        embedding_model = TextEmbedding("BAAI/bge-small-en-v1.5")
-        embeddings_generator = embedding_model.embed([question])
-        embeddings_list = list(embeddings_generator)
-        return embeddings_list[0].tolist()
-    except Exception as e:
-        logger.error(f"Erro ao embeddar usando FastEmbed: {e}")
-        # Mock embedding (tamanho 384 para bater com bge-small-en-v1.5)
-        return [0.1] * 384
+    """Usa Gemini gemini-embedding-001 (dim=3072) para embeddear la pregunta.
+    Fallback a mock si Gemini no esta disponible."""
+    import requests as req
+    gemini_key = os.environ.get('GEMINI_API_KEY') or getattr(settings, 'GEMINI_API_KEY', '')
+    if gemini_key:
+        try:
+            url = "https://generativelanguage.googleapis.com/v1/models/gemini-embedding-001:embedContent"
+            payload = {
+                "model": "models/gemini-embedding-001",
+                "content": {"parts": [{"text": question[:9000]}]},
+                "taskType": "RETRIEVAL_QUERY"
+            }
+            resp = req.post(url, json=payload, params={"key": gemini_key}, timeout=10)
+            resp.raise_for_status()
+            return resp.json()["embedding"]["values"]
+        except Exception as e:
+            logger.warning(f"Gemini embedding fallo: {e}. Usando mock...")
+
+    # Fallback mock (3072-dim para coincidir con gemini-embedding-001)
+    return [0.1] * 3072
+
 
 
 def _find_relevant_chunks(question_embedding: list[float], question: str = '', top_k: int = TOP_K) -> list[ProfeJoyChunk]:
