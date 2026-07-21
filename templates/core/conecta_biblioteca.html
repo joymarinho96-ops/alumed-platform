@@ -587,27 +587,32 @@
 
     <!-- Main Layout -->
     <div class="library-split-layout">
-        <!-- 1. Biblioteca Inteligente IA (Sustituye la vieja grade de pastas) -->
-        <div class="biblioteca-inteligente-wrapper">
-            <!-- Caixa de Busca com Efeito Glassmorphism -->
-            <div class="glass-search-box">
-                <div class="search-header">
-                    <h2>🧠 Biblioteca Inteligente IA</h2>
-                    <p>El conocimiento de más de 500 PDFs de la UNLP en 0.5 segundos. Preguntale a Profe Joy.</p>
+        <!-- 1. Biblioteca Inteligente IA (Gabinete de Carpetas y PDFs) -->
+        <div class="glass-cabinet-panel">
+            <!-- Left Sidebar -->
+            <div class="cabinet-sidebar">
+                <div class="cabinet-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="cabinetSearchInput" placeholder="Buscar materia..." onkeyup="handleSearch()">
                 </div>
-
-                <div class="search-input-group">
-                    <input type="text" id="ragSearchInput" class="glass-input" placeholder="Ex: ¿Cuál es la histología de la capa muscular del esófago?" onkeydown="if(event.key==='Enter') document.getElementById('chatInputText').value=this.value; if(event.key==='Enter') sendChatMessage();">
-                    <button class="glass-submit-btn" onclick="document.getElementById('chatInputText').value=document.getElementById('ragSearchInput').value; sendChatMessage();">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </button>
+                
+                <div style="margin-top: 10px;">
+                    <div class="sidebar-section-title">Navegación</div>
+                    <!-- The dynamic tree will be injected here by JS -->
+                    <div id="treeChildrenRoot"></div>
                 </div>
+            </div>
 
-                <!-- Filtros Inteligentes (Tags) -->
-                <div class="smart-tags">
-                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Anatomía Cátedra A: '">🦴 Anatomía Cátedra A</button>
-                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Histo y Embrio: '">🧫 Histo y Embrio</button>
-                    <button class="glass-tag" onclick="document.getElementById('ragSearchInput').value='Biología: '">🦠 Biología</button>
+            <!-- Main Library Content Area -->
+            <div class="cabinet-main">
+                <div class="cabinet-header">
+                    <div class="cabinet-breadcrumb" id="cabinetBreadcrumb">
+                        <!-- Breadcrumbs injected by JS -->
+                    </div>
+                </div>
+                
+                <div class="cabinet-grid" id="cabinetGrid">
+                    <!-- Dynamic Folders or Books injected by JS -->
                 </div>
             </div>
         </div>

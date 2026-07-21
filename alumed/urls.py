@@ -39,12 +39,13 @@ urlpatterns = [
     # Conecta FCM — /conecta/ landing publica, /conecta-fcm/ legado
     path('conecta/', conecta_landing_view, name='conecta_landing'),
     path('conecta-fcm/', conecta_fcm_view, name='conecta_fcm'),
-    path('conecta/biblioteca/', conecta_biblioteca_view, name='conecta_biblioteca'),
-    path('conecta/biblioteca/lector/<int:book_id>/', conecta_biblioteca_lector_view, name='conecta_biblioteca_lector'),
+    path('biblioteca/', conecta_biblioteca_view, name='conecta_biblioteca'),
+    path('conecta/biblioteca/', conecta_biblioteca_view), # Alias por retrocompatibilidad
+    path('biblioteca/lector/<int:book_id>/', conecta_biblioteca_lector_view, name='conecta_biblioteca_lector'),
+    path('conecta/biblioteca/lector/<int:book_id>/', conecta_biblioteca_lector_view), # Alias
 
     path('info-util/', info_util, name='info_util'),
     path('facultad/', facultad, name='facultad'),
-    path('biblioteca/', biblioteca, name='biblioteca'),
     path('cronograma-tps/', cronograma_tps, name='cronograma_tps'),
     path('plan-estudios/', plan_estudios, name='plan_estudios'),
     path('apoyo-psicologico/', apoyo_psicologico, name='apoyo_psicologico'),
