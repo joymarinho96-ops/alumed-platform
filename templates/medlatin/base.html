@@ -1,37 +1,49 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MedLatin{% endblock %}</title>
+    <title>{% block title %}MedLatín{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ml-bg: #0f1319;
-            --ml-panel: #151c24;
-            --ml-panel-soft: rgba(32, 39, 49, 0.75);
-            --ml-border: rgba(220, 194, 132, 0.18);
-            --ml-text: #f3efe7;
-            --ml-muted: #b2ac9f;
-            --ml-gold: #d8b36b;
-            --ml-burgundy: #6f2934;
+            --ml-bg: #fdfbf7;
+            --ml-panel: #f4ecd8;
+            --ml-panel-soft: rgba(244, 236, 216, 0.85);
+            --ml-border: rgba(139, 69, 19, 0.15);
+            --ml-text: #3a2c1f;
+            --ml-muted: #7c6853;
+            --ml-gold: #b8860b;
+            --ml-burgundy: #8b0000;
             --ml-parchment: #e9dcc2;
             --ml-ink: #201711;
-            --ml-success: #80c29b;
+            --ml-success: #4a7c59;
         }
 
         * { box-sizing: border-box; }
         body {
             margin: 0;
             background:
-                radial-gradient(circle at 15% 10%, rgba(111, 41, 52, 0.18), transparent 28%),
-                radial-gradient(circle at 80% 0%, rgba(216, 179, 107, 0.12), transparent 25%),
-                linear-gradient(180deg, #0f1319 0%, #0b1015 100%);
+                radial-gradient(circle at 15% 10%, rgba(139, 0, 0, 0.04), transparent 28%),
+                radial-gradient(circle at 80% 0%, rgba(184, 134, 11, 0.08), transparent 25%),
+                linear-gradient(180deg, #fdfbf7 0%, #f5f0e6 100%);
             color: var(--ml-text);
             font-family: "Manrope", sans-serif;
+            position: relative;
+        }
+        
+        /* Textura sutil de papiro */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            opacity: 0.4;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
         }
 
         a { color: inherit; text-decoration: none; }
@@ -41,8 +53,8 @@
             top: 0;
             z-index: 20;
             backdrop-filter: blur(16px);
-            background: rgba(11, 16, 21, 0.78);
-            border-bottom: 1px solid rgba(216, 179, 107, 0.12);
+            background: rgba(253, 251, 247, 0.85);
+            border-bottom: 1px solid var(--ml-border);
         }
         .ml-nav-inner {
             max-width: 1240px;
@@ -61,19 +73,22 @@
         .ml-brand-mark {
             width: 42px;
             height: 42px;
-            border: 1px solid rgba(216, 179, 107, 0.26);
+            border: 1px solid rgba(139, 0, 0, 0.2);
             border-radius: 14px;
             display: grid;
             place-items: center;
-            color: var(--ml-gold);
-            background: linear-gradient(180deg, rgba(216, 179, 107, 0.12), rgba(111, 41, 52, 0.16));
+            color: var(--ml-burgundy);
+            background: linear-gradient(180deg, rgba(184, 134, 11, 0.1), rgba(139, 0, 0, 0.05));
             font-size: 1.2rem;
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 700;
         }
         .ml-brand-copy strong {
             display: block;
             font-family: "Cormorant Garamond", serif;
             font-size: 1.7rem;
             letter-spacing: 0.02em;
+            color: var(--ml-burgundy);
         }
         .ml-brand-copy span {
             display: block;
@@ -90,20 +105,23 @@
         }
         .ml-pill,
         .ml-btn {
-            border: 1px solid rgba(216, 179, 107, 0.18);
+            border: 1px solid var(--ml-border);
             border-radius: 999px;
             padding: 10px 16px;
             font-size: 0.88rem;
             transition: 0.2s ease;
+            font-weight: 600;
         }
         .ml-pill:hover,
         .ml-btn:hover {
-            border-color: rgba(216, 179, 107, 0.34);
+            border-color: var(--ml-gold);
+            background: rgba(184, 134, 11, 0.05);
             transform: translateY(-1px);
         }
         .ml-btn-primary {
-            background: linear-gradient(135deg, rgba(216, 179, 107, 0.18), rgba(111, 41, 52, 0.26));
-            color: var(--ml-text);
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.15), rgba(139, 0, 0, 0.1));
+            color: var(--ml-burgundy);
+            border-color: rgba(139, 0, 0, 0.2);
         }
 
         .ml-hero-card,
@@ -111,7 +129,8 @@
             border: 1px solid var(--ml-border);
             border-radius: 28px;
             background: var(--ml-panel-soft);
-            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+            box-shadow: 0 18px 60px rgba(58, 44, 31, 0.08);
+            position: relative;
         }
         .ml-grid {
             display: grid;
@@ -127,8 +146,8 @@
             gap: 8px;
             padding: 7px 12px;
             border-radius: 999px;
-            background: rgba(216, 179, 107, 0.08);
-            border: 1px solid rgba(216, 179, 107, 0.16);
+            background: rgba(184, 134, 11, 0.1);
+            border: 1px solid rgba(184, 134, 11, 0.2);
             color: var(--ml-gold);
             font-size: 0.76rem;
             text-transform: uppercase;
@@ -140,10 +159,11 @@
             font-size: clamp(2.2rem, 5vw, 4.2rem);
             margin: 12px 0 12px;
             line-height: 0.95;
+            color: var(--ml-burgundy);
         }
         .ml-subtitle {
-            color: var(--ml-muted);
-            font-size: 1rem;
+            color: var(--ml-text);
+            font-size: 1.05rem;
             line-height: 1.7;
             max-width: 700px;
         }
@@ -151,6 +171,7 @@
             font-family: "Cormorant Garamond", serif;
             font-size: 2rem;
             margin: 0 0 8px;
+            color: var(--ml-burgundy);
         }
         .ml-section-copy {
             color: var(--ml-muted);
@@ -159,13 +180,12 @@
         .ml-hero-card {
             padding: 38px;
             overflow: hidden;
-            position: relative;
         }
         .ml-hero-card::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(216, 179, 107, 0.06), transparent 40%, rgba(111, 41, 52, 0.08) 100%);
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.05), transparent 40%, rgba(139, 0, 0, 0.03) 100%);
             pointer-events: none;
         }
         .ml-searchbar {
@@ -175,8 +195,8 @@
             margin-top: 24px;
             padding: 10px;
             border-radius: 20px;
-            background: rgba(8, 10, 14, 0.72);
-            border: 1px solid rgba(216, 179, 107, 0.14);
+            background: rgba(253, 251, 247, 0.9);
+            border: 1px solid var(--ml-border);
         }
         .ml-searchbar input,
         .ml-select,
@@ -189,12 +209,15 @@
             outline: none;
             font-family: inherit;
         }
+        .ml-searchbar input::placeholder {
+            color: var(--ml-muted);
+        }
         .ml-select,
         .ml-textarea {
-            border: 1px solid rgba(216, 179, 107, 0.16);
+            border: 1px solid var(--ml-border);
             border-radius: 16px;
             padding: 12px 14px;
-            background: rgba(8, 10, 14, 0.45);
+            background: rgba(253, 251, 247, 0.6);
         }
         .ml-textarea {
             min-height: 120px;
@@ -202,13 +225,18 @@
         }
         .ml-searchbar button,
         .ml-btn-submit {
-            background: linear-gradient(135deg, rgba(216, 179, 107, 0.24), rgba(111, 41, 52, 0.32));
-            border: 1px solid rgba(216, 179, 107, 0.22);
-            color: var(--ml-text);
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.15), rgba(139, 0, 0, 0.15));
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            color: var(--ml-burgundy);
             border-radius: 14px;
             padding: 12px 18px;
             font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ml-searchbar button:hover,
+        .ml-btn-submit:hover {
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.25), rgba(139, 0, 0, 0.25));
         }
         .ml-tags {
             display: flex;
@@ -219,10 +247,11 @@
         .ml-tag {
             padding: 8px 12px;
             border-radius: 999px;
-            background: rgba(233, 220, 194, 0.08);
-            color: var(--ml-parchment);
+            background: rgba(139, 69, 19, 0.05);
+            color: var(--ml-text);
             font-size: 0.84rem;
-            border: 1px solid rgba(233, 220, 194, 0.12);
+            border: 1px solid var(--ml-border);
+            font-weight: 500;
         }
         .ml-panel {
             padding: 22px;
@@ -231,6 +260,7 @@
             margin: 0 0 8px;
             font-family: "Cormorant Garamond", serif;
             font-size: 1.7rem;
+            color: var(--ml-burgundy);
         }
         .ml-panel p {
             margin: 0;
@@ -246,12 +276,13 @@
         .ml-meta span {
             padding: 6px 10px;
             border-radius: 999px;
-            background: rgba(216, 179, 107, 0.08);
-            border: 1px solid rgba(216, 179, 107, 0.12);
+            background: rgba(184, 134, 11, 0.1);
+            border: 1px solid rgba(184, 134, 11, 0.2);
             color: var(--ml-gold);
             font-size: 0.76rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
+            font-weight: 600;
         }
         .ml-card-list {
             display: grid;
@@ -260,21 +291,29 @@
         .ml-term-card {
             padding: 20px;
             border-radius: 22px;
-            background: linear-gradient(180deg, rgba(19, 25, 31, 0.92), rgba(15, 19, 25, 0.92));
-            border: 1px solid rgba(216, 179, 107, 0.14);
+            background: linear-gradient(180deg, #fdfbf7, #f4ecd8);
+            border: 1px solid var(--ml-border);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.05);
+            transition: transform 0.2s;
+        }
+        .ml-term-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--ml-gold);
         }
         .ml-term-card h3 {
             font-family: "Cormorant Garamond", serif;
             font-size: 1.8rem;
             margin: 0 0 6px;
+            color: var(--ml-burgundy);
         }
         .ml-term-card .ml-literal {
             color: var(--ml-gold);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             margin-bottom: 12px;
+            font-weight: 600;
         }
         .ml-term-card .ml-excerpt {
-            color: var(--ml-muted);
+            color: var(--ml-text);
             font-size: 0.94rem;
             line-height: 1.65;
         }
@@ -294,20 +333,22 @@
         .ml-part {
             padding: 10px 12px;
             border-radius: 16px;
-            background: rgba(216, 179, 107, 0.08);
-            border: 1px solid rgba(216, 179, 107, 0.14);
+            background: rgba(184, 134, 11, 0.08);
+            border: 1px solid rgba(184, 134, 11, 0.15);
             min-width: 150px;
         }
         .ml-part strong {
             display: block;
             margin-bottom: 4px;
-            color: var(--ml-parchment);
+            color: var(--ml-burgundy);
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.2rem;
         }
         .ml-empty {
             padding: 26px;
             border-radius: 24px;
-            background: rgba(111, 41, 52, 0.08);
-            border: 1px dashed rgba(216, 179, 107, 0.18);
+            background: rgba(139, 0, 0, 0.03);
+            border: 1px dashed var(--ml-border);
             color: var(--ml-muted);
             text-align: center;
         }
@@ -322,31 +363,37 @@
             margin-top: 24px;
             padding: 18px 20px;
             border-radius: 20px;
-            background: rgba(111, 41, 52, 0.08);
-            border: 1px solid rgba(216, 179, 107, 0.12);
+            background: rgba(139, 0, 0, 0.03);
+            border: 1px solid var(--ml-border);
         }
         .ml-stat {
             padding: 20px;
             border-radius: 20px;
-            border: 1px solid rgba(216, 179, 107, 0.12);
-            background: rgba(8, 10, 14, 0.42);
+            border: 1px solid var(--ml-border);
+            background: linear-gradient(180deg, #fdfbf7, #f4ecd8);
         }
         .ml-stat strong {
             display: block;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-family: "Cormorant Garamond", serif;
+            color: var(--ml-burgundy);
         }
         .ml-stat span {
-            color: var(--ml-muted);
+            color: var(--ml-text);
+            font-weight: 500;
         }
         .ml-inline-form { display: inline; }
         .ml-fav-btn {
             background: transparent;
             color: var(--ml-gold);
-            border: 1px solid rgba(216, 179, 107, 0.18);
+            border: 1px solid var(--ml-gold);
             border-radius: 999px;
             padding: 8px 12px;
             cursor: pointer;
+            font-weight: 600;
+        }
+        .ml-fav-btn:hover {
+            background: rgba(184, 134, 11, 0.1);
         }
 
         @media (max-width: 960px) {
@@ -376,17 +423,17 @@
             <a href="{% url 'medlatin:home' %}" class="ml-brand">
                 <div class="ml-brand-mark">ML</div>
                 <div class="ml-brand-copy">
-                    <strong>MedLatin</strong>
-                    <span>Understand the language behind medicine.</span>
+                    <strong>MedLatín</strong>
+                    <span>Entiende el idioma detrás de la medicina.</span>
                 </div>
             </a>
             <div class="ml-nav-links">
-                <a class="ml-pill" href="{% url 'medlatin:dictionary' %}">Dictionary</a>
-                <a class="ml-pill" href="{% url 'medlatin:analyzer' %}">Word Analyzer</a>
-                <a class="ml-pill" href="{% url 'medlatin:roots' %}">Roots Explorer</a>
-                <a class="ml-pill" href="{% url 'medlatin:quizzes' %}">Quiz</a>
-                <a class="ml-pill" href="{% url 'medlatin:flashcards' %}">Flashcards</a>
-                <a class="ml-btn ml-btn-primary" href="{% url 'home' %}">Back to ALUMED</a>
+                <a class="ml-pill" href="{% url 'medlatin:dictionary' %}">Diccionario</a>
+                <a class="ml-pill" href="{% url 'medlatin:analyzer' %}">Analizador</a>
+                <a class="ml-pill" href="{% url 'medlatin:roots' %}">Explorador de Raíces</a>
+                <a class="ml-pill" href="{% url 'medlatin:quizzes' %}">Simulacros</a>
+                <a class="ml-pill" href="{% url 'medlatin:flashcards' %}">Tarjetas</a>
+                <a class="ml-btn ml-btn-primary" href="{% url 'home' %}">Volver a ALUMED</a>
             </div>
         </div>
     </div>
@@ -397,7 +444,7 @@
 
     <div class="ml-footer">
         <div class="ml-disclaimer">
-            MedLatin is an educational terminology platform and does not replace medical textbooks, official anatomical nomenclature, professional instruction, diagnosis, or clinical advice.
+            MedLatín es una plataforma educativa de terminología médica y no reemplaza libros de texto oficiales, nomenclatura anatómica internacional o instrucción profesional.
         </div>
     </div>
     {% block extra_js %}{% endblock %}

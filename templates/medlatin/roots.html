@@ -1,14 +1,14 @@
 {% extends "medlatin/base.html" %}
 
-{% block title %}MedLatin · Roots Explorer{% endblock %}
+{% block title %}MedLatín · Explorador de Raíces{% endblock %}
 
 {% block content %}
 <section class="ml-panel">
-    <span class="ml-kicker">Roots explorer</span>
-    <h1 class="ml-section-title" style="font-size:2.8rem;">Prefixes, roots, and suffixes.</h1>
+    <span class="ml-kicker">Explorador de raíces</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Prefijos, raíces y sufijos.</h1>
     <form class="ml-searchbar" method="get">
-        <input type="text" name="q" value="{{ request_get.q }}" placeholder="Search cardi-, oste-, -itis, peri-, ad-">
-        <button type="submit">Explore</button>
+        <input type="text" name="q" value="{{ request_get.q }}" placeholder="Buscar cardi-, oste-, -itis, peri-, ad-">
+        <button type="submit">Explorar</button>
     </form>
 </section>
 
@@ -17,10 +17,10 @@
         <a class="ml-term-card" href="{% url 'medlatin:root-detail' root_id=root.id %}">
             <h3>{{ root.form }}</h3>
             <div class="ml-literal">{{ root.core_meaning }}</div>
-            <div class="ml-excerpt">{{ root.origin_language }} · {{ root.get_root_type_display }}{% if root.term_total %} · {{ root.term_total }} linked terms{% endif %}</div>
+            <div class="ml-excerpt">{{ root.origin_language }} · {{ root.get_root_type_display }}{% if root.term_total %} · {{ root.term_total }} término{{ root.term_total|pluralize:"s" }} enlazado{{ root.term_total|pluralize:"s" }}{% endif %}</div>
         </a>
     {% empty %}
-        <div class="ml-empty">No roots matched that query.</div>
+        <div class="ml-empty">Ninguna raíz coincidió con la búsqueda.</div>
     {% endfor %}
 </section>
 {% endblock %}

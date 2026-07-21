@@ -1,50 +1,50 @@
 {% extends "medlatin/base.html" %}
 
-{% block title %}MedLatin · Dictionary{% endblock %}
+{% block title %}MedLatín · Diccionario{% endblock %}
 
 {% block content %}
 <section class="ml-grid ml-grid-4">
     <div class="ml-panel" style="grid-column: span 4;">
-        <span class="ml-kicker">Dictionary search</span>
-        <h1 class="ml-section-title" style="font-size:2.8rem;">Find the term, then unpack why it is named that way.</h1>
+        <span class="ml-kicker">Búsqueda en diccionario</span>
+        <h1 class="ml-section-title" style="font-size:2.8rem;">Encuentra el término, luego desglosa por qué se llama así.</h1>
         <form method="get" class="ml-grid ml-grid-4" style="margin-top:18px;">
-            <input class="ml-select" type="text" name="q" value="{{ request_get.q }}" placeholder="Search Latin term, translation, root or suffix">
+            <input class="ml-select" type="text" name="q" value="{{ request_get.q }}" placeholder="Buscar término, traducción, raíz o sufijo">
             <select class="ml-select" name="subject">
-                <option value="">All subjects</option>
+                <option value="">Todas las materias</option>
                 {% for item in subjects %}<option value="{{ item }}" {% if request_get.subject == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
             </select>
             <select class="ml-select" name="anatomical_system">
-                <option value="">All systems</option>
+                <option value="">Todos los sistemas</option>
                 {% for item in anatomical_systems %}<option value="{{ item }}" {% if request_get.anatomical_system == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
             </select>
             <select class="ml-select" name="origin_language">
-                <option value="">All origins</option>
+                <option value="">Todos los orígenes</option>
                 {% for item in origin_languages %}<option value="{{ item }}" {% if request_get.origin_language == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
             </select>
             <select class="ml-select" name="ordering">
-                <option value="alphabetical" {% if request_get.ordering == "alphabetical" or not request_get.ordering %}selected{% endif %}>Alphabetical</option>
-                <option value="most_studied" {% if request_get.ordering == "most_studied" %}selected{% endif %}>Most studied</option>
-                <option value="most_favorited" {% if request_get.ordering == "most_favorited" %}selected{% endif %}>Most favorited</option>
-                <option value="recently_added" {% if request_get.ordering == "recently_added" %}selected{% endif %}>Recently added</option>
-                <option value="difficulty" {% if request_get.ordering == "difficulty" %}selected{% endif %}>Difficulty</option>
+                <option value="alphabetical" {% if request_get.ordering == "alphabetical" or not request_get.ordering %}selected{% endif %}>Alfabético</option>
+                <option value="most_studied" {% if request_get.ordering == "most_studied" %}selected{% endif %}>Más estudiados</option>
+                <option value="most_favorited" {% if request_get.ordering == "most_favorited" %}selected{% endif %}>Más favoritos</option>
+                <option value="recently_added" {% if request_get.ordering == "recently_added" %}selected{% endif %}>Agregados recientemente</option>
+                <option value="difficulty" {% if request_get.ordering == "difficulty" %}selected{% endif %}>Dificultad</option>
             </select>
             <select class="ml-select" name="term_type">
-                <option value="">All term types</option>
-                <option value="muscle" {% if request_get.term_type == "muscle" %}selected{% endif %}>Muscle term</option>
-                <option value="pathology" {% if request_get.term_type == "pathology" %}selected{% endif %}>Pathology</option>
-                <option value="anatomical adjective" {% if request_get.term_type == "anatomical adjective" %}selected{% endif %}>Anatomical adjective</option>
-                <option value="cell type" {% if request_get.term_type == "cell type" %}selected{% endif %}>Cell type</option>
+                <option value="">Todos los tipos</option>
+                <option value="muscle" {% if request_get.term_type == "muscle" %}selected{% endif %}>Término muscular</option>
+                <option value="pathology" {% if request_get.term_type == "pathology" %}selected{% endif %}>Patología</option>
+                <option value="anatomical adjective" {% if request_get.term_type == "anatomical adjective" %}selected{% endif %}>Adjetivo anatómico</option>
+                <option value="cell type" {% if request_get.term_type == "cell type" %}selected{% endif %}>Tipo celular</option>
             </select>
             <select class="ml-select" name="naming_category">
-                <option value="">All naming logic</option>
-                <option value="Function" {% if request_get.naming_category == "Function" %}selected{% endif %}>Function</option>
-                <option value="Position" {% if request_get.naming_category == "Position" %}selected{% endif %}>Position</option>
-                <option value="Shape" {% if request_get.naming_category == "Shape" %}selected{% endif %}>Shape</option>
-                <option value="Pathological process" {% if request_get.naming_category == "Pathological process" %}selected{% endif %}>Pathological process</option>
+                <option value="">Toda la lógica descriptiva</option>
+                <option value="Function" {% if request_get.naming_category == "Function" %}selected{% endif %}>Función</option>
+                <option value="Position" {% if request_get.naming_category == "Position" %}selected{% endif %}>Posición</option>
+                <option value="Shape" {% if request_get.naming_category == "Shape" %}selected{% endif %}>Forma</option>
+                <option value="Pathological process" {% if request_get.naming_category == "Pathological process" %}selected{% endif %}>Proceso patológico</option>
             </select>
-            <button class="ml-btn-submit" type="submit">Apply filters</button>
+            <button class="ml-btn-submit" type="submit">Aplicar filtros</button>
         </form>
-        <p style="margin-top:16px;color:var(--ml-muted);">{{ result_count }} result{{ result_count|pluralize }} found.</p>
+        <p style="margin-top:16px;color:var(--ml-muted);">{{ result_count }} resultado{{ result_count|pluralize:"s" }} encontrados.</p>
     </div>
 </section>
 
@@ -53,7 +53,7 @@
         {% for term in page_obj %}
             {% include "medlatin/partials/term_card.html" with term=term %}
         {% empty %}
-            <div class="ml-empty">No terms matched your current filters. Try a root like <code>cardi</code>, <code>ad-</code>, or <code>-itis</code>.</div>
+            <div class="ml-empty">Ningún término coincidió con tus filtros. Intenta una raíz como <code>cardi</code>, <code>ad-</code>, o <code>-itis</code>.</div>
         {% endfor %}
     </div>
 </section>
@@ -61,11 +61,11 @@
 {% if page_obj.paginator.num_pages > 1 %}
     <section class="ml-tags" style="margin-top:20px;">
         {% if page_obj.has_previous %}
-            <a class="ml-tag" href="?{% if request_get.q %}q={{ request_get.q }}&{% endif %}{% if request_get.subject %}subject={{ request_get.subject }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+            <a class="ml-tag" href="?{% if request_get.q %}q={{ request_get.q }}&{% endif %}{% if request_get.subject %}subject={{ request_get.subject }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
         {% endif %}
-        <span class="ml-tag">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <span class="ml-tag">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
         {% if page_obj.has_next %}
-            <a class="ml-tag" href="?{% if request_get.q %}q={{ request_get.q }}&{% endif %}{% if request_get.subject %}subject={{ request_get.subject }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+            <a class="ml-tag" href="?{% if request_get.q %}q={{ request_get.q }}&{% endif %}{% if request_get.subject %}subject={{ request_get.subject }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente</a>
         {% endif %}
     </section>
 {% endif %}

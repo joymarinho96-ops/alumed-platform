@@ -1,0 +1,73 @@
+I
+I
+I
+N
+N
+TE
+S
+VO
+A
+P
+RC
+AL
+INTENSIVO 
+PARCIAL
+bi
+GIA
+OLO
+bi LOGIA
+o
+bi
+GIA
+OLO
+bi LOGIA
+o
+AGUA
+1) El siguiente dispositivo consta de dos compartimentos (A y B) separados entre sí por una 
+membrana M: 
+
+En el compartimento A se coloca una solución de sacarosa 200 mM 
+(solución A) y en el B una solución de NaCl 100 mM (solución B). 
+Seleccioná la opción correcta: 
+Seleccione una: 
+A. La solución A es hiperosmolar respecto a la B. Si M es semipermeable, 
+la solución A será hipertónica respecto a la B y existirá flujo neto de 
+agua desde el compartimiento A hacia el B. 
+B. La solución A es isoosmolar respecto a la B. Si M es impermeable a la 
+sacarosa y a los iones Na y el coeficiente de reflexión para los iones Cl es 
+0,5 (σ = 0,5), la solución A es hipertónica respecto a la solución B y se 
+observará un incremento del volumen del compartimiento A. 
+C. La solución A es hiperosmolar respecto a la B. Si M es permeable a todos los solutos presentes, al 
+alcanzar el equilibrio se observará un incremento del volumen del compartimiento A. 
+D. La solución A es hiperosmolar respecto a la B. Si M es impermeable a la sacarosa y tanto los iones 
+Na como los Cl poseen un σ = 0,5, entonces, la solución A será hipertónica respecto a la B, y existirá 
+ósmosis desde el compartimiento A hacia el B. 
+E. La solución A es isoosmolar respecto a la B. Si M es impermeable al Na , permeable al Cl y el 
+coeficiente de reflexión para la sacarosa es 0,5 (σ =0,5), la solución A será hipertónica respecto a la B, 
+y existirá ósmosis desde el compartimiento B hacia el A 
+alumed
+alumed
+. 
+2) El siguiente dispositivo consta de dos compartimentos (A y B) separados entre sí por una 
+membrana M: 
+En el compartimento A se coloca una solución de sacarosa 150 mM 
+(solución A) y en el B una solución de NaCl 100 mM (solución B). 
+Seleccioná la opción correcta: 
+Seleccione una: 
+A. La solución A es hipoosmolar respecto a la B. Si M es permeable a 
+todos los solutos presentes, al alcanzar el equilibrio se observará un 
+incremento del volumen del compartimiento B. 
+B. La solución A es hiperosmolar respecto a la B. Si M es semipermeable, 
+la solución A será hipertónica respecto a la B y existirá flujo neto de 
+agua desde el compartimiento A hacia el B. 
+C. La solución A es hiperosmolar respecto a la B. Si M es impermeable al 
+Na , permeable al Cl y el coeficiente de reflexión para la sacarosa es 0,5 (σ = 0,5), al alcanzar el
+equilibrio se observará un incremento del volumen del compartimiento A. 
+alumed
+alumed
+D. La solución A es hipoosmolar respecto a la B. Si M es impermeable a la sacarosa y tanto los iones
+Na como los Cl poseen un σ = 0,5, entonces, la solución A será hipotónica respecto a la B, y habrá
+flujo neto de agua desde el compartimiento A hacia el B. 
+E. La solución A es hipoosmolar respecto a la B. Si M es impermeable a la sacarosa y a los iones Na y
+el coeficiente de reflexión para los iones Cl es 0,5 (σ - = 0,5), la solución A es isotónica respecto a la
+solución B y no existirá ósmosis. 

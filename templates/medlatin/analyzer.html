@@ -1,15 +1,15 @@
 {% extends "medlatin/base.html" %}
 
-{% block title %}MedLatin · Analyzer{% endblock %}
+{% block title %}MedLatín · Analizador{% endblock %}
 
 {% block content %}
 <section class="ml-panel">
-    <span class="ml-kicker">Word analyzer</span>
-    <h1 class="ml-section-title" style="font-size:2.8rem;">Type a term and inspect its likely construction.</h1>
-    <p class="ml-section-copy">Automated etymological decomposition can require expert review. When evidence is insufficient, MedLatin labels the result as uncertain instead of forcing a split.</p>
+    <span class="ml-kicker">Analizador de palabras</span>
+    <h1 class="ml-section-title" style="font-size:2.8rem;">Escribe un término e inspecciona su probable construcción.</h1>
+    <p class="ml-section-copy">La descomposición etimológica automatizada puede requerir revisión experta. Cuando la evidencia es insuficiente, MedLatín etiqueta el resultado como incierto en lugar de forzar una división.</p>
     <form method="get" class="ml-searchbar">
         <input type="text" name="q" value="{{ query }}" placeholder="sternocleidomastoideus, gastrocnemius, pericarditis, adenocarcinoma">
-        <button type="submit">Analyze</button>
+        <button type="submit">Analizar</button>
     </form>
     <div class="ml-tags">
         {% for item in examples %}
@@ -21,14 +21,14 @@
 {% if analysis %}
 <section class="ml-grid ml-grid-2" style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Confidence</h3>
+        <h3>Confianza</h3>
         <p style="text-transform:capitalize;">{{ analysis.confidence }}</p>
         {% if analysis.warning %}<p style="margin-top:14px;">{{ analysis.warning }}</p>{% endif %}
-        {% if analysis.literal_construction %}<p style="margin-top:14px;"><strong>Literal construction:</strong> {{ analysis.literal_construction }}</p>{% endif %}
-        {% if analysis.possible_meaning %}<p style="margin-top:14px;"><strong>Possible meaning:</strong> {{ analysis.possible_meaning }}</p>{% endif %}
+        {% if analysis.literal_construction %}<p style="margin-top:14px;"><strong>Construcción literal:</strong> {{ analysis.literal_construction }}</p>{% endif %}
+        {% if analysis.possible_meaning %}<p style="margin-top:14px;"><strong>Posible significado:</strong> {{ analysis.possible_meaning }}</p>{% endif %}
     </div>
     <div class="ml-panel">
-        <h3>Detected parts</h3>
+        <h3>Partes detectadas</h3>
         <div class="ml-part-row">
             {% for part in analysis.parts %}
                 <div class="ml-part">
@@ -37,7 +37,7 @@
                     <small style="color:var(--ml-muted);">{{ part.part_type }} · {{ part.origin_language }}</small>
                 </div>
             {% empty %}
-                <div class="ml-empty">No reliable decomposition parts found.</div>
+                <div class="ml-empty">No se encontraron partes de descomposición confiables.</div>
             {% endfor %}
         </div>
     </div>
@@ -45,12 +45,12 @@
 
 <section style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Related terms</h3>
+        <h3>Términos relacionados</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for term in analysis.related_terms %}
                 {% include "medlatin/partials/term_card.html" with term=term %}
             {% empty %}
-                <div class="ml-empty">No linked terms were found from the detected roots.</div>
+                <div class="ml-empty">No se encontraron términos vinculados a partir de las raíces detectadas.</div>
             {% endfor %}
         </div>
     </div>

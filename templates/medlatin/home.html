@@ -1,15 +1,15 @@
 {% extends "medlatin/base.html" %}
 
-{% block title %}MedLatin · Home{% endblock %}
+{% block title %}MedLatín · Inicio{% endblock %}
 
 {% block content %}
 <section class="ml-hero-card">
-    <span class="ml-kicker">MedLatin</span>
-    <h1 class="ml-title">Discover the roots, meanings, and anatomical logic behind medical terminology.</h1>
-    <p class="ml-subtitle">Every medical word has an anatomy. Search a term, trace its Greek or Latin logic, and study it with flashcards, quizzes, and naming-pattern memory hooks.</p>
+    <span class="ml-kicker">MedLatín</span>
+    <h1 class="ml-title">Descubre las raíces, significados y la lógica anatómica detrás de la terminología médica.</h1>
+    <p class="ml-subtitle">Cada palabra médica tiene una anatomía. Busca un término, rastrea su lógica griega o latina y estúdialo con tarjetas de memoria, simulacros y reglas mnemotécnicas.</p>
     <form class="ml-searchbar" method="get" action="{% url 'medlatin:dictionary' %}">
-        <input type="text" name="q" placeholder="Search biceps, flexor, myocardium, gastro-, -itis...">
-        <button type="submit">Search</button>
+        <input type="text" name="q" placeholder="Buscar biceps, flexor, myocardium, gastro-, -itis...">
+        <button type="submit">Buscar</button>
     </form>
     <div class="ml-tags">
         <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=biceps">biceps</a>
@@ -22,16 +22,16 @@
 </section>
 
 <section class="ml-grid ml-grid-4" style="margin-top:24px;">
-    <div class="ml-stat"><strong>{{ medlatin_term_count }}</strong><span>Seed terms</span></div>
-    <div class="ml-stat"><strong>{{ medlatin_root_count }}</strong><span>Roots and affixes</span></div>
-    <div class="ml-stat"><strong>3</strong><span>Languages per term</span></div>
-    <div class="ml-stat"><strong>1</strong><span>Method Joy memory block</span></div>
+    <div class="ml-stat"><strong>{{ medlatin_term_count }}</strong><span>Términos Base</span></div>
+    <div class="ml-stat"><strong>{{ medlatin_root_count }}</strong><span>Raíces y afijos</span></div>
+    <div class="ml-stat"><strong>3</strong><span>Idiomas por término</span></div>
+    <div class="ml-stat"><strong>1</strong><span>Bloque de memoria Joy</span></div>
 </section>
 
 <section style="margin-top:26px;">
     <div style="margin-bottom:18px;">
-        <span class="ml-kicker">Term of the Day</span>
-        <h2 class="ml-section-title">A focused entry to start with</h2>
+        <span class="ml-kicker">Término del Día</span>
+        <h2 class="ml-section-title">Una entrada clave para comenzar</h2>
     </div>
     {% if medlatin_term_of_day %}
         {% include "medlatin/partials/term_card.html" with term=medlatin_term_of_day %}
@@ -40,8 +40,8 @@
 
 <section class="ml-grid ml-grid-2" style="margin-top:26px;">
     <div class="ml-panel">
-        <h3>Explore by subject</h3>
-        <p>Start by the subject you are actively studying.</p>
+        <h3>Explorar por materia</h3>
+        <p>Comienza por la materia que estás estudiando activamente.</p>
         <div class="ml-tags">
             {% for item in featured_subjects %}
                 <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?subject={{ item }}">{{ item }}</a>
@@ -49,8 +49,8 @@
         </div>
     </div>
     <div class="ml-panel">
-        <h3>Explore by naming logic</h3>
-        <p>See how structure, position, function, or pathology shape the word.</p>
+        <h3>Explorar por lógica descriptiva</h3>
+        <p>Observa cómo la estructura, posición, función o patología dan forma a la palabra.</p>
         <div class="ml-tags">
             {% for item in naming_logic_categories %}
                 <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?naming_category={{ item }}">{{ item }}</a>
@@ -61,7 +61,7 @@
 
 <section class="ml-grid ml-grid-2" style="margin-top:26px;">
     <div class="ml-panel">
-        <h3>Popular roots</h3>
+        <h3>Raíces populares</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for root in medlatin_popular_roots %}
                 <a class="ml-term-card" href="{% url 'medlatin:root-detail' root_id=root.id %}">
@@ -70,12 +70,12 @@
                     <div class="ml-excerpt">{{ root.origin_language }} · {{ root.get_root_type_display }}</div>
                 </a>
             {% empty %}
-                <div class="ml-empty">No roots seeded yet.</div>
+                <div class="ml-empty">Aún no hay raíces sembradas.</div>
             {% endfor %}
         </div>
     </div>
     <div class="ml-panel">
-        <h3>Recently viewed</h3>
+        <h3>Vistos recientemente</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for term in recent_terms %}
                 <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=term.slug %}">
@@ -84,7 +84,7 @@
                     <div class="ml-excerpt">{{ term.medical_definition|truncatechars:140 }}</div>
                 </a>
             {% empty %}
-                <div class="ml-empty">Your recent terms will appear here after you open entries.</div>
+                <div class="ml-empty">Tus términos recientes aparecerán aquí luego de que abras algunas entradas.</div>
             {% endfor %}
         </div>
     </div>

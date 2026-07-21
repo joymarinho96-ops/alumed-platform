@@ -15,7 +15,7 @@ from medlatin.models import (
     Translation,
     WordPart,
 )
-from medlatin.seed_data import ROOT_LIBRARY, SEED_QUIZZES, SEED_TERMS
+from medlatin.seed_data_es import ROOT_LIBRARY, SEED_QUIZZES, SEED_TERMS
 from medlatin.services import normalize_text
 
 

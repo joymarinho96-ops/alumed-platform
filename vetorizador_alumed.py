@@ -16,16 +16,10 @@ if openai_key:
 
 def baixar_e_extrair_texto(url_pdf):
     """Baixa o PDF do Wix/Drive temporariamente e extrai todo o texto com pypdf."""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36',
-    }
-    resposta = requests.get(url_pdf, headers=headers, timeout=30)
-    resposta.raise_for_status()
-    
     caminho_temp = "temp_alumed.pdf"
-    with open(caminho_temp, 'wb') as f:
-        f.write(resposta.content)
-        
+    import gdown
+    gdown.download(url_pdf, caminho_temp, quiet=False)
+    
     texto_extraido = ""
     try:
         leitor = PdfReader(caminho_temp)

@@ -1,11 +1,11 @@
 {% extends "medlatin/base.html" %}
 
-{% block title %}MedLatin · {{ term.latin_name }}{% endblock %}
+{% block title %}MedLatín · {{ term.latin_name }}{% endblock %}
 
 {% block content %}
 <section class="ml-grid ml-grid-2">
     <div class="ml-hero-card">
-        <span class="ml-kicker">Term entry</span>
+        <span class="ml-kicker">Entrada de término</span>
         <h1 class="ml-title" style="font-size:3.2rem;">{{ term.latin_name }}</h1>
         <p class="ml-subtitle">{{ term.literal_translation }}</p>
         <div class="ml-meta">
@@ -22,27 +22,27 @@
                 <form class="ml-inline-form" method="post" action="{% url 'medlatin:toggle-favorite' slug=term.slug %}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button class="ml-fav-btn" type="submit">{% if is_favorited %}Remove favorite{% else %}Add favorite{% endif %}</button>
+                    <button class="ml-fav-btn" type="submit">{% if is_favorited %}Quitar favorito{% else %}Añadir favorito{% endif %}</button>
                 </form>
-                {% if progress %}<span class="ml-tag">Study status: {{ progress.get_status_display }}</span>{% endif %}
+                {% if progress %}<span class="ml-tag">Estado de estudio: {{ progress.get_status_display }}</span>{% endif %}
             </div>
         {% endif %}
     </div>
     <div class="ml-panel">
-        <h3>Medical definition</h3>
+        <h3>Definición médica</h3>
         <p>{{ term.medical_definition }}</p>
         <div class="ml-meta">
             {% if term.subject %}<span>{{ term.subject }}</span>{% endif %}
             {% if term.specialty %}<span>{{ term.specialty }}</span>{% endif %}
             {% if term.naming_category %}<span>{{ term.naming_category }}</span>{% endif %}
-            <span>Difficulty {{ term.difficulty }}</span>
+            <span>Dificultad {{ term.difficulty }}</span>
         </div>
     </div>
 </section>
 
 <section class="ml-grid ml-grid-2" style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Word decomposition</h3>
+        <h3>Descomposición de la palabra</h3>
         <div class="ml-part-row">
             {% for part in term.word_parts.all %}
                 <div class="ml-part">
@@ -51,34 +51,34 @@
                     <small style="color:var(--ml-muted);">{{ part.get_part_type_display }} · {{ part.origin_language }}</small>
                 </div>
             {% empty %}
-                <div class="ml-empty">This entry is best treated as a lexical unit and not safely split into smaller parts.</div>
+                <div class="ml-empty">Esta entrada se trata mejor como una unidad léxica y no se divide de forma segura en partes más pequeñas.</div>
             {% endfor %}
         </div>
     </div>
     <div class="ml-panel">
-        <h3>Etymology</h3>
+        <h3>Etimología</h3>
         <p>{{ term.etymology }}</p>
     </div>
 </section>
 
 <section class="ml-grid ml-grid-2" style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Naming logic</h3>
+        <h3>Lógica de nomenclatura</h3>
         <p>{{ term.naming_logic }}</p>
     </div>
     <div class="ml-panel">
-        <h3>Method Joy</h3>
-        <p><strong>Mnemonic:</strong> {{ term.mnemonic }}</p>
-        {% if term.mnemonic_spanish %}<p style="margin-top:12px;"><strong>Spanish-friendly:</strong> {{ term.mnemonic_spanish }}</p>{% endif %}
-        {% if term.mnemonic_portuguese %}<p style="margin-top:12px;"><strong>Portuguese-friendly:</strong> {{ term.mnemonic_portuguese }}</p>{% endif %}
-        {% if term.exam_trap %}<p style="margin-top:12px;"><strong>Exam trap:</strong> {{ term.exam_trap }}</p>{% endif %}
-        {% if term.rapid_review %}<p style="margin-top:12px;"><strong>Rapid review:</strong> {{ term.rapid_review }}</p>{% endif %}
+        <h3>Método Joy</h3>
+        <p><strong>Mnemotecnia:</strong> {{ term.mnemonic }}</p>
+        {% if term.mnemonic_spanish %}<p style="margin-top:12px;"><strong>Adaptado al español:</strong> {{ term.mnemonic_spanish }}</p>{% endif %}
+        {% if term.mnemonic_portuguese %}<p style="margin-top:12px;"><strong>Adaptado al portugués:</strong> {{ term.mnemonic_portuguese }}</p>{% endif %}
+        {% if term.exam_trap %}<p style="margin-top:12px;"><strong>Trampa de examen:</strong> {{ term.exam_trap }}</p>{% endif %}
+        {% if term.rapid_review %}<p style="margin-top:12px;"><strong>Repaso rápido:</strong> {{ term.rapid_review }}</p>{% endif %}
     </div>
 </section>
 
 <section class="ml-grid ml-grid-2" style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Translations</h3>
+        <h3>Traducciones</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for language, translation in translations.items %}
                 <div class="ml-term-card">
@@ -90,7 +90,7 @@
         </div>
     </div>
     <div class="ml-panel">
-        <h3>Related terminology</h3>
+        <h3>Terminología relacionada</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for relationship_type, items in relationships_by_type.items %}
                 {% for relation in items %}
@@ -101,7 +101,7 @@
                     </a>
                 {% endfor %}
             {% empty %}
-                <div class="ml-empty">No related terms linked yet for this entry.</div>
+                <div class="ml-empty">Aún no hay términos relacionados enlazados a esta entrada.</div>
             {% endfor %}
         </div>
     </div>
@@ -110,7 +110,7 @@
 {% if examples_by_context %}
 <section style="margin-top:24px;">
     <div class="ml-panel">
-        <h3>Medical contexts</h3>
+        <h3>Contextos médicos</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for context_name, items in examples_by_context.items %}
                 {% for example in items %}
