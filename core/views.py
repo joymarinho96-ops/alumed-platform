@@ -337,8 +337,62 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                 questions = qs
         except Exception as e:
             print("DB fallback failed:", e)
-            # Return empty list safely
             pass
+
+        if not questions and base_subject == "Anatomía":
+            questions = [
+                type('obj', (object,), {
+                    'id': 1,
+                    'question_text': "¿Cuál de los siguientes pares craneales emerge de la cara posterior del tronco encefálico (mesencéfalo)?",
+                    'option_a': "Nervio Oculomotor (III)",
+                    'option_b': "Nervio Troclear (IV)",
+                    'option_c': "Nervio Trigémino (V)",
+                    'option_d': "Nervio Abducens (VI)",
+                    'correct_option': "B",
+                    'explanation': "El nervio troclear o patético (IV par craneal) es el único que emerge de la cara posterior del tronco encefálico."
+                }),
+                type('obj', (object,), {
+                    'id': 2,
+                    'question_text': "En relación a la irrigación del corazón, la arteria descendente anterior es rama terminal de:",
+                    'option_a': "Arteria Coronaria Derecha",
+                    'option_b': "Arteria Circunfleja",
+                    'option_c': "Arteria Coronaria Izquierda",
+                    'option_d': "Seno Coronario",
+                    'correct_option': "C",
+                    'explanation': "La arteria coronaria izquierda se bifurca rápidamente en descendente anterior (interventricular anterior) y circunfleja."
+                }),
+                type('obj', (object,), {
+                    'id': 3,
+                    'question_text': "¿Qué estructura atraviesa el hiato aórtico del diafragma junto con la arteria aorta?",
+                    'option_a': "Nervio vago derecho",
+                    'option_b': "Vena cava inferior",
+                    'option_c': "Conducto torácico",
+                    'option_d': "Esófago",
+                    'correct_option': "C",
+                    'explanation': "Por el hiato aórtico del diafragma pasan la aorta descendente y el conducto torácico (y a veces la vena ácigos)."
+                }),
+                type('obj', (object,), {
+                    'id': 4,
+                    'question_text': "El ligamento cruzado anterior de la rodilla se inserta distalmente en:",
+                    'option_a': "Área intercondílea anterior de la tibia",
+                    'option_b': "Cóndilo medial del fémur",
+                    'option_c': "Cabeza del peroné",
+                    'option_d': "Tuberosidad de la tibia",
+                    'correct_option': "A",
+                    'explanation': "El LCA se inserta distalmente en el área intercondílea anterior de la tibia."
+                }),
+                type('obj', (object,), {
+                    'id': 5,
+                    'question_text': "El lóbulo de la ínsula se encuentra en la profundidad de la cisura de:",
+                    'option_a': "Rolando (Central)",
+                    'option_b': "Silvio (Lateral)",
+                    'option_c': "Calcarina",
+                    'option_d': "Parieto-occipital",
+                    'correct_option': "B",
+                    'explanation': "El lóbulo de la ínsula está oculto en el fondo del surco lateral o cisura de Silvio."
+                })
+            ]
+
         
         data = []
         for q in questions:
