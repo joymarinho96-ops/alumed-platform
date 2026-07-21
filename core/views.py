@@ -293,3 +293,7 @@ def api_get_simulacro_questions(request, subject):
             'explanation': q.explanation
         })
     return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
+
+
+def guia_supervivencia_view(request):
+    return render(request, 'accounts/guia_supervivencia.html')
