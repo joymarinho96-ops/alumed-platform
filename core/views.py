@@ -552,6 +552,56 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                     'option_d': "En las fimbrias del infundíbulo.",
                     'correct_option': "C",
                     'explanation': "La fecundación ocurre más frecuentemente en la región de la ampolla (tercio externo) de la trompa uterina."
+                }),
+                type('obj', (object,), {
+                    'id': 6,
+                    'question_text': "La anfimixis es la...",
+                    'option_a': "Telofase de la primera división mitótica.",
+                    'option_b': "Telofase de la primera división meiótica.",
+                    'option_c': "Metafase de la primera división mitótica.",
+                    'option_d': "Metafase de la primera división meiótica.",
+                    'correct_option': "C",
+                    'explanation': "La anfimixis corresponde a la metafase de la primera división mitótica de la cigota, donde se alinean los cromosomas maternos y paternos."
+                }),
+                type('obj', (object,), {
+                    'id': 7,
+                    'question_text': "¿Cuáles son las dos cavidades que se originan durante la 2da semana de gestación?",
+                    'option_a': "Amniótica de ubicación ventral y saco de Yolk de ubicación dorsal.",
+                    'option_b': "Celoma intraembrionario ventral y saco vitelino dorsal.",
+                    'option_c': "Amniótica de ubicación dorsal y saco vitelino de ubicación ventral.",
+                    'option_d': "Amniótica de ubicación ventral y saco vitelino de ubicación dorsal.",
+                    'correct_option': "C",
+                    'explanation': "En el disco bilaminar, la cavidad amniótica se forma dorsalmente (sobre el epiblasto) y el saco vitelino ventralmente (bajo el hipoblasto)."
+                }),
+                type('obj', (object,), {
+                    'id': 8,
+                    'question_text': "La neurulación se extiende desde la diferenciación del ectodermo en neuroepitelio, hasta el día:",
+                    'option_a': "30, con el cierre del neuroporo posterior.",
+                    'option_b': "27, con el cierre del neuroporo anterior.",
+                    'option_c': "27, con el cierre del neuroporo posterior.",
+                    'option_d': "25, con el cierre del neuroporo posterior.",
+                    'correct_option': "C",
+                    'explanation': "El proceso de neurulación finaliza con el cierre del neuroporo caudal o posterior, que ocurre alrededor del día 27-28."
+                }),
+                type('obj', (object,), {
+                    'id': 9,
+                    'question_text': "¿De dónde provienen las células que van a formar la notocorda?",
+                    'option_a': "Del ectodermo y migran a través de la fosita primitiva.",
+                    'option_b': "Del epiblasto y migran a través del nódulo de Hensen.",
+                    'option_c': "Surgen del endodermo durante el proceso notocordal.",
+                    'option_d': "Del epiblasto y migran a través de la región caudal de la línea primitiva.",
+                    'correct_option': "B",
+                    'explanation': "Las células notocordales derivan del epiblasto y se invaginan a nivel de la fosita primitiva en el nódulo de Hensen, extendiéndose cefálicamente."
+                }),
+                type('obj', (object,), {
+                    'id': 10,
+                    'question_text': "¿Qué factor produce la notocorda para que la parte ventromedial del somita se diferencie a esclerotoma?",
+                    'option_a': "WNT",
+                    'option_b': "Brachyury",
+                    'option_c': "SHH (Sonic Hedgehog)",
+                    'option_d': "BMP-4",
+                    'correct_option': "C",
+                    'explanation': "La notocorda y la placa del piso del tubo neural secretan SHH, el cual induce a la región ventromedial del somita a convertirse en esclerotoma."
                 })
             ]
         
