@@ -286,6 +286,103 @@ def api_get_simulacro_questions(request, subject):
         except ValueError:
             qty = 10
 
+        # 0. Intercept for Anatomía A Oral Mode (Syllabus based)
+        if modality == 'oral' and mapped_subject == 'Anatomía Cátedra A':
+            oral_questions = [
+                {
+                    'id': 1,
+                    'question_text': "(Osteología) Describa la escápula: situación, caras, bordes, ángulos e inserciones musculares principales en su cara posterior.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Deberías mencionar: Hueso plano en la región posterosuperior del tórax (costillas 2 a 7). Cara posterior: Espina de la escápula (divide en fosa supraespinosa e infraespinosa, donde se insertan los músculos homónimos). Acromion (articula con clavícula). Bordes: axilar (inserción de redondo menor y mayor) y espinal (romboides y elevador de la escápula)."
+                },
+                {
+                    'id': 2,
+                    'question_text': "(Articulaciones) Desarrolle la articulación Temporomandibular (ATM): clasificación, superficies articulares y principales medios de unión.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Clasificación: Diartrosis, bicondílea (o doble condílea). Superficies: cóndilo de la mandíbula y cavidad glenoidea / cóndilo del hueso temporal. Presenta un disco articular (menisco) para adaptar las superficies. Medios de unión: cápsula articular, ligamentos intrínsecos (lateral externo e interno) y extrínsecos (esfenomandibular, estilomandibular, pterigomandibular)."
+                },
+                {
+                    'id': 3,
+                    'question_text': "(Miología) Describa los músculos masticadores: nombre, origen e inserción general, e inervación.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Son 4 principales: Temporal (de fosa temporal a apófisis coronoides), Masetero (arco cigomático a cara externa del ángulo mandibular), Pterigoideo externo/lateral (apófisis pterigoides a cuello del cóndilo) y Pterigoideo interno/medial (apófisis pterigoides a cara interna del ángulo mandibular). Todos inervados por la rama mandibular del nervio Trigémino (V3)."
+                },
+                {
+                    'id': 4,
+                    'question_text': "(Neurolocomoción) Describa la constitución del Plexo Braquial: raíces, troncos primarios y ramas terminales principales.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Raíces: Ramos anteriores de C5 a T1. Troncos primarios: Superior (C5-C6), Medio (C7), Inferior (C8-T1). Estos se dividen para formar los fascículos/troncos secundarios en la axila. Ramas terminales principales: N. Musculocutáneo, N. Mediano, N. Cubital, N. Radial y N. Circunflejo (Axilar)."
+                },
+                {
+                    'id': 5,
+                    'question_text': "(Neuroanatomía) Describa la configuración externa del cerebro, mencionando los principales surcos (cisuras) y los lóbulos que delimitan.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Hemisferios divididos por la cisura interhemisférica. Surcos principales: Surco central (de Rolando), Surco lateral (de Silvio) y Surco parieto-occipital. Delimitan los lóbulos: Frontal (motor y ejecutivo), Parietal (sensitivo), Temporal (auditivo y memoria), Occipital (visual). En la profundidad del surco lateral se encuentra la ínsula."
+                },
+                {
+                    'id': 6,
+                    'question_text': "(Esplacnología - Cuello) Mencione los elementos que componen el paquete vasculonervioso del cuello y describa sus relaciones topográficas en la vaina carotídea.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Componentes: Arteria carótida común (o primitiva), Vena yugular interna y Nervio vago (Neumogástrico, X par). Relaciones: La arteria es medial, la vena es lateral y el nervio vago discurre posterior, en el ángulo diedro entre ambos. Todo envuelto por la vaina carotídea debajo del músculo esternocleidomastoideo."
+                },
+                {
+                    'id': 7,
+                    'question_text': "(Esplacnología - Tórax) Describa la configuración externa del corazón (caras y surcos) y su irrigación arterial coronaria.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Caras: Esternocostal (anterior), diafragmática (inferior) y pulmonar (izquierda). Surcos: Auriculoventricular (coronario) e Interventricular (anterior y posterior). Irrigación: Arteria coronaria derecha (da la descendente posterior usualmente) y Coronaria izquierda (se bifurca en descendente anterior y circunfleja)."
+                },
+                {
+                    'id': 8,
+                    'question_text': "(Esplacnología - Abdomen) Describa la ubicación, segmentación funcional y relaciones principales del Hígado.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Ubicación: Hipocondrio derecho y epigastrio. Relaciones: Superior (diafragma), inferior (estómago, duodeno, colon derecho, riñón derecho). Segmentación de Couinaud: Se divide en 8 segmentos funcionales basados en la distribución de la vena porta, arteria hepática y conductos biliares (pedículo hepático)."
+                },
+                {
+                    'id': 9,
+                    'question_text': "(Esplacnología - Genital) Describa los órganos genitales femeninos internos: ubicación, porciones del útero y trompas, e irrigación principal.",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Órganos: Ovarios, Trompas de Falopio (infundíbulo, ampolla, istmo, intramural), Útero (fondo, cuerpo, istmo, cuello/cérvix) y Vagina. Ubicados en la pelvis menor (subperitoneal el útero). Irrigación principal: Arteria uterina (rama de la ilíaca interna/hipogástrica) y Arteria ovárica (rama de la aorta abdominal)."
+                },
+                {
+                    'id': 10,
+                    'question_text': "(Neuroanatomía) Describa el origen real y aparente, además de la función principal, del nervio facial (VII par).",
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': "Desarrollo",
+                    'explanation': "Origen aparente: Surco bulboprotuberancial (fosa supraolivar). Origen real: Núcleo motor en la protuberancia (para músculos de la mímica facial), núcleos parasimpáticos (salival superior para glándulas submandibular/sublingual y lagrimal) y sensitivo (gusto 2/3 anteriores de la lengua). Sale del cráneo por el agujero estilomastoideo."
+                }
+            ]
+            
+            import random
+            if qty < len(oral_questions):
+                selected_qs = random.sample(oral_questions, qty)
+            else:
+                selected_qs = oral_questions
+                
+            data = []
+            for q in selected_qs:
+                data.append({
+                    'id': q['id'],
+                    'question_text': q['question_text'],
+                    'options': {
+                        'A': q['option_a'],
+                        'B': q['option_b'],
+                        'C': q['option_c'],
+                        'D': q['option_d']
+                    },
+                    'correct_option': q['correct_option'],
+                    'explanation': q['explanation']
+                })
+            return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
+
         # 1. Intentar Generar con Motor RAG / IA
         client_type, client = _get_api_client()
         if client_type != 'mock' and client is not None:
@@ -329,15 +426,45 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
         # 2. Fallback a la Base de Datos Local
         base_subject = mapped_subject.split(' ')[0]
         questions = []
-        try:
-            qs = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
-            if len(qs) > qty:
-                questions = random.sample(qs, qty)
-            else:
-                questions = qs
-        except Exception as e:
-            print("DB fallback failed:", e)
-            pass
+        
+        if modality == 'pinche' and mapped_subject == 'Anatomía Cátedra B':
+            pinche_answers = [
+                "Troquín del húmero", "Apófisis estiloides del radio", "Espina ciática", "Seno del tarso", 
+                "Nervio musculocutáneo", "Arteria femoral", "Músculo recto interno", "Pata de ganso",
+                "Tendón del músculo extensor largo del pulgar", "Tendón del músculo supinador largo",
+                "Arteria cubital", "Porción larga del tríceps", "Tendón del aductor mayor",
+                "Ligamento meniscofemoral", "Tendón del músculo peroneo lateral corto", "Nervio ciático mayor",
+                "Gancho del hueso ganchoso", "Nervio cubital", "Arteria radial", "Músculo pedio"
+            ]
+            
+            # Map up to 20 images
+            import random
+            available_images = [f"/static/pinches/img_{i}.png" for i in range(1, 21)]
+            
+            for i, ans in enumerate(pinche_answers):
+                img_url = f"/static/pinches/img_{i+1}.png"
+                questions.append(type('obj', (object,), {
+                    'id': i+1,
+                    'question_text': "¿Qué estructura anatómica está marcada por el alfiler/pinche en este preparado?",
+                    'image_url': img_url,
+                    'option_a': "", 'option_b': "", 'option_c': "", 'option_d': "",
+                    'correct_option': ans,
+                    'explanation': f"Esta estructura es {ans}. (Nota: La imagen es un placeholder hasta la curaduría final)."
+                }))
+            
+            if qty < len(questions):
+                questions = random.sample(questions, qty)
+        
+        else:
+            try:
+                qs = list(SimulacroQuestion.objects.filter(subject__icontains=base_subject))
+                if len(qs) > qty:
+                    questions = random.sample(qs, qty)
+                else:
+                    questions = qs
+            except Exception as e:
+                print("DB fallback failed:", e)
+                pass
 
         if not questions and mapped_subject == "Anatomía Cátedra C":
             questions = [
@@ -765,7 +892,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
         
         data = []
         for q in questions:
-            data.append({
+            item = {
                 'id': q.id,
                 'question_text': q.question_text,
                 'options': {
@@ -776,7 +903,10 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
                 },
                 'correct_option': q.correct_option,
                 'explanation': q.explanation
-            })
+            }
+            if hasattr(q, 'image_url'):
+                item['image_url'] = q.image_url
+            data.append(item)
         return JsonResponse({'ok': True, 'subject': subject, 'questions': data})
     except Exception as outer_e:
         import traceback

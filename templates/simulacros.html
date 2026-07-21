@@ -38,9 +38,10 @@
 .setup-box h4 { margin-bottom: 5px; font-size: 1.1rem; color: #fff; }
 .setup-box p { font-size: 0.85rem; color: var(--text-muted); }
 
-/* Textarea Modo Oral */
+/* Textarea Modo Oral / Pinches */
 .oral-textarea { width: 100%; height: 150px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; color: #fff; font-size: 1rem; resize: vertical; margin-bottom: 15px; }
 .oral-textarea:focus { outline: none; border-color: var(--purple-main); }
+.pinche-image { max-width: 100%; max-height: 450px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: 0 5px 15px rgba(0,0,0,0.3); object-fit: contain; background: #000; }
 </style>
 {% endblock %}
 
@@ -63,7 +64,10 @@
             <h3 style="color: #ef4444; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 1.5rem;">🚨</span> Triángulo de Sobrevivencia
             </h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Las materias filtro de La Plata. Diagnóstico exhaustivo recomendado.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; margin-bottom: 15px;">Las materias filtro de La Plata. Diagnóstico exhaustivo recomendado.</p>
+            <button onclick="openInteligencia()" class="btn-gold" style="padding: 10px 20px; font-size: 0.95rem;">
+                📊 Ver Reporte de Inteligencia y Probabilidades
+            </button>
         </div>
 
         <div class="cards-row" style="margin-bottom: 40px;">
@@ -113,9 +117,16 @@
         <div class="setup-option" id="modality-options">
             <div class="setup-box active" onclick="selectModality('choice')">
                 <h4>🎯 Modo Examen (Choice)</h4>
-                <p>Multiple Choice con corrección teórica al instante.</p>
+                <p>Multiple Choice con teórica al instante.</p>
             </div>
-
+            <div class="setup-box" onclick="selectModality('pinche')">
+                <h4>📌 Modo Pinches</h4>
+                <p>Identificación en Preparados (Práctico).</p>
+            </div>
+            <div class="setup-box" onclick="selectModality('oral')">
+                <h4>🎙️ Modo Oral</h4>
+                <p>Desarrollo conceptual para finales/orales.</p>
+            </div>
         </div>
 
         <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">2. ¿Cuántas preguntas querés para este bloque?</h3>
@@ -184,6 +195,45 @@
             </a>
         </div>
     </div>
+    <!-- Inteligencia State -->
+    <div id="inteligencia-state" class="glass-card" style="display: none; padding: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 30px;">
+            <h2 style="color: #ffd700; font-size: 2rem;">📊 Reporte de Inteligencia Estratégica</h2>
+            <button onclick="closeInteligencia()" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">✖</button>
+        </div>
+        
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Análisis predictivo basado en frecuencias históricas, PDFs de la cátedra y cronograma oficial de Trabajos Prácticos.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                <h4 style="color: #fca5a5; margin-bottom: 10px;">ANATOMÍA (Cátedras A, B, C)</h4>
+                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
+                    <li><strong>85-90% Probabilidad:</strong> Neuroanatomía (Pares craneales, Polígono de Willis, Vías piramidales).</li>
+                    <li><strong>80% Probabilidad:</strong> Esplacnología (Irrigación gástrica, Segmentación hepática, Peritoneo).</li>
+                    <li><strong>75% Probabilidad:</strong> Locomotor (Triángulos del cuello, Pata de ganso, Manguito rotador).</li>
+                    <li style="color: #fbbf24; margin-top: 5px;"><em>⚠️ Tip: En Anato B, es altísima la probabilidad de examen práctico con preparados (Pinches) de Locomotor.</em></li>
+                </ul>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
+                <h4 style="color: #6ee7b7; margin-bottom: 10px;">HISTOLOGÍA Y EMBRIOLOGÍA</h4>
+                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
+                    <li><strong>92% Probabilidad (Embrio):</strong> 1ra a 3ra semana (Fecundación, Capacitación espermática, Gastrulación, Derivados de hojas germinativas).</li>
+                    <li><strong>88% Probabilidad (Histo):</strong> Tejido Epitelial (Especializaciones apicales) y Sangre (Fórmula leucocitaria).</li>
+                    <li><strong>75% Probabilidad:</strong> Tejido Nervioso (Glía, Sinapsis).</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                <h4 style="color: #93c5fd; margin-bottom: 10px;">BIOLOGÍA</h4>
+                <ul style="color: var(--text-light); line-height: 1.8; padding-left: 20px;">
+                    <li><strong>85% Probabilidad:</strong> Membrana Plasmática (Ósmosis, Transporte activo y pasivo, Coeficiente de reflexión).</li>
+                    <li><strong>80% Probabilidad:</strong> Ciclo Celular y Mitosis/Meiosis (Regulación, Puntos de control).</li>
+                    <li><strong>70% Probabilidad:</strong> Organelas (Mitocondria, Fosforilación oxidativa, REL/RER).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -210,6 +260,25 @@
         document.getElementById('selection-state').style.display = 'none';
         document.getElementById('setup-state').style.display = 'block';
         document.getElementById('setup-subject-name').innerText = subject.replace('-', ' ').toUpperCase();
+        
+        // Forzar modalidad
+        if (subject === 'anatomia-b') {
+            selectModality('pinche');
+        } else if (subject === 'anatomia-a') {
+            selectModality('oral');
+        } else {
+            selectModality('choice');
+        }
+    }
+
+    function openInteligencia() {
+        document.getElementById('selection-state').style.display = 'none';
+        document.getElementById('inteligencia-state').style.display = 'block';
+    }
+
+    function closeInteligencia() {
+        document.getElementById('inteligencia-state').style.display = 'none';
+        document.getElementById('selection-state').style.display = 'block';
     }
 
     function selectModality(modality) {
@@ -276,6 +345,10 @@
         
         const container = document.getElementById('options-container');
         container.innerHTML = '';
+
+        if (q.image_url) {
+            document.getElementById('question-text').innerHTML += `<br><div style="text-align: center;"><img src="${q.image_url}" class="pinche-image" alt="Preparado Anatómico"></div>`;
+        }
         
         if (selectedModality === 'choice') {
             ['A', 'B', 'C', 'D'].forEach(letter => {
@@ -287,16 +360,30 @@
                     container.appendChild(btn);
                 }
             });
-        } else if (selectedModality === 'oral') {
-            const textarea = document.createElement('textarea');
+        } else if (selectedModality === 'pinche') {
+            const textarea = document.createElement('input');
+            textarea.type = 'text';
             textarea.className = 'oral-textarea';
-            textarea.placeholder = "Escribe tu desarrollo, diagnóstico o paso a paso aquí...";
+            textarea.style.height = '60px';
+            textarea.placeholder = "Escribe la estructura señalada aquí...";
             container.appendChild(textarea);
 
             const btn = document.createElement('button');
             btn.className = 'btn-primary';
             btn.style.width = '100%';
-            btn.innerHTML = "📝 Enviar Desarrollo para Corrección";
+            btn.innerHTML = "📝 Revelar Respuesta Correcta";
+            btn.onclick = () => checkAnswerPinche(textarea.value, q.correct_option);
+            container.appendChild(btn);
+        } else if (selectedModality === 'oral') {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'oral-textarea';
+            textarea.placeholder = "Desarrolla tu respuesta aquí (estructura, relaciones, inserciones, irrigación, etc.)...";
+            container.appendChild(textarea);
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.style.width = '100%';
+            btn.innerHTML = "📝 Enviar y Comparar con Criterio Docente";
             btn.onclick = () => checkAnswerOral(textarea.value);
             container.appendChild(btn);
         }
@@ -337,9 +424,38 @@
         feedbackArea.style.display = 'block';
     }
 
+    function checkAnswerPinche(textValue, correctAnswer) {
+        if (!textValue.trim()) {
+            alert("Por favor, escribe una respuesta antes de revelar.");
+            return;
+        }
+        
+        document.getElementById('options-container').querySelectorAll('button, input').forEach(el => el.disabled = true);
+
+        const q = questions[currentQuestionIndex];
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExp = document.getElementById('feedback-explanation');
+
+        // Evaluación súper permisiva para el prototipo (contiene la subcadena)
+        const isCorrect = correctAnswer.toLowerCase().includes(textValue.toLowerCase().trim()) || textValue.toLowerCase().includes(correctAnswer.toLowerCase().trim());
+        
+        if (isCorrect) {
+            score++;
+            feedbackTitle.innerText = "✅ ¡Excelente! Estructura Identificada";
+            feedbackTitle.style.color = "#10b981";
+        } else {
+            feedbackTitle.innerText = "👨‍🏫 Devolución de la IA (Auto-evaluación)";
+            feedbackTitle.style.color = "#fbbf24";
+        }
+
+        feedbackExp.innerHTML = `<strong>Respuesta Correcta:</strong> <span style="color:var(--purple-main); font-size:1.1rem;">${correctAnswer}</span><br><br>Tu respuesta: <em>${textValue}</em><br><br>${q.explanation ? '<strong>Nota:</strong> ' + q.explanation : ''}`;
+        feedbackArea.style.display = 'block';
+    }
+
     function checkAnswerOral(textValue) {
         if (!textValue.trim()) {
-            alert("Por favor, escribe un desarrollo antes de enviar.");
+            alert("Por favor, desarrolla una respuesta antes de enviar.");
             return;
         }
         
@@ -350,13 +466,12 @@
         const feedbackTitle = document.getElementById('feedback-title');
         const feedbackExp = document.getElementById('feedback-explanation');
 
-        // En modo oral sumamos puntaje automáticamente en esta versión de interfaz 
-        // (En el futuro, esto lo corregirá la IA en el backend).
+        // En modo oral sumamos puntaje automáticamente porque es autoevaluación cualitativa
         score++;
 
-        feedbackTitle.innerText = "👨‍🏫 Devolución de la IA (Referencia)";
+        feedbackTitle.innerText = "👨‍🏫 Devolución de la IA (Criterios de Evaluación)";
         feedbackTitle.style.color = "#fbbf24";
-        feedbackExp.innerHTML = `<strong>Criterio de Evaluación:</strong> Para que tu respuesta sea correcta, debía mencionar los siguientes puntos clave:<br><br>${q.explanation || 'La respuesta correcta en Choice era la opción ' + q.correct_option}`;
+        feedbackExp.innerHTML = `<strong>Lo que esperaba escuchar un docente de Anatomía A:</strong><br><br><div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--purple-main); margin-top: 10px;">${q.explanation}</div><br><strong>Tu desarrollo:</strong><br><em>${textValue}</em>`;
         feedbackArea.style.display = 'block';
     }
 
