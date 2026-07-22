@@ -5,419 +5,428 @@
 
 {% block content %}
 <style>
-    /* ══════════════════════════════════════════════════════
-       PAPIRO DA PROFE JOY — Estilos exclusivos desta página
-       ══════════════════════════════════════════════════════ */
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap');
 
+    /* ═══════════════════════════════════════════════════════
+       FUNDO DOURADO DE PAPIRO — cobre toda a página
+       ═══════════════════════════════════════════════════════ */
+    body.alumed-remaster {
+        background:
+            /* linhas horizontais de papiro */
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 28px,
+                rgba(139, 90, 20, 0.07) 28px,
+                rgba(139, 90, 20, 0.07) 29px
+            ),
+            /* manchas de envelhecimento nos cantos */
+            radial-gradient(ellipse at 0%   0%,   rgba(160, 100, 30, 0.28) 0%, transparent 38%),
+            radial-gradient(ellipse at 100% 0%,   rgba(180, 140, 40, 0.22) 0%, transparent 35%),
+            radial-gradient(ellipse at 100% 100%, rgba(120, 60,  20, 0.25) 0%, transparent 38%),
+            radial-gradient(ellipse at 0%   100%, rgba(140, 80,  20, 0.22) 0%, transparent 35%),
+            /* base dourada rica */
+            linear-gradient(160deg,
+                #f5e6b0 0%,
+                #e8d080 18%,
+                #d4b84a 36%,
+                #c9a83a 50%,
+                #d4b84a 64%,
+                #e8d080 82%,
+                #f5e6b0 100%
+            ) !important;
+        color: #3a2000 !important;
+    }
+
+    /* Sobrescrever fundo glow e orbs roxos — não combinam com o papiro */
+    body.alumed-remaster .ambient-glow,
+    body.alumed-remaster .home-depth-atmosphere,
+    body.alumed-remaster .bg-checkerboard,
+    body.alumed-remaster .home-orb,
+    body.alumed-remaster .home-medical-glyph,
+    body.alumed-remaster .anatomical-bg-layer { opacity: 0 !important; }
+
+    /* Adaptar navbar para não conflitar com o fundo dourado */
+    .navbar {
+        background: rgba(90, 40, 0, 0.88) !important;
+        backdrop-filter: blur(16px) !important;
+        border-bottom: 1px solid rgba(200, 150, 20, 0.3) !important;
+    }
+    .navbar a, .navbar .logo { color: #f5e6b0 !important; }
+    .navbar .logo span { color: #f0c030 !important; }
+
+    /* ── Wrapper ──────────────────────────────────────── */
     .papiro-page {
-        max-width: 900px;
+        max-width: 920px;
         margin: 0 auto;
-        padding: 40px 24px 80px;
+        padding: 36px 24px 80px;
         position: relative;
         z-index: 1;
     }
 
-    /* ── Hero do Papiro ───────────────────────────────── */
+    /* ── HERO ─────────────────────────────────────────── */
     .papiro-hero {
         position: relative;
-        border-radius: 24px;
+        border-radius: 20px;
         overflow: hidden;
-        padding: 56px 52px 48px;
-        margin-bottom: 36px;
+        padding: 54px 52px 46px;
+        margin-bottom: 32px;
         background:
-            repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 30px,
-                rgba(184, 134, 11, 0.07) 30px,
-                rgba(184, 134, 11, 0.07) 31px
-            ),
-            radial-gradient(ellipse at 0% 0%,   rgba(139, 69, 19, 0.18) 0%, transparent 45%),
-            radial-gradient(ellipse at 100% 0%,  rgba(184, 134, 11, 0.12) 0%, transparent 40%),
-            radial-gradient(ellipse at 100% 100%,rgba(139, 0,  0,  0.14) 0%, transparent 45%),
-            radial-gradient(ellipse at 0%  100%, rgba(101, 67, 33, 0.16) 0%, transparent 40%),
-            linear-gradient(160deg, #f8f0dc 0%, #ede3c3 40%, #e6d9b8 100%);
-        border: 1px solid rgba(139, 69, 19, 0.25);
+            repeating-linear-gradient(0deg, transparent, transparent 30px,
+                rgba(120,70,10,0.1) 30px, rgba(120,70,10,0.1) 31px),
+            radial-gradient(ellipse at 0%   0%,   rgba(100,50,10,0.3) 0%, transparent 40%),
+            radial-gradient(ellipse at 100% 0%,   rgba(140,90,20,0.2) 0%, transparent 38%),
+            radial-gradient(ellipse at 100% 100%, rgba(90, 40,10,0.28) 0%, transparent 40%),
+            radial-gradient(ellipse at 0%   100%, rgba(110,60,15,0.25) 0%, transparent 38%),
+            linear-gradient(150deg, #f2d96e 0%, #c9a030 30%, #b08020 55%, #c9a030 75%, #f2d96e 100%);
+        border: 2px solid rgba(120, 80, 10, 0.4);
         box-shadow:
-            inset 0 0 60px rgba(139, 69, 19, 0.06),
-            0 20px 80px rgba(0, 0, 0, 0.35);
+            inset 0 0 80px rgba(100, 60, 0, 0.2),
+            inset 0 2px 0 rgba(255,230,100,0.5),
+            0 24px 80px rgba(0,0,0,0.5),
+            0 0 0 1px rgba(200,160,30,0.2);
     }
-
-    /* Marcas de desgaste nas bordas */
     .papiro-hero::before {
         content: "";
         position: absolute;
         inset: 0;
         border-radius: inherit;
         background:
-            radial-gradient(circle at 3% 12%, rgba(101,67,33,0.22) 0%, transparent 14%),
-            radial-gradient(circle at 97% 8%,  rgba(139,69,19,0.18) 0%, transparent 12%),
-            radial-gradient(circle at 5% 90%,  rgba(139,0,0,0.15)  0%, transparent 16%),
-            radial-gradient(circle at 95% 85%, rgba(101,67,33,0.2)  0%, transparent 14%);
+            radial-gradient(circle at 3%  12%, rgba(80,40,0,0.35) 0%, transparent 16%),
+            radial-gradient(circle at 97% 8%,  rgba(100,60,0,0.28) 0%, transparent 14%),
+            radial-gradient(circle at 5%  90%, rgba(80,30,0,0.3)  0%, transparent 18%),
+            radial-gradient(circle at 95% 85%, rgba(90,50,0,0.32) 0%, transparent 15%);
         pointer-events: none;
     }
 
     .papiro-seal-top {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 24px;
+        display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
     }
-    .papiro-seal-icon {
-        font-size: 2.4rem;
-        line-height: 1;
-        filter: drop-shadow(0 2px 8px rgba(139,0,0,0.3));
-    }
+    .papiro-seal-icon { font-size: 2.6rem; filter: drop-shadow(0 3px 10px rgba(80,30,0,0.5)); }
     .papiro-eyebrow {
         font-family: 'Cinzel', serif;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: #8b4513;
-        font-weight: 600;
+        color: #5c2800;
+        font-weight: 700;
     }
     .papiro-divider-thin {
-        width: 100%;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(139,69,19,0.4), transparent);
-        margin: 6px 0;
+        background: linear-gradient(90deg, transparent, rgba(100,50,0,0.5), transparent);
+        margin: 5px 0;
     }
-
     .papiro-title {
         font-family: 'Cormorant Garamond', serif;
-        font-size: clamp(2.4rem, 6vw, 4rem);
-        line-height: 1.05;
-        color: #5c1f00;
+        font-size: clamp(2.6rem, 7vw, 4.4rem);
+        line-height: 0.98;
+        color: #3a1a00;
         margin: 0 0 8px;
-        letter-spacing: -0.01em;
-        position: relative;
-        z-index: 1;
+        text-shadow: 0 2px 12px rgba(200,140,0,0.3);
+        position: relative; z-index: 1;
     }
-    .papiro-title em {
-        font-style: italic;
-        color: #8b0000;
-    }
-
+    .papiro-title em { font-style: italic; color: #8b0000; }
     .papiro-subtitle {
         font-family: 'IM Fell English', serif;
-        font-size: 1.1rem;
+        font-size: 1.08rem;
         font-style: italic;
-        color: #6b4226;
-        line-height: 1.8;
-        max-width: 680px;
-        margin: 16px 0 0;
+        color: #5c2800;
+        line-height: 1.85;
+        max-width: 660px;
+        margin: 18px 0 0;
         padding: 16px 20px;
-        border-left: 3px solid rgba(184,134,11,0.5);
-        background: rgba(184,134,11,0.06);
+        border-left: 3px solid rgba(120,70,0,0.5);
+        background: rgba(0,0,0,0.06);
         border-radius: 0 12px 12px 0;
-        position: relative;
-        z-index: 1;
+        position: relative; z-index: 1;
     }
-
-    /* Ornamento decorativo de canto */
     .papiro-ornament {
         position: absolute;
         font-family: 'Cormorant Garamond', serif;
-        color: rgba(139, 69, 19, 0.1);
-        pointer-events: none;
-        line-height: 1;
+        color: rgba(80, 40, 0, 0.12);
+        pointer-events: none; line-height: 1;
     }
     .papiro-ornament-tl { top: 14px; left: 18px; font-size: 4rem; }
     .papiro-ornament-tr { top: 14px; right: 18px; font-size: 4rem; }
     .papiro-ornament-br { bottom: 14px; right: 22px; font-size: 2.5rem; }
 
-    /* ── Seções do Papiro ─────────────────────────────── */
+    /* ── Seções ──────────────────────────────────────── */
     .papiro-section {
         position: relative;
-        border-radius: 20px;
-        padding: 36px 40px;
-        margin-bottom: 24px;
+        border-radius: 18px;
+        padding: 36px 38px;
+        margin-bottom: 22px;
         background:
-            repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 26px,
-                rgba(184,134,11,0.055) 26px,
-                rgba(184,134,11,0.055) 27px
-            ),
-            linear-gradient(160deg, #f9f3e2 0%, #ede3c3 100%);
-        border: 1px solid rgba(139,69,19,0.18);
+            repeating-linear-gradient(0deg, transparent, transparent 26px,
+                rgba(100,60,0,0.07) 26px, rgba(100,60,0,0.07) 27px),
+            linear-gradient(155deg, #f2d96e 0%, #c9a030 40%, #b88020 60%, #c9a030 80%, #f2d96e 100%);
+        border: 1.5px solid rgba(100,60,0,0.28);
         box-shadow:
-            inset 0 1px 0 rgba(255,255,255,0.6),
-            0 8px 32px rgba(0,0,0,0.18);
+            inset 0 2px 0 rgba(255,230,80,0.4),
+            inset 0 0 40px rgba(100,50,0,0.12),
+            0 8px 32px rgba(0,0,0,0.25);
     }
-
-    /* Desgaste nas bordas das seções */
     .papiro-section::before {
         content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
+        position: absolute; inset: 0; border-radius: inherit;
         background:
-            radial-gradient(circle at 0% 0%,   rgba(101,67,33,0.12) 0%, transparent 20%),
-            radial-gradient(circle at 100% 100%,rgba(139,69,19,0.1) 0%, transparent 20%);
+            radial-gradient(circle at 0% 0%,   rgba(80,40,0,0.18) 0%, transparent 22%),
+            radial-gradient(circle at 100% 100%,rgba(90,45,0,0.15) 0%, transparent 22%);
         pointer-events: none;
     }
 
-    .section-number {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #8b0000, #b8860b);
-        color: #fdf8f0;
-        font-family: 'Cinzel', serif;
-        font-size: 0.8rem;
-        font-weight: 700;
-        margin-right: 12px;
-        flex-shrink: 0;
-        box-shadow: 0 3px 12px rgba(139,0,0,0.35);
-    }
+    /* Cabeçalho de seção */
     .section-header-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid rgba(139,69,19,0.15);
+        display: flex; align-items: center;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 1px solid rgba(100,50,0,0.2);
     }
     .section-icon { font-size: 1.8rem; margin-right: 12px; }
     .section-title-wrap h2 {
         font-family: 'Cormorant Garamond', serif;
-        font-size: 1.85rem;
-        color: #5c1f00;
-        margin: 0;
-        line-height: 1.1;
+        font-size: 1.8rem; color: #3a1400; margin: 0; line-height: 1.1;
     }
     .section-title-wrap span {
         font-family: 'Cinzel', serif;
-        font-size: 0.65rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: #b8860b;
-        display: block;
-        margin-top: 2px;
+        font-size: 0.63rem; letter-spacing: 0.17em;
+        text-transform: uppercase; color: #7a4800; display: block; margin-top: 2px;
     }
 
-    /* Artigos do Estatuto */
+    /* Artigos */
     .artigo {
-        background: rgba(255,255,255,0.45);
-        border-radius: 14px;
-        padding: 20px 22px;
-        margin-bottom: 16px;
-        border: 1px solid rgba(139,69,19,0.12);
-        position: relative;
-        transition: all 0.25s ease;
+        background: rgba(255,240,160,0.35);
+        border-radius: 14px; padding: 20px 22px; margin-bottom: 14px;
+        border: 1px solid rgba(100,60,0,0.16);
+        position: relative; transition: all 0.25s ease;
     }
     .artigo:hover {
-        background: rgba(255,255,255,0.65);
-        border-color: rgba(184,134,11,0.3);
+        background: rgba(255,240,140,0.55);
+        border-color: rgba(120,70,0,0.32);
         transform: translateX(3px);
     }
     .artigo::before {
         content: "";
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 4px;
-        border-radius: 4px 0 0 4px;
-        background: linear-gradient(180deg, #b8860b, #8b0000);
+        position: absolute; left: 0; top: 0; bottom: 0;
+        width: 4px; border-radius: 4px 0 0 4px;
+        background: linear-gradient(180deg, #8b0000, #b8860b);
     }
     .artigo-num {
         font-family: 'Cinzel', serif;
-        font-size: 0.68rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: #b8860b;
-        font-weight: 700;
-        margin-bottom: 6px;
-        display: block;
+        font-size: 0.65rem; letter-spacing: 0.16em;
+        text-transform: uppercase; color: #8b0000;
+        font-weight: 700; margin-bottom: 5px; display: block;
     }
     .artigo-title {
         font-family: 'Cormorant Garamond', serif;
-        font-size: 1.25rem;
-        color: #5c1f00;
-        font-weight: 600;
-        margin-bottom: 8px;
-        line-height: 1.2;
+        font-size: 1.2rem; color: #3a1400; font-weight: 700;
+        margin-bottom: 7px; line-height: 1.2;
     }
     .artigo-body {
         font-family: 'IM Fell English', serif;
-        color: #4a3320;
-        line-height: 1.8;
-        font-size: 0.98rem;
+        color: #4a2800; line-height: 1.8; font-size: 0.97rem;
     }
+    .artigo-body strong { color: #3a1400; }
 
-    /* Métodos e técnicas de estudo */
-    .metodo-grid {
+    /* Bloco de norma/citação */
+    .norma-block {
+        margin: 16px 0; padding: 18px 22px; border-radius: 14px;
+        background: rgba(139,0,0,0.08);
+        border: 1px solid rgba(139,0,0,0.2);
+        border-left: 4px solid #8b0000;
+    }
+    .norma-block cite {
+        font-family: 'Cinzel', serif; font-size: 0.63rem;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        color: #8b0000; display: block; margin-bottom: 7px; font-weight: 700;
+    }
+    .norma-block p {
+        font-family: 'IM Fell English', serif;
+        font-style: italic; color: #4a2800; line-height: 1.8; font-size: 0.97rem; margin: 0;
+    }
+    .norma-block strong { color: #3a1400; font-style: normal; }
+
+    /* ═══ TUS DERECHOS — Cards vermelho / azul / amarelo ═══ */
+    .derechos-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 14px;
         margin-top: 14px;
     }
+    .derecho-card {
+        padding: 22px 20px;
+        border-radius: 18px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.28s cubic-bezier(.4,0,.2,1);
+        border: 2px solid transparent;
+    }
+    .derecho-card::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0; height: 4px;
+        border-radius: 18px 18px 0 0;
+        transition: height 0.25s;
+    }
+    .derecho-card:hover { transform: translateY(-4px); }
+    .derecho-card:hover::before { height: 6px; }
+
+    /* 🔴 VERMELHO — cards 1 e 2 */
+    .derecho-card.cor-vermelho {
+        background: linear-gradient(145deg, rgba(180,0,0,0.13), rgba(220,30,30,0.07));
+        border-color: rgba(180,0,0,0.3);
+        box-shadow: 0 4px 20px rgba(180,0,0,0.12), inset 0 1px 0 rgba(255,100,100,0.2);
+    }
+    .derecho-card.cor-vermelho::before { background: linear-gradient(90deg, #cc0000, #ff4444, #cc0000); }
+    .derecho-card.cor-vermelho:hover { box-shadow: 0 12px 36px rgba(180,0,0,0.22); border-color: rgba(180,0,0,0.5); }
+    .derecho-card.cor-vermelho .derecho-num { background: linear-gradient(135deg, #cc0000, #880000); box-shadow: 0 3px 12px rgba(180,0,0,0.45); }
+    .derecho-card.cor-vermelho .derecho-title { color: #7a0000; }
+    .derecho-card.cor-vermelho .derecho-body strong { color: #cc0000; }
+    .derecho-card.cor-vermelho .derecho-norma { background: rgba(180,0,0,0.1); border-color: rgba(180,0,0,0.25); color: #cc0000; }
+
+    /* 🔵 AZUL — cards 3 e 4 */
+    .derecho-card.cor-azul {
+        background: linear-gradient(145deg, rgba(20,60,160,0.13), rgba(40,90,200,0.07));
+        border-color: rgba(30,70,180,0.3);
+        box-shadow: 0 4px 20px rgba(20,60,160,0.12), inset 0 1px 0 rgba(100,150,255,0.2);
+    }
+    .derecho-card.cor-azul::before { background: linear-gradient(90deg, #1a3eb0, #4488ff, #1a3eb0); }
+    .derecho-card.cor-azul:hover { box-shadow: 0 12px 36px rgba(20,60,160,0.22); border-color: rgba(30,70,180,0.5); }
+    .derecho-card.cor-azul .derecho-num { background: linear-gradient(135deg, #1a3eb0, #0d2480); box-shadow: 0 3px 12px rgba(20,60,160,0.45); }
+    .derecho-card.cor-azul .derecho-title { color: #0d2870; }
+    .derecho-card.cor-azul .derecho-body strong { color: #1a3eb0; }
+    .derecho-card.cor-azul .derecho-norma { background: rgba(20,60,160,0.1); border-color: rgba(20,60,160,0.25); color: #1a3eb0; }
+
+    /* 🟡 AMARELO — cards 5 e 6 */
+    .derecho-card.cor-amarelo {
+        background: linear-gradient(145deg, rgba(180,130,0,0.18), rgba(220,170,0,0.1));
+        border-color: rgba(180,130,0,0.35);
+        box-shadow: 0 4px 20px rgba(180,130,0,0.15), inset 0 1px 0 rgba(255,220,80,0.3);
+    }
+    .derecho-card.cor-amarelo::before { background: linear-gradient(90deg, #b08000, #ffe040, #b08000); }
+    .derecho-card.cor-amarelo:hover { box-shadow: 0 12px 36px rgba(180,130,0,0.25); border-color: rgba(180,130,0,0.55); }
+    .derecho-card.cor-amarelo .derecho-num { background: linear-gradient(135deg, #b08000, #806000); box-shadow: 0 3px 12px rgba(150,100,0,0.45); }
+    .derecho-card.cor-amarelo .derecho-title { color: #6b4800; }
+    .derecho-card.cor-amarelo .derecho-body strong { color: #8b5e00; }
+    .derecho-card.cor-amarelo .derecho-norma { background: rgba(160,110,0,0.12); border-color: rgba(160,110,0,0.28); color: #8b5e00; }
+
+    /* Elementos comuns dos cards */
+    .derecho-num {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 50%;
+        color: #fff; font-family: 'Cinzel', serif;
+        font-size: 0.78rem; font-weight: 700; margin-bottom: 12px;
+    }
+    .derecho-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.18rem; font-weight: 700;
+        margin-bottom: 7px; line-height: 1.2;
+    }
+    .derecho-body {
+        font-family: 'IM Fell English', serif;
+        color: #3a2000; font-size: 0.9rem; line-height: 1.68;
+    }
+    .derecho-norma {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-top: 11px; padding: 5px 11px;
+        border-radius: 999px; border: 1px solid;
+        font-family: 'Cinzel', serif;
+        font-size: 0.61rem; letter-spacing: 0.1em;
+        text-transform: uppercase; font-weight: 700;
+    }
+
+    /* Metodo grid */
+    .metodo-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;
+    }
     .metodo-card {
-        padding: 18px 16px;
-        border-radius: 14px;
-        background: rgba(255,255,255,0.5);
-        border: 1px solid rgba(139,69,19,0.14);
+        padding: 18px 16px; border-radius: 14px;
+        background: rgba(255,240,150,0.4);
+        border: 1px solid rgba(100,60,0,0.16);
         transition: all 0.2s;
     }
     .metodo-card:hover {
-        background: rgba(255,255,255,0.7);
-        border-color: rgba(184,134,11,0.3);
+        background: rgba(255,240,140,0.6);
+        border-color: rgba(100,55,0,0.3);
         transform: translateY(-2px);
     }
     .metodo-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
     .metodo-title {
         font-family: 'Cormorant Garamond', serif;
-        font-size: 1.1rem;
-        color: #5c1f00;
-        font-weight: 700;
-        margin-bottom: 5px;
+        font-size: 1.08rem; color: #3a1400; font-weight: 700; margin-bottom: 5px;
     }
-    .metodo-desc {
-        color: #6b4226;
-        font-size: 0.86rem;
-        line-height: 1.55;
-    }
+    .metodo-desc { color: #5c3200; font-size: 0.86rem; line-height: 1.55; }
 
-    /* Lista de pontos da Anatomia Profe Joy */
+    /* Anatomia list */
     .anato-list {
-        list-style: none;
-        padding: 0;
-        margin: 14px 0 0;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        list-style: none; padding: 0; margin: 14px 0 0;
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
     }
     .anato-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: rgba(255,255,255,0.5);
-        border: 1px solid rgba(139,69,19,0.1);
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 10px 14px; border-radius: 12px;
+        background: rgba(255,240,150,0.4);
+        border: 1px solid rgba(100,60,0,0.12);
         font-family: 'IM Fell English', serif;
-        color: #4a3320;
-        font-size: 0.92rem;
-        line-height: 1.5;
+        color: #4a2800; font-size: 0.92rem; line-height: 1.5;
     }
     .anato-list li::before {
-        content: "✦";
-        color: #b8860b;
-        font-size: 0.7rem;
-        flex-shrink: 0;
-        margin-top: 3px;
+        content: "✦"; color: #8b0000; font-size: 0.7rem; flex-shrink: 0; margin-top: 3px;
     }
 
-    /* Bloco de citação/norma */
-    .norma-block {
-        margin: 16px 0;
-        padding: 18px 22px;
-        border-radius: 14px;
-        background: rgba(139, 0, 0, 0.05);
-        border: 1px solid rgba(139, 0, 0, 0.15);
-        border-left: 4px solid #8b0000;
-    }
-    .norma-block cite {
-        font-family: 'Cinzel', serif;
-        font-size: 0.65rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #8b0000;
-        display: block;
-        margin-bottom: 6px;
-    }
-    .norma-block p {
-        font-family: 'IM Fell English', serif;
-        font-style: italic;
-        color: #4a3320;
-        line-height: 1.75;
-        font-size: 0.97rem;
-        margin: 0;
-    }
-
-    /* CTA final */
+    /* CTA */
     .papiro-cta {
-        text-align: center;
-        padding: 40px 32px;
-        border-radius: 24px;
+        text-align: center; padding: 40px 32px; border-radius: 20px;
         background:
-            repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(184,134,11,0.06) 28px, rgba(184,134,11,0.06) 29px),
-            linear-gradient(135deg, #f8f0dc, #ede3c3);
-        border: 1px solid rgba(139,69,19,0.2);
+            repeating-linear-gradient(0deg, transparent, transparent 28px,
+                rgba(100,55,0,0.07) 28px, rgba(100,55,0,0.07) 29px),
+            linear-gradient(135deg, #f2d96e, #c9a030, #b08020, #c9a030, #f2d96e);
+        border: 2px solid rgba(100,55,0,0.28);
+        box-shadow: inset 0 2px 0 rgba(255,230,80,0.4), 0 8px 32px rgba(0,0,0,0.2);
         margin-top: 8px;
     }
     .papiro-cta h3 {
         font-family: 'Cormorant Garamond', serif;
-        font-size: 2rem;
-        color: #5c1f00;
-        margin: 0 0 10px;
+        font-size: 2rem; color: #3a1400; margin: 0 0 10px;
     }
     .papiro-cta p {
-        font-family: 'IM Fell English', serif;
-        font-style: italic;
-        color: #6b4226;
-        font-size: 1rem;
-        line-height: 1.7;
-        max-width: 540px;
-        margin: 0 auto 24px;
+        font-family: 'IM Fell English', serif; font-style: italic;
+        color: #5c2800; font-size: 1rem; line-height: 1.75;
+        max-width: 540px; margin: 0 auto 24px;
     }
-    .cta-buttons {
-        display: flex;
-        gap: 14px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
     .cta-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 13px 24px;
-        border-radius: 14px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: all 0.25s ease;
-        letter-spacing: 0.04em;
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 22px; border-radius: 14px;
+        font-weight: 700; font-size: 0.88rem;
+        text-decoration: none; transition: all 0.25s; letter-spacing: 0.04em;
     }
     .cta-btn-primary {
-        background: linear-gradient(135deg, #7c3aed, #5b21b6);
-        color: #fff;
-        border: 1px solid rgba(124,58,237,0.4);
-        box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+        background: linear-gradient(135deg, #8b0000, #5c1a00);
+        color: #f5e6b0; border: 1px solid rgba(139,0,0,0.5);
+        box-shadow: 0 4px 18px rgba(139,0,0,0.4);
     }
     .cta-btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 28px rgba(124,58,237,0.4);
-        color: #fff;
+        transform: translateY(-2px); box-shadow: 0 8px 26px rgba(139,0,0,0.5); color: #f5e6b0;
     }
     .cta-btn-secondary {
-        background: rgba(139,69,19,0.08);
-        color: #5c1f00;
-        border: 1px solid rgba(139,69,19,0.22);
+        background: rgba(60,20,0,0.12); color: #3a1400;
+        border: 1.5px solid rgba(100,55,0,0.3);
     }
     .cta-btn-secondary:hover {
-        background: rgba(184,134,11,0.12);
-        border-color: rgba(184,134,11,0.35);
-        transform: translateY(-2px);
-        color: #5c1f00;
+        background: rgba(139,0,0,0.12); border-color: rgba(139,0,0,0.3);
+        transform: translateY(-2px); color: #3a1400;
     }
 
     @media (max-width: 680px) {
-        .papiro-hero { padding: 36px 24px 32px; }
-        .papiro-section { padding: 28px 22px; }
-        .metodo-grid { grid-template-columns: 1fr; }
-        .anato-list { grid-template-columns: 1fr; }
-        .papiro-title { font-size: 2.2rem; }
+        .papiro-hero { padding: 34px 22px 30px; }
+        .papiro-section { padding: 26px 20px; }
+        .derechos-grid, .metodo-grid, .anato-list { grid-template-columns: 1fr; }
+        .papiro-title { font-size: 2.3rem; }
     }
 </style>
 
 <div class="papiro-page">
 
-    <!-- ═══ HERO DO PAPIRO ══════════════════════════════════════════════ -->
+    <!-- ═══ HERO ══════════════════════════════════════════ -->
     <div class="papiro-hero">
         <span class="papiro-ornament papiro-ornament-tl">℞</span>
         <span class="papiro-ornament papiro-ornament-tr">✦</span>
@@ -428,14 +437,11 @@
             <div>
                 <div class="papiro-eyebrow">Alumed OS · Ecossistema Estudantil FCM-UNLP</div>
                 <div class="papiro-divider-thin"></div>
-                <div class="papiro-eyebrow" style="letter-spacing:0.12em; color:#8b0000;">Estatuto Geral & Blindagem Acadêmica</div>
+                <div class="papiro-eyebrow" style="color:#8b0000;">Estatuto Geral & Blindagem Acadêmica</div>
             </div>
         </div>
 
-        <h1 class="papiro-title">
-            O Papiro da<br>
-            <em>Profe Joy</em>
-        </h1>
+        <h1 class="papiro-title">O Papiro da<br><em>Profe Joy</em></h1>
 
         <blockquote class="papiro-subtitle">
             "Os apunte organizan o que necesitás estudiar. Os papiros te ajudam a profundizar.
@@ -444,7 +450,96 @@
     </div>
 
 
-    <!-- ═══ SEÇÃO 1 — ESTATUTO CENTRAL ══════════════════════════════════ -->
+    <!-- ═══ TUS DERECHOS ══════════════════════════════════ -->
+    <div class="papiro-section">
+        <div class="section-header-row">
+            <span class="section-icon">⚖️</span>
+            <div class="section-title-wrap">
+                <h2>Tus Derechos Académicos</h2>
+                <span>FCM-UNLP · Blindagem Estudantil Completa</span>
+            </div>
+        </div>
+
+        <div class="norma-block" style="margin-bottom:20px;">
+            <cite>Base Normativa · Res. 465/18 FCM-UNLP · Estatuto da UNLP · Régimen de Alumnos</cite>
+            <p>
+                Teus direitos não são favores — são <strong>normas vigentes</strong> aprovadas pelo
+                Conselho Directivo. Nenhum docente, departamento ou JTP pode te negar o que a regulamentação
+                garante. Conhece cada um deles e usa-os como escudo.
+            </p>
+        </div>
+
+        <div class="derechos-grid">
+            <div class="derecho-card cor-vermelho">
+                <div class="derecho-num">01</div>
+                <div class="derecho-title">4 Datas por Parcial</div>
+                <p class="derecho-body">
+                    Tens direito a <strong>4 datas</strong> no cronograma por cada parcial.
+                    Podes escolher <strong>3 para rendir</strong>: o parcial original + 2 recuperatórios.
+                    A ausência em uma data não é abandono — é escolha estratégica.
+                </p>
+                <span class="derecho-norma">📄 Res. 465/18 · Art. 12</span>
+            </div>
+
+            <div class="derecho-card cor-vermelho">
+                <div class="derecho-num">02</div>
+                <div class="derecho-title">Ver Tu Examen Corregido</div>
+                <p class="derecho-body">
+                    Tens direito a <strong>ver o exame corrigido</strong> e conhecer os critérios
+                    de correção utilizados. Nenhum docente pode se negar a mostrar a prova após
+                    a publicação das notas.
+                </p>
+                <span class="derecho-norma">📄 Estatuto UNLP · Art. 49</span>
+            </div>
+
+            <div class="derecho-card cor-azul">
+                <div class="derecho-num">03</div>
+                <div class="derecho-title">Recusación de Docente</div>
+                <p class="derecho-body">
+                    Tens direito a solicitar a <strong>recusação de um docente</strong>
+                    que avalie teu exame se houver conflito de interesses, parcialidade
+                    demonstrada ou relação que comprometa a objetividade da correção.
+                </p>
+                <span class="derecho-norma">📄 Estatuto UNLP · Art. 51</span>
+            </div>
+
+            <div class="derecho-card cor-azul">
+                <div class="derecho-num">04</div>
+                <div class="derecho-title">Revisión de Nota</div>
+                <p class="derecho-body">
+                    Após receber a nota, podes solicitar formalmente uma
+                    <strong>revisão por tribunal</strong> composto por docentes diferentes.
+                    O prazo e o procedimento estão definidos no reglamento da FCM.
+                </p>
+                <span class="derecho-norma">📄 Res. 465/18 · Art. 15</span>
+            </div>
+
+            <div class="derecho-card cor-amarelo">
+                <div class="derecho-num">05</div>
+                <div class="derecho-title">TPs Aprovados = Sem Perda</div>
+                <p class="derecho-body">
+                    Cumprindo o mínimo de <strong>TPs aprovados</strong>, nenhuma ausência
+                    em parcial pode resultar em perda da regularidade. O aluno mantém
+                    os TPs e usa as datas de recuperatório disponíveis.
+                </p>
+                <span class="derecho-norma">📄 Régimen de TPs · FCM</span>
+            </div>
+
+            <div class="derecho-card cor-amarelo">
+                <div class="derecho-num">06</div>
+                <div class="derecho-title">Acesso Livre à Información</div>
+                <p class="derecho-body">
+                    Tens direito de acesso a <strong>programas de matéria, cronogramas,
+                    regulamentos, atas e resoluciones</strong> do Conselho Directivo.
+                    A universidade pública é transparente por obrigação legal.
+                </p>
+                <span class="derecho-norma">📄 Ley 27.275 · Acceso Información</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══ ESTATUTO CENTRAL ══════════════════════════════ -->
     <div class="papiro-section">
         <div class="section-header-row">
             <span class="section-icon">🛡️</span>
@@ -461,7 +556,7 @@
                 Este estatuto não nasce de uma grande corporação nem de interesses políticos tradicionais;
                 ele nasce de <strong>estudantes para estudantes</strong>, garantindo transparência,
                 descentralização, acesso livre ao conhecimento e defesa real dos direitos acadêmicos
-                frente às falhas burocráticas. A plataforma não é um produto — é um escudo.
+                frente às falhas burocráticas.
             </p>
         </div>
 
@@ -470,8 +565,8 @@
             <div class="artigo-title">A Plataforma como Escudo</div>
             <p class="artigo-body">
                 As ferramentas tecnológicas construídas pela comunidade — como o ambiente centralizado
-                da <strong>Conecta FCM</strong> — funcionam como um <em>registro vivo</em>, um suporte
-                prático e uma ferramenta de auditoria cidadã para garantir que nenhum direito estudantil
+                da <strong>Conecta FCM</strong> — funcionam como um <em>registro vivo</em>, suporte
+                prático e ferramenta de auditoria cidadã para garantir que nenhum direito estudantil
                 seja violado por negligência administrativa.
             </p>
         </div>
@@ -485,37 +580,17 @@
                 contra injustiças. Conhecer o estatuto é a primeira forma de proteção.
             </p>
         </div>
-
-        <div class="norma-block">
-            <cite>Regime de Parciais e Recuperatórios · FCM-UNLP · Res. 465/18 & Estatuto UNLP</cite>
-            <p>
-                Baseado estritamente nas normativas reais da FCM-UNLP, garante o direito absoluto às
-                <strong>4 datas de cronograma por parcial</strong>, permitindo ao aluno escolher 3 para
-                render (parcial original e dois recuperatórios), sem penalização por ausência caso cumpra
-                o mínimo de TPs aprovados.
-            </p>
-        </div>
     </div>
 
 
-    <!-- ═══ SEÇÃO 2 — O CONHECIMENTO CONECTA MUNDOS ══════════════════════ -->
+    <!-- ═══ METODOLOGIA ═══════════════════════════════════ -->
     <div class="papiro-section">
         <div class="section-header-row">
             <span class="section-icon">🏛️</span>
             <div class="section-title-wrap">
-                <h2>Os Papiros e o Conhecimento</h2>
-                <span>Conectando Mundos · A Metodologia ALUMED OS</span>
+                <h2>O Método Profe Joy</h2>
+                <span>Conectando Mundos · ALUMED OS</span>
             </div>
-        </div>
-
-        <div class="artigo" style="margin-bottom:20px;">
-            <span class="artigo-num">A Metodologia</span>
-            <div class="artigo-title">O Ecossistema Joyce</div>
-            <p class="artigo-body">
-                O ecossistema criado por <strong>Joyce</strong> no <em>Alumed OS</em> e no <em>Conecta FCM</em>
-                transforma dados complexos de matérias de primeiro ano — Anatomia, Histologia, Biologia,
-                Fisiologia — em ferramentas reais de domínio:
-            </p>
         </div>
 
         <div class="metodo-grid">
@@ -537,64 +612,51 @@
             <div class="metodo-card">
                 <span class="metodo-icon">🔑</span>
                 <div class="metodo-title">Palavras-chave para Gabaritar</div>
-                <p class="metodo-desc">O vocabulário mínimo necessário para responder qualquer questão do parcial com segurança e precisão.</p>
+                <p class="metodo-desc">O vocabulário mínimo necessário para responder qualquer questão do parcial com segurança.</p>
             </div>
         </div>
     </div>
 
 
-    <!-- ═══ SEÇÃO 3 — ANATOMIA PADRÃO PROFE JOY ═════════════════════════ -->
+    <!-- ═══ ANATOMIA ══════════════════════════════════════ -->
     <div class="papiro-section">
         <div class="section-header-row">
             <span class="section-icon">🦴</span>
             <div class="section-title-wrap">
-                <h2>Anatomia no Padrão Profe Joy</h2>
+                <h2>Anatomia · Padrão Profe Joy</h2>
                 <span>Os 9 Pilares do Estudo Anatômico Completo</span>
             </div>
         </div>
-
-        <div class="norma-block" style="margin-bottom:18px;">
+        <div class="norma-block" style="margin-bottom:16px;">
             <cite>Princípio Metodológico</cite>
-            <p>
-                Não basta memorizar nomes; é preciso entender cada estrutura em sua totalidade
-                para que a informação permaneça e seja aplicável clinicamente.
-            </p>
+            <p>Não basta memorizar nomes — é preciso entender cada estrutura em sua totalidade para que a informação permaneça e seja aplicável clinicamente.</p>
         </div>
-
         <ul class="anato-list">
             <li><strong>Nome</strong> — Nomenclatura oficial (Terminologia Anatômica)</li>
             <li><strong>Localização</strong> — Região topográfica exata no corpo</li>
             <li><strong>Forma & Tamanho</strong> — Geometria e proporções da estrutura</li>
-            <li><strong>Origem & Inserção</strong> — Para músculos: pontos de ancoragem</li>
+            <li><strong>Origem & Inserção</strong> — Pontos de ancoragem musculares</li>
             <li><strong>Inervação</strong> — Nervo(s) responsável(eis) pelo controle</li>
             <li><strong>Vascularização</strong> — Artéria e veia correspondentes</li>
             <li><strong>Função</strong> — O que a estrutura faz fisiologicamente</li>
-            <li><strong>Relações</strong> — Estruturas adjacentes e sua importância clínica</li>
-            <li><strong>Trampa de Examen</strong> — O ponto exato onde a banca costuma errar o estudante</li>
+            <li><strong>Relações</strong> — Estruturas adjacentes e importância clínica</li>
+            <li><strong>Trampa de Examen</strong> — O ponto exato onde a banca costuma errar o aluno</li>
         </ul>
     </div>
 
 
-    <!-- ═══ CTA FINAL ═════════════════════════════════════════════════════ -->
+    <!-- ═══ CTA ═══════════════════════════════════════════ -->
     <div class="papiro-cta">
-        <h3>Pronta para estudar de verdade?</h3>
+        <h3>Pronta para rendir con seguridad?</h3>
         <p>
-            Use o MedLatín para entender os nomes, o Conecta FCM para os apuntes e a Profe Joy
-            para transformar tudo isso em compreensão real e nota no parcial.
+            Usa o MedLatín para entender os nomes, o Conecta FCM para os apuntes
+            e a Profe Joy para transformar tudo isso em compreensão real e nota no parcial.
         </p>
         <div class="cta-buttons">
-            <a href="{% url 'profe_joy_chat' %}" class="cta-btn cta-btn-primary">
-                ✨ Falar com a Profe Joy
-            </a>
-            <a href="{% url 'medlatin:home' %}" class="cta-btn cta-btn-secondary">
-                📜 MedLatín
-            </a>
-            <a href="{% url 'conecta_fcm' %}" class="cta-btn cta-btn-secondary">
-                ⚡ Conecta FCM
-            </a>
-            <a href="{% url 'conecta_biblioteca' %}" class="cta-btn cta-btn-secondary">
-                📚 Biblioteca
-            </a>
+            <a href="{% url 'profe_joy_chat' %}" class="cta-btn cta-btn-primary">✨ Falar com a Profe Joy</a>
+            <a href="{% url 'medlatin:home' %}" class="cta-btn cta-btn-secondary">📜 MedLatín</a>
+            <a href="{% url 'conecta_fcm' %}" class="cta-btn cta-btn-secondary">⚡ Conecta FCM</a>
+            <a href="{% url 'conecta_biblioteca' %}" class="cta-btn cta-btn-secondary">📚 Biblioteca</a>
         </div>
     </div>
 
