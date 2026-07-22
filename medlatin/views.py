@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from collections import defaultdict
-
-from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -140,14 +138,16 @@ def analyzer(request: HttpRequest) -> HttpResponse:
     return render(request, "medlatin/analyzer.html", context)
 
 
-@login_required
 def favorites(request: HttpRequest) -> HttpResponse:
-    items = Favorite.objects.filter(user=request.user).select_related("term").order_by("-created_at")
+    items = []
+    if request.user.is_authenticated:
+        items = Favorite.objects.filter(user=request.user).select_related("term").order_by("-created_at")
     return render(request, "medlatin/favorites.html", {"favorites": items})
 
 
-@login_required
 def toggle_favorite(request: HttpRequest, slug: str) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return redirect("medlatin:term-detail", slug=slug)
     term = get_object_or_404(Term, slug=slug)
     favorite = Favorite.objects.filter(user=request.user, term=term)
     if favorite.exists():
@@ -160,8 +160,9 @@ def toggle_favorite(request: HttpRequest, slug: str) -> HttpResponse:
     return redirect(next_url)
 
 
-@login_required
 def progress_dashboard(request: HttpRequest) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return redirect("medlatin:home")
     snapshot = build_progress_snapshot(request.user)
     recent_progress = (
         UserTermProgress.objects.filter(user=request.user)
@@ -183,16 +184,18 @@ def progress_dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, "medlatin/progress.html", context)
 
 
-@login_required
 def flashcards(request: HttpRequest) -> HttpResponse:
-    due_reviews = (
-        FlashcardReview.objects.filter(user=request.user, next_review__lte=timezone.now())
-        .select_related("flashcard__term")
-        .order_by("next_review")
-    )
-    new_cards = Term.objects.filter(flashcards__is_active=True).exclude(
-        flashcards__reviews__user=request.user
-    ).distinct()[:12]
+    due_reviews = []
+    new_cards = Term.objects.filter(flashcards__is_active=True).distinct()[:12]
+    if request.user.is_authenticated:
+        due_reviews = (
+            FlashcardReview.objects.filter(user=request.user, next_review__lte=timezone.now())
+            .select_related("flashcard__term")
+            .order_by("next_review")
+        )
+        new_cards = Term.objects.filter(flashcards__is_active=True).exclude(
+            flashcards__reviews__user=request.user
+        ).distinct()[:12]
     context = {"due_reviews": due_reviews, "new_cards": new_cards}
     return render(request, "medlatin/flashcards.html", context)
 

@@ -1,92 +1,813 @@
 {% extends "medlatin/base.html" %}
+{% load static %}
 
-{% block title %}MedLatín · Inicio{% endblock %}
+{% block title %}MedLatín · El Idioma de la Medicina{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ─── HERO ─────────────────────────────────────────────── */
+    .hero-wrap {
+        position: relative;
+        border-radius: 32px;
+        overflow: hidden;
+        min-height: 540px;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        align-items: center;
+        gap: 0;
+        background:
+            url("{% static 'medlatin/papyrus_texture.svg' %}"),
+            linear-gradient(135deg, #f9f3e3 0%, #ede0c4 50%, #e4d0aa 100%);
+        border: 1px solid rgba(139, 69, 19, 0.22);
+        box-shadow:
+            inset 0 0 80px rgba(139, 69, 19, 0.08),
+            0 24px 80px rgba(58, 44, 31, 0.14);
+    }
+
+    /* Linhas horizontais de papiro */
+    .hero-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 28px,
+            rgba(139, 69, 19, 0.055) 28px,
+            rgba(139, 69, 19, 0.055) 29px
+        );
+        pointer-events: none;
+        border-radius: inherit;
+    }
+
+    /* Mancha de borda envelhecida */
+    .hero-wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+            radial-gradient(ellipse at 0% 0%, rgba(139, 69, 19, 0.12) 0%, transparent 40%),
+            radial-gradient(ellipse at 100% 100%, rgba(101, 67, 33, 0.15) 0%, transparent 45%),
+            radial-gradient(ellipse at 100% 0%, rgba(184, 134, 11, 0.08) 0%, transparent 30%),
+            radial-gradient(ellipse at 0% 100%, rgba(139, 0, 0, 0.07) 0%, transparent 30%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        padding: 52px 48px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-medallion {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(139, 0, 0, 0.08);
+        border: 1px solid rgba(139, 0, 0, 0.18);
+        color: var(--ml-burgundy);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .hero-medallion::before {
+        content: "✦";
+        color: var(--ml-gold);
+    }
+
+    .hero-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.8rem, 5.5vw, 5rem);
+        line-height: 0.92;
+        color: var(--ml-burgundy);
+        margin: 0 0 8px;
+        letter-spacing: -0.01em;
+    }
+    .hero-title em {
+        font-style: italic;
+        color: var(--ml-gold);
+    }
+
+    .hero-divider {
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--ml-gold), transparent);
+        margin: 18px 0;
+        border-radius: 2px;
+    }
+
+    .hero-lead {
+        font-size: 1.05rem;
+        line-height: 1.75;
+        color: var(--ml-text);
+        max-width: 500px;
+        margin-bottom: 28px;
+    }
+
+    /* Barra de busca estilo papiro */
+    .hero-search {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        background: rgba(253, 251, 247, 0.92);
+        border: 1.5px solid rgba(139, 69, 19, 0.25);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(58, 44, 31, 0.1);
+        max-width: 500px;
+    }
+    .hero-search-icon {
+        padding: 0 14px;
+        color: var(--ml-gold);
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .hero-search input {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.97rem;
+        color: var(--ml-text);
+        padding: 14px 0;
+    }
+    .hero-search input::placeholder { color: var(--ml-muted); }
+    .hero-search button {
+        background: linear-gradient(135deg, var(--ml-burgundy), #6b0000);
+        color: #fdf8f0;
+        border: 0;
+        padding: 0 22px;
+        height: 100%;
+        min-height: 50px;
+        font-weight: 700;
+        font-size: 0.87rem;
+        cursor: pointer;
+        letter-spacing: 0.06em;
+        transition: background 0.2s;
+    }
+    .hero-search button:hover {
+        background: linear-gradient(135deg, #6b0000, var(--ml-burgundy));
+    }
+
+    .hero-terms {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+    .hero-term-chip {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(139, 69, 19, 0.08);
+        border: 1px solid rgba(139, 69, 19, 0.15);
+        color: var(--ml-text);
+        font-size: 0.82rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .hero-term-chip:hover {
+        background: rgba(184, 134, 11, 0.12);
+        border-color: var(--ml-gold);
+        color: var(--ml-burgundy);
+    }
+
+    /* Coluna vertebral hero */
+    .hero-spine {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        min-height: 540px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 30px 20px 0;
+    }
+    .hero-spine img {
+        width: 100%;
+        max-width: 260px;
+        height: auto;
+        filter: drop-shadow(0 0 40px rgba(120, 0, 180, 0.35)) drop-shadow(0 0 80px rgba(184, 134, 11, 0.2));
+        animation: floatSpine 5s ease-in-out infinite;
+    }
+    @keyframes floatSpine {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+    }
+
+    /* Selos decorativos tipo papiro */
+    .hero-seal {
+        position: absolute;
+        font-family: "Cormorant Garamond", serif;
+        color: rgba(139, 0, 0, 0.12);
+        font-size: 5rem;
+        pointer-events: none;
+        z-index: 1;
+        line-height: 1;
+    }
+    .hero-seal-tl { top: 16px; left: 22px; }
+    .hero-seal-br { bottom: 16px; right: 280px; }
+
+    /* ─── STATS ─────────────────────────────────────────────── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+    }
+    .stat-brick {
+        padding: 22px 18px;
+        border-radius: 22px;
+        border: 1px solid rgba(139, 69, 19, 0.15);
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(139,69,19,0.04) 22px, rgba(139,69,19,0.04) 23px),
+            linear-gradient(180deg, #fdfbf7, #f4ecd8);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+    .stat-brick::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--ml-gold), var(--ml-burgundy));
+    }
+    .stat-number {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.6rem;
+        color: var(--ml-burgundy);
+        line-height: 1;
+        display: block;
+    }
+    .stat-label {
+        color: var(--ml-muted);
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* ─── SECTIONS ──────────────────────────────────────────── */
+    .section-header {
+        margin-bottom: 20px;
+    }
+    .section-eyebrow {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-weight: 700;
+        color: var(--ml-gold);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    .section-eyebrow::before, .section-eyebrow::after {
+        content: "";
+        display: block;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ml-gold), transparent);
+        flex: 1;
+        max-width: 40px;
+    }
+
+    /* Cartão de termo do dia — versão papiro */
+    .term-of-day {
+        padding: 32px;
+        border-radius: 28px;
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(139,69,19,0.05) 30px, rgba(139,69,19,0.05) 31px),
+            linear-gradient(135deg, #f9f3e3, #ede0c4);
+        border: 1px solid rgba(139, 69, 19, 0.2);
+        box-shadow: inset 0 0 50px rgba(139, 69, 19, 0.05), 0 8px 32px rgba(58, 44, 31, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .term-of-day::before {
+        content: "I";
+        position: absolute;
+        top: -10px; right: 30px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 10rem;
+        color: rgba(139, 0, 0, 0.04);
+        line-height: 1;
+        pointer-events: none;
+    }
+    .tod-latin {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 3rem;
+        color: var(--ml-burgundy);
+        line-height: 1;
+        margin: 0 0 6px;
+    }
+    .tod-translation {
+        color: var(--ml-gold);
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 14px;
+        letter-spacing: 0.04em;
+    }
+    .tod-definition {
+        color: var(--ml-text);
+        line-height: 1.7;
+        font-size: 0.97rem;
+        max-width: 640px;
+    }
+    .tod-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+    .tod-badge {
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(184, 134, 11, 0.1);
+        border: 1px solid rgba(184, 134, 11, 0.2);
+        color: var(--ml-gold);
+        font-size: 0.73rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    .tod-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 18px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        background: rgba(139, 0, 0, 0.07);
+        border: 1px solid rgba(139, 0, 0, 0.15);
+        color: var(--ml-burgundy);
+        font-weight: 700;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+    }
+    .tod-link:hover {
+        background: rgba(139, 0, 0, 0.12);
+        transform: translateX(3px);
+    }
+
+    /* ─── FEATURE GRID ──────────────────────────────────────── */
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-top: 20px;
+    }
+    .feature-card {
+        padding: 26px 22px;
+        border-radius: 24px;
+        border: 1px solid rgba(139, 69, 19, 0.15);
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(139,69,19,0.04) 24px, rgba(139,69,19,0.04) 25px),
+            linear-gradient(180deg, #fdfbf7, #f4ecd8);
+        transition: all 0.25s ease;
+        text-decoration: none;
+        display: block;
+        position: relative;
+        overflow: hidden;
+    }
+    .feature-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--ml-gold), transparent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--ml-gold);
+        box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+    }
+    .feature-card:hover::after { transform: scaleX(1); }
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+    .feature-card h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+        color: var(--ml-burgundy);
+        margin: 0 0 8px;
+    }
+    .feature-card p {
+        color: var(--ml-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+    .feature-arrow {
+        display: inline-block;
+        margin-top: 14px;
+        color: var(--ml-gold);
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.06em;
+    }
+
+    /* ─── PANELES EXPLORE ───────────────────────────────────── */
+    .explore-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 20px;
+    }
+    .explore-panel {
+        padding: 26px;
+        border-radius: 24px;
+        border: 1px solid rgba(139, 69, 19, 0.15);
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 26px, rgba(139,69,19,0.04) 26px, rgba(139,69,19,0.04) 27px),
+            #f9f3e3;
+    }
+    .explore-panel h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.6rem;
+        color: var(--ml-burgundy);
+        margin: 0 0 8px;
+    }
+    .explore-panel p {
+        color: var(--ml-muted);
+        margin: 0 0 16px;
+        font-size: 0.9rem;
+    }
+    .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .tag-chip {
+        padding: 7px 13px;
+        border-radius: 999px;
+        background: rgba(139, 69, 19, 0.07);
+        border: 1px solid rgba(139, 69, 19, 0.13);
+        color: var(--ml-text);
+        font-size: 0.83rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .tag-chip:hover {
+        background: rgba(184, 134, 11, 0.14);
+        border-color: var(--ml-gold);
+        color: var(--ml-burgundy);
+        transform: translateY(-1px);
+    }
+
+    /* ─── ROOTS POPULARES ──────────────────────────────────── */
+    .roots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+    .root-brick {
+        padding: 18px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(139, 69, 19, 0.14);
+        background: linear-gradient(180deg, #fdfbf7, #f4ecd8);
+        text-decoration: none;
+        display: block;
+        transition: all 0.22s;
+        position: relative;
+        overflow: hidden;
+    }
+    .root-brick::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, var(--ml-gold), var(--ml-burgundy));
+        border-radius: 3px 0 0 3px;
+    }
+    .root-brick:hover {
+        transform: translateY(-3px);
+        border-color: var(--ml-gold);
+        box-shadow: 0 8px 24px rgba(58, 44, 31, 0.1);
+    }
+    .root-form {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+        color: var(--ml-burgundy);
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+    .root-meaning {
+        color: var(--ml-gold);
+        font-size: 0.84rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .root-meta {
+        color: var(--ml-muted);
+        font-size: 0.78rem;
+    }
+
+    /* Recents */
+    .recents-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .recent-row {
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(139, 69, 19, 0.12);
+        background: rgba(253, 251, 247, 0.7);
+        text-decoration: none;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        transition: all 0.2s;
+    }
+    .recent-row:hover {
+        border-color: var(--ml-gold);
+        background: rgba(244, 236, 216, 0.7);
+        transform: translateX(4px);
+    }
+    .recent-latin {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        color: var(--ml-burgundy);
+        line-height: 1;
+        flex-shrink: 0;
+        min-width: 120px;
+    }
+    .recent-def {
+        color: var(--ml-muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+    }
+
+    .ml-empty-papyrus {
+        padding: 26px;
+        border-radius: 20px;
+        background: rgba(139, 69, 19, 0.03);
+        border: 1px dashed rgba(139, 69, 19, 0.2);
+        color: var(--ml-muted);
+        text-align: center;
+        font-style: italic;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.05rem;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 900px) {
+        .hero-wrap { grid-template-columns: 1fr; }
+        .hero-spine { display: none; }
+        .hero-content { padding: 36px 28px; }
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+        .feature-grid { grid-template-columns: 1fr 1fr; }
+        .explore-row { grid-template-columns: 1fr; }
+        .roots-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+        .feature-grid { grid-template-columns: 1fr; }
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+        .roots-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<section class="ml-hero-card">
-    <span class="ml-kicker">MedLatín</span>
-    <h1 class="ml-title">Descubre las raíces, significados y la lógica anatómica detrás de la terminología médica.</h1>
-    <p class="ml-subtitle">Cada palabra médica tiene una anatomía. Busca un término, rastrea su lógica griega o latina y estúdialo con tarjetas de memoria, simulacros y reglas mnemotécnicas.</p>
-    <form class="ml-searchbar" method="get" action="{% url 'medlatin:dictionary' %}">
-        <input type="text" name="q" placeholder="Buscar biceps, flexor, myocardium, gastro-, -itis...">
-        <button type="submit">Buscar</button>
-    </form>
-    <div class="ml-tags">
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=biceps">biceps</a>
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=sternocleidomastoideus">sternocleidomastoideus</a>
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=adductor">adductor</a>
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=myocardium">myocardium</a>
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=osteoblast">osteoblast</a>
-        <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?q=adenocarcinoma">adenocarcinoma</a>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
+<section class="hero-wrap">
+    <span class="hero-seal hero-seal-tl">℞</span>
+    <span class="hero-seal hero-seal-br">✦</span>
+
+    <div class="hero-content">
+        <div class="hero-medallion">Terminología Médica · Latín & Griego</div>
+
+        <h1 class="hero-title">
+            Med<em>Latín</em><br>
+            <span style="font-size:0.58em; opacity:0.75;">El idioma detrás de la medicina</span>
+        </h1>
+
+        <div class="hero-divider"></div>
+
+        <p class="hero-lead">
+            Cada palabra médica es una historia. Descubre las raíces griegas y latinas que estructuran 
+            la anatomía, la patología y la clínica — y entiende la medicina de verdad.
+        </p>
+
+        <form class="hero-search" method="get" action="{% url 'medlatin:dictionary' %}">
+            <span class="hero-search-icon">🔍</span>
+            <input id="hero-search-input" type="text" name="q"
+                   placeholder="gastrocnemius, myocardium, -itis, osteoblast...">
+            <button type="submit">Buscar</button>
+        </form>
+
+        <div class="hero-terms">
+            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=biceps">biceps</a>
+            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=sternocleidomastoideus">sternocleidomastoideus</a>
+            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=myocardium">myocardium</a>
+            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=adenocarcinoma">adenocarcinoma</a>
+            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=osteoblast">osteoblast</a>
+        </div>
+    </div>
+
+    <div class="hero-spine">
+        <img src="{% static 'medlatin/spine_hero.jpg' %}"
+             alt="Columna vertebral — MedLatín"
+             loading="eager">
     </div>
 </section>
 
-<section class="ml-grid ml-grid-4" style="margin-top:24px;">
-    <div class="ml-stat"><strong>{{ medlatin_term_count }}</strong><span>Términos Base</span></div>
-    <div class="ml-stat"><strong>{{ medlatin_root_count }}</strong><span>Raíces y afijos</span></div>
-    <div class="ml-stat"><strong>3</strong><span>Idiomas por término</span></div>
-    <div class="ml-stat"><strong>1</strong><span>Bloque de memoria Joy</span></div>
+
+<!-- ═══ ESTADÍSTICAS ════════════════════════════════════════════════ -->
+<div class="stats-row">
+    <div class="stat-brick">
+        <span class="stat-number">{{ medlatin_term_count }}</span>
+        <span class="stat-label">Términos base</span>
+    </div>
+    <div class="stat-brick">
+        <span class="stat-number">{{ medlatin_root_count }}</span>
+        <span class="stat-label">Raíces & afijos</span>
+    </div>
+    <div class="stat-brick">
+        <span class="stat-number">3</span>
+        <span class="stat-label">Idiomas por término</span>
+    </div>
+    <div class="stat-brick">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Acceso libre y gratuito</span>
+    </div>
+</div>
+
+
+<!-- ═══ HERRAMIENTAS ═════════════════════════════════════════════════ -->
+<section style="margin-top:40px;">
+    <div class="section-header">
+        <div class="section-eyebrow">Herramientas</div>
+        <h2 class="ml-section-title">Todo lo que necesitas para dominar la terminología</h2>
+    </div>
+
+    <div class="feature-grid">
+        <a class="feature-card" href="{% url 'medlatin:dictionary' %}">
+            <span class="feature-icon">📖</span>
+            <h3>Diccionario</h3>
+            <p>Busca cualquier término médico y accede a su etimología, traducción en 3 idiomas, raíces y ejemplos clínicos.</p>
+            <span class="feature-arrow">Explorar diccionario →</span>
+        </a>
+
+        <a class="feature-card" href="{% url 'medlatin:analyzer' %}">
+            <span class="feature-icon">🔬</span>
+            <h3>Analizador</h3>
+            <p>Ingresa cualquier término y descompónlo automáticamente en sus raíces, prefijos y sufijos con su significado.</p>
+            <span class="feature-arrow">Analizar término →</span>
+        </a>
+
+        <a class="feature-card" href="{% url 'medlatin:roots' %}">
+            <span class="feature-icon">🌿</span>
+            <h3>Explorador de Raíces</h3>
+            <p>Navega las raíces griegas y latinas que construyen el vocabulario médico completo.</p>
+            <span class="feature-arrow">Explorar raíces →</span>
+        </a>
+
+        <a class="feature-card" href="{% url 'medlatin:quizzes' %}">
+            <span class="feature-icon">📝</span>
+            <h3>Simulacros</h3>
+            <p>Pon a prueba tu memoria con cuestionarios de terminología diseñados para el examen parcial.</p>
+            <span class="feature-arrow">Empezar simulacro →</span>
+        </a>
+
+        <a class="feature-card" href="{% url 'medlatin:flashcards' %}">
+            <span class="feature-icon">🃏</span>
+            <h3>Tarjetas de Memoria</h3>
+            <p>Estudia con repetición espaciada y consolida los términos que necesitas repasar.</p>
+            <span class="feature-arrow">Ver tarjetas →</span>
+        </a>
+
+        <a class="feature-card" href="{% url 'medlatin:dictionary' %}?subject=Anatomy">
+            <span class="feature-icon">🦴</span>
+            <h3>Anatomía Completa</h3>
+            <p>Todos los términos anatómicos organizados por sistema y región corporal para un estudio profundo.</p>
+            <span class="feature-arrow">Ver anatomía →</span>
+        </a>
+    </div>
 </section>
 
-<section style="margin-top:26px;">
-    <div style="margin-bottom:18px;">
-        <span class="ml-kicker">Término del Día</span>
-        <h2 class="ml-section-title">Una entrada clave para comenzar</h2>
+
+<!-- ═══ TÉRMINO DEL DÍA ════════════════════════════════════════════ -->
+{% if medlatin_term_of_day %}
+<section style="margin-top:40px;">
+    <div class="section-header">
+        <div class="section-eyebrow">Término del día</div>
+        <h2 class="ml-section-title">Una entrada clave para comenzar hoy</h2>
     </div>
-    {% if medlatin_term_of_day %}
-        {% include "medlatin/partials/term_card.html" with term=medlatin_term_of_day %}
-    {% endif %}
+
+    <div class="term-of-day">
+        <p class="tod-latin">{{ medlatin_term_of_day.latin_name }}</p>
+        <p class="tod-translation">{{ medlatin_term_of_day.literal_translation }}</p>
+        <p class="tod-definition">{{ medlatin_term_of_day.medical_definition|truncatechars:280 }}</p>
+        <div class="tod-meta">
+            {% if medlatin_term_of_day.subject %}
+                <span class="tod-badge">{{ medlatin_term_of_day.subject }}</span>
+            {% endif %}
+            {% if medlatin_term_of_day.anatomical_system %}
+                <span class="tod-badge">{{ medlatin_term_of_day.anatomical_system }}</span>
+            {% endif %}
+            {% if medlatin_term_of_day.origin_language %}
+                <span class="tod-badge">{{ medlatin_term_of_day.origin_language }}</span>
+            {% endif %}
+        </div>
+        <a class="tod-link" href="{% url 'medlatin:term-detail' slug=medlatin_term_of_day.slug %}">
+            Leer entrada completa →
+        </a>
+    </div>
+</section>
+{% endif %}
+
+
+<!-- ═══ EXPLORAR ════════════════════════════════════════════════════ -->
+<section style="margin-top:40px;">
+    <div class="section-header">
+        <div class="section-eyebrow">Explorar</div>
+        <h2 class="ml-section-title">Navega por materia o por lógica descriptiva</h2>
+    </div>
+
+    <div class="explore-row">
+        <div class="explore-panel">
+            <h3>Por materia</h3>
+            <p>Comienza por la asignatura que estás estudiando.</p>
+            <div class="tag-cloud">
+                {% for item in featured_subjects %}
+                    <a class="tag-chip" href="{% url 'medlatin:dictionary' %}?subject={{ item }}">{{ item }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="explore-panel">
+            <h3>Por lógica descriptiva</h3>
+            <p>Entende cómo forma, posición, función o patología construyen la palabra.</p>
+            <div class="tag-cloud">
+                {% for item in naming_logic_categories %}
+                    <a class="tag-chip" href="{% url 'medlatin:dictionary' %}?naming_category={{ item }}">{{ item }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="ml-grid ml-grid-2" style="margin-top:26px;">
-    <div class="ml-panel">
-        <h3>Explorar por materia</h3>
-        <p>Comienza por la materia que estás estudiando activamente.</p>
-        <div class="ml-tags">
-            {% for item in featured_subjects %}
-                <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?subject={{ item }}">{{ item }}</a>
-            {% endfor %}
-        </div>
+
+<!-- ═══ RAÍCES POPULARES + RECIENTES ════════════════════════════════ -->
+<section style="margin-top:40px;">
+    <div class="section-header">
+        <div class="section-eyebrow">Raíces populares</div>
+        <h2 class="ml-section-title">Las raíces más frecuentes de la medicina</h2>
     </div>
-    <div class="ml-panel">
-        <h3>Explorar por lógica descriptiva</h3>
-        <p>Observa cómo la estructura, posición, función o patología dan forma a la palabra.</p>
-        <div class="ml-tags">
-            {% for item in naming_logic_categories %}
-                <a class="ml-tag" href="{% url 'medlatin:dictionary' %}?naming_category={{ item }}">{{ item }}</a>
-            {% endfor %}
-        </div>
+
+    <div class="roots-grid">
+        {% for root in medlatin_popular_roots %}
+            <a class="root-brick" href="{% url 'medlatin:root-detail' root_id=root.id %}">
+                <div class="root-form">{{ root.form }}</div>
+                <div class="root-meaning">{{ root.core_meaning }}</div>
+                <div class="root-meta">{{ root.origin_language }} · {{ root.get_root_type_display }}</div>
+            </a>
+        {% empty %}
+            <div class="ml-empty-papyrus" style="grid-column:1/-1;">
+                Aún no hay raíces sembradas en la biblioteca.
+            </div>
+        {% endfor %}
     </div>
 </section>
 
-<section class="ml-grid ml-grid-2" style="margin-top:26px;">
-    <div class="ml-panel">
-        <h3>Raíces populares</h3>
-        <div class="ml-card-list" style="margin-top:14px;">
-            {% for root in medlatin_popular_roots %}
-                <a class="ml-term-card" href="{% url 'medlatin:root-detail' root_id=root.id %}">
-                    <h3 style="margin-bottom:4px;">{{ root.form }}</h3>
-                    <div class="ml-literal">{{ root.core_meaning }}</div>
-                    <div class="ml-excerpt">{{ root.origin_language }} · {{ root.get_root_type_display }}</div>
-                </a>
-            {% empty %}
-                <div class="ml-empty">Aún no hay raíces sembradas.</div>
-            {% endfor %}
-        </div>
+
+<!-- ═══ VISTOS RECIENTEMENTE ════════════════════════════════════════ -->
+{% if recent_terms %}
+<section style="margin-top:40px;">
+    <div class="section-header">
+        <div class="section-eyebrow">Tu sesión</div>
+        <h2 class="ml-section-title">Términos vistos recientemente</h2>
     </div>
-    <div class="ml-panel">
-        <h3>Vistos recientemente</h3>
-        <div class="ml-card-list" style="margin-top:14px;">
-            {% for term in recent_terms %}
-                <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=term.slug %}">
-                    <h3 style="margin-bottom:4px;">{{ term.latin_name }}</h3>
-                    <div class="ml-literal">{{ term.literal_translation }}</div>
-                    <div class="ml-excerpt">{{ term.medical_definition|truncatechars:140 }}</div>
-                </a>
-            {% empty %}
-                <div class="ml-empty">Tus términos recientes aparecerán aquí luego de que abras algunas entradas.</div>
-            {% endfor %}
-        </div>
+
+    <div class="recents-list">
+        {% for term in recent_terms %}
+            <a class="recent-row" href="{% url 'medlatin:term-detail' slug=term.slug %}">
+                <div class="recent-latin">{{ term.latin_name }}</div>
+                <div class="recent-def">
+                    <strong style="color:var(--ml-gold);">{{ term.literal_translation }}</strong><br>
+                    {{ term.medical_definition|truncatechars:120 }}
+                </div>
+            </a>
+        {% endfor %}
     </div>
 </section>
+{% endif %}
+
 {% endblock %}
