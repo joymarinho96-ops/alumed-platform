@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand
-from core.grilla_cleaner import limpiar_grilla_estudiantes
+from core.grilla_cleaner import procesar_y_limpiar_notas, limpiar_grilla_estudiantes
 import json
 
 class Command(BaseCommand):
-    help = 'Limpia grillas de notas desordenadas con ruido de OCR/PDF para ALUMED / Conecta FCM.'
+    help = 'Limpia grillas de notas desordenadas en PDF/TXT con ruido para ALUMED OS / Conecta FCM.'
 
     def add_arguments(self, parser):
-        parser.add_argument('--archivo', type=str, help='Ruta al archivo TXT con el texto de la grilla.')
+        parser.add_argument('--archivo', type=str, help='Ruta al archivo PDF o TXT con la grilla de notas.')
+        parser.add_argument('--salida', type=str, default='grilla_limpia_alumed.csv', help='Ruta del archivo CSV resultante.')
 
     def handle(self, *args, **options):
         archivo = options.get('archivo')
+        salida = options.get('salida', 'grilla_limpia_alumed.csv')
+
         if archivo:
-            with open(archivo, 'r', encoding='utf-8', errors='ignore') as f:
-                texto = f.read()
+            self.stdout.write(self.style.NOTICE(f"Procesando archivo: {archivo}..."))
+            registros = procesar_y_limpiar_notas(archivo, salida)
         else:
             self.stdout.write(self.style.NOTICE("Procesando muestra de grilla de prueba..."))
             texto = """
@@ -38,8 +41,7 @@ class Command(BaseCommand):
             0 kuster, liandra  Promocion
             0 fernandez pastore, noren  aprobado
             """
-
-        registros = limpiar_grilla_estudiantes(texto)
-        self.stdout.write(self.style.SUCCESS(f"[SUCCESS] Se limpiaron {len(registros)} registros con exito!"))
-        for r in registros[:5]:
-            self.stdout.write(f" -> {r['Legajo']} | {r['DNI']} | {r['Apellido_Nombre']} | {r['Estado']}")
+            registros = limpiar_grilla_estudiantes(texto)
+            self.stdout.write(self.style.SUCCESS(f"[SUCCESS] Se limpiaron {len(registros)} registros con exito!"))
+            for r in registros[:5]:
+                self.stdout.write(f" -> {r['Legajo']} | {r['DNI']} | {r['Apellido_Nombre']} | {r['Estado']}")

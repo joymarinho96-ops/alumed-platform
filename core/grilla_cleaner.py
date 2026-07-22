@@ -1,6 +1,31 @@
 # -*- coding: utf-8 -*-
 import re
+import csv
 import json
+import os
+
+def extraer_texto_archivo(ruta_archivo):
+    """Extrae texto de archivos .txt o .pdf (usando fitz si está disponible)."""
+    if not os.path.exists(ruta_archivo):
+        raise FileNotFoundError(f"No se encontró el archivo: {ruta_archivo}")
+
+    ext = os.path.splitext(ruta_archivo)[1].lower()
+
+    if ext == '.pdf':
+        try:
+            import fitz  # PyMuPDF
+            doc = fitz.open(ruta_archivo)
+            texto = ""
+            for page in doc:
+                texto += page.get_text() + "\n"
+            return texto
+        except ImportError:
+            # Fallback simple
+            with open(ruta_archivo, 'r', encoding='utf-8', errors='ignore') as f:
+                return f.read()
+    else:
+        with open(ruta_archivo, 'r', encoding='utf-8', errors='ignore') as f:
+            return f.read()
 
 def limpiar_grilla_estudiantes(texto_o_lineas):
     """
@@ -22,12 +47,12 @@ def limpiar_grilla_estudiantes(texto_o_lineas):
 
     for linea in lineas:
         linea_str = linea.strip()
-        if not linea_str:
+        if not linea_str or "comision" in linea_str.lower():
             continue
 
         # 1. Detectar Estado
         match_estado = re_estado.search(linea_str)
-        estado = match_estado.group(1).capitalize() if match_estado else 'Desconocido'
+        estado = match_estado.group(1).capitalize() if match_estado else 'Sin Especificar'
         if estado.lower() == 'promocion':
             estado = 'Promoción'
 
@@ -50,8 +75,8 @@ def limpiar_grilla_estudiantes(texto_o_lineas):
         # 4. Extraer números de Legajo y DNI
         numeros = re.findall(r'\b\d+\b', linea_limpia)
         
-        legajo = "S/L"
-        dni = "S/D"
+        legajo = "N/D"
+        dni = "N/D"
 
         if len(numeros) >= 2:
             legajo = numeros[0]
@@ -83,6 +108,31 @@ def limpiar_grilla_estudiantes(texto_o_lineas):
         })
 
     return registros
+
+def procesar_y_limpiar_notas(archivo_entrada, archivo_salida="grilla_limpia_alumed.csv"):
+    """
+    Procesa un archivo PDF o TXT de grilla de notas de ALUMED / Conecta FCM,
+    limpia el ruido alfanumérico y exporta un archivo CSV estructurado.
+    """
+    print("🧹 Iniciando la limpieza y normalización de la grilla de notas...")
+
+    try:
+        texto = extraer_texto_archivo(archivo_entrada)
+        registros = limpiar_grilla_estudiantes(texto)
+
+        # Exportar a CSV de forma nativa
+        with open(archivo_salida, 'w', newline='', encoding='utf-8-sig') as f:
+            fieldnames = ['Comision', 'Legajo', 'DNI', 'Apellido_Nombre', 'Estado']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(registros)
+
+        print(f"✅ ¡Proceso completado con éxito! {len(registros)} registros limpios guardados en: {archivo_salida}")
+        return registros
+
+    except FileNotFoundError as e:
+        print(f"⚠️ {e}")
+        return []
 
 def a_dataframe_html(registros):
     """Genera una tabla HTML limpia y estilizada estilo AluMed OS."""
