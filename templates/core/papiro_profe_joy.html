@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}📜 O Papiro da Profe Joy · Estatuto do Alumed{% endblock %}
+
+{% block content %}
+<style>
+    /* ══════════════════════════════════════════════════════
+       PAPIRO DA PROFE JOY — Estilos exclusivos desta página
+       ══════════════════════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap');
+
+    .papiro-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Hero do Papiro ───────────────────────────────── */
+    .papiro-hero {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        padding: 56px 52px 48px;
+        margin-bottom: 36px;
+        background:
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 30px,
+                rgba(184, 134, 11, 0.07) 30px,
+                rgba(184, 134, 11, 0.07) 31px
+            ),
+            radial-gradient(ellipse at 0% 0%,   rgba(139, 69, 19, 0.18) 0%, transparent 45%),
+            radial-gradient(ellipse at 100% 0%,  rgba(184, 134, 11, 0.12) 0%, transparent 40%),
+            radial-gradient(ellipse at 100% 100%,rgba(139, 0,  0,  0.14) 0%, transparent 45%),
+            radial-gradient(ellipse at 0%  100%, rgba(101, 67, 33, 0.16) 0%, transparent 40%),
+            linear-gradient(160deg, #f8f0dc 0%, #ede3c3 40%, #e6d9b8 100%);
+        border: 1px solid rgba(139, 69, 19, 0.25);
+        box-shadow:
+            inset 0 0 60px rgba(139, 69, 19, 0.06),
+            0 20px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Marcas de desgaste nas bordas */
+    .papiro-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+            radial-gradient(circle at 3% 12%, rgba(101,67,33,0.22) 0%, transparent 14%),
+            radial-gradient(circle at 97% 8%,  rgba(139,69,19,0.18) 0%, transparent 12%),
+            radial-gradient(circle at 5% 90%,  rgba(139,0,0,0.15)  0%, transparent 16%),
+            radial-gradient(circle at 95% 85%, rgba(101,67,33,0.2)  0%, transparent 14%);
+        pointer-events: none;
+    }
+
+    .papiro-seal-top {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+    .papiro-seal-icon {
+        font-size: 2.4rem;
+        line-height: 1;
+        filter: drop-shadow(0 2px 8px rgba(139,0,0,0.3));
+    }
+    .papiro-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 0.7rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #8b4513;
+        font-weight: 600;
+    }
+    .papiro-divider-thin {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(139,69,19,0.4), transparent);
+        margin: 6px 0;
+    }
+
+    .papiro-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.4rem, 6vw, 4rem);
+        line-height: 1.05;
+        color: #5c1f00;
+        margin: 0 0 8px;
+        letter-spacing: -0.01em;
+        position: relative;
+        z-index: 1;
+    }
+    .papiro-title em {
+        font-style: italic;
+        color: #8b0000;
+    }
+
+    .papiro-subtitle {
+        font-family: 'IM Fell English', serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #6b4226;
+        line-height: 1.8;
+        max-width: 680px;
+        margin: 16px 0 0;
+        padding: 16px 20px;
+        border-left: 3px solid rgba(184,134,11,0.5);
+        background: rgba(184,134,11,0.06);
+        border-radius: 0 12px 12px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Ornamento decorativo de canto */
+    .papiro-ornament {
+        position: absolute;
+        font-family: 'Cormorant Garamond', serif;
+        color: rgba(139, 69, 19, 0.1);
+        pointer-events: none;
+        line-height: 1;
+    }
+    .papiro-ornament-tl { top: 14px; left: 18px; font-size: 4rem; }
+    .papiro-ornament-tr { top: 14px; right: 18px; font-size: 4rem; }
+    .papiro-ornament-br { bottom: 14px; right: 22px; font-size: 2.5rem; }
+
+    /* ── Seções do Papiro ─────────────────────────────── */
+    .papiro-section {
+        position: relative;
+        border-radius: 20px;
+        padding: 36px 40px;
+        margin-bottom: 24px;
+        background:
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 26px,
+                rgba(184,134,11,0.055) 26px,
+                rgba(184,134,11,0.055) 27px
+            ),
+            linear-gradient(160deg, #f9f3e2 0%, #ede3c3 100%);
+        border: 1px solid rgba(139,69,19,0.18);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.6),
+            0 8px 32px rgba(0,0,0,0.18);
+    }
+
+    /* Desgaste nas bordas das seções */
+    .papiro-section::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+            radial-gradient(circle at 0% 0%,   rgba(101,67,33,0.12) 0%, transparent 20%),
+            radial-gradient(circle at 100% 100%,rgba(139,69,19,0.1) 0%, transparent 20%);
+        pointer-events: none;
+    }
+
+    .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b0000, #b8860b);
+        color: #fdf8f0;
+        font-family: 'Cinzel', serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-right: 12px;
+        flex-shrink: 0;
+        box-shadow: 0 3px 12px rgba(139,0,0,0.35);
+    }
+    .section-header-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(139,69,19,0.15);
+    }
+    .section-icon { font-size: 1.8rem; margin-right: 12px; }
+    .section-title-wrap h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.85rem;
+        color: #5c1f00;
+        margin: 0;
+        line-height: 1.1;
+    }
+    .section-title-wrap span {
+        font-family: 'Cinzel', serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #b8860b;
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* Artigos do Estatuto */
+    .artigo {
+        background: rgba(255,255,255,0.45);
+        border-radius: 14px;
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(139,69,19,0.12);
+        position: relative;
+        transition: all 0.25s ease;
+    }
+    .artigo:hover {
+        background: rgba(255,255,255,0.65);
+        border-color: rgba(184,134,11,0.3);
+        transform: translateX(3px);
+    }
+    .artigo::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 4px;
+        border-radius: 4px 0 0 4px;
+        background: linear-gradient(180deg, #b8860b, #8b0000);
+    }
+    .artigo-num {
+        font-family: 'Cinzel', serif;
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #b8860b;
+        font-weight: 700;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .artigo-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.25rem;
+        color: #5c1f00;
+        font-weight: 600;
+        margin-bottom: 8px;
+        line-height: 1.2;
+    }
+    .artigo-body {
+        font-family: 'IM Fell English', serif;
+        color: #4a3320;
+        line-height: 1.8;
+        font-size: 0.98rem;
+    }
+
+    /* Métodos e técnicas de estudo */
+    .metodo-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+    }
+    .metodo-card {
+        padding: 18px 16px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.5);
+        border: 1px solid rgba(139,69,19,0.14);
+        transition: all 0.2s;
+    }
+    .metodo-card:hover {
+        background: rgba(255,255,255,0.7);
+        border-color: rgba(184,134,11,0.3);
+        transform: translateY(-2px);
+    }
+    .metodo-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+    .metodo-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.1rem;
+        color: #5c1f00;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .metodo-desc {
+        color: #6b4226;
+        font-size: 0.86rem;
+        line-height: 1.55;
+    }
+
+    /* Lista de pontos da Anatomia Profe Joy */
+    .anato-list {
+        list-style: none;
+        padding: 0;
+        margin: 14px 0 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .anato-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.5);
+        border: 1px solid rgba(139,69,19,0.1);
+        font-family: 'IM Fell English', serif;
+        color: #4a3320;
+        font-size: 0.92rem;
+        line-height: 1.5;
+    }
+    .anato-list li::before {
+        content: "✦";
+        color: #b8860b;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+        margin-top: 3px;
+    }
+
+    /* Bloco de citação/norma */
+    .norma-block {
+        margin: 16px 0;
+        padding: 18px 22px;
+        border-radius: 14px;
+        background: rgba(139, 0, 0, 0.05);
+        border: 1px solid rgba(139, 0, 0, 0.15);
+        border-left: 4px solid #8b0000;
+    }
+    .norma-block cite {
+        font-family: 'Cinzel', serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #8b0000;
+        display: block;
+        margin-bottom: 6px;
+    }
+    .norma-block p {
+        font-family: 'IM Fell English', serif;
+        font-style: italic;
+        color: #4a3320;
+        line-height: 1.75;
+        font-size: 0.97rem;
+        margin: 0;
+    }
+
+    /* CTA final */
+    .papiro-cta {
+        text-align: center;
+        padding: 40px 32px;
+        border-radius: 24px;
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(184,134,11,0.06) 28px, rgba(184,134,11,0.06) 29px),
+            linear-gradient(135deg, #f8f0dc, #ede3c3);
+        border: 1px solid rgba(139,69,19,0.2);
+        margin-top: 8px;
+    }
+    .papiro-cta h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        color: #5c1f00;
+        margin: 0 0 10px;
+    }
+    .papiro-cta p {
+        font-family: 'IM Fell English', serif;
+        font-style: italic;
+        color: #6b4226;
+        font-size: 1rem;
+        line-height: 1.7;
+        max-width: 540px;
+        margin: 0 auto 24px;
+    }
+    .cta-buttons {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 24px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        letter-spacing: 0.04em;
+    }
+    .cta-btn-primary {
+        background: linear-gradient(135deg, #7c3aed, #5b21b6);
+        color: #fff;
+        border: 1px solid rgba(124,58,237,0.4);
+        box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+    }
+    .cta-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(124,58,237,0.4);
+        color: #fff;
+    }
+    .cta-btn-secondary {
+        background: rgba(139,69,19,0.08);
+        color: #5c1f00;
+        border: 1px solid rgba(139,69,19,0.22);
+    }
+    .cta-btn-secondary:hover {
+        background: rgba(184,134,11,0.12);
+        border-color: rgba(184,134,11,0.35);
+        transform: translateY(-2px);
+        color: #5c1f00;
+    }
+
+    @media (max-width: 680px) {
+        .papiro-hero { padding: 36px 24px 32px; }
+        .papiro-section { padding: 28px 22px; }
+        .metodo-grid { grid-template-columns: 1fr; }
+        .anato-list { grid-template-columns: 1fr; }
+        .papiro-title { font-size: 2.2rem; }
+    }
+</style>
+
+<div class="papiro-page">
+
+    <!-- ═══ HERO DO PAPIRO ══════════════════════════════════════════════ -->
+    <div class="papiro-hero">
+        <span class="papiro-ornament papiro-ornament-tl">℞</span>
+        <span class="papiro-ornament papiro-ornament-tr">✦</span>
+        <span class="papiro-ornament papiro-ornament-br">⚕</span>
+
+        <div class="papiro-seal-top">
+            <span class="papiro-seal-icon">📜</span>
+            <div>
+                <div class="papiro-eyebrow">Alumed OS · Ecossistema Estudantil FCM-UNLP</div>
+                <div class="papiro-divider-thin"></div>
+                <div class="papiro-eyebrow" style="letter-spacing:0.12em; color:#8b0000;">Estatuto Geral & Blindagem Acadêmica</div>
+            </div>
+        </div>
+
+        <h1 class="papiro-title">
+            O Papiro da<br>
+            <em>Profe Joy</em>
+        </h1>
+
+        <blockquote class="papiro-subtitle">
+            "Os apunte organizan o que necesitás estudiar. Os papiros te ajudam a profundizar.
+            O Método Profe Joy transforma tudo em compreensão, memoria e segurança para rendir."
+        </blockquote>
+    </div>
+
+
+    <!-- ═══ SEÇÃO 1 — ESTATUTO CENTRAL ══════════════════════════════════ -->
+    <div class="papiro-section">
+        <div class="section-header-row">
+            <span class="section-icon">🛡️</span>
+            <div class="section-title-wrap">
+                <h2>O Papiro Central: Estatuto Geral</h2>
+                <span>Blindagem Acadêmica · Espírito Conecta & Alumed</span>
+            </div>
+        </div>
+
+        <div class="artigo">
+            <span class="artigo-num">Origem & Essência</span>
+            <div class="artigo-title">Nascido de estudantes, para estudantes</div>
+            <p class="artigo-body">
+                Este estatuto não nasce de uma grande corporação nem de interesses políticos tradicionais;
+                ele nasce de <strong>estudantes para estudantes</strong>, garantindo transparência,
+                descentralização, acesso livre ao conhecimento e defesa real dos direitos acadêmicos
+                frente às falhas burocráticas. A plataforma não é um produto — é um escudo.
+            </p>
+        </div>
+
+        <div class="artigo">
+            <span class="artigo-num">Art. 9º</span>
+            <div class="artigo-title">A Plataforma como Escudo</div>
+            <p class="artigo-body">
+                As ferramentas tecnológicas construídas pela comunidade — como o ambiente centralizado
+                da <strong>Conecta FCM</strong> — funcionam como um <em>registro vivo</em>, um suporte
+                prático e uma ferramenta de auditoria cidadã para garantir que nenhum direito estudantil
+                seja violado por negligência administrativa.
+            </p>
+        </div>
+
+        <div class="artigo">
+            <span class="artigo-num">Art. 10º</span>
+            <div class="artigo-title">O Conhecimento Estatutário como Arma</div>
+            <p class="artigo-body">
+                A defesa dos alunos não se faz com gritos, mas com <strong>conhecimento técnico</strong>,
+                domínio dos regulamentos vigentes e uso estratégico das regras para blindar o estudante
+                contra injustiças. Conhecer o estatuto é a primeira forma de proteção.
+            </p>
+        </div>
+
+        <div class="norma-block">
+            <cite>Regime de Parciais e Recuperatórios · FCM-UNLP · Res. 465/18 & Estatuto UNLP</cite>
+            <p>
+                Baseado estritamente nas normativas reais da FCM-UNLP, garante o direito absoluto às
+                <strong>4 datas de cronograma por parcial</strong>, permitindo ao aluno escolher 3 para
+                render (parcial original e dois recuperatórios), sem penalização por ausência caso cumpra
+                o mínimo de TPs aprovados.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ═══ SEÇÃO 2 — O CONHECIMENTO CONECTA MUNDOS ══════════════════════ -->
+    <div class="papiro-section">
+        <div class="section-header-row">
+            <span class="section-icon">🏛️</span>
+            <div class="section-title-wrap">
+                <h2>Os Papiros e o Conhecimento</h2>
+                <span>Conectando Mundos · A Metodologia ALUMED OS</span>
+            </div>
+        </div>
+
+        <div class="artigo" style="margin-bottom:20px;">
+            <span class="artigo-num">A Metodologia</span>
+            <div class="artigo-title">O Ecossistema Joyce</div>
+            <p class="artigo-body">
+                O ecossistema criado por <strong>Joyce</strong> no <em>Alumed OS</em> e no <em>Conecta FCM</em>
+                transforma dados complexos de matérias de primeiro ano — Anatomia, Histologia, Biologia,
+                Fisiologia — em ferramentas reais de domínio:
+            </p>
+        </div>
+
+        <div class="metodo-grid">
+            <div class="metodo-card">
+                <span class="metodo-icon">📊</span>
+                <div class="metodo-title">Esquemas & Quadros</div>
+                <p class="metodo-desc">Comparativos e tabelas que transformam volumes inteiros em informação acionável para o exame.</p>
+            </div>
+            <div class="metodo-card">
+                <span class="metodo-icon">🗺️</span>
+                <div class="metodo-title">Mapas Mentais</div>
+                <p class="metodo-desc">Conexões visuais entre conceitos que o cérebro retém muito mais rápido que textos lineares.</p>
+            </div>
+            <div class="metodo-card">
+                <span class="metodo-icon">🖼️</span>
+                <div class="metodo-title">Imagens Sinalizadas</div>
+                <p class="metodo-desc">Lâminas histológicas e estruturas anatômicas anotadas com os termos exatos que a banca pede.</p>
+            </div>
+            <div class="metodo-card">
+                <span class="metodo-icon">🔑</span>
+                <div class="metodo-title">Palavras-chave para Gabaritar</div>
+                <p class="metodo-desc">O vocabulário mínimo necessário para responder qualquer questão do parcial com segurança e precisão.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══ SEÇÃO 3 — ANATOMIA PADRÃO PROFE JOY ═════════════════════════ -->
+    <div class="papiro-section">
+        <div class="section-header-row">
+            <span class="section-icon">🦴</span>
+            <div class="section-title-wrap">
+                <h2>Anatomia no Padrão Profe Joy</h2>
+                <span>Os 9 Pilares do Estudo Anatômico Completo</span>
+            </div>
+        </div>
+
+        <div class="norma-block" style="margin-bottom:18px;">
+            <cite>Princípio Metodológico</cite>
+            <p>
+                Não basta memorizar nomes; é preciso entender cada estrutura em sua totalidade
+                para que a informação permaneça e seja aplicável clinicamente.
+            </p>
+        </div>
+
+        <ul class="anato-list">
+            <li><strong>Nome</strong> — Nomenclatura oficial (Terminologia Anatômica)</li>
+            <li><strong>Localização</strong> — Região topográfica exata no corpo</li>
+            <li><strong>Forma & Tamanho</strong> — Geometria e proporções da estrutura</li>
+            <li><strong>Origem & Inserção</strong> — Para músculos: pontos de ancoragem</li>
+            <li><strong>Inervação</strong> — Nervo(s) responsável(eis) pelo controle</li>
+            <li><strong>Vascularização</strong> — Artéria e veia correspondentes</li>
+            <li><strong>Função</strong> — O que a estrutura faz fisiologicamente</li>
+            <li><strong>Relações</strong> — Estruturas adjacentes e sua importância clínica</li>
+            <li><strong>Trampa de Examen</strong> — O ponto exato onde a banca costuma errar o estudante</li>
+        </ul>
+    </div>
+
+
+    <!-- ═══ CTA FINAL ═════════════════════════════════════════════════════ -->
+    <div class="papiro-cta">
+        <h3>Pronta para estudar de verdade?</h3>
+        <p>
+            Use o MedLatín para entender os nomes, o Conecta FCM para os apuntes e a Profe Joy
+            para transformar tudo isso em compreensão real e nota no parcial.
+        </p>
+        <div class="cta-buttons">
+            <a href="{% url 'profe_joy_chat' %}" class="cta-btn cta-btn-primary">
+                ✨ Falar com a Profe Joy
+            </a>
+            <a href="{% url 'medlatin:home' %}" class="cta-btn cta-btn-secondary">
+                📜 MedLatín
+            </a>
+            <a href="{% url 'conecta_fcm' %}" class="cta-btn cta-btn-secondary">
+                ⚡ Conecta FCM
+            </a>
+            <a href="{% url 'conecta_biblioteca' %}" class="cta-btn cta-btn-secondary">
+                📚 Biblioteca
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -257,6 +257,15 @@ def becas_view(request):
     """
     return render(request, 'core/becas.html')
 
+
+def papiro_profe_joy_view(request):
+    """
+    O Papiro da Profe Joy — Estatuto do Alumed.
+    Acesso livre — filosofia, blindagem academica e metodologia ALUMED OS.
+    """
+    return render(request, 'core/papiro_profe_joy.html')
+
+
 from django.http import JsonResponse
 from courses.models import SimulacroQuestion
 import random
