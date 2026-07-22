@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}📜 O Papiro da Profe Joy · Estatuto do Alumed{% endblock %}
+{% block title %}📜 El Papiro de la Profe Joy · Estatuto de AluMed{% endblock %}
 
 {% block content %}
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap');
 
     /* ═══════════════════════════════════════════════════════
-       FUNDO DOURADO DE PAPIRO — cobre toda a página
+       FONDO DORADO DE PAPIRO — cubre toda la página
        ═══════════════════════════════════════════════════════ */
     body.alumed-remaster {
         background:
-            /* linhas horizontais de papiro */
+            /* líneas horizontales de papiro */
             repeating-linear-gradient(
                 0deg,
                 transparent,
@@ -20,12 +20,12 @@
                 rgba(139, 90, 20, 0.07) 28px,
                 rgba(139, 90, 20, 0.07) 29px
             ),
-            /* manchas de envelhecimento nos cantos */
+            /* manchas de envejecimiento en bordes */
             radial-gradient(ellipse at 0%   0%,   rgba(160, 100, 30, 0.28) 0%, transparent 38%),
             radial-gradient(ellipse at 100% 0%,   rgba(180, 140, 40, 0.22) 0%, transparent 35%),
             radial-gradient(ellipse at 100% 100%, rgba(120, 60,  20, 0.25) 0%, transparent 38%),
             radial-gradient(ellipse at 0%   100%, rgba(140, 80,  20, 0.22) 0%, transparent 35%),
-            /* base dourada rica */
+            /* base dorada rica */
             linear-gradient(160deg,
                 #f5e6b0 0%,
                 #e8d080 18%,
@@ -38,7 +38,7 @@
         color: #3a2000 !important;
     }
 
-    /* Sobrescrever fundo glow e orbs roxos — não combinam com o papiro */
+    /* Sobrescribir fondos oscuros no compatibles */
     body.alumed-remaster .ambient-glow,
     body.alumed-remaster .home-depth-atmosphere,
     body.alumed-remaster .bg-checkerboard,
@@ -46,7 +46,7 @@
     body.alumed-remaster .home-medical-glyph,
     body.alumed-remaster .anatomical-bg-layer { opacity: 0 !important; }
 
-    /* Adaptar navbar para não conflitar com o fundo dourado */
+    /* Adaptar navbar */
     .navbar {
         background: rgba(90, 40, 0, 0.88) !important;
         backdrop-filter: blur(16px) !important;
@@ -150,7 +150,7 @@
     .papiro-ornament-tr { top: 14px; right: 18px; font-size: 4rem; }
     .papiro-ornament-br { bottom: 14px; right: 22px; font-size: 2.5rem; }
 
-    /* ── Seções ──────────────────────────────────────── */
+    /* ── Secciones ──────────────────────────────────────── */
     .papiro-section {
         position: relative;
         border-radius: 18px;
@@ -175,7 +175,7 @@
         pointer-events: none;
     }
 
-    /* Cabeçalho de seção */
+    /* Encabezado de sección */
     .section-header-row {
         display: flex; align-items: center;
         margin-bottom: 20px; padding-bottom: 14px;
@@ -192,7 +192,7 @@
         text-transform: uppercase; color: #7a4800; display: block; margin-top: 2px;
     }
 
-    /* Artigos */
+    /* Artículos */
     .artigo {
         background: rgba(255,240,160,0.35);
         border-radius: 14px; padding: 20px 22px; margin-bottom: 14px;
@@ -227,7 +227,7 @@
     }
     .artigo-body strong { color: #3a1400; }
 
-    /* Bloco de norma/citação */
+    /* Bloque de norma / cita */
     .norma-block {
         margin: 16px 0; padding: 18px 22px; border-radius: 14px;
         background: rgba(139,0,0,0.08);
@@ -245,7 +245,7 @@
     }
     .norma-block strong { color: #3a1400; font-style: normal; }
 
-    /* ═══ TUS DERECHOS — Cards vermelho / azul / amarelo ═══ */
+    /* ═══ TUS DERECHOS — Cards rojo / azul / amarillo ═══ */
     .derechos-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -269,7 +269,7 @@
     .derecho-card:hover { transform: translateY(-4px); }
     .derecho-card:hover::before { height: 6px; }
 
-    /* 🔴 VERMELHO — cards 1 e 2 */
+    /* 🔴 ROJO — cards 1 y 2 */
     .derecho-card.cor-vermelho {
         background: linear-gradient(145deg, rgba(180,0,0,0.13), rgba(220,30,30,0.07));
         border-color: rgba(180,0,0,0.3);
@@ -282,7 +282,7 @@
     .derecho-card.cor-vermelho .derecho-body strong { color: #cc0000; }
     .derecho-card.cor-vermelho .derecho-norma { background: rgba(180,0,0,0.1); border-color: rgba(180,0,0,0.25); color: #cc0000; }
 
-    /* 🔵 AZUL — cards 3 e 4 */
+    /* 🔵 AZUL — cards 3 y 4 */
     .derecho-card.cor-azul {
         background: linear-gradient(145deg, rgba(20,60,160,0.13), rgba(40,90,200,0.07));
         border-color: rgba(30,70,180,0.3);
@@ -295,7 +295,7 @@
     .derecho-card.cor-azul .derecho-body strong { color: #1a3eb0; }
     .derecho-card.cor-azul .derecho-norma { background: rgba(20,60,160,0.1); border-color: rgba(20,60,160,0.25); color: #1a3eb0; }
 
-    /* 🟡 AMARELO — cards 5 e 6 */
+    /* 🟡 AMARILLO — cards 5 y 6 */
     .derecho-card.cor-amarelo {
         background: linear-gradient(145deg, rgba(180,130,0,0.18), rgba(220,170,0,0.1));
         border-color: rgba(180,130,0,0.35);
@@ -308,7 +308,7 @@
     .derecho-card.cor-amarelo .derecho-body strong { color: #8b5e00; }
     .derecho-card.cor-amarelo .derecho-norma { background: rgba(160,110,0,0.12); border-color: rgba(160,110,0,0.28); color: #8b5e00; }
 
-    /* Elementos comuns dos cards */
+    /* Elementos comunes */
     .derecho-num {
         display: inline-flex; align-items: center; justify-content: center;
         width: 34px; height: 34px; border-radius: 50%;
@@ -333,7 +333,7 @@
         text-transform: uppercase; font-weight: 700;
     }
 
-    /* Metodo grid */
+    /* Método grid */
     .metodo-grid {
         display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;
     }
@@ -355,7 +355,7 @@
     }
     .metodo-desc { color: #5c3200; font-size: 0.86rem; line-height: 1.55; }
 
-    /* Anatomia list */
+    /* Anatomía list */
     .anato-list {
         list-style: none; padding: 0; margin: 14px 0 0;
         display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
@@ -435,17 +435,17 @@
         <div class="papiro-seal-top">
             <span class="papiro-seal-icon">📜</span>
             <div>
-                <div class="papiro-eyebrow">Alumed OS · Ecossistema Estudantil FCM-UNLP</div>
+                <div class="papiro-eyebrow">AluMed OS · Ecosistema Estudiantil FCM-UNLP</div>
                 <div class="papiro-divider-thin"></div>
-                <div class="papiro-eyebrow" style="color:#8b0000;">Estatuto Geral & Blindagem Acadêmica</div>
+                <div class="papiro-eyebrow" style="color:#8b0000;">Estatuto General & Blindaje Académico</div>
             </div>
         </div>
 
-        <h1 class="papiro-title">O Papiro da<br><em>Profe Joy</em></h1>
+        <h1 class="papiro-title">El Papiro de la<br><em>Profe Joy</em></h1>
 
         <blockquote class="papiro-subtitle">
-            "Os apunte organizan o que necesitás estudiar. Os papiros te ajudam a profundizar.
-            O Método Profe Joy transforma tudo em compreensão, memoria e segurança para rendir."
+            "Los apuntes organizan lo que necesitas estudiar. Los papiros te ayudan a profundizar.
+            El Método Profe Joy transforma todo en comprensión, memoria y seguridad para rendir."
         </blockquote>
     </div>
 
@@ -456,27 +456,27 @@
             <span class="section-icon">⚖️</span>
             <div class="section-title-wrap">
                 <h2>Tus Derechos Académicos</h2>
-                <span>FCM-UNLP · Blindagem Estudantil Completa</span>
+                <span>FCM-UNLP · Blindaje Estudiantil Completo</span>
             </div>
         </div>
 
         <div class="norma-block" style="margin-bottom:20px;">
-            <cite>Base Normativa · Res. 465/18 FCM-UNLP · Estatuto da UNLP · Régimen de Alumnos</cite>
+            <cite>Base Normativa · Res. 465/18 FCM-UNLP · Estatuto de la UNLP · Régimen de Alumnos</cite>
             <p>
-                Teus direitos não são favores — são <strong>normas vigentes</strong> aprovadas pelo
-                Conselho Directivo. Nenhum docente, departamento ou JTP pode te negar o que a regulamentação
-                garante. Conhece cada um deles e usa-os como escudo.
+                Tus derechos no son favores — son <strong>normas vigentes</strong> aprobadas por el
+                Consejo Directivo. Ningún docente, cátedra o JTP puede negarte lo que la reglamentación
+                garantiza. Conoce cada uno de ellos y úsalos como tu escudo.
             </p>
         </div>
 
         <div class="derechos-grid">
             <div class="derecho-card cor-vermelho">
                 <div class="derecho-num">01</div>
-                <div class="derecho-title">4 Datas por Parcial</div>
+                <div class="derecho-title">4 Fechas por Parcial</div>
                 <p class="derecho-body">
-                    Tens direito a <strong>4 datas</strong> no cronograma por cada parcial.
-                    Podes escolher <strong>3 para rendir</strong>: o parcial original + 2 recuperatórios.
-                    A ausência em uma data não é abandono — é escolha estratégica.
+                    Tienes derecho a <strong>4 fechas</strong> en el cronograma por cada parcial.
+                    Puedes elegir <strong>3 para rendir</strong>: el parcial original + 2 recuperatorios.
+                    La ausencia en una fecha no es abandono — es una elección estratégica.
                 </p>
                 <span class="derecho-norma">📄 Res. 465/18 · Art. 12</span>
             </div>
@@ -485,9 +485,9 @@
                 <div class="derecho-num">02</div>
                 <div class="derecho-title">Ver Tu Examen Corregido</div>
                 <p class="derecho-body">
-                    Tens direito a <strong>ver o exame corrigido</strong> e conhecer os critérios
-                    de correção utilizados. Nenhum docente pode se negar a mostrar a prova após
-                    a publicação das notas.
+                    Tienes derecho a <strong>ver el examen corregido</strong> y conocer los criterios
+                    de corrección utilizados. Ningún docente puede negarse a mostrar la prueba tras
+                    la publicación de las notas.
                 </p>
                 <span class="derecho-norma">📄 Estatuto UNLP · Art. 49</span>
             </div>
@@ -496,9 +496,9 @@
                 <div class="derecho-num">03</div>
                 <div class="derecho-title">Recusación de Docente</div>
                 <p class="derecho-body">
-                    Tens direito a solicitar a <strong>recusação de um docente</strong>
-                    que avalie teu exame se houver conflito de interesses, parcialidade
-                    demonstrada ou relação que comprometa a objetividade da correção.
+                    Tienes derecho a solicitar la <strong>recusación de un docente</strong>
+                    que evalúe tu examen si existe conflicto de intereses, parcialidad
+                    demostrada o relación que comprometa la objetividad de la corrección.
                 </p>
                 <span class="derecho-norma">📄 Estatuto UNLP · Art. 51</span>
             </div>
@@ -507,31 +507,31 @@
                 <div class="derecho-num">04</div>
                 <div class="derecho-title">Revisión de Nota</div>
                 <p class="derecho-body">
-                    Após receber a nota, podes solicitar formalmente uma
-                    <strong>revisão por tribunal</strong> composto por docentes diferentes.
-                    O prazo e o procedimento estão definidos no reglamento da FCM.
+                    Tras recibir la nota, puedes solicitar formalmente una
+                    <strong>revisión por tribunal</strong> compuesto por docentes diferentes.
+                    El plazo y procedimiento están definidos en el reglamento de la FCM.
                 </p>
                 <span class="derecho-norma">📄 Res. 465/18 · Art. 15</span>
             </div>
 
             <div class="derecho-card cor-amarelo">
                 <div class="derecho-num">05</div>
-                <div class="derecho-title">TPs Aprovados = Sem Perda</div>
+                <div class="derecho-title">TPs Aprobados = Sin Pérdida</div>
                 <p class="derecho-body">
-                    Cumprindo o mínimo de <strong>TPs aprovados</strong>, nenhuma ausência
-                    em parcial pode resultar em perda da regularidade. O aluno mantém
-                    os TPs e usa as datas de recuperatório disponíveis.
+                    Cumpliendo el mínimo de <strong>TPs aprobados</strong>, ninguna ausencia
+                    en parciales puede resultar en la pérdida de regularidad. El alumno conserva
+                    los TPs y utiliza las fechas de recuperatorio disponibles.
                 </p>
                 <span class="derecho-norma">📄 Régimen de TPs · FCM</span>
             </div>
 
             <div class="derecho-card cor-amarelo">
                 <div class="derecho-num">06</div>
-                <div class="derecho-title">Acesso Livre à Información</div>
+                <div class="derecho-title">Acceso Libre a la Información</div>
                 <p class="derecho-body">
-                    Tens direito de acesso a <strong>programas de matéria, cronogramas,
-                    regulamentos, atas e resoluciones</strong> do Conselho Directivo.
-                    A universidade pública é transparente por obrigação legal.
+                    Tienes derecho de acceso a <strong>programas de materias, cronogramas,
+                    reglamentos, actas y resoluciones</strong> del Consejo Directivo.
+                    La universidad pública es transparente por obligación legal.
                 </p>
                 <span class="derecho-norma">📄 Ley 27.275 · Acceso Información</span>
             </div>
@@ -544,116 +544,116 @@
         <div class="section-header-row">
             <span class="section-icon">🛡️</span>
             <div class="section-title-wrap">
-                <h2>O Papiro Central: Estatuto Geral</h2>
-                <span>Blindagem Acadêmica · Espírito Conecta & Alumed</span>
+                <h2>El Papiro Central: Estatuto General</h2>
+                <span>Blindaje Académico · Espíritu Conecta & AluMed</span>
             </div>
         </div>
 
         <div class="artigo">
-            <span class="artigo-num">Origem & Essência</span>
-            <div class="artigo-title">Nascido de estudantes, para estudantes</div>
+            <span class="artigo-num">Origen & Esencia</span>
+            <div class="artigo-title">Nacido de estudiantes, para estudiantes</div>
             <p class="artigo-body">
-                Este estatuto não nasce de uma grande corporação nem de interesses políticos tradicionais;
-                ele nasce de <strong>estudantes para estudantes</strong>, garantindo transparência,
-                descentralização, acesso livre ao conhecimento e defesa real dos direitos acadêmicos
-                frente às falhas burocráticas.
+                Este estatuto no nace de una gran corporación ni de intereses políticos tradicionales;
+                nace de <strong>estudiantes para estudiantes</strong>, garantizando transparencia,
+                descentralización, acceso libre al conocimiento y defensa real de los derechos académicos
+                frente a las fallas burocráticas.
             </p>
         </div>
 
         <div class="artigo">
             <span class="artigo-num">Art. 9º</span>
-            <div class="artigo-title">A Plataforma como Escudo</div>
+            <div class="artigo-title">La Plataforma como Escudo</div>
             <p class="artigo-body">
-                As ferramentas tecnológicas construídas pela comunidade — como o ambiente centralizado
-                da <strong>Conecta FCM</strong> — funcionam como um <em>registro vivo</em>, suporte
-                prático e ferramenta de auditoria cidadã para garantir que nenhum direito estudantil
-                seja violado por negligência administrativa.
+                Las herramientas tecnológicas construidas por la comunidad — como el ambiente centralizado
+                de <strong>Conecta FCM</strong> — funcionan como un <em>registro vivo</em>, soporte
+                práctico y herramienta de auditoría ciudadana para garantizar que ningún derecho estudiantil
+                sea violado por negligencia administrativa.
             </p>
         </div>
 
         <div class="artigo">
             <span class="artigo-num">Art. 10º</span>
-            <div class="artigo-title">O Conhecimento Estatutário como Arma</div>
+            <div class="artigo-title">El Conocimiento Estatutario como Arma</div>
             <p class="artigo-body">
-                A defesa dos alunos não se faz com gritos, mas com <strong>conhecimento técnico</strong>,
-                domínio dos regulamentos vigentes e uso estratégico das regras para blindar o estudante
-                contra injustiças. Conhecer o estatuto é a primeira forma de proteção.
+                La defensa de los alumnos no se hace con gritos, sino con <strong>conocimiento técnico</strong>,
+                dominio de los reglamentos vigentes y uso estratégico de las reglas para blindar al estudiante
+                contra injusticias. Conocer el estatuto es la primera forma de protección.
             </p>
         </div>
     </div>
 
 
-    <!-- ═══ METODOLOGIA ═══════════════════════════════════ -->
+    <!-- ═══ METODOLOGÍA ═══════════════════════════════════ -->
     <div class="papiro-section">
         <div class="section-header-row">
             <span class="section-icon">🏛️</span>
             <div class="section-title-wrap">
-                <h2>O Método Profe Joy</h2>
-                <span>Conectando Mundos · ALUMED OS</span>
+                <h2>El Método Profe Joy</h2>
+                <span>Conectando Mundos · AluMed OS</span>
             </div>
         </div>
 
         <div class="metodo-grid">
             <div class="metodo-card">
                 <span class="metodo-icon">📊</span>
-                <div class="metodo-title">Esquemas & Quadros</div>
-                <p class="metodo-desc">Comparativos e tabelas que transformam volumes inteiros em informação acionável para o exame.</p>
+                <div class="metodo-title">Esquemas & Cuadros</div>
+                <p class="metodo-desc">Comparativos y tablas que transforman tomos enteros en información directa para el examen.</p>
             </div>
             <div class="metodo-card">
                 <span class="metodo-icon">🗺️</span>
-                <div class="metodo-title">Mapas Mentais</div>
-                <p class="metodo-desc">Conexões visuais entre conceitos que o cérebro retém muito mais rápido que textos lineares.</p>
+                <div class="metodo-title">Mapas Mentales</div>
+                <p class="metodo-desc">Conexiones visuales entre conceptos que el cerebro retiene mucho más rápido que textos lineales.</p>
             </div>
             <div class="metodo-card">
                 <span class="metodo-icon">🖼️</span>
-                <div class="metodo-title">Imagens Sinalizadas</div>
-                <p class="metodo-desc">Lâminas histológicas e estruturas anatômicas anotadas com os termos exatos que a banca pede.</p>
+                <div class="metodo-title">Imágenes Señaladas</div>
+                <p class="metodo-desc">Láminas histológicas y estructuras anatómicas anotadas con los términos exactos que pide la cátedra.</p>
             </div>
             <div class="metodo-card">
                 <span class="metodo-icon">🔑</span>
-                <div class="metodo-title">Palavras-chave para Gabaritar</div>
-                <p class="metodo-desc">O vocabulário mínimo necessário para responder qualquer questão do parcial com segurança.</p>
+                <div class="metodo-title">Palabras Clave para Aprobar</div>
+                <p class="metodo-desc">El vocabulario mínimo indispensable para responder cualquier pregunta del parcial con seguridad.</p>
             </div>
         </div>
     </div>
 
 
-    <!-- ═══ ANATOMIA ══════════════════════════════════════ -->
+    <!-- ═══ ANATOMÍA ══════════════════════════════════════ -->
     <div class="papiro-section">
         <div class="section-header-row">
             <span class="section-icon">🦴</span>
             <div class="section-title-wrap">
-                <h2>Anatomia · Padrão Profe Joy</h2>
-                <span>Os 9 Pilares do Estudo Anatômico Completo</span>
+                <h2>Anatomía · Patrón Profe Joy</h2>
+                <span>Los 9 Pilares del Estudio Anatómico Completo</span>
             </div>
         </div>
         <div class="norma-block" style="margin-bottom:16px;">
-            <cite>Princípio Metodológico</cite>
-            <p>Não basta memorizar nomes — é preciso entender cada estrutura em sua totalidade para que a informação permaneça e seja aplicável clinicamente.</p>
+            <cite>Principio Metodológico</cite>
+            <p>No basta con memorizar nombres — es necesario entender cada estructura en su totalidad para que la información permanezca y sea aplicable clínicamente.</p>
         </div>
         <ul class="anato-list">
-            <li><strong>Nome</strong> — Nomenclatura oficial (Terminologia Anatômica)</li>
-            <li><strong>Localização</strong> — Região topográfica exata no corpo</li>
-            <li><strong>Forma & Tamanho</strong> — Geometria e proporções da estrutura</li>
-            <li><strong>Origem & Inserção</strong> — Pontos de ancoragem musculares</li>
-            <li><strong>Inervação</strong> — Nervo(s) responsável(eis) pelo controle</li>
-            <li><strong>Vascularização</strong> — Artéria e veia correspondentes</li>
-            <li><strong>Função</strong> — O que a estrutura faz fisiologicamente</li>
-            <li><strong>Relações</strong> — Estruturas adjacentes e importância clínica</li>
-            <li><strong>Trampa de Examen</strong> — O ponto exato onde a banca costuma errar o aluno</li>
+            <li><strong>Nombre</strong> — Nomenclatura oficial (Terminología Anatómica)</li>
+            <li><strong>Localización</strong> — Región topográfica exacta en el cuerpo</li>
+            <li><strong>Forma & Tamaño</strong> — Geometria y proporciones de la estructura</li>
+            <li><strong>Origen & Inserción</strong> — Puntos de anclaje musculares</li>
+            <li><strong>Inervación</strong> — Nervio(s) responsable(s) del control</li>
+            <li><strong>Vascularización</strong> — Arteria y vena correspondientes</li>
+            <li><strong>Función</strong> — Lo que la estructura realiza fisiológicamente</li>
+            <li><strong>Relaciones</strong> — Estructuras adyacentes e importancia clínica</li>
+            <li><strong>Trampa de Examen</strong> — El punto exacto donde la cátedra suele confundir al estudiante</li>
         </ul>
     </div>
 
 
     <!-- ═══ CTA ═══════════════════════════════════════════ -->
     <div class="papiro-cta">
-        <h3>Pronta para rendir con seguridad?</h3>
+        <h3>¿Lista para rendir con seguridad?</h3>
         <p>
-            Usa o MedLatín para entender os nomes, o Conecta FCM para os apuntes
-            e a Profe Joy para transformar tudo isso em compreensão real e nota no parcial.
+            Utiliza MedLatín para entender los nombres, Conecta FCM para los apuntes
+            y la Profe Joy para transformar todo eso en comprensión real y nota en el parcial.
         </p>
         <div class="cta-buttons">
-            <a href="{% url 'profe_joy_chat' %}" class="cta-btn cta-btn-primary">✨ Falar com a Profe Joy</a>
+            <a href="{% url 'profe_joy_chat' %}" class="cta-btn cta-btn-primary">✨ Hablar con Profe Joy</a>
             <a href="{% url 'medlatin:home' %}" class="cta-btn cta-btn-secondary">📜 MedLatín</a>
             <a href="{% url 'conecta_fcm' %}" class="cta-btn cta-btn-secondary">⚡ Conecta FCM</a>
             <a href="{% url 'conecta_biblioteca' %}" class="cta-btn cta-btn-secondary">📚 Biblioteca</a>
