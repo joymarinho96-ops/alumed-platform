@@ -1,0 +1,16 @@
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.sqlite3
+*.json
+*.html
+*.txt
+venv/
+.venv/
+__pycache__/
+*.log
+scratch/
+media/
+tmp*
+*.csv
