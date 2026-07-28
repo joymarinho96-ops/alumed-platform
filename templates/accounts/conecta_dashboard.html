@@ -926,11 +926,17 @@ body {
         <div class="cx-tool-name">Apoyo Psicológico</div>
         <div class="cx-tool-desc">Acompañamiento y bienestar estudiantil.</div>
       </a>
-      <a href="#" class="cx-tool-card">
-        <div class="cx-tool-ico" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c;"><i class="fas fa-link"></i></div>
-        <div class="cx-tool-name">Links Oficiales</div>
-        <div class="cx-tool-desc">SIU, Guaraní, Mesa Virtual y más.</div>
+      <a href="{% url 'info_util' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c;"><i class="fas fa-globe"></i></div>
+        <div class="cx-tool-name">Sitios y Emails</div>
+        <div class="cx-tool-desc">Mails de cátedras, SIU Guaraní y webs oficiales.</div>
       </a>
+      <a href="{% url 'becas' %}" class="cx-tool-card">
+        <div class="cx-tool-ico" style="background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);color:#ec4899;"><i class="fas fa-hand-holding-heart"></i></div>
+        <div class="cx-tool-name">Becas y Beneficios</div>
+        <div class="cx-tool-desc">Boleto estudiantil, Comedor, CUDE y becas UNLP.</div>
+      </a>
+
     </div>
   </section>
 

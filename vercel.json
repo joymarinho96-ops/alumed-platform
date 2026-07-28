@@ -1,32 +1,13 @@
 {
   "version": 2,
-  "framework": null,
-  "builds": [
+  "rewrites": [
     {
-      "src": "alumed/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.12"
-      }
+      "source": "/static/(.*)",
+      "destination": "/staticfiles/$1"
     },
     {
-      "src": "staticfiles/**",
-      "use": "@vercel/static"
+      "source": "/(.*)",
+      "destination": "/api/index.py"
     }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/staticfiles/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "alumed/wsgi.py"
-    }
-  ],
-  "env": {
-    "DJANGO_SETTINGS_MODULE": "alumed.settings",
-    "PYTHONPATH": "."
-  }
+  ]
 }
