@@ -433,6 +433,7 @@
                 <a class="ml-pill" href="{% url 'medlatin:roots' %}">Raíces</a>
                 <a class="ml-pill" href="{% url 'medlatin:quizzes' %}">Simulacros</a>
                 <a class="ml-pill" href="{% url 'medlatin:flashcards' %}">Tarjetas</a>
+                {% include 'components/language_selector.html' %}
                 <a class="ml-btn ml-btn-primary" href="{% url 'home' %}">← ALUMED</a>
             </div>
         </div>

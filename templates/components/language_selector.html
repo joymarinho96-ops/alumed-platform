@@ -1,0 +1,216 @@
+<!-- ══════════════════════════════════════════════════════════════════
+     ALUMED TRANSLATOR WIDGET — Top Right Language Selector
+     Idiomas: Español (ARG) [Default], Português, English, Français
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* Container superior direito fixo ou inline */
+  .alumed-lang-widget {
+    position: relative;
+    display: inline-block;
+    z-index: 9999;
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+  
+  .alumed-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 99px;
+    background: rgba(15, 10, 30, 0.75);
+    border: 1px solid rgba(245, 200, 66, 0.3);
+    color: #f5c842;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+  .alumed-lang-btn:hover {
+    background: rgba(245, 200, 66, 0.15);
+    border-color: rgba(245, 200, 66, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(245, 200, 66, 0.25);
+  }
+  .alumed-lang-btn .flag-ico {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .alumed-lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 170px;
+    background: rgba(15, 8, 28, 0.95);
+    border: 1px solid rgba(245, 200, 66, 0.35);
+    border-radius: 14px;
+    padding: 6px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 200, 66, 0.12);
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .alumed-lang-dropdown.open {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .alumed-lang-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #e2e8f0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .alumed-lang-item:hover {
+    background: rgba(245, 200, 66, 0.15);
+    color: #f5c842;
+  }
+  .alumed-lang-item.active {
+    background: rgba(245, 200, 66, 0.22);
+    color: #f5c842;
+    font-weight: 800;
+  }
+  .alumed-lang-item .badge-default {
+    margin-left: auto;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 99px;
+    background: rgba(245, 200, 66, 0.2);
+    color: #f5c842;
+    border: 1px solid rgba(245, 200, 66, 0.4);
+  }
+
+  /* Ocultar elementos padrão do Google Translate */
+  #google_translate_element { display: none !important; }
+  .goog-te-banner-frame { display: none !important; }
+  body { top: 0 !important; }
+  .goog-tooltip { display: none !important; }
+  .goog-tooltip:hover { display: none !important; }
+  .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+</style>
+
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
+
+<!-- Custom Glassmorphism Selector Button -->
+<div class="alumed-lang-widget" id="alumedLangWidget">
+  <button type="button" class="alumed-lang-btn" id="alumedLangBtn" aria-label="Seleccionar Idioma">
+    <span class="flag-ico" id="currentLangFlag">🇦🇷</span>
+    <span id="currentLangLabel">Español</span>
+    <i class="fas fa-chevron-down" style="font-size: 0.65rem; opacity: 0.7;"></i>
+  </button>
+
+  <div class="alumed-lang-dropdown" id="alumedLangDropdown">
+    <button type="button" class="alumed-lang-item active" data-lang="es" onclick="alumedChangeLanguage('es')">
+      <span class="flag-ico">🇦🇷</span>
+      <span>Español</span>
+      <span class="badge-default">Default</span>
+    </button>
+    <button type="button" class="alumed-lang-item" data-lang="pt" onclick="alumedChangeLanguage('pt')">
+      <span class="flag-ico">🇧🇷</span>
+      <span>Português</span>
+    </button>
+    <button type="button" class="alumed-lang-item" data-lang="en" onclick="alumedChangeLanguage('en')">
+      <span class="flag-ico">🇺🇸</span>
+      <span>English</span>
+    </button>
+    <button type="button" class="alumed-lang-item" data-lang="fr" onclick="alumedChangeLanguage('fr')">
+      <span class="flag-ico">🇫🇷</span>
+      <span>Français</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'es',
+      includedLanguages: 'es,pt,en,fr',
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+
+  (function() {
+    // Carregar script do Google Translate dinamicamente se ainda não carregado
+    if (!document.getElementById('google-translate-script')) {
+      var s = document.createElement('script');
+      s.id = 'google-translate-script';
+      s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.body.appendChild(s);
+    }
+
+    var widget = document.getElementById('alumedLangWidget');
+    var btn = document.getElementById('alumedLangBtn');
+    var dropdown = document.getElementById('alumedLangDropdown');
+
+    if (btn && dropdown) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
+      });
+
+      document.addEventListener('click', function() {
+        dropdown.classList.remove('open');
+      });
+    }
+
+    // Restaurar idioma salvo
+    var savedLang = localStorage.getItem('alumed_lang') || 'es';
+    if (savedLang !== 'es') {
+      setTimeout(function() {
+        alumedApplyLanguageUI(savedLang);
+      }, 1000);
+    }
+  })();
+
+  function alumedChangeLanguage(langCode) {
+    localStorage.setItem('alumed_lang', langCode);
+    alumedApplyLanguageUI(langCode);
+
+    // Disparar Google Translate
+    var select = document.querySelector('.goog-te-combo');
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event('change'));
+    } else {
+      // Fallback via cookie de tradução do Google
+      document.cookie = "googtrans=/es/" + langCode + "; path=/; domain=" + window.location.hostname;
+      document.cookie = "googtrans=/es/" + langCode + "; path=/;";
+      window.location.reload();
+    }
+  }
+
+  function alumedApplyLanguageUI(langCode) {
+    var flags = { es: '🇦🇷', pt: '🇧🇷', en: '🇺🇸', fr: '🇫🇷' };
+    var names = { es: 'Español', pt: 'Português', en: 'English', fr: 'Français' };
+
+    var flagEl = document.getElementById('currentLangFlag');
+    var labelEl = document.getElementById('currentLangLabel');
+
+    if (flagEl) flagEl.textContent = flags[langCode] || '🇦🇷';
+    if (labelEl) labelEl.textContent = names[langCode] || 'Español';
+
+    document.querySelectorAll('.alumed-lang-item').forEach(function(item) {
+      if (item.getAttribute('data-lang') === langCode) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+</script>
