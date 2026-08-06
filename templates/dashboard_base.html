@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ALUMED OS Dashboard{% endblock %}</title>
+    <title>{% block title %}CONECTA FCM Dashboard{% endblock %}</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -49,7 +49,18 @@
             display: flex;
             flex-direction: column;
             padding: 20px 0;
-            height: 100%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(245, 200, 66, 0.35);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
         }
         .sidebar-logo { font-size: 20px; font-weight: 800; color: var(--gold-main); padding: 0 20px 20px; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px;}
         .sidebar-logo span { color: var(--text-light); }
@@ -81,6 +92,16 @@
 
         /* DASHBOARD SCROLL AREA */
         .dashboard-content { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 30px; }
+        .dashboard-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dashboard-content::-webkit-scrollbar-thumb {
+            background: rgba(245, 200, 66, 0.4);
+            border-radius: 4px;
+        }
+        .dashboard-content::-webkit-scrollbar-track {
+            background: rgba(10, 5, 16, 0.5);
+        }
 
         /* ==========================================
            COMPONENTES DEL GRID
@@ -137,32 +158,21 @@
 
 <!-- SIDEBAR IZQUIERDO -->
 <aside class="sidebar">
-    <div class="sidebar-logo"><span>ALUMED</span> OS</div>
+    <div class="sidebar-logo"><span>CONECTA</span> FCM</div>
     
     <div class="menu-section">
         <ul class="menu-list">
-            <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 Inicio</a></li>
-            <li><a href="https://www.alumedestudiantes.com/miscursos" target="_blank">📚 Mis cursos</a></li>
             <li><a href="{% url 'simulacros' %}" class="{% if request.resolver_match.url_name == 'simulacros' %}active{% endif %}">🎯 Simulacros</a></li>
-            <li><a href="{% url 'conecta_biblioteca' %}">📁 Biblioteca</a></li>
-            <li><a href="{% url 'microscopio_virtual' %}">🔬 Microscopio</a></li>
-            <li><a href="{% url 'anatomia_3d' %}">🦴 Atlas 3D</a></li>
-            <li><a href="{% url 'medlatin:home' %}">🏛️ MedLatin</a></li>
-            <li><a href="{% url 'profe_joy' %}">👩‍🏫 IA Profe Joy</a></li>
-        </ul>
-    </div>
-
-    <!-- HEMISFERIO DORADO EN EL MENU -->
-    <div class="menu-section menu-conecta">
-        <h4 style="color: var(--gold-main);">⚡ Conecta FCM</h4>
-        <ul class="menu-list">
-            <li><a href="{% url 'cartelera_view' %}">📢 Cartelera en Vivo</a></li>
-            <li><a href="{% url 'cronograma_finales' %}">📅 Parciales y Finales</a></li>
-            <li><a href="{% url 'comisiones' %}">👥 Comisiones</a></li>
-            <li><a href="{% url 'cronograma_tps' %}">⏱️ Horarios</a></li>
-            <li><a href="{% url 'mapa_facultad' %}">📍 Mapa Facultad</a></li>
-            <li><a href="{% url 'info_util' %}">🌐 Sitios y Emails</a></li>
-            <li><a href="{% url 'becas' %}">🎁 Becas y Beneficios</a></li>
+            <li><a href="{% url 'conecta_biblioteca' %}" class="{% if request.resolver_match.url_name == 'conecta_biblioteca' %}active{% endif %}">📁 Biblioteca</a></li>
+            <li><a href="{% url 'microscopio_virtual' %}" class="{% if request.resolver_match.url_name == 'microscopio_virtual' %}active{% endif %}">🔬 Microscopio</a></li>
+            <li><a href="{% url 'anatomia_3d' %}" class="{% if request.resolver_match.url_name == 'anatomia_3d' %}active{% endif %}">🦴 Atlas 3D</a></li>
+            <li><a href="/conecta/dashboard/#section-cartelera">📢 Cartelera en Vivo</a></li>
+            <li><a href="/conecta/dashboard/#section-finales">📅 Parciales y Finales</a></li>
+            <li><a href="/conecta/dashboard/#section-comisiones">👥 Comisiones</a></li>
+            <li><a href="{% url 'cronograma_tps' %}">⏱️ Horarios / TPs</a></li>
+            <li><a href="/conecta/dashboard/#section-mapa">📍 Mapa Facultad</a></li>
+            <li><a href="/conecta/dashboard/#section-info-util">🌐 Sitios y Emails</a></li>
+            <li><a href="/conecta/dashboard/#section-becas">🎁 Becas y Beneficios</a></li>
         </ul>
     </div>
 </aside>
@@ -173,19 +183,16 @@
     <!-- TOP NAV -->
     <nav class="topnav">
         <div class="nav-pills">
-            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a>
-            <a href="https://www.alumedestudiantes.com/miscursos" target="_blank">Cursos</a>
             <a href="{% url 'simulacros' %}" class="{% if request.resolver_match.url_name == 'simulacros' %}active{% endif %}">Simulacros</a>
             <a href="{% url 'conecta_biblioteca' %}">Biblioteca</a>
-            <a href="{% url 'profe_joy' %}">IA Profe Joy</a>
             <a href="{% url 'conecta_fcm' %}">Conecta FCM</a>
         </div>
         <div class="user-profile">
             {% include 'components/language_selector.html' %}
             <span>🔔</span>
             <span>📅</span>
-            <div class="user-avatar">
-                <img src="{% static 'img/profe_joy_avatar.png' %}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            <div class="user-avatar" style="width:36px;height:36px;border-radius:50%;background:rgba(245,200,66,0.15);border:1px solid rgba(245,200,66,0.3);display:flex;align-items:center;justify-content:center;color:#f5c842;font-size:16px;">
+                🎓
             </div>
             <span>¡Hola, Alumno! <br><small style="color:var(--text-muted);">Mi perfil ⌄</small></span>
         </div>

@@ -1,7 +1,7 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}Dashboard Conecta FCM — ALUMED OS{% endblock %}
+{% block title %}Dashboard Conecta FCM{% endblock %}
 
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
@@ -450,7 +450,24 @@ body {
 }
 
 /* ── SIDEBAR overrides for Conecta ── */
-.sidebar { border-right-color: rgba(245,200,66,.15) !important; }
+.sidebar {
+  border-right-color: rgba(245,200,66,.15) !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+}
+.sidebar nav {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(245, 200, 66, 0.4);
+  border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(10, 5, 16, 0.4);
+}
 .sidebar-brand .brand-row i { color: var(--cx-gold) !important; }
 .sidebar-premium { background: rgba(245,200,66,.1) !important; border-color: var(--cx-gold) !important; color: var(--cx-gold) !important; }
 .sidebar nav a.active { background: rgba(245,200,66,.12) !important; border-color: rgba(245,200,66,.25) !important; color: var(--cx-gold) !important; }
@@ -467,6 +484,75 @@ body {
 @media(max-width:480px){
   .cx-hero-right { grid-template-columns: 1fr 1fr; }
   .cx-integ-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── STICKY TOP SUBNAV BAR (Matching Image Design) ── */
+.cx-subnav-bar {
+  position: sticky; top: 10px; z-index: 99;
+  background: rgba(12, 6, 24, 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 200, 66, 0.22);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 10px 22px; margin-bottom: 24px;
+  border-radius: 16px;
+}
+.cx-subnav-container {
+  display: flex; align-items: center; justify-content: flex-start;
+  gap: 24px; overflow-x: auto; scrollbar-width: none;
+}
+.cx-subnav-container::-webkit-scrollbar { display: none; }
+.cx-subnav-brand {
+  font-family: 'Outfit', 'Cinzel', serif;
+  font-weight: 900; font-size: 15px; letter-spacing: 0.05em;
+  color: #f5c842; text-decoration: none; display: flex; align-items: center; gap: 8px;
+  white-space: nowrap; margin-right: 8px; text-transform: uppercase;
+}
+.cx-subnav-link {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600; color: rgba(240, 238, 225, 0.78);
+  text-decoration: none; white-space: nowrap; transition: all 0.2s ease;
+  padding: 6px 12px; border-radius: 8px;
+}
+.cx-subnav-link:hover {
+  color: #f5c842; background: rgba(245, 200, 66, 0.12); transform: translateY(-1px);
+}
+
+/* ── RICH SECTIONS CSS (Info Util & Becas) ── */
+.cx-side-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+.cx-side-tabs {
+  background: rgba(14, 8, 28, 0.7);
+  border: 1px solid rgba(245, 200, 66, 0.14);
+  border-radius: 18px;
+  padding: 18px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.cx-rich-tab-btn {
+  padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; color: var(--cx-muted); cursor: pointer; font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 10px;
+  transition: all 0.25s ease; width: 100%;
+}
+.cx-rich-tab-btn:hover { background: rgba(245,200,66,0.08); color: var(--cx-text); border-color: rgba(245,200,66,0.25); }
+.cx-rich-tab-btn.cx-tab-active {
+  background: rgba(245,200,66,0.16) !important; border-color: rgba(245,200,66,0.45) !important;
+  color: #f5c842 !important; font-weight: 700 !important; box-shadow: 0 0 16px rgba(245,200,66,0.15);
+}
+.cx-card-box {
+  background: rgba(14, 8, 28, 0.7); border: 1px solid rgba(245, 200, 66, 0.14);
+  border-radius: 18px; padding: 26px; backdrop-filter: blur(12px); margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+@media(max-width:768px){
+  .cx-side-grid { grid-template-columns: 1fr; }
 }
 </style>
 {% endblock %}
@@ -505,7 +591,7 @@ body {
         </div>
     </div>
 
-    <!-- Volver a ALUMED Premium -->
+    <!-- Volver a Conecta FCM Premium -->
     <a href="/dashboard/" style="
         display:flex; align-items:center; gap:10px;
         padding: 12px 14px; border-radius: 12px; margin-bottom: 14px;
@@ -517,45 +603,41 @@ body {
     " onmouseover="this.style.background='linear-gradient(135deg,rgba(124,58,237,.28),rgba(124,58,237,.15))';"
        onmouseout="this.style.background='linear-gradient(135deg,rgba(124,58,237,.18),rgba(124,58,237,.08))';">
         <span style="width:28px;height:28px;border-radius:8px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🟣</span>
-        <span>ALUMED Premium</span>
+        <span>Conecta FCM Premium</span>
         <span style="margin-left:auto;font-size:10px;opacity:.6;">→</span>
     </a>
 
     <nav>
-        <!-- CONECTA FCM: Institucional -->
-        <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,200,66,.4);padding:0 4px 8px;margin-bottom:4px;border-bottom:1px solid rgba(245,200,66,.08);">
-            ⚡ CONECTA FCM · Institucional
-        </div>
-
-        <a href="/conecta/dashboard/" class="{% if request.path == '/conecta/dashboard/' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-home"></i> Resumen
+        <a href="{% url 'simulacros' %}" class="{% if request.path == '/simulacros/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-bullseye"></i> Simulacros
         </a>
         <a href="{% url 'conecta_biblioteca' %}" class="{% if request.resolver_match.url_name == 'conecta_biblioteca' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-book"></i> Biblioteca Inteligente
+            <i class="fas fa-book"></i> Biblioteca Virtual
         </a>
-        <a href="/cartelera/" class="{% if request.path == '/cartelera/' %}active{% endif %}" style="color: #f0e8d0;">
+        <a href="/microscopio-virtual/" class="{% if request.path == '/microscopio-virtual/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-microscope"></i> Microscopio Virtual
+        </a>
+        <a href="/anatomia-3d/" class="{% if request.path == '/anatomia-3d/' %}active{% endif %}" style="color: #f0e8d0;">
+            <i class="fas fa-cube"></i> Atlas 3D
+        </a>
+        <a href="#section-cartelera" onclick="openCxDashboardSection('section-cartelera')" style="color: #f0e8d0;">
             <i class="fas fa-bullhorn"></i> Cartelera en Vivo
         </a>
-        <a href="/cronograma-finales/" class="{% if request.path == '/cronograma-finales/' %}active{% endif %}" style="color: #f0e8d0;">
+        <a href="#section-finales" onclick="openCxDashboardSection('section-finales')" style="color: #f0e8d0;">
             <i class="fas fa-calendar-check"></i> Parciales y Finales
         </a>
-        <a href="/plan-estudios/" class="{% if request.path == '/plan-estudios/' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-book-open"></i> Plan de Estudios
-        </a>
-        <a href="/comisiones/" class="{% if request.path == '/comisiones/' %}active{% endif %}" style="color: #f0e8d0;">
+        <a href="#section-comisiones" onclick="openCxDashboardSection('section-comisiones')" style="color: #f0e8d0;">
             <i class="fas fa-users"></i> Comisiones
         </a>
-        <a href="/cronograma-tps/" class="{% if request.path == '/cronograma-tps/' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-tasks"></i> Cronograma de TPs
-        </a>
-        <a href="/facultad/" class="{% if request.path == '/facultad/' %}active{% endif %}" style="color: #f0e8d0;">
+
+        <a href="#section-mapa" onclick="openCxDashboardSection('section-mapa')" style="color: #f0e8d0;">
             <i class="fas fa-map-marked-alt"></i> Mapa de Facultad
         </a>
-        <a href="/apoyo-psicologico/" class="{% if request.path == '/apoyo-psicologico/' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-heart"></i> Apoyo Psicologico
+        <a href="#section-info-util" onclick="openCxDashboardSection('section-info-util')" style="color: #f0e8d0;">
+            <i class="fas fa-info-circle"></i> Sitios y Emails
         </a>
-        <a href="/info-util/" class="{% if request.path == '/info-util/' %}active{% endif %}" style="color: #f0e8d0;">
-            <i class="fas fa-info-circle"></i> Info Util
+        <a href="#section-becas" onclick="openCxDashboardSection('section-becas')" style="color: #f0e8d0;">
+            <i class="fas fa-hand-holding-heart"></i> Becas y Beneficios
         </a>
 
         <!-- Separator -->
@@ -582,8 +664,23 @@ body {
 
 <div class="cx-main">
 
+  <!-- ── FAIXA STICKY DE ALERTA DE EXÁMENES (visible en todas las secciones) ── -->
+  <div id="cx-exam-ticker" style="position:sticky;top:0;z-index:200;background:linear-gradient(90deg,#1a0533 0%,#3b0764 45%,#1a0533 100%);border-bottom:2px solid rgba(74,222,128,0.45);padding:7px 18px;display:flex;align-items:center;gap:12px;overflow:hidden;box-shadow:0 3px 18px rgba(0,0,0,0.55);">
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(74,222,128,0.18);border:1px solid rgba(74,222,128,0.65);padding:2px 10px;border-radius:20px;color:#4ade80;font-size:10px;font-weight:900;letter-spacing:.08em;flex-shrink:0;animation:pulse 1.4s ease-in-out infinite;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;display:inline-block;"></span>
+      ✅ INSCRIPCIÓN ABIERTA
+    </div>
+    <marquee behavior="scroll" direction="left" scrollamount="6" style="color:#fff;font-size:12px;font-weight:600;flex:1;">
+      🚨 <strong style="color:#f87171;">¡ABIERTAS!</strong> · <strong style="color:#4ade80;">2ª Mesa de Exámenes Finales de Julio</strong> — HABILITADA en SIU Guaraní &nbsp;·&nbsp; Aviso oficial: <strong style="color:var(--cx-gold);">Secretaría Académica FCM UNLP</strong> (14/07/2026) &nbsp;·&nbsp; ¡Anotate antes del cierre! &nbsp;·&nbsp; Verificá tus correlativas aprobadas &nbsp;·&nbsp; Fuente: <span style="color:#c084fc;">cartelera.med.unlp.edu.ar</span> &nbsp;·&nbsp; 🚨 <strong style="color:#f87171;">¡ABIERTAS!</strong> · <strong style="color:#4ade80;">2ª Mesa de Exámenes Finales de Julio</strong>
+    </marquee>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <a href="https://cartelera.med.unlp.edu.ar/" target="_blank" style="color:#c084fc;font-size:10px;font-weight:700;text-decoration:none;border:1px solid rgba(192,132,252,0.4);padding:3px 9px;border-radius:10px;white-space:nowrap;">Ver cartelera</a>
+      <a href="https://siu-guarani.unlp.edu.ar/" target="_blank" style="color:var(--cx-gold);font-size:11px;font-weight:800;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:4px;background:rgba(245,200,66,0.12);padding:3px 12px;border-radius:12px;border:1px solid rgba(245,200,66,0.35);">SIU Guaraní <i class="fas fa-arrow-right" style="font-size:9px;"></i></a>
+    </div>
+  </div>
+
   <!-- ── STATUS BAR ── -->
-  <div class="cx-statusbar">
+  <div class="cx-statusbar" id="cx-top">
     <div class="cx-sb-item"><i class="fas fa-map-marker-alt" style="color:var(--cx-gold);"></i> La Plata, Buenos Aires</div>
     <div class="cx-sb-sep"></div>
     <div class="cx-sb-item"><i class="fas fa-thermometer-half" style="color:#fb923c;"></i> <span id="cx-temp">--°C</span></div>
@@ -592,13 +689,28 @@ body {
     <div class="cx-sb-sep"></div>
     <div class="cx-sb-item" id="cx-datetime"><i class="far fa-calendar" style="color:var(--cx-gold);"></i> <span>--</span></div>
     <div class="cx-sb-sep"></div>
-    <div class="cx-sb-live"><div class="cx-sb-dot"></div> Sistema activo — ALUMED OS v2.0</div>
+    <div class="cx-sb-live"><div class="cx-sb-dot"></div> Sistema activo — Conecta FCM v2.0</div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
       <a href="{% url 'student_dashboard' %}" class="cx-btn cx-btn-switch" style="padding:5px 14px;font-size:.68rem;">
-        <i class="fas fa-graduation-cap"></i> ALUMED OS
+        <i class="fas fa-graduation-cap"></i> Conecta FCM
       </a>
     </div>
   </div>
+
+  <!-- ── STICKY TOP SUBNAV BAR (Matching Image Header) ── -->
+  <div class="cx-subnav-bar">
+    <div class="cx-subnav-container">
+      <a href="#cx-top" class="cx-subnav-brand"><i class="fas fa-bolt" style="color:var(--cx-gold);"></i> CONECTA FCM</a>
+      <a href="#section-cartelera" class="cx-subnav-link">Cartelera</a>
+      <a href="{% url 'conecta_biblioteca' %}" class="cx-subnav-link">Biblioteca Virtual</a>
+      <a href="#section-info-util" class="cx-subnav-link">Sitios y Emails</a>
+      <a href="#section-becas" class="cx-subnav-link">Becas y Beneficios</a>
+      <a href="/cronograma-finales/" class="cx-subnav-link">Finales</a>
+      <a href="/plan-estudios/" class="cx-subnav-link">Plan de Estudios</a>
+    </div>
+  </div>
+
+  <!-- (ticker movido a sticky global arriba) -->
 
   <!-- ── HERO STRIP ── -->
   <div class="cx-hero">
@@ -648,7 +760,7 @@ body {
   </div>
 
   <!-- ── CARTELERA EN VIVO ── -->
-  <section>
+  <section id="section-cartelera">
     <span class="cx-label lbl-gold">📡 En vivo</span>
     <h2 class="cx-section-title">Cartelera Oficial FCM · UNLP</h2>
     <p class="cx-section-sub">Avisos scrapeados directamente del sitio oficial. Actualizados automáticamente cada 10 minutos.</p>
@@ -888,18 +1000,13 @@ body {
     <div class="cx-tools-grid">
       <a href="{% url 'conecta_biblioteca' %}" class="cx-tool-card">
         <div class="cx-tool-ico" style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);"><i class="fas fa-book-reader"></i></div>
-        <div class="cx-tool-name">Biblioteca Inteligente</div>
-        <div class="cx-tool-desc">Libros virtuales y chat didáctico con la IA.</div>
+        <div class="cx-tool-name">Biblioteca Virtual</div>
+        <div class="cx-tool-desc">Accedé al sitio oficial de libros y resúmenes digitales.</div>
       </a>
       <a href="{% url 'plan_estudios' %}" class="cx-tool-card">
         <div class="cx-tool-ico" style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);color:var(--cx-gold);"><i class="fas fa-list-ol"></i></div>
         <div class="cx-tool-name">Plan de Estudios</div>
         <div class="cx-tool-desc">Tu hoja de ruta con correlatividades.</div>
-      </a>
-      <a href="{% url 'cronograma_tps' %}" class="cx-tool-card">
-        <div class="cx-tool-ico" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);color:#60a5fa;"><i class="fas fa-calendar-check"></i></div>
-        <div class="cx-tool-name">Cronograma de TPs</div>
-        <div class="cx-tool-desc">Todas las entregas del cuatrimestre.</div>
       </a>
       <a href="{% url 'comisiones' %}" class="cx-tool-card">
         <div class="cx-tool-ico" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.2);color:#c084fc;"><i class="fas fa-users"></i></div>
@@ -926,17 +1033,595 @@ body {
         <div class="cx-tool-name">Apoyo Psicológico</div>
         <div class="cx-tool-desc">Acompañamiento y bienestar estudiantil.</div>
       </a>
-      <a href="{% url 'info_util' %}" class="cx-tool-card">
-        <div class="cx-tool-ico" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c;"><i class="fas fa-globe"></i></div>
-        <div class="cx-tool-name">Sitios y Emails</div>
-        <div class="cx-tool-desc">Mails de cátedras, SIU Guaraní y webs oficiales.</div>
-      </a>
-      <a href="{% url 'becas' %}" class="cx-tool-card">
-        <div class="cx-tool-ico" style="background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);color:#ec4899;"><i class="fas fa-hand-holding-heart"></i></div>
-        <div class="cx-tool-name">Becas y Beneficios</div>
-        <div class="cx-tool-desc">Boleto estudiantil, Comedor, CUDE y becas UNLP.</div>
-      </a>
+    </div>
+  </section>
 
+  <!-- ── SITIOS Y EMAILS OFICIALES ── -->
+  <section id="section-info-util">
+    <span class="cx-label lbl-orange">🌐 Directório Oficial</span>
+    <h2 class="cx-section-title">Sitios y Emails FCM</h2>
+    <p class="cx-section-sub">Accedé a los portales web principales y correos oficiales de secretarías y trámites de la Facultad de Ciencias Médicas.</p>
+
+    <div class="cx-side-grid">
+      <!-- Left Column: Navigation Buttons List -->
+      <div class="cx-side-tabs">
+        <h4 style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--cx-gold);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(245,200,66,.15);">
+          <i class="fas fa-at"></i> Sitios & Contactos
+        </h4>
+        <button onclick="switchCxInfoTab('portales')" class="cx-rich-tab-btn cx-tab-active" id="cxtab-portales">
+          <i class="fas fa-globe" style="color:#f5c842;width:18px;"></i> <span>Portales Web</span>
+        </button>
+        <button onclick="switchCxInfoTab('secretarias')" class="cx-rich-tab-btn" id="cxtab-secretarias">
+          <i class="fas fa-envelope" style="color:#22d3ee;width:18px;"></i> <span>Mails Secretarías</span>
+        </button>
+        <button onclick="switchCxInfoTab('tramites')" class="cx-rich-tab-btn" id="cxtab-tramites">
+          <i class="fas fa-file-alt" style="color:#c084fc;width:18px;"></i> <span>Mails Trámites</span>
+        </button>
+      </div>
+
+      <!-- Right Column: Active Content Panel -->
+      <div class="cx-card-box" style="margin-bottom:0;">
+        <!-- Portales Web View -->
+        <div id="cxcontent-portales" class="cx-info-view" style="display:block;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:20px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-globe" style="color:var(--cx-gold);"></i> Portales Web Oficiales FCM & UNLP
+          </h3>
+          <p style="font-size:14px;color:var(--cx-muted);line-height:1.6;margin-bottom:18px;">
+            Enlaces directos a las plataformas institucionales y académicas principales.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+            <a href="https://www.med.unlp.edu.ar" target="_blank" style="background:rgba(255,255,255,.03);border:1px solid rgba(245,200,66,.2);border-radius:12px;padding:14px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='var(--cx-gold)';" onmouseout="this.style.borderColor='rgba(245,200,66,.2)';">
+              <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;"><i class="fas fa-university" style="color:var(--cx-gold);"></i> Sitio Oficial FCM UNLP</div>
+              <div style="font-size:12px;color:var(--cx-muted);">www.med.unlp.edu.ar</div>
+            </a>
+            <a href="https://siu.unlp.edu.ar" target="_blank" style="background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:14px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='#22d3ee';" onmouseout="this.style.borderColor='rgba(34,211,238,.2)';">
+              <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;"><i class="fas fa-user-graduate" style="color:#22d3ee;"></i> SIU Guaraní UNLP</div>
+              <div style="font-size:12px;color:var(--cx-muted);">siu.unlp.edu.ar</div>
+            </a>
+            <a href="https://aulasweb.unlp.edu.ar" target="_blank" style="background:rgba(255,255,255,.03);border:1px solid rgba(192,132,252,.2);border-radius:12px;padding:14px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='#c084fc';" onmouseout="this.style.borderColor='rgba(192,132,252,.2)';">
+              <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;"><i class="fas fa-laptop-code" style="color:#c084fc;"></i> Aulas Web UNLP</div>
+              <div style="font-size:12px;color:var(--cx-muted);">aulasweb.unlp.edu.ar</div>
+            </a>
+            <a href="https://www.biblio.unlp.edu.ar" target="_blank" style="background:rgba(255,255,255,.03);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:14px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='#4ade80';" onmouseout="this.style.borderColor='rgba(74,222,128,.2)';">
+              <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;"><i class="fas fa-book-reader" style="color:#4ade80;"></i> Biblioteca Central UNLP</div>
+              <div style="font-size:12px;color:var(--cx-muted);">www.biblio.unlp.edu.ar</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mails Secretarías View -->
+        <div id="cxcontent-secretarias" class="cx-info-view" style="display:none;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:20px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-envelope" style="color:#22d3ee;"></i> Correos Oficiales de Secretarías FCM & UNLP
+          </h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Presidencia de la UNLP</div>
+              <a href="mailto:secretaria.academica@presi.unlp.edu.ar" style="font-size:12px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">secretaria.academica@presi.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaria General</div>
+              <a href="mailto:sgeneral@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sgeneral@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaria de Asuntos Académicos</div>
+              <a href="mailto:sacademico@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sacademico@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaria de Asuntos Estudiantiles</div>
+              <a href="mailto:sestudiantil@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sestudiantil@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Extensión Universitaria</div>
+              <a href="mailto:extension@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">extension@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Ciencia y Técnica</div>
+              <a href="mailto:secyt@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">secyt@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Docente Asistencial</div>
+              <a href="mailto:docenteasistencial@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">docenteasistencial@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Redes en Salud</div>
+              <a href="mailto:redesensalud@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">redesensalud@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Dirección de Género y Salud</div>
+              <a href="mailto:direcciondegenero@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">direcciondegenero@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Administrativa</div>
+              <a href="mailto:diroperativa@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">diroperativa@med.unlp.edu.ar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mails Trámites View -->
+        <div id="cxcontent-tramites" class="cx-info-view" style="display:none;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:20px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-file-alt" style="color:#c084fc;"></i> Correos para Trámites & Alumnos
+          </h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Presidencia de la UNLP</div>
+              <a href="mailto:secretaria.academica@presi.unlp.edu.ar" style="font-size:12px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">secretaria.academica@presi.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaría General</div>
+              <a href="mailto:sgeneral@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sgeneral@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaría de Asuntos Académicos</div>
+              <a href="mailto:sacademico@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sacademico@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Secretaría de Asuntos Estudiantiles</div>
+              <a href="mailto:sestudiantil@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">sestudiantil@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Extensión Universitaria</div>
+              <a href="mailto:extension@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">extension@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Ciencia y Técnica</div>
+              <a href="mailto:secyt@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">secyt@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Docente Asistencial</div>
+              <a href="mailto:docenteasistencial@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">docenteasistencial@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Redes en Salud</div>
+              <a href="mailto:redesensalud@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">redesensalud@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Dirección de Género y Salud</div>
+              <a href="mailto:direcciondegenero@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;word-break:break-all;">direcciondegenero@med.unlp.edu.ar</a>
+            </div>
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px;">
+              <div style="font-size:11px;color:var(--cx-muted);margin-bottom:2px;font-weight:600;">Dirección Operativa / Administrativa</div>
+              <a href="mailto:diroperativa@med.unlp.edu.ar" style="font-size:13px;font-weight:700;color:#22d3ee;text-decoration:none;">diroperativa@med.unlp.edu.ar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BECAS, BENEFICIOS E INFO ÚTIL ── -->
+  <section id="section-becas">
+    <span class="cx-label lbl-pink">🎁 Bienestar e Información Estudiantil</span>
+    <h2 class="cx-section-title">Becas, Beneficios e Info Útil FCM</h2>
+    <p class="cx-section-sub">Guía completa sobre subsidios, becas de estudio, transporte, comedor, libreta de salud y apoyo para estudiantes.</p>
+
+    <div class="cx-side-grid">
+      <!-- Left Column: Navigation Buttons List -->
+      <div class="cx-side-tabs">
+        <h4 style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#c084fc;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(192,132,252,.15);">
+          <i class="fas fa-gift"></i> Beneficios e Info
+        </h4>
+        <button onclick="switchCxBecaTab('cude')" class="cx-rich-tab-btn cx-tab-active" id="cxbtab-cude">
+          <i class="fas fa-user-graduate" style="color:#c084fc;width:18px;"></i> <span>Beca CUDE UNLP</span>
+        </button>
+        <button onclick="switchCxBecaTab('boleto')" class="cx-rich-tab-btn" id="cxbtab-boleto">
+          <i class="fas fa-bus" style="color:#60a5fa;width:18px;"></i> <span>Boleto Educativo (SUBE)</span>
+        </button>
+        <button onclick="switchCxBecaTab('comedor')" class="cx-rich-tab-btn" id="cxbtab-comedor">
+          <i class="fas fa-utensils" style="color:#fb923c;width:18px;"></i> <span>Comedor Universitario</span>
+        </button>
+        <button onclick="switchCxBecaTab('libreta')" class="cx-rich-tab-btn" id="cxbtab-libreta">
+          <i class="fas fa-file-medical" style="color:#4ade80;width:18px;"></i> <span>Libreta de Salud</span>
+        </button>
+        <button onclick="switchCxBecaTab('apoyo')" class="cx-rich-tab-btn" id="cxbtab-apoyo">
+          <i class="fas fa-heartbeat" style="color:#f43f5e;width:18px;"></i> <span>Apoyo Psicológico</span>
+        </button>
+      </div>
+
+      <!-- Right Column: Active Content Panel -->
+      <div class="cx-card-box" style="margin-bottom:0;">
+        <!-- CUDE Panel -->
+        <div id="cxbpanel-cude" class="cx-beca-view" style="display:block;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);display:flex;align-items:center;justify-content:center;font-size:22px;">🎓</div>
+            <div>
+              <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">Beca CUDE — Centro Universitario de Educación</h3>
+              <p style="font-size:13px;color:var(--cx-muted);margin:0;">Asistencia económica para estudiantes de la UNLP en situación de vulnerabilidad socioeconómica.</p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px;">
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+              <div style="font-size:10px;font-weight:700;color:var(--cx-gold);text-transform:uppercase;">💵 Beca Económica</div>
+              <span style="font-size:12px;color:var(--cx-text);">Ayuda mensual en dinero para gastos de estudio y manutención.</span>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+              <div style="font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;">📚 Material de Estudio</div>
+              <span style="font-size:12px;color:var(--cx-text);">Libros, apuntes y materiales de laboratorio.</span>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+              <div style="font-size:10px;font-weight:700;color:#c084fc;text-transform:uppercase;">🏠 Alojamiento</div>
+              <span style="font-size:12px;color:var(--cx-text);">Residencia universitaria para estudiantes del interior.</span>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;">
+              <div style="font-size:10px;font-weight:700;color:#4ade80;text-transform:uppercase;">🍽️ Comedor</div>
+              <span style="font-size:12px;color:var(--cx-text);">Acceso al comedor universitario sin costo alguno.</span>
+            </div>
+          </div>
+
+          <a href="https://secretaria478.wixsite.com/conectafcm/guiacude" target="_blank" class="cx-btn cx-btn-gold" style="font-size:.78rem;display:inline-flex;">
+            <i class="fas fa-external-link-alt"></i> Ver guía completa CUDE en Conecta FCM
+          </a>
+        </div>
+
+        <!-- Boleto Panel -->
+        <div id="cxbpanel-boleto" class="cx-beca-view" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;font-size:22px;">🚌</div>
+            <div>
+              <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">Boleto Educativo Gratuito (SUBE)</h3>
+              <p style="font-size:13px;color:var(--cx-muted);margin:0;">Pasajes gratuitos en transporte público interurbano para estudiantes bonaerenses.</p>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--cx-text);line-height:1.6;margin-bottom:14px;">
+            Descargá tu <strong>Certificado de Alumno Regular</strong> desde el SIU Guaraní y asociá tu tarjeta SUBE en el portal provincial para activar las recargas mensuales.
+          </p>
+          <div style="background:rgba(255,255,255,.02);border:1px solid rgba(245,200,66,.1);border-radius:12px;padding:14px;">
+            <h4 style="color:#60a5fa;margin-bottom:6px;font-size:12px;text-transform:uppercase;">Pasos rápidos:</h4>
+            <ol style="padding-left:18px;font-size:12px;color:var(--cx-text);display:flex;flex-direction:column;gap:4px;">
+              <li>Ingresá a tu cuenta de SIU Guaraní -> Menú Trámites -> Solicitud de Boleto.</li>
+              <li>Aceptá los términos de consentimiento.</li>
+              <li>Una vez aprobado, apoyá tu tarjeta SUBE en una Terminal Automática (TAS).</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Comedor Panel -->
+        <div id="cxbpanel-comedor" class="cx-beca-view" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(251,146,60,.15);border:1px solid rgba(251,146,60,.3);display:flex;align-items:center;justify-content:center;font-size:22px;">🍽️</div>
+            <div>
+              <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">Comedor Universitario UNLP</h3>
+              <p style="font-size:13px;color:var(--cx-muted);margin:0;">Menús diarios saludables y altamente subsidiados para estudiantes de la UNLP.</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+            <div style="padding:12px;background:rgba(255,255,255,.02);border-radius:10px;border-left:3px solid #fb923c;">
+              <h4 style="color:#fff;font-size:13px;margin-bottom:4px;">Sede del Bosque (Medicina):</h4>
+              <p style="font-size:12px;color:var(--cx-muted);margin:0;">Calle 50 entre 117 y 118 (frente al Colegio Nacional).</p>
+            </div>
+            <div style="padding:12px;background:rgba(255,255,255,.02);border-radius:10px;border-left:3px solid #fb923c;">
+              <h4 style="color:#fff;font-size:13px;margin-bottom:4px;">Menús Especiales:</h4>
+              <p style="font-size:12px;color:var(--cx-muted);margin:0;">Opción Celíacos y Vegetariano acreditando certificado medico.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Libreta Panel -->
+        <div id="cxbpanel-libreta" class="cx-beca-view" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.3);display:flex;align-items:center;justify-content:center;font-size:22px;">📗</div>
+            <div>
+              <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">Libreta de Salud Estudiantil</h3>
+              <p style="font-size:13px;color:var(--cx-muted);margin:0;">Examen médico clínico preventivo obligatorio para registrar materias aprobadas.</p>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.02);border:1px solid rgba(245,200,66,.1);border-radius:12px;padding:14px;">
+            <h4 style="color:#4ade80;margin-bottom:6px;font-size:12px;text-transform:uppercase;">Vacunas Obligatorias:</h4>
+            <ul style="padding-left:18px;font-size:12px;color:var(--cx-text);display:flex;flex-direction:column;gap:4px;">
+              <li>Triple / Doble Viral (Sarampión y Rubéola).</li>
+              <li>Doble Bacteriana (Difteria y Tétanos).</li>
+              <li>Hepatitis B (Esquema completo de 3 dosis).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Apoyo Panel -->
+        <div id="cxbpanel-apoyo" class="cx-beca-view" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(244,63,94,.15);border:1px solid rgba(244,63,94,.3);display:flex;align-items:center;justify-content:center;font-size:22px;">🧠</div>
+            <div>
+              <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">Apoyo Psicológico y Salud Mental</h3>
+              <p style="font-size:13px;color:var(--cx-muted);margin:0;">Contención y orientación gratuita y confidencial ante estrés o ansiedad académica.</p>
+            </div>
+          </div>
+          <div style="background:rgba(244,63,94,.06);border:1px dashed rgba(244,63,94,.3);border-radius:12px;padding:14px;">
+            <h4 style="color:#fff;font-size:12px;margin-bottom:4px;"><i class="fas fa-envelope"></i> Contacto Directo:</h4>
+            <p style="font-size:12px;color:var(--cx-text);margin:0;">
+              Correo a Salud Mental UNLP: <strong style="color:#f43f5e;">saludmental@unlp.edu.ar</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MAPA DE LA FACULTAD (SIDE-BY-SIDE) ── -->
+  <section id="section-mapa">
+    <span class="cx-label lbl-green">🗺️ Campus FCM</span>
+    <h2 class="cx-section-title">Mapa de la Facultad</h2>
+    <p class="cx-section-sub">Ubicación de aulas, anfiteatros, secretarías y dependencias en el plano interactivo FCM UNLP.</p>
+
+    <div class="cx-side-grid">
+      <!-- Left Column: Search & Classroom List -->
+      <div class="cx-side-tabs">
+        <h4 style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#4ade80;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(74,222,128,.15);">
+          <i class="fas fa-search"></i> Buscador de Aulas
+        </h4>
+        <div style="position:relative;margin-bottom:10px;">
+          <input type="text" id="cx-map-search" placeholder="Buscar aula (ej: Prieto Díaz, Galli)..." oninput="filterCxMapClassrooms()" style="width:100%;padding:8px 10px 8px 30px;background:rgba(8,5,16,.7);border:1px solid rgba(74,222,128,.3);border-radius:8px;color:#fff;font-size:12px;outline:none;">
+          <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#4ade80;font-size:11px;"></i>
+        </div>
+        <div style="max-height:280px;overflow-y:auto;border:1px solid rgba(74,222,128,.15);border-radius:10px;">
+          <table style="width:100%;border-collapse:collapse;font-size:11px;text-align:left;">
+            <thead style="position:sticky;top:0;background:#0d0614;border-bottom:1px solid rgba(74,222,128,.2);z-index:2;">
+              <tr>
+                <th style="padding:6px 8px;color:#4ade80;">Aula</th>
+                <th style="padding:6px 8px;color:#fff;">Ubicación</th>
+              </tr>
+            </thead>
+            <tbody id="cx-map-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Vector Map -->
+      <div class="cx-card-box" style="margin-bottom:0;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:18px;color:#fff;margin:0;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-map-marked-alt" style="color:#4ade80;"></i> Plano Vectorial FCM
+          </h3>
+          <span style="font-size:11px;color:rgba(74,222,128,.8);background:rgba(74,222,128,.1);padding:3px 10px;border-radius:12px;border:1px solid rgba(74,222,128,.2);">Interactivo</span>
+        </div>
+        <div style="background:#06030a;border:1px solid rgba(74,222,128,.2);border-radius:14px;padding:14px;">
+          <svg viewBox="0 0 500 360" style="width:100%;height:auto;" id="cx-faculty-svg">
+            <rect width="100%" height="100%" fill="rgba(10,5,20,0.5)" />
+            <rect x="200" y="30" width="100" height="35" fill="rgba(148,163,184,0.15)" stroke="rgba(148,163,184,0.3)" rx="3" id="cx-svg-hosp" style="cursor:pointer;" onclick="highlightCxWing('hosp')" />
+            <text x="250" y="52" fill="white" font-size="8" text-anchor="middle">Hospital Universitario</text>
+            <path d="M 120,130 L 155,120 L 195,240 L 155,250 Z" fill="rgba(127,29,29,0.7)" stroke="#ef4444" stroke-width="1.5" id="cx-svg-berisso" style="cursor:pointer;" onclick="highlightCxWing('berisso')" />
+            <text x="145" y="190" fill="white" font-size="8" text-anchor="middle" transform="rotate(73 145 190)">ALA BERISSO</text>
+            <path d="M 380,130 L 345,120 L 305,240 L 345,250 Z" fill="rgba(127,29,29,0.7)" stroke="#ef4444" stroke-width="1.5" id="cx-svg-laplata" style="cursor:pointer;" onclick="highlightCxWing('laplata')" />
+            <text x="355" y="190" fill="white" font-size="8" text-anchor="middle" transform="rotate(-73 355 190)">ALA LA PLATA</text>
+            <path d="M 155,250 C 190,270 310,270 345,250 L 335,280 C 290,300 210,300 165,280 Z" fill="rgba(153,27,27,0.8)" stroke="#ef4444" stroke-width="1.5" id="cx-svg-principal" style="cursor:pointer;" onclick="highlightCxWing('principal')" />
+            <text x="250" y="272" fill="white" font-size="9" text-anchor="middle">EDIFICIO PRINCIPAL</text>
+            <circle cx="250" cy="310" r="5" fill="#f5c842" />
+            <text x="250" y="328" fill="#f5c842" font-size="8" text-anchor="middle">ACCESO PRINCIPAL (CALLE 60 Y 120)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PARCIALES Y FINALES 2026 (SIDE-BY-SIDE) ── -->
+  <section id="section-finales">
+    <span class="cx-label lbl-purple">📅 Cronograma de Exámenes</span>
+    <h2 class="cx-section-title">Parciales y Finales FCM 2026</h2>
+    <p class="cx-section-sub">Fechas de mesas de examen, turnos de finales y evaluaciones parciales para tu planificación estratégica.</p>
+
+    <!-- ── FAIXA DESTACADA DE ALERTA: APERTURA DE INSCRIPCIÓN A EXÁMENES ── -->
+    <div style="background:linear-gradient(90deg, rgba(220,38,38,0.25) 0%, rgba(168,85,247,0.25) 50%, rgba(245,200,66,0.25) 100%);border:1px solid rgba(248,113,113,0.5);border-radius:14px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;gap:14px;box-shadow:0 0 30px rgba(248,113,113,0.25);position:relative;overflow:hidden;">
+      <div style="width:42px;height:42px;border-radius:12px;background:rgba(239,68,68,0.3);border:1px solid #ef4444;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 0 15px rgba(239,68,68,0.4);">
+        🚨
+      </div>
+      <div style="flex:1;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#4ade80;background:rgba(74,222,128,0.2);padding:3px 10px;border-radius:6px;border:1px solid rgba(74,222,128,0.5);animation:pulse 1.5s infinite;">
+            ✅ 2ª MESA JULIO — INSCRIPCIÓN ABIERTA
+          </span>
+          <span style="font-size:11px;color:var(--cx-gold);font-weight:800;">⏱️ SIU GUARANÍ ACTIVO AHORA</span>
+          <a href="https://cartelera.med.unlp.edu.ar/noticia/261" target="_blank" style="font-size:10px;color:#c084fc;font-weight:700;text-decoration:none;border:1px solid rgba(192,132,252,0.4);padding:2px 8px;border-radius:10px;">Ver aviso oficial →</a>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.5;">
+          <span style="color:#f87171;">🚨 URGENTE — JULIO 2026:</span> La <strong style="color:#4ade80;">2ª Mesa de Exámenes Finales de Julio</strong> ya está habilitada en el SIU Guaraní. Aviso oficial de la <strong style="color:var(--cx-gold);">Secretaría Académica FCM UNLP</strong> publicado el 14/07/2026. Verificá tus correlativas aprobadas antes de inscribirte.
+        </div>
+      </div>
+      <a href="https://siu-guarani.unlp.edu.ar/" target="_blank" class="cx-btn cx-btn-gold" style="padding:8px 16px;font-size:11px;flex-shrink:0;white-space:nowrap;box-shadow:0 0 15px rgba(245,200,66,0.3);">
+        <i class="fas fa-external-link-alt"></i> Ir al SIU Guaraní
+      </a>
+    </div>
+
+    <div class="cx-side-grid">
+      <!-- Left Column: Search & Filters -->
+      <div class="cx-side-tabs">
+        <h4 style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#c084fc;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(192,132,252,.15);">
+          <i class="fas fa-search"></i> Filtros de Examen
+        </h4>
+        <div style="position:relative;margin-bottom:10px;">
+          <input type="text" id="cx-exam-search" placeholder="Buscar materia (ej: Anatomía)..." oninput="filterCxDashboardExams()" style="width:100%;padding:8px 10px 8px 30px;background:rgba(8,5,16,.7);border:1px solid rgba(192,132,252,.3);border-radius:8px;color:#fff;font-size:12px;outline:none;">
+          <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#c084fc;font-size:11px;"></i>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button onclick="filterCxExamYear('all')" class="cx-rich-tab-btn cx-tab-active" id="cxexamtab-all">
+            <i class="fas fa-list-ul" style="color:#c084fc;width:18px;"></i> <span>Todas las materias</span>
+          </button>
+          <button onclick="filterCxExamYear('1')" class="cx-rich-tab-btn" id="cxexamtab-1">
+            <i class="fas fa-graduation-cap" style="color:#60a5fa;width:18px;"></i> <span>1º Año Medicina</span>
+          </button>
+          <button onclick="filterCxExamYear('2')" class="cx-rich-tab-btn" id="cxexamtab-2">
+            <i class="fas fa-graduation-cap" style="color:#4ade80;width:18px;"></i> <span>2º Año Medicina</span>
+          </button>
+          <button onclick="filterCxExamYear('3')" class="cx-rich-tab-btn" id="cxexamtab-3">
+            <i class="fas fa-graduation-cap" style="color:#fb923c;width:18px;"></i> <span>3º Año Medicina</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Exam Schedule Table -->
+      <div class="cx-card-box" style="margin-bottom:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:18px;color:#fff;margin:0;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-calendar-check" style="color:#c084fc;"></i> Mesas de Examen 2026
+          </h3>
+          <a href="/cronograma-finales/" class="cx-btn cx-btn-outline" style="font-size:11px;padding:4px 10px;">
+            Ver calendario completo →
+          </a>
+        </div>
+
+        <div style="overflow-x:auto;border:1px solid rgba(192,132,252,.2);border-radius:12px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;text-align:left;" id="cx-exams-dash-table">
+            <thead style="background:rgba(192,132,252,.1);border-bottom:1px solid rgba(192,132,252,.3);">
+              <tr>
+                <th style="padding:10px 12px;color:var(--cx-gold);">Materia</th>
+                <th style="padding:10px 12px;color:#fff;">Año</th>
+                <th style="padding:10px 12px;color:#60a5fa;">Mayo</th>
+                <th style="padding:10px 12px;color:#4ade80;">Julio</th>
+                <th style="padding:10px 12px;color:#fb923c;">Agosto</th>
+                <th style="padding:10px 12px;color:#c084fc;">Diciembre</th>
+              </tr>
+            </thead>
+            <tbody id="cx-exams-dash-body">
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-year="1" data-name="anatomia">
+                <td style="padding:10px 12px;color:#fff;font-weight:700;">Anatomía A, B y C</td>
+                <td style="padding:10px 12px;color:var(--cx-muted);">1º Año</td>
+                <td style="padding:10px 12px;color:#60a5fa;">15 May</td>
+                <td style="padding:10px 12px;color:#4ade80;">04 Jul</td>
+                <td style="padding:10px 12px;color:#fb923c;">08 Ago</td>
+                <td style="padding:10px 12px;color:#c084fc;">12 Dic</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-year="1" data-name="histologia">
+                <td style="padding:10px 12px;color:#fff;font-weight:700;">Histología y Embriología</td>
+                <td style="padding:10px 12px;color:var(--cx-muted);">1º Año</td>
+                <td style="padding:10px 12px;color:#60a5fa;">18 May</td>
+                <td style="padding:10px 12px;color:#4ade80;">07 Jul</td>
+                <td style="padding:10px 12px;color:#fb923c;">11 Ago</td>
+                <td style="padding:10px 12px;color:#c084fc;">15 Dic</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-year="1" data-name="biologia">
+                <td style="padding:10px 12px;color:#fff;font-weight:700;">Biología Celular</td>
+                <td style="padding:10px 12px;color:var(--cx-muted);">1º Año</td>
+                <td style="padding:10px 12px;color:#60a5fa;">20 May</td>
+                <td style="padding:10px 12px;color:#4ade80;">09 Jul</td>
+                <td style="padding:10px 12px;color:#fb923c;">13 Ago</td>
+                <td style="padding:10px 12px;color:#c084fc;">17 Dic</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-year="2" data-name="fisiologia">
+                <td style="padding:10px 12px;color:#fff;font-weight:700;">Fisiología y Biofísica</td>
+                <td style="padding:10px 12px;color:var(--cx-muted);">2º Año</td>
+                <td style="padding:10px 12px;color:#60a5fa;">22 May</td>
+                <td style="padding:10px 12px;color:#4ade80;">11 Jul</td>
+                <td style="padding:10px 12px;color:#fb923c;">15 Ago</td>
+                <td style="padding:10px 12px;color:#c084fc;">19 Dic</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-year="2" data-name="bioquimica">
+                <td style="padding:10px 12px;color:#fff;font-weight:700;">Química Biológica</td>
+                <td style="padding:10px 12px;color:var(--cx-muted);">2º Año</td>
+                <td style="padding:10px 12px;color:#60a5fa;">26 May</td>
+                <td style="padding:10px 12px;color:#4ade80;">14 Jul</td>
+                <td style="padding:10px 12px;color:#fb923c;">18 Ago</td>
+                <td style="padding:10px 12px;color:#c084fc;">21 Dic</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMISIONES Y CURSADAS 2026 (SIDE-BY-SIDE) ── -->
+  <section id="section-comisiones">
+    <span class="cx-label lbl-yellow">👥 Distribución de Cursada</span>
+    <h2 class="cx-section-title">Comisiones FCM 2026</h2>
+    <p class="cx-section-sub">Horarios, cátedras, aulas y distribución de comisiones para materias de la Facultad de Ciencias Médicas UNLP.</p>
+
+    <div class="cx-side-grid">
+      <!-- Left Column: Search & Day Filters -->
+      <div class="cx-side-tabs">
+        <h4 style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--cx-gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(245,200,66,.15);">
+          <i class="fas fa-filter"></i> Filtrar Comisiones
+        </h4>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:11px;color:var(--cx-muted);display:block;margin-bottom:4px;">Seleccionar Cátedra:</label>
+          <select id="cx-com-subject" onchange="filterCxDashboardComisiones()" style="width:100%;padding:8px 10px;background:rgba(8,5,16,.7);border:1px solid rgba(245,200,66,.3);border-radius:8px;color:#fff;font-size:12px;outline:none;">
+            <option value="all">Todas las Cátedras</option>
+            <option value="anatomia-a">Anatomía A</option>
+            <option value="anatomia-b">Anatomía B</option>
+            <option value="anatomia-c">Anatomía C</option>
+            <option value="histologia">Histología y Embriología</option>
+            <option value="biologia">Biología Celular</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label style="font-size:11px;color:var(--cx-muted);display:block;margin-bottom:4px;">Día de la semana:</label>
+          <select id="cx-com-day" onchange="filterCxDashboardComisiones()" style="width:100%;padding:8px 10px;background:rgba(8,5,16,.7);border:1px solid rgba(245,200,66,.3);border-radius:8px;color:#fff;font-size:12px;outline:none;">
+            <option value="all">Todos los Días</option>
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+          </select>
+        </div>
+
+        <div style="padding:10px;background:rgba(245,200,66,.05);border:1px dashed rgba(245,200,66,.2);border-radius:8px;font-size:11px;color:var(--cx-muted);">
+          <strong style="color:var(--cx-gold);">ℹ️ Nota SIU Guaraní:</strong> Las inscripciones se confirman mediante la plataforma oficial SIU.
+        </div>
+      </div>
+
+      <!-- Right Column: Comisiones Grid / Table -->
+      <div class="cx-card-box" style="margin-bottom:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h3 style="font-family:'Outfit',sans-serif;font-size:18px;color:#fff;margin:0;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-users" style="color:var(--cx-gold);"></i> Grilla de Comisiones
+          </h3>
+          <a href="/comisiones/" class="cx-btn cx-btn-gold" style="font-size:11px;padding:4px 10px;">
+            Ver buscador avanzado →
+          </a>
+        </div>
+
+        <div style="overflow-x:auto;border:1px solid rgba(245,200,66,.2);border-radius:12px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;text-align:left;">
+            <thead style="background:rgba(245,200,66,.1);border-bottom:1px solid rgba(245,200,66,.3);">
+              <tr>
+                <th style="padding:10px 12px;color:var(--cx-gold);">Comisión</th>
+                <th style="padding:10px 12px;color:#fff;">Cátedra</th>
+                <th style="padding:10px 12px;color:#60a5fa;">Día</th>
+                <th style="padding:10px 12px;color:#4ade80;">Horario</th>
+                <th style="padding:10px 12px;color:#c084fc;">Aula</th>
+              </tr>
+            </thead>
+            <tbody id="cx-comisiones-dash-body">
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-subj="anatomia-a" data-day="Lunes">
+                <td style="padding:10px 12px;color:var(--cx-gold);font-weight:700;">Comisión 1</td>
+                <td style="padding:10px 12px;color:#fff;">Anatomía A</td>
+                <td style="padding:10px 12px;color:#60a5fa;">Lunes</td>
+                <td style="padding:10px 12px;color:#4ade80;">08:00 - 12:00 hs</td>
+                <td style="padding:10px 12px;color:#c084fc;">Anfiteatro Prieto Díaz</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-subj="anatomia-a" data-day="Martes">
+                <td style="padding:10px 12px;color:var(--cx-gold);font-weight:700;">Comisión 2</td>
+                <td style="padding:10px 12px;color:#fff;">Anatomía A</td>
+                <td style="padding:10px 12px;color:#60a5fa;">Martes</td>
+                <td style="padding:10px 12px;color:#4ade80;">13:00 - 17:00 hs</td>
+                <td style="padding:10px 12px;color:#c084fc;">Anfiteatro Galli</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-subj="histologia" data-day="Miércoles">
+                <td style="padding:10px 12px;color:var(--cx-gold);font-weight:700;">Comisión 3</td>
+                <td style="padding:10px 12px;color:#fff;">Histología y Embriología</td>
+                <td style="padding:10px 12px;color:#60a5fa;">Miércoles</td>
+                <td style="padding:10px 12px;color:#4ade80;">09:00 - 13:00 hs</td>
+                <td style="padding:10px 12px;color:#c084fc;">Laboratorio Histo 1</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-subj="biologia" data-day="Jueves">
+                <td style="padding:10px 12px;color:var(--cx-gold);font-weight:700;">Comisión 4</td>
+                <td style="padding:10px 12px;color:#fff;">Biología Celular</td>
+                <td style="padding:10px 12px;color:#60a5fa;">Jueves</td>
+                <td style="padding:10px 12px;color:#4ade80;">14:00 - 18:00 hs</td>
+                <td style="padding:10px 12px;color:#c084fc;">Anfiteatro Rawson</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);" data-subj="anatomia-b" data-day="Viernes">
+                <td style="padding:10px 12px;color:var(--cx-gold);font-weight:700;">Comisión 5</td>
+                <td style="padding:10px 12px;color:#fff;">Anatomía B</td>
+                <td style="padding:10px 12px;color:#60a5fa;">Viernes</td>
+                <td style="padding:10px 12px;color:#4ade80;">08:00 - 12:00 hs</td>
+                <td style="padding:10px 12px;color:#c084fc;">Anfiteatro Gorostiaga</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -957,7 +1642,7 @@ body {
         <div class="cx-stat-block-title"><i class="fas fa-chart-bar"></i> ESTA SEMANA</div>
         <div class="cx-stat-row"><span class="cx-stat-name">TPs pendientes</span><span class="cx-stat-val gold">4</span></div>
         <div class="cx-stat-row"><span class="cx-stat-name">Finales a anotarse</span><span class="cx-stat-val high">2</span></div>
-        <div class="cx-stat-row"><span class="cx-stat-name">Notificaciones IA</span><span class="cx-stat-val ok">8</span></div>
+        <div class="cx-stat-row"><span class="cx-stat-name">Notificaciones Conecta</span><span class="cx-stat-val ok">8</span></div>
         <div class="cx-stat-row"><span class="cx-stat-name">Cartelera actualizada</span><span class="cx-stat-val ok">✓ Sí</span></div>
       </div>
     </div>
@@ -977,10 +1662,18 @@ body {
         <i class="fab fa-whatsapp"></i> Activar WhatsApp
       </a>
       <a href="{% url 'student_dashboard' %}" class="cx-btn cx-btn-switch">
-        <i class="fas fa-graduation-cap"></i> Ir a ALUMED OS
+        <i class="fas fa-graduation-cap"></i> Ir a Conecta FCM
       </a>
-    </div>
-  </div>
+  <!-- ── DASHBOARD FOOTER ── -->
+  <footer style="margin-top:40px;padding:20px;text-align:center;border-top:1px solid rgba(245,200,66,.15);font-size:12px;color:var(--cx-muted);">
+    <p style="margin:0 0 6px 0;font-weight:600;color:var(--cx-text);">
+      Modelo de Utilidad ® desarrollado por <strong style="color:var(--cx-gold);">Joyce Marinho</strong>
+    </p>
+    <p style="margin:0;font-size:11px;opacity:.8;">
+      <a href="https://www.conectafcm.com/pol%C3%ADtica-de-privacidade" target="_blank" style="color:#22d3ee;text-decoration:none;margin-right:12px;">Política de Privacidade</a>
+      <span>© 2024 por Joyce Marinho</span>
+    </p>
+  </footer>
 
 </div>
 
@@ -1151,6 +1844,136 @@ body {
   if(cxSrch) cxSrch.addEventListener('input', function(){ cxDictRender(this.value); });
   cxDictRender('');
 })();
+
+window.switchCxInfoTab = function(tabKey) {
+  document.querySelectorAll('.cx-info-view').forEach(function(v){ v.style.display = 'none'; });
+  var v = document.getElementById('cxcontent-' + tabKey);
+  if (v) v.style.display = 'block';
+  document.querySelectorAll('#section-info-util .cx-rich-tab-btn').forEach(function(b){ b.classList.remove('cx-tab-active'); });
+  var btn = document.getElementById('cxtab-' + tabKey);
+  if (btn) btn.classList.add('cx-tab-active');
+  if (tabKey === 'mapa') { renderCxMapClassrooms(cxClassroomsData); }
+};
+
+window.switchCxBecaTab = function(tabKey) {
+  document.querySelectorAll('.cx-beca-view').forEach(function(v){ v.style.display = 'none'; });
+  var v = document.getElementById('cxbpanel-' + tabKey);
+  if (v) v.style.display = 'block';
+  document.querySelectorAll('#section-becas .cx-rich-tab-btn').forEach(function(b){ b.classList.remove('cx-tab-active'); });
+  var btn = document.getElementById('cxbtab-' + tabKey);
+  if (btn) btn.classList.add('cx-tab-active');
+};
+
+var cxClassroomsData = [
+  { name: "Prieto Diaz A", location: "Planta baja ala Berisso", wing: "berisso" },
+  { name: "Galli (anfiteatro 2)", location: "1er piso ala Berisso", wing: "berisso" },
+  { name: "Rawson (aula)", location: "1er piso ala La Plata", wing: "laplata" },
+  { name: "Christman (anfiteatro 3)", location: "2do piso ala La Plata", wing: "laplata" },
+  { name: "Mainetti (anfiteatro 4)", location: "2do piso ala Berisso", wing: "berisso" },
+  { name: "Favaloro (anfiteatro 5)", location: "3er piso ala La Plata", wing: "laplata" },
+  { name: "Pasteur (anfiteatro 6)", location: "3er piso ala Berisso", wing: "berisso" },
+  { name: "Mazzei (anfiteatro 7)", location: "4to piso ala Berisso", wing: "berisso" },
+  { name: "Estiu (anfiteatro 8)", location: "4to piso ala La Plata", wing: "laplata" },
+  { name: "Aula 15", location: "4to piso ala Berisso", wing: "berisso" },
+  { name: "Aula 17", location: "4to piso ala Berisso", wing: "berisso" },
+  { name: "Aula 25", location: "4to piso ala Berisso", wing: "berisso" },
+  { name: "Aula 21", location: "1er piso de Biblioteca", wing: "principal" }
+];
+
+window.renderCxMapClassrooms = function(data) {
+  var tbody = document.getElementById('cx-map-body');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  data.forEach(function(row, index) {
+    var tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
+    tr.style.background = index % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent';
+    tr.innerHTML = '<td style="padding:8px 10px;color:#fff;font-weight:600;">' + row.name + '</td>' +
+                   '<td style="padding:8px 10px;color:var(--cx-muted);">' + row.location + '</td>';
+    tr.onclick = function() {
+      highlightCxWing(row.wing);
+    };
+    tbody.appendChild(tr);
+  });
+};
+
+window.filterCxMapClassrooms = function() {
+  var searchVal = (document.getElementById('cx-map-search').value || '').toLowerCase().trim();
+  var filtered = cxClassroomsData.filter(function(item) {
+    return item.name.toLowerCase().includes(searchVal) || item.location.toLowerCase().includes(searchVal);
+  });
+  renderCxMapClassrooms(filtered);
+};
+
+window.highlightCxWing = function(wing) {
+  var berisso = document.getElementById('cx-svg-berisso');
+  var laplata = document.getElementById('cx-svg-laplata');
+  var principal = document.getElementById('cx-svg-principal');
+  var hosp = document.getElementById('cx-svg-hosp');
+  [berisso, laplata, principal].forEach(function(path) {
+    if(path) { path.style.fill = 'rgba(127, 29, 29, 0.7)'; path.style.stroke = '#ef4444'; }
+  });
+  if(hosp) { hosp.style.fill = 'rgba(148, 163, 184, 0.1)'; hosp.style.stroke = 'rgba(148, 163, 184, 0.3)'; }
+  if (wing === 'berisso' && berisso) {
+    berisso.style.fill = 'rgba(245, 200, 66, 0.4)'; berisso.style.stroke = '#f5c842';
+  } else if (wing === 'laplata' && laplata) {
+    laplata.style.fill = 'rgba(34, 211, 238, 0.4)'; laplata.style.stroke = '#22d3ee';
+  } else if (wing === 'principal' && principal) {
+    principal.style.fill = 'rgba(192, 132, 252, 0.4)'; principal.style.stroke = '#c084fc';
+  } else if (wing === 'hosp' && hosp) {
+    hosp.style.fill = 'rgba(74, 222, 128, 0.4)'; hosp.style.stroke = '#4ade80';
+  }
+};
+
+window.filterCxDashboardExams = function() {
+  var searchVal = (document.getElementById('cx-exam-search').value || '').toLowerCase().trim();
+  var rows = document.querySelectorAll('#cx-exams-dash-body tr');
+  rows.forEach(function(row) {
+    var name = (row.getAttribute('data-name') || '') + ' ' + (row.textContent || '');
+    if (name.toLowerCase().includes(searchVal)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+};
+
+window.filterCxExamYear = function(year) {
+  ['all','1','2','3'].forEach(function(y) {
+    var btn = document.getElementById('cxexamtab-' + y);
+    if(btn) btn.classList.remove('cx-tab-active');
+  });
+  var activeBtn = document.getElementById('cxexamtab-' + year);
+  if(activeBtn) activeBtn.classList.add('cx-tab-active');
+
+  var rows = document.querySelectorAll('#cx-exams-dash-body tr');
+  rows.forEach(function(row) {
+    var rowYear = row.getAttribute('data-year');
+    if (year === 'all' || rowYear === year) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+};
+
+window.filterCxDashboardComisiones = function() {
+  var subjVal = document.getElementById('cx-com-subject').value;
+  var dayVal = document.getElementById('cx-com-day').value;
+  var rows = document.querySelectorAll('#cx-comisiones-dash-body tr');
+  rows.forEach(function(row) {
+    var rowSubj = row.getAttribute('data-subj');
+    var rowDay = row.getAttribute('data-day');
+    var matchSubj = (subjVal === 'all' || rowSubj === subjVal);
+    var matchDay = (dayVal === 'all' || rowDay === dayVal);
+    if (matchSubj && matchDay) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+};
 </script>
 
 {% endblock %}
