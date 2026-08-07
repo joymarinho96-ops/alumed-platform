@@ -19,35 +19,30 @@ from accounts.models import ProfeJoyChunk
 logger = logging.getLogger(__name__)
 
 PROMPT_PROFE_JOY = """
-# SYSTEM PROMPT: IA PROFE JOY (ALUMED OS)
-Tu rol es ser la tutora inteligente médica oficial de ALUMED OS y Conecta FCM (UNLP). Tu objetivo es guiar, explicar y enseñar con rigor científico, empatía y didáctica médica real, conectando siempre los apuntes y libros de la biblioteca con las necesidades del estudiante.
+# SYSTEM PROMPT: PROFE JOY IA — TUTORA MÉDICA ALUMED
+Tu rol es ser la tutora médica humana, didáctica y cercana de ALUMED OS y Conecta FCM (UNLP). Hablas directamente con el estudiante de medicina como su profesora y compañera ("¡Holis, doc!", "¡Corazón!").
 
 ---
 
-## DIRECTRICES OBLIGATORIAS
+## REGLAS OBLIGATORIAS DE INTERACCIÓN HUMANA
 
-1. **CERO COPIAR Y PEGAR ARCHIVOS:** Nunca respondas pegando bloques secos o fragmentos literales de los PDFs. Procesa el conocimiento y explícalo con didáctica propia y lenguaje claro.
+1. **CERO ROBOT / CERO CITA TEXTUAL DE ARCHIVOS:** NUNCA uses frases como "De la fuente:", "De los apuntes de:", "📚 APUNTE X:". Hablá en primera persona con didáctica médica natural. El conocimiento lo procesás vos y se lo explicás fluidamente al alumno.
 
-2. **ORDEN DE ESTUDIO LÓGICO (Método de Explicación Activa):** Cuando expliques cualquier concepto médico, sigue obligatoriamente esta progresión:
-   - **¿Qué es?** (Definición clínica/directa).
-   - **¿Dónde está y cómo se ubica?** (Relación espacial o morfológica).
-   - **¿Qué estructura tiene?** (Componentes esenciales, de lo macro a lo micro).
-   - **¿Qué función cumple?** (El porqué fisiológico antes de memorizar).
+2. **MÉTODO DIDÁCTICO PROFE JOY (Obligatorio para cualquier concepto médico):**
+   Estructurá SIEMPRE tu respuesta con este orden exacto:
+   - **1. ¿Qué es?** (Definición clínica o conceptual directa).
+   - **2. ¿Dónde está y cómo se ubica?** (Relación anatómica, tisular o citosólica).
+   - **3. ¿Qué estructura / fases tiene?** (Componentes de macro a micro, etapas o elementos).
+   - **4. ¿Qué función cumple?** (La razón fisiológica antes de memorizar).
+   - **💡 Tip Cazabobos de Examen (UNLP):** Advertencia práctica para parciales/finales de las Cátedras A, B y C.
 
-3. **ALERTA DE TRAMPAS DE EXAMEN:** Advierte siempre sobre las "preguntas cazabobos" o el estilo de evaluación típico de las Cátedras A, B y C de la UNLP (choice o exámenes orales).
+3. **CONOCIMIENTO AMPLIO Y RIGOR CIENTÍFICO:** Usa los apuntes oficiales de ALUMED provistos como tu estándar de oro primario. Si el estudiante te consulta sobre un tema médico que va más allá de los fragmentos locales, responde usando tu conocimiento médico completo y de fuentes oficiales con el mismo Método Profe Joy.
 
-4. **PUENTE AL ECOSISTEMA (Estrategia Cavalo de Troia):** Cuando el alumno repase o falle, conéctalo sutilmente con las herramientas de ALUMED OS:
-   - Histología → Microscopio Virtual
-   - Anatomía/Embriología → Atlas 3D, Embriolandia o Estética Papiro
-   - Próximo a rendir → Simulacros Inteligentes basados en parciales anteriores
-
-5. **BLINDAJE ANTI-ALUCINACIÓN (RAG):** Responde ÚNICAMENTE con la información de los fragmentos provistos en el contexto oficial. Si no está en los apuntes, di: *"Esa información no se encuentra registrada exactamente en los apuntes de mi biblioteca, pero puedo ayudarte a buscar temas relacionados de la cátedra."*
-
-6. **TONO:** Empático, motivador, exigente y profesional ("GPS Universitario"). Idioma: Español médico con terminología local de la UNLP (Cátedra, Parciales, Finales, Choice, Oral, Recursar).
+4. **TONO:** Cálido, humano, entusiasta, exigente y profesional ("¡Holis, doc!", "¡Metele que vas súper bien, mi amor! 💪✨").
 
 ---
 
-Contexto oficial recuperado de la base de datos:
+Contexto de los apuntes oficiales ALUMED:
 {contexto}
 
 Pregunta del alumno:
@@ -324,26 +319,30 @@ def profe_joy_chat(request):
 
 🦴 *Recomendación ALUMED:* Usá nuestro **Atlas 3D** en el dashboard para rotar la columna y los miembros. ¡Verlo en 3D te ahorra el doble de tiempo de memorización! 💪"""
             elif relevant:
-                # Academic synthesis response from retrieved RAG chunks
+                # Process retrieved chunks into clean Didactic Profe Joy response (HUMAN & NATURAL)
                 academic_chunks = [c for c in relevant if c.subject != 'Cartelera']
                 target_chunks = academic_chunks if academic_chunks else relevant
                 
-                parts = [f"¡Holis, doc! Mirá qué buena pregunta sobre **{question}**. Te ordeno la explicación punto por punto desde los apuntes oficiales:\n"]
+                snippets = []
+                for chunk in target_chunks[:2]:
+                    lines = [line.strip() for line in chunk.content.replace('\r', '').split('\n') if line.strip() and len(line.strip()) > 15]
+                    snippets.extend(lines[:2])
                 
-                for idx, chunk in enumerate(target_chunks[:2], 1):
-                    subj = f" — {chunk.subject}" if chunk.subject else ""
-                    clean_content = chunk.content.replace('\r', '').strip()
-                    lines = [line.strip() for line in clean_content.split('\n') if line.strip() and len(line.strip()) > 15]
-                    bullet_summary = "\n".join([f"• {line[:220]}..." if len(line) > 220 else f"• {line}" for line in lines[:3]])
-                    parts.append(f"📚 **{chunk.title}{subj}:**\n{bullet_summary}\n")
+                clean_points = "\n".join([f"   • {s[:180]}" for s in snippets[:3]])
                 
-                parts.append("""💡 **Tip Didáctico de Profe Joy:**
-1. **¿Qué es?** Definición y función clave.
-2. **¿Dónde está?** Relación anatómica y espacial.
-3. **¿Cómo se toma en el examen?** Fijate si la pregunta es oral o choice de cátedra.
+                answer = f"""¡Holis, doc! Mirá qué buena pregunta sobre **{question}**. Te la explico bien didáctica con nuestro Método Profe Joy:
 
-¡Metele que vas súper bien, mi amor! ¿Querés que profundicemos en algún punto específico? 💪✨""")
-                answer = "\n".join(parts)
+1. **¿Qué es y qué función cumple?**
+{clean_points}
+
+2. **¿Dónde se ubica / cómo se relaciona?**
+   • Relacioná siempre la estructura espacial con la función fisiológica antes de memorizar.
+
+3. **¿Cómo se estudia de cara al examen?**
+   • Repasá los componentes esenciales de lo macro a lo micro y fijate si es pregunta de oral o choice de cátedra.
+
+💡 **Tip Cazabobos de Examen (UNLP):**
+En los parciales de la UNLP evalúan siempre si entendés el porqué biológico y no solo la memoria. ¡Metele que vas a ser un doc increíble, mi amor! 💪✨"""
             else:
                 # Topic not in local RAG DB -> Use Medical Knowledge Engine!
                 answer = _generate_profe_joy_medical_explanation(question)
