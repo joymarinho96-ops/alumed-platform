@@ -4427,7 +4427,7 @@
 </nav>
 
 <!-- ══ MOBILE NAV DRAWER ════════════════════════════════════════════ -->
-<div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-hidden="true">
+<div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-hidden="true" style="display: none;">
   <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Cerrar menú">&times;</button>
   <div class="nav-drawer-links">
 
@@ -5614,6 +5614,7 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
   pointer-events: none;
 }
 .nav-mobile-drawer.open {
+  display: flex !important;
   transform: translateX(0);
   visibility: visible;
   pointer-events: auto;
