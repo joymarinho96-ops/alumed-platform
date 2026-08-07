@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from courses.models import Course
 from .library_catalog import build_library_payload
-from .models import LibraryResource, Announcement, Popup, Testimonial, TestimonialVideo, DigitalBook
+from .models import LiveClass, UserCalendarEvent, CarteleraItem, LibraryResource, Announcement, Popup, Testimonial, TestimonialVideo, DigitalBook
 from accounts.views import student_auth_required
 import urllib.request
 import re
@@ -199,6 +201,10 @@ def simulacros_view(request, materia=None):
     """Renderiza el portal de simulacros público (Caballo de Troya)."""
     return render(request, 'simulacros.html', {'materia_preseleccionada': materia})
 
+def atlas_histologico_view(request):
+    """Renderiza el Módulo #1 Principal: Atlas Histológico & Visor de Láminas."""
+    return render(request, 'core/atlas_histologico.html')
+
 def checkout_intensivo(request, curso):
     """Redirige al checkout del intensivo correspondiente."""
     return render(request, 'simulacros.html')  # Mock view for now
@@ -267,6 +273,7 @@ def papiro_profe_joy_view(request):
 
 
 from django.http import JsonResponse
+from django_q.tasks import async_task
 from courses.models import SimulacroQuestion
 import random
 
@@ -924,3 +931,313 @@ Devuelve ÚNICAMENTE un objeto JSON estricto con la siguiente clave "questions" 
 
 def guia_supervivencia_view(request):
     return render(request, 'accounts/guia_supervivencia.html')
+
+
+def alumed_widgets_view(request):
+    """
+    Vista principal para gestionar la carga de widgets educativos 
+    dentro de la plataforma Alumed.
+    """
+    context = {
+        'section': 'banco_preguntas',
+        'status': 'active'
+    }
+    
+    # Si es una petición AJAX / API para cargar datos dinámicos del widget
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = {
+            "widget_name": "Banco de Preguntas Histología",
+            "state": "loaded"
+        }
+        return JsonResponse(data)
+        
+    return render(request, 'alumed_widgets/index.html', context)
+
+
+
+from django.utils import timezone
+from datetime import datetime
+
+@login_required
+@require_http_methods(['POST'])
+def sync_calendar_event(request):
+    """
+    Endpoint para sincronizar un evento de la cartelera a Google Calendar (ASÍNCRONO).
+    Body JSON: { "item_id": "..." }
+    """
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+        
+        if not item_id:
+            return JsonResponse({'error': 'Faltan datos (item_id)'}, status=400)
+            
+        try:
+            cartelera_item = CarteleraItem.objects.get(id=item_id)
+        except CarteleraItem.DoesNotExist:
+            return JsonResponse({'error': 'El evento original ya no existe en la cartelera.'}, status=404)
+
+        # Si ya existe localmente, sabemos de antemano que está sincronizado.
+        user_event = UserCalendarEvent.objects.filter(user=request.user, cartelera_event=cartelera_item).first()
+        if user_event:
+            return JsonResponse({
+                'status': 'already_synced',
+                'message': '¡Este evento ya está en tu calendario! No se creará un duplicado.'
+            })
+
+        # Encolamos la tarea pesada
+        async_task('core.tasks.async_sync_google_event', request.user.id, item_id)
+        
+        return JsonResponse({
+            'status': 'queued', 
+            'message': 'Procesando en segundo plano. Tu evento aparecerá en breve.'
+        }, status=202)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(['POST'])
+def unsync_calendar_event(request):
+    """Permite al alumno quitar el evento de su Google Calendar (ASÍNCRONO)."""
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+
+        sync_record = UserCalendarEvent.objects.filter(user=request.user, cartelera_event_id=item_id).first()
+        if not sync_record:
+            return JsonResponse({'error': 'El evento no está sincronizado'}, status=404)
+
+        # Encolamos la eliminación
+        async_task('core.tasks.async_delete_google_event', request.user.id, sync_record.google_event_id, item_id)
+
+        # Opcional: borrar el registro local de inmediato para que la UI lo refleje al instante
+        sync_record.delete()
+
+        return JsonResponse({'status': 'queued', 'message': 'Eliminación en proceso.'}, status=202)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+from .models import LiveClass, Materia, CursoWix, UserProfile
+
+@login_required
+def student_dashboard(request):
+    """Vista principal del Dashboard del Estudiante."""
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    # Obtener materias del alumno
+    materias_alumno = profile.materias.all()
+    materias_disponibles = Materia.objects.exclude(id__in=materias_alumno.values_list('id', flat=True))
+    
+    # Obtener los próximos eventos de la cartelera filtrados por las materias del alumno
+    # Asumimos que los eventos futuros son aquellos cuya date_parsed es mayor o igual a hoy
+    # Si no tiene fecha, lo obviamos por ahora o lo mostramos si target_years coincide.
+    # Por simplicidad, mostraremos los últimos items relacionados a la materia
+    proximos_eventos = CarteleraItem.objects.filter(materia__in=materias_alumno).order_by('-id')[:10]
+    
+    # Marcar cuáles están sincronizados
+    synced_events_ids = UserCalendarEvent.objects.filter(user=request.user).values_list('cartelera_event_id', flat=True)
+    for evento in proximos_eventos:
+        evento.is_synced = evento.id in synced_events_ids
+        
+    eventos_agendados_count = len(synced_events_ids)
+    
+    # Obtener cursos Wix vinculados a las materias
+    mis_cursos_wix = CursoWix.objects.filter(materia__in=materias_alumno, activo=True)
+    
+    # WhatsApp Support URL
+    from .whatsapp_service import WhatsAppService
+    ws = WhatsAppService()
+    materia_str = materias_alumno.first().nombre if materias_alumno.exists() else None
+    whatsapp_support_url = ws.build_support_whatsapp_url(request.user.first_name, materia_str)
+    
+    context = {
+        'whatsapp_support_url': whatsapp_support_url,
+        'profile': profile,
+        'materias_alumno': materias_alumno,
+        'materias_disponibles': materias_disponibles,
+        'proximos_eventos': proximos_eventos,
+        'eventos_agendados_count': eventos_agendados_count,
+        'mis_cursos_wix': mis_cursos_wix,
+    }
+    return render(request, 'core/dashboard.html', context)
+
+@login_required
+@require_http_methods(['POST'])
+def update_materias(request):
+    """Endpoint AJAX para inscribirse o desinscribirse de una materia."""
+    try:
+        data = json.loads(request.body)
+        materia_id = data.get('materia_id')
+        action = data.get('action') # 'add' or 'remove'
+        
+        materia = Materia.objects.get(id=materia_id)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        
+        if action == 'add':
+            profile.materias.add(materia)
+        elif action == 'remove':
+            profile.materias.remove(materia)
+            
+        return JsonResponse({'status': 'success', 'message': f'Materia {"añadida" if action == "add" else "removida"}'})
+    except Materia.DoesNotExist:
+        return JsonResponse({'error': 'Materia no encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(['POST'])
+def update_whatsapp_profile(request):
+    """Endpoint AJAX para actualizar el número y preferencias de WhatsApp."""
+    try:
+        data = json.loads(request.body)
+        phone = data.get('phone_number', '').strip()
+        enabled = data.get('notifications_enabled', True)
+        
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        
+        # Validar formato simple de +549... (esto es solo un check básico)
+        if phone and not phone.startswith('+'):
+            return JsonResponse({'error': 'El número debe comenzar con + y el código de país (ej. +549...)'}, status=400)
+            
+        profile.phone_number = phone
+        profile.whatsapp_notifications_enabled = enabled
+        profile.save()
+        
+        return JsonResponse({'status': 'success', 'message': 'Preferencias de WhatsApp actualizadas.'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+from .wix_library_service import WixLibraryService
+from .models import LiveClass, LibraryDownloadLog
+
+def library_catalog(request):
+    """Vista pública/híbrida para la Biblioteca Virtual."""
+    search_query = request.GET.get('q', '')
+    materia_code = request.GET.get('materia', '')
+    
+    # Consumir API de Wix
+    wix_service = WixLibraryService()
+    items = wix_service.get_library_items(search_query=search_query, materia_code=materia_code)
+    
+    # Extraer las materias disponibles (podemos sacarlas del modelo Materia)
+    materias_disponibles = Materia.objects.all()
+    
+    context = {
+        'items': items,
+        'search_query': search_query,
+        'materia_code': materia_code,
+        'materias': materias_disponibles,
+        'is_guest': not request.user.is_authenticated
+    }
+    return render(request, 'core/biblioteca.html', context)
+
+@login_required
+@require_http_methods(['POST'])
+def track_and_download_item(request):
+    """Endpoint para descargar un PDF de la biblioteca y registrar el log."""
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('wix_item_id')
+        item_title = data.get('item_title', 'Documento Desconocido')
+        materia_code = data.get('materia_code')
+        
+        materia = Materia.objects.filter(codigo=materia_code).first() if materia_code else None
+        
+        # Guardar en analíticas
+        LibraryDownloadLog.objects.create(
+            user=request.user,
+            wix_item_id=item_id,
+            item_title=item_title,
+            materia=materia
+        )
+        
+        # Obtener URL real del CDN de Wix
+        wix_service = WixLibraryService()
+        download_url = wix_service.get_item_download_url(item_id, request.user)
+        
+        return JsonResponse({
+            'status': 'success', 
+            'download_url': download_url,
+            'message': '¡Descarga iniciada! Echa un vistazo a nuestros cursos premium.'
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+from allauth.socialaccount.models import SocialToken
+from django.contrib import messages
+from django.shortcuts import redirect
+from .google_calendar_service import GoogleCalendarService
+from .models import LiveClass, CarteleraItem
+
+@login_required
+def sync_calendar_view(request):
+    """Sincronización masiva de exámenes/parciales."""
+    try:
+        # Obtener el token de Google asociado al usuario
+        social_token = SocialToken.objects.filter(account__user=request.user, account__provider='google').first()
+        if not social_token:
+            messages.error(request, "No se encontró una cuenta de Google vinculada. Por favor, inicia sesión con Google.")
+            return redirect('dashboard')
+            
+        # Extraer los exámenes (CarteleraItem tipo Examen/Parcial que sean futuros)
+        # Asumiremos que traemos todos los items de la cartelera para el ejemplo,
+        # o podríamos filtrar por materia del usuario y tipo (ej: parcial/final)
+        # Aquí traemos los de las materias del alumno
+        user_materias = request.user.core_profile.materias.all() if hasattr(request.user, 'core_profile') else []
+        exams_list = CarteleraItem.objects.filter(materia__in=user_materias).exclude(date_iso__isnull=True)
+        
+        if not exams_list.exists():
+            messages.info(request, "No hay exámenes o eventos programados para tus materias.")
+            return redirect('dashboard')
+            
+        success, msg = GoogleCalendarService.sync_exams_to_user_calendar(social_token, exams_list)
+        
+        if success:
+            messages.success(request, f"¡Éxito! Se sincronizaron {exams_list.count()} eventos en tu Google Calendar.")
+        else:
+            messages.error(request, f"Hubo un problema sincronizando: {msg}")
+            
+    except Exception as e:
+        messages.error(request, f"Error inesperado: {str(e)}")
+        
+    return redirect('dashboard')
+
+
+@login_required
+def live_classroom_view(request):
+    """
+    Vista de la Sala de Clases en Vivo.
+    Filtra por el año del estudiante.
+    """
+    try:
+        profile = request.user.core_profile
+        current_year = profile.current_year
+    except:
+        current_year = None
+
+    # Buscar la clase activa para el año del estudiante
+    live_class = None
+    if current_year:
+        # Primero buscamos si hay una activa ahora
+        live_class = LiveClass.objects.filter(target_year=current_year, is_active=True).first()
+        
+        # Si no hay activa, buscamos la próxima programada
+        if not live_class:
+            live_class = LiveClass.objects.filter(target_year=current_year, is_active=False).order_by('scheduled_time').first()
+    
+    # Fallback: si no tiene año, mostrar una clase activa general (target_year null)
+    if not live_class:
+        live_class = LiveClass.objects.filter(target_year__isnull=True, is_active=True).first()
+
+    context = {
+        'live_class': live_class,
+        'profile': profile if 'profile' in locals() else None,
+    }
+    return render(request, 'core/live_room.html', context)

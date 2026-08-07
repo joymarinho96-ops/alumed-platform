@@ -38,6 +38,8 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from core.models import CarteleraItem
+from core.whatsapp_service import send_whatsapp_alert
+from accounts.models import ConectaPreference
 
 logger = logging.getLogger(__name__)
 
@@ -894,12 +896,24 @@ class Command(BaseCommand):
 
                 # ── 5. Notificar ──
                 if do_notify:
-                    sent = send_telegram_segmented(item)
-                    if sent:
+                    sent_tg = send_telegram_segmented(item)
+                    
+                    # WhatsApp Alert Logic
+                    prefs = ConectaPreference.objects.filter(whatsapp_active=True, consent_granted=True)
+                    wa_numbers = [p.whatsapp_number for p in prefs if p.whatsapp_number]
+                    
+                    sent_wa = False
+                    if wa_numbers:
+                        try:
+                            sent_wa = send_whatsapp_alert(item, wa_numbers)
+                        except Exception as e:
+                            logger.error(f'Error sending WA alerts: {e}')
+
+                    if sent_tg or sent_wa:
                         item.notified_at = timezone.now()
                         item.save(update_fields=['notified_at'])
                         stats['notified'] += 1
-                        self.stdout.write(self.style.SUCCESS('     [SENT] Notificacao enviada'))
+                        self.stdout.write(self.style.SUCCESS(f'     [SENT] Notificacao enviada (TG: {bool(sent_tg)}, WA: {bool(sent_wa)})'))
 
 
         # ── 6. Marcar inativos ──

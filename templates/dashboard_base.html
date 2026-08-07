@@ -162,6 +162,7 @@
     
     <div class="menu-section">
         <ul class="menu-list">
+            <li><a href="/atlas-histologico/" class="{% if request.resolver_match.url_name == 'atlas_histologico' %}active{% endif %}" style="color: #ec4899; font-weight: 800;"><i class="fas fa-microscope" style="color: #ec4899;"></i> 1. Atlas Histológico (Principal)</a></li>
             <li><a href="{% url 'simulacros' %}" class="{% if request.resolver_match.url_name == 'simulacros' %}active{% endif %}">🎯 Simulacros</a></li>
             <li><a href="{% url 'conecta_biblioteca' %}" class="{% if request.resolver_match.url_name == 'conecta_biblioteca' %}active{% endif %}">📁 Biblioteca</a></li>
             <li><a href="{% url 'microscopio_virtual' %}" class="{% if request.resolver_match.url_name == 'microscopio_virtual' %}active{% endif %}">🔬 Microscopio</a></li>

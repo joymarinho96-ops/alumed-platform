@@ -50,10 +50,14 @@
     }
 
     .wix-embed-card iframe {
+        position: absolute;
+        top: -100px;
+        left: 0;
         width: 100%;
-        height: 100%;
+        height: calc(100% + 150px);
         border: none;
         display: block;
+        overflow: hidden;
     }
 
     /* ── CHAT PANEL PROFE JOY IA ── */
@@ -322,7 +326,7 @@
     <div class="library-split-layout">
         <!-- 1. Embedded Wix Site -->
         <div class="wix-embed-card">
-            <iframe src="https://www.conectafcm.com/biblioteca-virtual/aea00840-590b-4e56-b96e-4eae57b081a1" title="Biblioteca Virtual Conecta FCM" loading="lazy"></iframe>
+            <iframe src="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" title="Biblioteca Virtual Conecta FCM" loading="lazy" scrolling="no" frameborder="0" allowfullscreen></iframe>
         </div>
 
         <!-- 2. Integrated Profe Joy IA Chat -->

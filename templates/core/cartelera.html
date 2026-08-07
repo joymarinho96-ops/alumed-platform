@@ -774,3 +774,45 @@ function getCookie(name){
 window.onload = function(){ SUB.init(); };
 </script>
 {% endblock %}
+
+<script>
+async function syncToGoogleCalendar(item_id, title, date_iso) {
+    // Extraer CSRF Token (necesario para Django)
+    let csrfToken = '';
+    const match = document.cookie.match(/csrftoken=([^;]+)/);
+    if (match) csrfToken = match[1];
+
+    try {
+        const response = await fetch('/api/calendar/sync/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                item_id: item_id,
+                title: title, 
+                date_iso: date_iso 
+            })
+        });
+        const data = await response.json();
+        
+        if(data.error === 'not_linked') {
+             // Redirigir sutilmente al login de Google para vincular cuenta
+             alert("¡Hola, corazón! Para agendar esto necesitas vincular tu cuenta de Google. Te redirigiremos ahora.");
+             window.location.href = "{% url 'account_login' %}?process=connect";
+        } else if (data.status === 'already_synced') {
+             alert(data.message);
+        } else if (data.status === 'queued') {
+             alert(data.message); // Tarea asíncrona iniciada
+        } else if (data.status === 'success') {
+             alert(data.message);
+             if(data.link) window.open(data.link, '_blank');
+        } else {
+             alert("Error: " + data.error);
+        }
+    } catch (err) {
+        alert("Ocurrió un error al intentar sincronizar.");
+    }
+}
+</script>

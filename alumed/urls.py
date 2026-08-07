@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view, simulacros_view, api_get_simulacro_questions, checkout_intensivo, guia_supervivencia_view, papiro_profe_joy_view
+from core.views import home, unlp, uba, barcelo, premed, grupos, microscopio_virtual, anatomia_3d, cronograma_finales, info_util, facultad, biblioteca, cronograma_tps, plan_estudios, apoyo_psicologico, comisiones, club, favoritos, cartelera_view, conecta_fcm_view, conecta_landing_view, mapa_facultad_view, becas_view, simulacros_view, api_get_simulacro_questions, checkout_intensivo, guia_supervivencia_view, papiro_profe_joy_view, atlas_histologico_view, alumed_widgets_view
 from core.telegram_views import telegram_webhook, setup_webhook
 from core.library_views import conecta_biblioteca_view, conecta_biblioteca_lector_view
 from core.profe_joy_views import profe_joy_chat, profe_joy_page, profe_joy_stats
@@ -18,6 +18,10 @@ urlpatterns = [
     path('medlatin/', include('medlatin.urls', namespace='medlatin')),
 
     path('', home, name='home'),
+    path('atlas-histologico/', atlas_histologico_view, name='atlas_histologico'),
+    path('atlas/', atlas_histologico_view, name='atlas_histologico_alias'),
+    path('widgets/', alumed_widgets_view, name='alumed_widgets'),
+    path('widgets/preguntas/', alumed_widgets_view, name='alumed_widgets_view'),
     path('guia-supervivencia/', guia_supervivencia_view, name='guia_supervivencia'),
     path('simulacros/', simulacros_view, name='simulacros'),
     path('simulacros/<slug:materia>/', simulacros_view, name='simulacro_materia'),

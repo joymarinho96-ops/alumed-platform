@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Announcement, Event, LibraryResource, Product, Popup, Testimonial, TestimonialVideo, DigitalBook, CarteleraItem
+from .models import LiveClass, Announcement, Event, LibraryResource, Product, Popup, Testimonial, TestimonialVideo, DigitalBook, CarteleraItem
 from django.utils.html import format_html
 from django.utils import timezone
 from datetime import timedelta
@@ -129,3 +129,53 @@ class CarteleraItemAdmin(admin.ModelAdmin):
     def mark_inactive(self, request, queryset):
         queryset.update(is_active=False)
     mark_inactive.short_description = 'Marcar como inativo'
+
+from .models import LiveClass, ConectaRadarSession, RadarSweepLog, PrimeiroBiblioTome, EstatutoCodex, AegisDefenseDraft, ClubAluMedAdept, FirewallSigil
+
+# ==========================================
+# MENU ARQUITETA - REGISTROS ALQUÍMICOS
+# ==========================================
+
+@admin.register(ConectaRadarSession)
+class ConectaRadarSessionAdmin(admin.ModelAdmin):
+    list_display = ('session_name', 'is_active', 'last_used')
+    list_filter = ('is_active',)
+
+@admin.register(RadarSweepLog)
+class RadarSweepLogAdmin(admin.ModelAdmin):
+    list_display = ('target_year', 'status', 'items_found', 'timestamp')
+    list_filter = ('status', 'target_year')
+
+@admin.register(PrimeiroBiblioTome)
+class PrimeiroBiblioTomeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'subject', 'vectorization_status', 'uploaded_at')
+    list_filter = ('vectorization_status', 'subject')
+
+@admin.register(EstatutoCodex)
+class EstatutoCodexAdmin(admin.ModelAdmin):
+    list_display = ('article_number', 'title')
+    search_fields = ('article_number', 'title', 'keywords')
+
+@admin.register(AegisDefenseDraft)
+class AegisDefenseDraftAdmin(admin.ModelAdmin):
+    list_display = ('student_identifier', 'related_rule', 'created_at')
+    search_fields = ('student_identifier',)
+
+@admin.register(ClubAluMedAdept)
+class ClubAluMedAdeptAdmin(admin.ModelAdmin):
+    list_display = ('student_email', 'has_atlas_access', 'has_microscope_access', 'has_profe_joy_premium', 'expiration_date')
+    list_filter = ('has_atlas_access', 'has_profe_joy_premium')
+    search_fields = ('student_email', 'wix_subscription_id')
+
+@admin.register(FirewallSigil)
+class FirewallSigilAdmin(admin.ModelAdmin):
+    list_display = ('service_name', 'is_active', 'rate_limit_requests', 'rotated_at')
+    list_filter = ('is_active',)
+
+
+
+@admin.register(LiveClass)
+class LiveClassAdmin(admin.ModelAdmin):
+    list_display = ('title', 'target_year', 'scheduled_time', 'is_active')
+    list_filter = ('target_year', 'is_active')
+    search_fields = ('title', 'target_year')

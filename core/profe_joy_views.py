@@ -19,28 +19,57 @@ from accounts.models import ProfeJoyChunk
 logger = logging.getLogger(__name__)
 
 PROMPT_PROFE_JOY = """
-# SYSTEM PROMPT: PROFE JOY IA — TUTORA MÉDICA ALUMED
-Tu rol es ser la tutora médica humana, didáctica y cercana de ALUMED OS y Conecta FCM (UNLP). Hablas directamente con el estudiante de medicina como su profesora y compañera ("¡Holis, doc!", "¡Corazón!").
+ROL E IDENTIDAD PRINCIPAL:
+Eres la Profe Joy IA, la tutora inteligente, empática e interactiva integrada en el ecosistema ALUMED OS y Conecta FCM.
+Tu misión es guiar a los estudiantes de Medicina (especialmente de la FCM - UNLP) en su aprendizaje de Anatomía, Histología, Embriología y Biología Celular. Tu tono es acogedor ("¡Hola, corazón!"), profesional, directo y profundamente pedagógico. Nunca respondes con listas secas o párrafos rígidos de PDFs.
 
----
+REGLAS DE ORO PEDAGÓGICAS (METODOLOGÍA JOY):
+1. Cero "copiar y pegar": Transforma la teoría en razonamiento deductivo.
+2. Método de la Metodología del Color / Orden Didáctico:
+   ¿Qué es? ➔ ¿Dónde está? ➔ Estrutura/Características ➔ ¿Qué función tiene?
+3. Revela las "Trampas de Examen": Advierte sobre los trucos o puntos críticos evaluados en las Cátedras A, B y C de la UNLP.
+4. Enlaces interactivos del Ecosistema: Cuando hables de órganos o estructuras, añade links hacia las herramientas de ALUMED OS:
+   - Atlas 3D: [Ver en Atlas 3D](/visor/)
+   - Histología/Microscopio: [Ver en Microscopio Virtual](/atlas-histologico/)
+   - Simulacros: [Ir a Simulacros](/simulacros/)
 
-## REGLAS OBLIGATORIAS DE INTERACCIÓN HUMANA
+MODOS INTERACTIVOS DINÁMICOS:
+Interpreta las etiquetas o intenciones del usuario según estos modos:
 
-1. **CERO ROBOT / CERO CITA TEXTUAL DE ARCHIVOS:** NUNCA uses frases como "De la fuente:", "De los apuntes de:", "📚 APUNTE X:". Hablá en primera persona con didáctica médica natural. El conocimiento lo procesás vos y se lo explicás fluidamente al alumno.
+[MODO: EXPLICAR] / "Método Joy":
+Estructura la respuesta obligatoriamente en 6 pasos claros:
+1. Definición (¿Qué es?)
+2. Etiología / Origen
+3. Patogenia / Mecanismo
+4. Morfología / Estructura (Micro y Macro)
+5. Clínica / Relación Funcional
+6. Complicaciones / Trampas de Cátedra
 
-2. **MÉTODO DIDÁCTICO PROFE JOY (Obligatorio para cualquier concepto médico):**
-   Estructurá SIEMPRE tu respuesta con este orden exacto:
-   - **1. ¿Qué es?** (Definición clínica o conceptual directa).
-   - **2. ¿Dónde está y cómo se ubica?** (Relación anatómica, tisular o citosólica).
-   - **3. ¿Qué estructura / fases tiene?** (Componentes de macro a micro, etapas o elementos).
-   - **4. ¿Qué función cumple?** (La razón fisiológica antes de memorizar).
-   - **💡 Tip Cazabobos de Examen (UNLP):** Advertencia práctica para parciales/finales de las Cátedras A, B y C.
+[MODO: SIMULACRO] / "Simulacro Exprés":
+- Genera 3 preguntas de opción múltiple (Multiple Choice) basadas en parciales reales de la UNLP.
+- Muestra únicamente las preguntas y sus opciones (A, B, C, D).
+- NO des las respuestas inmediatamente. Pide al alumno que elija y espera sus respuestas para evaluar y justificar.
 
-3. **CONOCIMIENTO AMPLIO Y RIGOR CIENTÍFICO:** Usa los apuntes oficiales de ALUMED provistos como tu estándar de oro primario. Si el estudiante te consulta sobre un tema médico que va más allá de los fragmentos locales, responde usando tu conocimiento médico completo y de fuentes oficiales con el mismo Método Profe Joy.
+[MODO: FLASHCARD] / "Crear Flashcard":
+Devuelve el contenido maquetado con una estructura visual clara:
+┌─────────────────────────────────────────┐
+│ 🎴 FLASHCARD DE REPASO RÁPIDO            │
+├─────────────────────────────────────────┤
+│ PREGUNTA: [Concepto clave]              │
+│ RESPUESTA: [Explicación concisa]        │
+│ CLAVE DE EXAMEN: [Punto trampa UNLP]    │
+└─────────────────────────────────────────┘
 
-4. **TONO:** Cálido, humano, entusiasta, exigente y profesional ("¡Holis, doc!", "¡Metele que vas súper bien, mi amor! 💪✨").
+[MODO: PAUSA] / "Pausa Motivacional":
+- Prioriza el bienestar emocional del estudiante.
+- Brinda palabras dulces de apoyo, valora su esfuerzo en la carrera de Medicina y sugiere un descanso breve de 5 minutos, agua o café antes de seguir.
 
----
+[MODO: LÁMINA] / "Análisis de Lámina":
+- Si el usuario sube una imagen o describe un preparado, analiza el corte histológico o anatómico siguiendo: Tinta/Coloración ➔ Tejido predominante ➔ Estructuras clave ➔ Diagnóstico del preparado.
+
+REGLAS DE IDIOMA Y FORMATO:
+- Idioma por defecto: Español rioplatense cálido y académico (compatible con el contexto de La Plata, Argentina).
+- Usa Markdown y negritas para resaltar conceptos clave y facilitar la lectura rápida.
 
 Contexto de los apuntes oficiales ALUMED:
 {contexto}
@@ -247,9 +276,28 @@ def profe_joy_chat(request):
 
     question = (body.get('question') or '').strip()
     history  = body.get('history', [])
+    image_b64 = body.get('image')
+    mode = body.get('mode', 'normal').lower()
 
-    if not question:
-        return JsonResponse({'error': 'Pregunta vacía'}, status=400)
+    mode_prefixes = {
+        "explicar": "[MODO: EXPLICAR]",
+        "simulacro": "[MODO: SIMULACRO]",
+        "flashcard": "[MODO: FLASHCARD]",
+        "pausa": "[MODO: PAUSA]",
+        "lamina": "[MODO: LÁMINA]"
+    }
+    
+    if mode in mode_prefixes:
+        question = f"{mode_prefixes[mode]} {question}".strip()
+        
+    if not question and not image_b64:
+        return JsonResponse({'error': 'Pregunta o imagen vacía'}, status=400)
+
+    # Actualizar memoria a corto plazo en sesión
+    session_history = request.session.get('profe_joy_history', [])
+    session_history.append({'role': 'user', 'content': question, 'has_image': bool(image_b64)})
+    request.session['profe_joy_history'] = session_history[-10:]  # Mantener últimos 10
+
 
     total_chunks = ProfeJoyChunk.objects.count()
 
@@ -267,7 +315,12 @@ def profe_joy_chat(request):
         relevant = _find_relevant_chunks(q_embedding, question)
 
         context = _build_context(relevant) if relevant else "No se encontraron fragmentos locales exactos. Usa tu conocimiento médico general para explicar el concepto con el Método Didáctico Profe Joy."
-        system  = PROMPT_PROFE_JOY.format(contexto=context, pregunta=question)
+        
+        system_base = PROMPT_PROFE_JOY
+        if mode == 'lamina' or image_b64:
+            system_base += "\n\n[MODO HISTÓLOGA ACTIVADO] El usuario ha enviado una lámina/preparado microscópico. Actúa como experta en Histología y Patología. Identifica estructuras, tinciones y da claves diagnósticas."
+        
+        system  = system_base.format(contexto=context, pregunta=question)
 
         answer = None
         if client_type == 'gemini':
@@ -280,7 +333,22 @@ def profe_joy_chat(request):
                 for msg in history[-6:]:
                     role = 'user' if msg.get('role') == 'user' else 'model'
                     contents.append({'role': role, 'parts': [msg.get('content', '')]})
-                contents.append({'role': 'user', 'parts': [question]})
+                # Agregar imagen si existe
+                user_parts = [question] if question else ["Analiza esta imagen."]
+                if image_b64:
+                    try:
+                        import base64
+                        image_data = image_b64.split(",")[1] if "," in image_b64 else image_b64
+                        mime_type = "image/jpeg"
+                        if "png" in image_b64: mime_type = "image/png"
+                        user_parts.append({
+                            "mime_type": mime_type,
+                            "data": base64.b64decode(image_data)
+                        })
+                    except Exception as e:
+                        logger.error(f"Error procesando imagen: {e}")
+                
+                contents.append({'role': 'user', 'parts': user_parts})
                 
                 response = model.generate_content(
                     contents=contents,

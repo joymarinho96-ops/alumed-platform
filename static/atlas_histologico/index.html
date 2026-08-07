@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALUMED OS | Simulador Médico UNLP - Facultad de Ciencias Médicas</title>
+  <meta name="description" content="Simulador médico de alto rendimiento para estudiantes de 1° año de la Facultad de Ciencias Médicas UNLP. Multiple Choice, Pinches, Oral y Método Profe Joy.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="alumed-os-theme">
+
+  <div class="app-layout">
+
+    <!-- ══════════════ SIDEBAR ══════════════ -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-box">
+          <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <div>
+          <h1>ALUMED <span class="os-tag">OS</span></h1>
+          <p>Medicina UNLP — 1° Año</p>
+        </div>
+      </div>
+
+            <nav class="nav-menu" style="margin-top: 15px;">
+        <div class="nav-group-title" style="color: var(--cyan-neon); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; padding: 0 16px 8px; text-transform: uppercase;">
+          Plataforma Dual UNLP
+        </div>
+
+        <button class="nav-btn nav-btn-split-special active" id="nav-simulador" onclick="prepararEntrenamiento('split', null, this); initVistaDividida();" style="background: linear-gradient(135deg, rgba(168,85,247,0.22), rgba(0,229,255,0.15)); border: 1px solid rgba(168,85,247,0.5); margin: 0 8px 8px 8px; width: calc(100% - 16px);">
+          <i class="fa-solid fa-laptop-code" style="color: var(--cyan-neon); font-size: 1.1rem;"></i>
+          <div style="display:flex; flex-direction:column; text-align:left;">
+            <span style="font-weight:800; color:#fff; font-size:0.88rem;">Simulador</span>
+            <span style="font-size:0.7rem; color:#c084fc;">Atlas + Preguntas (Lado a Lado)</span>
+          </div>
+        </button>
+
+        <button class="nav-btn nav-btn-atlas-special" id="nav-atlas" onclick="prepararEntrenamiento('split', null, this); initVistaDividida();" style="background: linear-gradient(135deg, rgba(236,72,153,0.18), rgba(0,255,255,0.12)); border: 1px solid rgba(236,72,153,0.4); margin: 0 8px 8px 8px; width: calc(100% - 16px);">
+          <i class="fa-solid fa-microscope" style="color: #ec4899; font-size: 1.1rem;"></i>
+          <div style="display:flex; flex-direction:column; text-align:left;">
+            <span style="font-weight:800; color:#fff; font-size:0.88rem;">Atlas AluMed</span>
+            <span style="font-size:0.7rem; color:var(--cyan-neon);">Preparados & SelectView</span>
+          </div>
+        </button>
+
+        
+        <button class="nav-btn" id="nav-dashboard" onclick="abrirDashboard(this)" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); margin-top: 10px;">
+          <i class="fa-solid fa-chart-line" style="color: #34d399;"></i>
+          <span style="color: #fff; font-weight: bold;">Mi Progreso (Diagnóstico)</span>
+        </button>
+
+<div class="nav-divider" style="height: 1px; background: var(--border); margin: 15px 16px;"></div>
+
+        <div class="nav-group-title" style="color: var(--muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; padding: 0 16px 8px; text-transform: uppercase;">Entrenamiento por Materia</div>
+        
+        <button class="nav-btn" id="nav-histo" onclick="switchModuloSplit('histo'); prepararEntrenamiento('split', null, this);">
+          <i class="fa-solid fa-microscope"></i>
+          <span>Histología (Choice + Atlas)</span>
+        </button>
+
+        <button class="nav-btn" id="nav-embrio" onclick="switchModuloSplit('embrio'); prepararEntrenamiento('split', null, this);">
+          <i class="fa-solid fa-baby"></i>
+          <span>Embriología (Choice + Atlas)</span>
+        </button>
+
+        <button class="nav-btn" id="nav-bio" onclick="prepararEntrenamiento('choices', 'biologia', this)">
+          <i class="fa-solid fa-dna"></i>
+          <span>Biología Celular</span>
+        </button>
+        
+        <button class="nav-btn" id="nav-anatoa" onclick="prepararEntrenamiento('oral', 'anato_a', this)">
+          <i class="fa-solid fa-comments"></i>
+          <span>Anatomía A</span>
+        </button>
+        
+        <button class="nav-btn" id="nav-anatob" onclick="prepararEntrenamiento('pinches', 'anato_b', this)">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>Anatomía B</span>
+        </button>
+        
+        <button class="nav-btn" id="nav-anatoc" onclick="prepararEntrenamiento('oral', 'anato_c', this)">
+          <i class="fa-solid fa-comments"></i>
+          <span>Anatomía C</span>
+        </button>
+
+        <div class="nav-divider" style="height: 1px; background: var(--border); margin: 15px 16px;"></div>
+
+        <div class="nav-group-title" style="color: var(--muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; padding: 0 16px 8px; text-transform: uppercase;">Recursos & Calendario</div>
+        
+        <button class="nav-btn" id="nav-calendario" onclick="prepararEntrenamiento('calendario', null, this); initCalendario();">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Calendario de Parciales</span>
+        </button>
+      
+        <button class="nav-btn" id="nav-biblioteca" onclick="mostrarBiblioteca(this)">
+          <i class="fa-solid fa-book-open" style="color: var(--cyan-neon);"></i>
+          <span>Biblioteca Virtual</span>
+        </button>
+
+        <button class="nav-btn" id="nav-estatuto">
+          <i class="fa-solid fa-scale-balanced" style="color: #38bdf8;"></i>
+          <span>Estatuto / Problemas</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="unlp-badge-mini">
+          <i class="fa-solid fa-building-columns"></i> FCM — UNLP
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══════════════ CONTENIDO PRINCIPAL ══════════════ -->
+    <main class="content">
+
+      <!-- ══════════════ TOPBAR MENU HEADER (MATCHING USER NAVBAR) ══════════════ -->
+      <header class="top-header-navbar" style="background: linear-gradient(90deg, #1c1106, #2d1804, #12091f); border-bottom: 1px solid rgba(245, 200, 66, 0.25); padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); flex-wrap: wrap;">
+        <!-- Logo -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 900; color: #fff; letter-spacing: -0.02em;">
+            ALU<span style="color: #c084fc;">MED</span>
+          </span>
+        </div>
+
+        <!-- Pill Nav Bar -->
+        <nav style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); padding: 6px 18px; border-radius: 99px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <a href="index.html" style="color: #f1f5f9; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Inicio</a>
+          <a href="/#cursos" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Cursos</a>
+          <a href="widget.html" style="color: #c084fc; text-decoration: none; font-weight: 700; font-size: 0.88rem; background: rgba(192,132,252,0.12); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(192,132,252,0.3); display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-laptop-code"></i> Simulacros (Widget)
+          </a>
+          <a href="widget.html" style="color: #ec4899; text-decoration: none; font-weight: 800; font-size: 0.88rem; background: rgba(236,72,153,0.18); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(236,72,153,0.4); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 12px rgba(236,72,153,0.2);">
+            <i class="fa-solid fa-microscope" style="color: #ec4899;"></i> Atlas AluMed (Widget)
+          </a>
+          <a href="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" target="_blank" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Biblioteca</a>
+          <a href="#" onclick="alert('Fragmentos de apuntes ALUMED'); return false;" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.88rem;">📜 Papiro</a>
+          <a href="widget.html" style="color: #c084fc; text-decoration: none; font-weight: 600; font-size: 0.88rem;">🪄 IA Profe Joy</a>
+          <a href="https://www.conectafcm.com" target="_blank" style="background: linear-gradient(135deg, #f5c842, #fbbf24); color: #000; font-weight: 800; font-size: 0.82rem; padding: 6px 16px; border-radius: 99px; text-decoration: none; box-shadow: 0 0 15px rgba(245,200,66,0.4); display: flex; align-items: center; gap: 6px;">
+            ⚡ Conecta FCM
+          </a>
+          <button class="nav-btn" id="nav-estatuto">
+          <i class="fa-solid fa-scale-balanced" style="color: #38bdf8;"></i>
+          <span>Estatuto / Problemas</span>
+        </button>
+      </nav>
+
+        <!-- Lang selector -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button style="background: rgba(30, 20, 10, 0.8); border: 1px solid rgba(245,200,66,0.3); color: #f5c842; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;">
+            US English
+          </button>
+        </div>
+      </header>
+
+      <!-- HERO SECTION LANDING PAGE -->
+      <section class="hero-section">
+        <div class="hero-badge">
+          <i class="fa-solid fa-certificate"></i> PLATAFORMA EXCLUSIVA UNLP — MEDICINA LA PLATA
+        </div>
+        <h1 class="hero-title">
+          Dominá el 1er Año en la UNLP con <span class="text-gradient">ALUMED OS</span>
+        </h1>
+        <p class="hero-subtitle">
+          Tu simulador médico de alto rendimiento adaptado a las cátedras de La Plata.
+          Parciales, pinches de anatomía y orales con corrección didáctica — Método Profe Joy.
+        </p>
+
+        <!-- CTA Directo al Widget Page -->
+        <div style="margin: 20px 0;">
+          <a href="widget.html" class="btn-primary btn-large btn-dopamine" style="text-decoration: none; display: inline-flex; align-items: center; gap: 12px; font-size: 1.1rem; padding: 14px 32px; border-radius: 99px; box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);">
+            <i class="fa-solid fa-columns" style="font-size: 1.2rem;"></i> 🚀 Abrir Widget Dual (Atlas + Simulador Lado a Lado)
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <span class="stat-num text-cyan" id="stat-total-q">2.000+</span>
+            <span class="stat-desc">Preguntas Reales UNLP</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-magenta">Joy</span>
+            <span class="stat-desc">Método Profe Joy</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-violet">3</span>
+            <span class="stat-desc">Cátedras de Anatomía</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO PRINCIPAL HOMEPAGE: VISTA DIVIDIDA (ATLAS + SIMULADOR LADO A LADO) ═══ -->
+      <section id="tab-split" class="tab-content active">
+        <div class="header-banner" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(0, 229, 255, 0.12)); border: 1px solid rgba(168, 85, 247, 0.35);">
+          <div>
+            <h2><i class="fa-solid fa-columns" style="color: #c084fc;"></i> Módulo Dual ALUMED OS — Atlas AluMed + Simulador de Parcial</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Explorá preparados microscópicos a la izquierda y respondé preguntas reales de examen UNLP a la derecha.</p>
+          </div>
+          <span class="counter-badge" id="split-status-badge" style="background: rgba(168, 85, 247, 0.2); color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.4);">
+            Módulo: Histología
+          </span>
+        </div>
+
+        <!-- Selector de Materia: HISTOLOGÍA vs EMBRIOLOGÍA -->
+        <div class="atlas-controls-bar" style="margin-bottom: 20px;">
+          <div class="module-switcher split-materia-switcher">
+            <button class="module-tab active" id="split-tab-histo" onclick="switchModuloSplit('histo')">
+              <i class="fa-solid fa-microscope"></i>
+              <span>HISTOLOGÍA</span>
+              <span class="badge-mini" id="split-badge-histo" style="font-size: 0.7rem; background: rgba(0,229,255,0.2); color: var(--cyan-neon); padding: 2px 8px; border-radius: 10px; margin-left: 6px;">337 Q</span>
+            </button>
+            <button class="module-tab" id="split-tab-embrio" onclick="switchModuloSplit('embrio')">
+              <i class="fa-solid fa-baby"></i>
+              <span>EMBRIOLOGÍA</span>
+              <span class="badge-mini" id="split-badge-embrio" style="font-size: 0.7rem; background: rgba(236,72,153,0.2); color: #ec4899; padding: 2px 8px; border-radius: 10px; margin-left: 6px;">168 Q</span>
+            </button>
+          </div>
+
+          <div class="search-box atlas-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="splitSearchInput" oninput="buscarSplitAtlas(this.value)" placeholder="Buscar preparado histológico / embriológico (ej. Intestino, Osteona, Mesotelio)...">
+          </div>
+        </div>
+
+        <!-- DUAL PANEL CONTAINER (LADO A LADO: WIDGETS INTEGRADOS) -->
+        <div class="split-dual-layout">
+          
+          <!-- LEFT PANEL: WIDGET ATLAS HISTOLÓGICO / EMBRIOLÓGICO -->
+          <div class="split-panel split-panel-left alumed-widget-box">
+            <div class="panel-header-bar">
+              <h3 style="display:flex; align-items:center; gap:8px;">
+                <span style="background: rgba(236,72,153,0.2); color: #ec4899; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; border: 1px solid rgba(236,72,153,0.4);">
+                  🧩 WIDGET ATLAS
+                </span>
+                <span>Atlas AluMed</span>
+              </h3>
+              <span class="panel-subtitle-tag" id="split-atlas-count">9 Preparados</span>
+            </div>
+
+            <!-- Active Slide Preview Card / Interactive Display -->
+            <div id="splitActiveSlideBox" class="split-active-slide-card" style="margin-bottom: 15px;">
+              <div class="slide-view-header">
+                <span class="badge badge-materia" id="splitSlideTp">TP UNLP</span>
+                <h4 id="splitSlideTitle" style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 4px 0;">—</h4>
+                <p id="splitSlideSpecimen" style="font-size: 0.82rem; color: var(--cyan-neon); margin-bottom: 8px;">—</p>
+              </div>
+
+              <div class="interactive-canvas" id="splitCanvas" style="height: 240px; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border);">
+                <img id="splitSlideImg" src="" alt="Muestra Atlas" style="width: 100%; height: 240px; object-fit: cover;">
+                <div class="pins-container" id="splitPinsContainer"></div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <a id="splitExternalLink" href="#" target="_blank" class="btn-external-link" style="font-size: 0.78rem;">
+                  <i class="fa-solid fa-up-right-from-square"></i> Microscopio Virtual (HistologyGuide)
+                </a>
+                <button class="btn-secondary" onclick="abrirAtlasModal(estadoSplit.preparadoActualId)" style="padding: 4px 10px; font-size: 0.78rem;">
+                  <i class="fa-solid fa-expand"></i> Ver Modal Completo
+                </button>
+              </div>
+
+              <!-- Claves Diagnósticas -->
+              <div class="panel-section diagnostic-highlight" style="margin-top: 12px; padding: 10px; border-radius: 8px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2);">
+                <h4 style="font-size: 0.85rem; margin-bottom: 6px; color: var(--cyan-neon);"><i class="fa-solid fa-lightbulb"></i> Claves Diagnósticas Profe Joy:</h4>
+                <ul id="splitClavesList" style="padding-left: 16px; font-size: 0.8rem; line-height: 1.5; color: #e2e8f0; margin: 0;"></ul>
+              </div>
+            </div>
+
+            <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+              <i class="fa-solid fa-layer-group"></i> Seleccionar Preparado:
+            </h4>
+            <!-- Grid de Tarjetas Mini para el Atlas -->
+            <div class="atlas-grid split-atlas-grid" id="splitAtlasGrid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; max-height: 350px; overflow-y: auto; padding-right: 4px;"></div>
+          </div>
+
+          <!-- RIGHT PANEL: WIDGET SIMULADOR DE EXAMEN UNLP -->
+          <div class="split-panel split-panel-right alumed-widget-box">
+            <div class="panel-header-bar">
+              <h3 style="display:flex; align-items:center; gap:8px;">
+                <span style="background: rgba(0,229,255,0.2); color: var(--cyan-neon); padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; border: 1px solid rgba(0,229,255,0.4);">
+                  🧩 WIDGET SIMULADOR
+                </span>
+                <span>Simulador de Parcial</span>
+              </h3>
+              <span class="panel-subtitle-tag" id="split-choice-counter">Pregunta 1 de —</span>
+            </div>
+
+            <div class="card card-glow" id="splitChoiceCard" style="border: 1px solid var(--border);">
+              <div class="card-meta" style="margin-bottom: 10px;">
+                <span class="badge badge-materia" id="split-mc-materia-tag">Histología</span>
+                <span class="badge badge-tema" id="split-mc-tema" style="font-size: 0.75rem;"></span>
+              </div>
+
+              <h3 id="split-mc-pregunta" class="question-text" style="font-size: 1rem; line-height: 1.5; margin-bottom: 15px;">Cargando pregunta...</h3>
+
+              <div class="options-group" id="split-mc-opcoes" style="gap: 10px;"></div>
+
+              <!-- Panel de corrección Profe Joy -->
+              <div id="split-mc-feedback" class="feedback"></div>
+
+              <div class="card-footer" style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <button class="btn-secondary" id="split-btn-prev" onclick="prevChoiceSplit()" style="padding: 8px 14px; font-size: 0.85rem;">
+                  <i class="fa-solid fa-arrow-left"></i> Anterior
+                </button>
+                <button class="btn-primary" onclick="validarChoiceSplit()" id="split-btn-validar" style="padding: 8px 18px; font-size: 0.88rem;">
+                  <i class="fa-solid fa-check-double"></i> Confirmar Respuesta
+                </button>
+                <button class="btn-secondary" id="split-btn-next" onclick="nextChoiceSplit()" style="padding: 8px 14px; font-size: 0.85rem;">
+                  Siguiente <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO MULTIPLE CHOICE SINGLE ═══ -->
+      <section id="tab-choices" class="tab-content">
+
+    <!-- Header Examen Contrarreloj -->
+    <div id="examen-header" style="display:none; background: #0f172a; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e11d48; display: flex; justify-content: space-between; align-items: center;">
+      <span id="examen-titulo" style="font-weight: bold; color: #f43f5e; font-size: 1rem;">⏱️ PARCIAL REAL EN CURSO</span>
+      <span id="examen-timer" style="font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #ef4444; background: #000; padding: 4px 12px; border-radius: 6px; border: 1px solid #991b1b;">00:00</span>
+    </div>
+    
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-list-check"></i> Entrenamiento Parcial — Múltiple Choice</h2>
+          <span class="counter-badge" id="mc-counter">Pregunta 1 de —</span>
+        </div>
+
+        <div class="card card-glow">
+          <!-- Meta: solo materia y tema — SIN nombre de archivo/fuente interna -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="mc-materia-tag">Materia UNLP</span>
+            <span class="badge badge-tema" id="mc-tema"></span>
+          </div>
+
+          <h3 id="mc-pergunta" class="question-text">Cargando pregunta...</h3>
+
+          <div class="options-group" id="mc-opcoes"></div>
+
+          <!-- Panel de corrección Profe Joy -->
+          <div id="mc-feedback" class="feedback"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" id="btn-prev" onclick="prevChoice()">
+              <i class="fa-solid fa-arrow-left"></i> Anterior
+            </button>
+            <button class="btn-primary" onclick="validarChoice()" id="btn-validar">
+              <i class="fa-solid fa-check-double"></i> Confirmar Respuesta
+            </button>
+            <button class="btn-secondary" id="btn-next" onclick="nextChoice()">
+              Siguiente <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 2: PINCHES ═══ -->
+      <section id="tab-pinches" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-crosshairs"></i> Entrenamiento Parcial — Pinches</h2>
+        </div>
+
+        <div class="card card-glow">
+          <!-- Solo materia — sin fuente de archivo -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="pinch-materia">Anatomía UNLP</span>
+          </div>
+
+          <div class="img-container" id="pinch-img-wrapper">
+            <img id="pinch-img" src="" alt="Muestra Anatómica UNLP">
+          </div>
+
+          <p id="pinch-pergunta" class="question-text">Identifique la estructura señalada:</p>
+
+          <div class="input-action-group">
+            <input type="text" id="pinch-input" class="input-field"
+              placeholder="Escriba aquí la estructura (ej: Arteria Subclavia)..."
+              autocomplete="off">
+            <button class="btn-primary" onclick="validarPinche()">
+              <i class="fa-solid fa-crosshairs"></i> Validar Pinche
+            </button>
+          </div>
+
+          <div id="pinch-feedback" class="feedback" style="display:none;"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" onclick="nextPinche()">
+              Siguiente Muestra <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 3: ORAL / BOLILLAS ═══ -->
+      <section id="tab-oral" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-comments"></i> Entrenamiento Parcial — Práctica oral</h2>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary btn-large btn-dopamine" onclick="sortearOral()">
+            <i class="fa-solid fa-dice"></i> Siguiente pregunta
+          </button>
+        </div>
+
+        <div class="card card-glow" id="oral-card" style="display:none;">
+          <!-- Solo materia — sin fuente de archivo -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="oral-materia">Materia UNLP</span>
+          </div>
+          <h3 id="oral-titulo" class="question-text"></h3>
+          <div class="case-box">
+            <strong><i class="fa-solid fa-notes-medical"></i> Caso Clínico / Introducción:</strong>
+            <p id="oral-caso"></p>
+          </div>
+          <h4 class="checklist-heading">
+            <i class="fa-solid fa-list-check"></i> Tópicos Obligatorios a Desarrollar:
+          </h4>
+          <div class="checklist" id="oral-checklist"></div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 4: CALENDARIO DE PARCIALES ═══ -->
+      <section id="tab-calendario" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-calendar-days"></i> Calendario de Parciales — 1er Año</h2>
+        </div>
+
+        <!-- Leyenda de colores -->
+        <div class="cal-leyenda">
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-bio"></span> Biología</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatoa"></span> Anatomía A</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatob"></span> Anatomía B</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatoc"></span> Anatomía C</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-hye"></span> Histología y Embriología</div>
+        </div>
+
+        <!-- Switcher de vista -->
+        <div class="cal-vista-switcher">
+          <button class="cal-vista-btn active" id="cal-vista-btn-cronologica"
+            onclick="switchVistaCalendario('cronologica')">
+            <i class="fa-solid fa-list"></i> Vista Cronológica
+          </button>
+          <button class="cal-vista-btn" id="cal-vista-btn-calendario"
+            onclick="switchVistaCalendario('calendario')">
+            <i class="fa-solid fa-calendar"></i> Vista Mensual
+          </button>
+        </div>
+
+        <!-- VISTA CRONOLÓGICA -->
+        <div id="cal-vista-cronologica">
+          <div id="cal-cronologica-container"></div>
+        </div>
+
+        <!-- VISTA MENSUAL -->
+        <div id="cal-vista-calendario" style="display:none">
+          <div class="cal-mes-nav">
+            <button class="btn-secondary cal-nav-btn" onclick="navCalendario(-1)">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h3 id="cal-mes-titulo" class="cal-mes-titulo">Mayo 2026</h3>
+            <button class="btn-secondary cal-nav-btn" onclick="navCalendario(1)">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          <div id="cal-mes-grid" class="cal-mes-grid"></div>
+          <div class="cal-mes-hint">
+            <i class="fa-solid fa-circle-info"></i>
+            Las barras de color indican eventos o períodos activos en ese día.
+            Los períodos estimados aparecen con borde punteado.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 5: ATLAS HISTOLÓGICO Y EMBRIOLÓGICO ═══ -->
+      <section id="tab-atlas" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-microscope"></i> Atlas AluMed y Embriológico — Método Profe Joy</h2>
+          <span class="counter-badge" id="atlas-total-badge">10 Microfotografías Virtuales</span>
+        </div>
+
+        <!-- Switcher de Módulo (Histo vs Embrio) & Buscador -->
+        <div class="atlas-controls-bar">
+          <div class="module-switcher">
+            <button class="module-tab active" id="atlas-tab-histo" onclick="switchModuloAtlas('histo')">
+              <i class="fa-solid fa-microscope"></i>
+              <span>HISTOLOGÍA</span>
+            </button>
+            <button class="module-tab" id="atlas-tab-embrio" onclick="switchModuloAtlas('embrio')">
+              <i class="fa-solid fa-baby"></i>
+              <span>EMBRIOLOGÍA</span>
+            </button>
+          </div>
+
+          <div class="search-box atlas-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="atlasSearchInput" oninput="buscarAtlas(this.value)" placeholder="Buscar tejido, célula o preparado (ej. Osteona, Chapa Estriada, Mesotelio)...">
+          </div>
+        </div>
+
+        <!-- Categorías de Tejidos -->
+        <div class="categories-nav atlas-cat-nav">
+          <button class="nav-btn active" data-atlas-cat="all" onclick="filtrarAtlasCategoria('all', this)">
+            <i class="fa-solid fa-border-all"></i>
+            <span>Todas</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="epitelial" onclick="filtrarAtlasCategoria('epitelial', this)">
+            <i class="fa-solid fa-border-top-left"></i>
+            <span>Epitelial</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="conectivo" onclick="filtrarAtlasCategoria('conectivo', this)">
+            <i class="fa-solid fa-cubes"></i>
+            <span>Conectivo</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="especializado" onclick="filtrarAtlasCategoria('especializado', this)">
+            <i class="fa-solid fa-bone"></i>
+            <span>Cartílago / Hueso</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="nervioso" onclick="filtrarAtlasCategoria('nervioso', this)">
+            <i class="fa-solid fa-brain"></i>
+            <span>Nervioso</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="muscular" onclick="filtrarAtlasCategoria('muscular', this)">
+            <i class="fa-solid fa-dumbbell"></i>
+            <span>Muscular</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="linfoide" onclick="filtrarAtlasCategoria('linfoide', this)">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Linfoide</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="cardiovascular" onclick="filtrarAtlasCategoria('cardiovascular', this)">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>Cardiovascular</span>
+          </button>
+          <button class="nav-btn" data-atlas-cat="sangre" onclick="filtrarAtlasCategoria('sangre', this)">
+            <i class="fa-solid fa-droplet"></i>
+            <span>Sangre</span>
+          </button>
+        </div>
+
+        <!-- Grid Dinámico de Tarjetas de Preparados -->
+        <div class="atlas-grid" id="atlasGrid"></div>
+      </section>
+
+      <!-- ═══ MÓDULO 6: VISTA DIVIDIDA (ATLAS + SIMULADOR LADO A LADO) ═══ -->
+      <section id="tab-split" class="tab-content">
+        <div class="header-banner" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(0, 229, 255, 0.12)); border: 1px solid rgba(168, 85, 247, 0.35);">
+          <div>
+            <h2><i class="fa-solid fa-columns" style="color: #c084fc;"></i> Vista Dividida — Atlas AluMed + Simulador de Parcial</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Explorá preparados microscópicos a la izquierda y respondé preguntas reales de examen UNLP a la derecha.</p>
+          </div>
+          <span class="counter-badge" id="split-status-badge" style="background: rgba(168, 85, 247, 0.2); color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.4);">
+            Módulo: Histología
+          </span>
+        </div>
+
+        <!-- Selector de Materia: HISTOLOGÍA vs EMBRIOLOGÍA -->
+        <div class="atlas-controls-bar" style="margin-bottom: 20px;">
+          <div class="module-switcher split-materia-switcher">
+            <button class="module-tab active" id="split-tab-histo" onclick="switchModuloSplit('histo')">
+              <i class="fa-solid fa-microscope"></i>
+              <span>HISTOLOGÍA</span>
+              <span class="badge-mini" id="split-badge-histo" style="font-size: 0.7rem; background: rgba(0,229,255,0.2); color: var(--cyan-neon); padding: 2px 8px; border-radius: 10px; margin-left: 6px;">337 Q</span>
+            </button>
+            <button class="module-tab" id="split-tab-embrio" onclick="switchModuloSplit('embrio')">
+              <i class="fa-solid fa-baby"></i>
+              <span>EMBRIOLOGÍA</span>
+              <span class="badge-mini" id="split-badge-embrio" style="font-size: 0.7rem; background: rgba(236,72,153,0.2); color: #ec4899; padding: 2px 8px; border-radius: 10px; margin-left: 6px;">168 Q</span>
+            </button>
+          </div>
+
+          <div class="search-box atlas-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="splitSearchInput" oninput="buscarSplitAtlas(this.value)" placeholder="Buscar preparado histológico / embriológico (ej. Intestino, Osteona, Mesotelio)...">
+          </div>
+        </div>
+
+        <!-- DUAL PANEL CONTAINER (LADO A LADO) -->
+        <div class="split-dual-layout">
+          
+          <!-- LEFT PANEL: ATLAS HISTOLÓGICO / EMBRIOLÓGICO -->
+          <div class="split-panel split-panel-left">
+            <div class="panel-header-bar">
+              <h3><i class="fa-solid fa-microscope" style="color: #ec4899;"></i> 1. Atlas AluMed</h3>
+              <span class="panel-subtitle-tag" id="split-atlas-count">9 Preparados</span>
+            </div>
+
+            <!-- Active Slide Preview Card / Interactive Display -->
+            <div id="splitActiveSlideBox" class="split-active-slide-card" style="margin-bottom: 15px;">
+              <div class="slide-view-header">
+                <span class="badge badge-materia" id="splitSlideTp">TP UNLP</span>
+                <h4 id="splitSlideTitle" style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 4px 0;">—</h4>
+                <p id="splitSlideSpecimen" style="font-size: 0.82rem; color: var(--cyan-neon); margin-bottom: 8px;">—</p>
+              </div>
+
+              <div class="interactive-canvas" id="splitCanvas" style="height: 240px; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border);">
+                <img id="splitSlideImg" src="" alt="Muestra Atlas" style="width: 100%; height: 240px; object-fit: cover;">
+                <div class="pins-container" id="splitPinsContainer"></div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <a id="splitExternalLink" href="#" target="_blank" class="btn-external-link" style="font-size: 0.78rem;">
+                  <i class="fa-solid fa-up-right-from-square"></i> Microscopio Virtual (HistologyGuide)
+                </a>
+                <button class="btn-secondary" onclick="abrirAtlasModal(estadoSplit.preparadoActualId)" style="padding: 4px 10px; font-size: 0.78rem;">
+                  <i class="fa-solid fa-expand"></i> Ver Modal Completo
+                </button>
+              </div>
+
+              <!-- Claves Diagnósticas -->
+              <div class="panel-section diagnostic-highlight" style="margin-top: 12px; padding: 10px; border-radius: 8px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2);">
+                <h4 style="font-size: 0.85rem; margin-bottom: 6px; color: var(--cyan-neon);"><i class="fa-solid fa-lightbulb"></i> Claves Diagnósticas Profe Joy:</h4>
+                <ul id="splitClavesList" style="padding-left: 16px; font-size: 0.8rem; line-height: 1.5; color: #e2e8f0; margin: 0;"></ul>
+              </div>
+            </div>
+
+            <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+              <i class="fa-solid fa-layer-group"></i> Seleccionar Preparado:
+            </h4>
+            <!-- Grid de Tarjetas Mini para el Atlas -->
+            <div class="atlas-grid split-atlas-grid" id="splitAtlasGrid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; max-height: 350px; overflow-y: auto; padding-right: 4px;"></div>
+          </div>
+
+          <!-- RIGHT PANEL: SIMULADOR DE EXAMEN UNLP -->
+          <div class="split-panel split-panel-right">
+            <div class="panel-header-bar">
+              <h3><i class="fa-solid fa-list-check" style="color: var(--cyan-neon);"></i> 2. Simulador de Parcial</h3>
+              <span class="panel-subtitle-tag" id="split-choice-counter">Pregunta 1 de —</span>
+            </div>
+
+            <div class="card card-glow" id="splitChoiceCard" style="border: 1px solid var(--border);">
+              <div class="card-meta" style="margin-bottom: 10px;">
+                <span class="badge badge-materia" id="split-mc-materia-tag">Histología</span>
+                <span class="badge badge-tema" id="split-mc-tema" style="font-size: 0.75rem;"></span>
+              </div>
+
+              <h3 id="split-mc-pregunta" class="question-text" style="font-size: 1rem; line-height: 1.5; margin-bottom: 15px;">Cargando pregunta...</h3>
+
+              <div class="options-group" id="split-mc-opcoes" style="gap: 10px;"></div>
+
+              <!-- Panel de corrección Profe Joy -->
+              <div id="split-mc-feedback" class="feedback"></div>
+
+              <div class="card-footer" style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <button class="btn-secondary" id="split-btn-prev" onclick="prevChoiceSplit()" style="padding: 8px 14px; font-size: 0.85rem;">
+                  <i class="fa-solid fa-arrow-left"></i> Anterior
+                </button>
+                <button class="btn-primary" onclick="validarChoiceSplit()" id="split-btn-validar" style="padding: 8px 18px; font-size: 0.88rem;">
+                  <i class="fa-solid fa-check-double"></i> Confirmar Respuesta
+                </button>
+                <button class="btn-secondary" id="split-btn-next" onclick="nextChoiceSplit()" style="padding: 8px 14px; font-size: 0.85rem;">
+                  Siguiente <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    
+      <!-- ═══ MÓDULO DASHBOARD / PAINEL DIAGNÓSTICO ═══ -->
+            <section id="tab-dashboard" class="tab-content">
+        <div class="header-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(0, 229, 255, 0.12)); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2><i class="fa-solid fa-brain" style="color: #34d399;"></i> Mi Progreso (Diagnóstico ALUMED)</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Análisis cognitivo de tu rendimiento basado en el Método Profe Joy.</p>
+          </div>
+          <button onclick="resetarDiagnostico()" class="btn-reset" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease;"><i class="fa-solid fa-trash-can"></i> Resetar Diagnóstico</button>
+        </div>
+        
+        <!-- EMPTY STATE -->
+        <div id="dash-empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
+          <i class="fa-solid fa-satellite-dish" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;"></i>
+          <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 10px;">Aún no hay datos de diagnóstico</h3>
+          <p style="color: #94a3b8; max-width: 400px; line-height: 1.5; margin-bottom: 25px;">Comienza a responder preguntas en el Simulador para que nuestro motor cognitivo empiece a analizar tu patrón de errores y genere tu perfil de estudio.</p>
+          <button onclick="document.getElementById('nav-simulador').click()" class="btn-primary" style="background: #3b82f6; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;"><i class="fa-solid fa-play"></i> Iniciar Entrenamiento</button>
+        </div>
+
+        <!-- DASHBOARD CONTENT -->
+        <div id="dash-content-state" style="display: none;">
+          <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px;">
+            <!-- KPIs -->
+            <div class="dash-card">
+              <h3><i class="fa-solid fa-bullseye" style="color: #67e8f9;"></i> Precisión Global</h3>
+              <div class="dash-stat" id="dash-accuracy">0%</div>
+            </div>
+            <div class="dash-card">
+              <h3><i class="fa-solid fa-list-check" style="color: #fca5a5;"></i> Respondidas</h3>
+              <div class="dash-stat" id="dash-total-q">0</div>
+            </div>
+            <div class="dash-card">
+              <h3><i class="fa-solid fa-fire" style="color: #fbbf24;"></i> Racha Actual</h3>
+              <div class="dash-stat" id="dash-streak">0</div>
+            </div>
+            <div class="dash-card">
+              <h3><i class="fa-solid fa-stopwatch" style="color: #a78bfa;"></i> Tiempo Medio</h3>
+              <div class="dash-stat" id="dash-avg-time">0s</div>
+            </div>
+            <div class="dash-card">
+              <h3><i class="fa-solid fa-trophy" style="color: #34d399;"></i> Mejor Materia</h3>
+              <div class="dash-stat" id="dash-best-subject" style="font-size: 1.2rem;">-</div>
+            </div>
+
+            <!-- Gráfico Cognitivo -->
+            <div class="dash-card card-wide" style="grid-column: span 3;">
+              <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-chart-bar" style="color: #c084fc;"></i> Perfil de Errores (Diagnóstico Cognitivo)</h3>
+              <div class="progress-bar-container" style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                  <div class="bar-lbl"><span>Error Conceptual (Falla mapa general)</span><span id="lbl-conceptual">0%</span></div>
+                  <div class="bar-track"><div id="bar-conceptual" class="bar-fill bg-neon-magenta"></div></div>
+                </div>
+                <div>
+                  <div class="bar-lbl"><span>Error de Interpretación (Lectura/Trampas)</span><span id="lbl-interpretacion">0%</span></div>
+                  <div class="bar-track"><div id="bar-interpretacion" class="bar-fill bg-neon-yellow"></div></div>
+                </div>
+                <div>
+                  <div class="bar-lbl"><span>Error de Memoria (Datos crudos)</span><span id="lbl-memoria">0%</span></div>
+                  <div class="bar-track"><div id="bar-memoria" class="bar-fill bg-neon-cyan"></div></div>
+                </div>
+                <div>
+                  <div class="bar-lbl"><span>Error de Asociación (Confusión de partes)</span><span id="lbl-asociacion">0%</span></div>
+                  <div class="bar-track"><div id="bar-asociacion" class="bar-fill bg-neon-green"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Temas Críticos -->
+            <div class="dash-card card-wide" style="grid-column: span 2;">
+              <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Temas a Reforzar</h3>
+              <ul id="dash-temas-criticos" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Temas inyectados aquí -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- Re-entrenamiento CTA -->
+          <div style="padding: 0 20px 30px 20px;">
+            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 25px; text-align: center;">
+              <h3 style="color: #fff; font-size: 1.3rem; margin-bottom: 10px;">Re-entrenamiento Híbrido</h3>
+              <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Deja que el motor filtre tus peores temas y arme un simulacro específico para reparar tu perfil cognitivo.</p>
+              
+              <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="iniciarReentrenamiento('auto')" class="btn-retrain-main"><i class="fa-solid fa-wand-magic-sparkles"></i> Simulacro Inteligente Profe Joy</button>
+                <button onclick="iniciarReentrenamiento('conceptual')" class="btn-retrain-sub btn-magenta"><i class="fa-solid fa-book"></i> Reforzar Conceptos</button>
+                <button onclick="iniciarReentrenamiento('memoria')" class="btn-retrain-sub btn-cyan"><i class="fa-solid fa-brain"></i> Reforzar Memoria</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+  
+      <!-- MÓDULO ESTATUTO Y PROBLEMAS -->
+      <section id="tab-estatuto" class="tab-content" style="padding: 30px;">
+        <!-- Spotlight Hero -->
+        <div class="estatuto-hero" style="text-align: center; margin-bottom: 30px;">
+          <h2 style="font-size: 2.2rem; margin-bottom: 10px; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-scale-balanced" style="color: #38bdf8; -webkit-text-fill-color: #38bdf8;"></i> Estatuto & Resoluções</h2>
+          <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 25px;">¿Qué problema o duda tienes hoy? Consulta el reglamento y nuestras guías.</p>
+          
+          <div class="search-spotlight-container" style="position: relative; max-width: 600px; margin: 0 auto;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #818cf8; font-size: 1.2rem;"></i>
+            <input type="text" id="search-estatuto" class="search-spotlight" placeholder="Escribí tu problema, duda o palabra clave..." autocomplete="off">
+          </div>
+          
+          <div class="estatuto-tags" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+            <button class="est-tag" onclick="filtrarEstatuto('#Regulamento')">#Regulamento</button>
+            <button class="est-tag" onclick="filtrarEstatuto('#Exámenes')">#Exámenes</button>
+            <button class="est-tag" onclick="filtrarEstatuto('#DudasFrecuentes')">#DudasFrecuentes</button>
+            <button class="est-tag" onclick="filtrarEstatuto('')" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;">Limpiar</button>
+          </div>
+        </div>
+
+        <!-- Resultados -->
+        <div id="estatuto-grid" style="display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto;">
+          <!-- Generado via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="estatuto-empty" style="display: none; text-align: center; margin-top: 40px;">
+          <i class="fa-solid fa-file-circle-question" style="font-size: 3rem; color: #64748b; margin-bottom: 15px;"></i>
+          <h3 style="color: #fff;">No encontramos resultados para tu búsqueda.</h3>
+          <p style="color: #94a3b8; margin: 10px 0 20px 0;">Intenta usar otra palabra clave o contacta directamente con el centro de estudiantes.</p>
+          <a href="https://www.conectafcm.com" target="_blank" class="btn-primary" style="background: #38bdf8; color: #0f172a; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;"><i class="fa-solid fa-headset"></i> Ir a Soporte / Comunidad</a>
+        </div>
+      </section>
+
+    
+      <!-- TAB: BIBLIOTECA VIRTUAL -->
+      <section id="tab-biblioteca" class="tab-content" style="padding:0; margin:0; overflow:hidden;">
+        <div class="biblioteca-embed-wrapper">
+          <iframe 
+            id="iframe-biblioteca"
+            src="https://secretaria478.wixsite.com/conectafcm/biblioteca-virtual" 
+            frameborder="0" 
+            scrolling="no"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </section>
+
+      
+        <section id="tab-aulas-ao-vivo" class="tab-content" style="padding: 20px; height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #060913;">
+          <!-- 1. Ticker Rolante de Próxima Aula -->
+          <div class="live-ticker-bar">
+            <div class="ticker-badge">🔴 PRÓXIMA CLASE</div>
+            <div class="ticker-text-wrapper">
+              <div class="ticker-text">
+                <span>Histología: Tecido Epitelial e Glandular &nbsp;•&nbsp; Próxima transmisión: Martes 12 de Agosto - 18:00 hs &nbsp;•&nbsp; ¡Conéctate a tiempo, doc! &nbsp;•&nbsp;</span>
+                <span>Histología: Tecido Epitelial e Glandular &nbsp;•&nbsp; Próxima transmisión: Martes 12 de Agosto - 18:00 hs &nbsp;•&nbsp; ¡Conéctate a tiempo, doc! &nbsp;•&nbsp;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Grid Principal: Transmissão + Chat Ao Vivo -->
+          <div class="live-layout-grid">
+            <!-- Player de Transmissão / Google Meet Card -->
+            <div class="live-player-container">
+              <div class="stream-embed-wrapper">
+                <iframe 
+                  id="live-stream-iframe"
+                  src="https://www.youtube.com/embed/live_stream?channel=SEU_CANAL" 
+                  frameborder="0" 
+                  allowfullscreen>
+                </iframe>
+              </div>
+              <div class="live-actions-bar">
+                <a href="https://meet.google.com/SEU-LINK-MEET" target="_blank" class="btn-meet-direct">
+                  📹 Entrar a la Sala del Google Meet
+                </a>
+              </div>
+            </div>
+
+            <!-- Espaço de Chat Ao Vivo -->
+            <div class="live-chat-container">
+              <div class="chat-header">
+                <span>💬 Chat en Vivo</span>
+                <span class="online-count">🟢 42 docs conectados</span>
+              </div>
+              <div id="chat-messages" class="chat-messages-box">
+                <div class="chat-msg system">
+                  <span class="author">Profe Joy IA:</span> ¡Holis doc! Bienvenidos a la clase. Dejen sus dudas aquí.
+                </div>
+              </div>
+              <form id="chat-form" class="chat-input-wrapper" onsubmit="event.preventDefault();">
+                <input type="text" id="chat-input" placeholder="Escribe tu duda para la clase..." autocomplete="off" required>
+                <button type="submit" class="btn-send-chat">Enviar</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </main>
+  </div>
+
+  <!-- ══════════════ MODAL DE EXPLORACIÓN MICROSCÓPICA ATLAS ══════════════ -->
+  <div class="modal-overlay hidden" id="atlasModal" style="display:none;">
+    <div class="modal-container atlas-modal-container">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="badge-category" id="atlasModalCategory">Tejido Epitelial</span>
+          <h2 id="atlasModalSlideTitle">Epitelio Cilíndrico Simple con Chapa Estriada</h2>
+          <p class="modal-specimen" id="atlasModalSpecimen">Muestra: Intestino Delgado (Corte Transversal)</p>
+        </div>
+        <button class="btn-close-modal" onclick="cerrarAtlasModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="slide-view-container">
+          <div class="modal-tabs">
+            <button id="atlasTabStaticView" class="modal-tab-btn active" onclick="setVisorAtlas('static')">
+              <i class="fa-solid fa-image"></i> Imagen Anotada con Pins
+            </button>
+            <button id="atlasTabLiveEmbed" class="modal-tab-btn" onclick="setVisorAtlas('live')">
+              <i class="fa-solid fa-microscope"></i> Visor Virtual HistologyGuide
+            </button>
+          </div>
+
+          <div class="interactive-canvas" id="atlasCanvas">
+            <iframe id="atlasIframe" class="slide-iframe hidden" src="about:blank" frameborder="0" allowfullscreen></iframe>
+                          <div class="canvas-image-placeholder" id="atlasCanvasBg" style="position: relative; overflow: hidden; border-radius: 12px;">
+                <img id="atlasModalImg" src="" alt="Muestra AluMed" style="width:100%; height:100%; object-fit:contain; transition: transform 0.3s ease;">
+                
+                <!-- MICROSCOPE HUD -->
+                <div id="microscopeHUD" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;">
+                  <!-- Vignette (Sombra de tubo) -->
+                  <div style="position: absolute; top: -5%; left: -5%; width: 110%; height: 110%; box-shadow: inset 0 0 100px rgba(0,0,0,0.9), inset 0 0 40px rgba(0,0,0,0.7); border-radius: 50%; pointer-events: none;"></div>
+                  
+                  <!-- Reticle Crosshair -->
+                  <div style="position: absolute; top: 50%; left: 50%; width: 50px; height: 1px; background: rgba(0, 229, 255, 0.4); transform: translate(-50%, -50%);"></div>
+                  <div style="position: absolute; top: 50%; left: 50%; width: 1px; height: 50px; background: rgba(0, 229, 255, 0.4); transform: translate(-50%, -50%);"></div>
+                  <div style="position: absolute; top: 50%; left: 50%; width: 25px; height: 25px; border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 50%; transform: translate(-50%, -50%);"></div>
+
+                  <!-- Objetivos Intercambiables -->
+                  <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; pointer-events: auto;">
+                    <button onclick="window.setMicroscopeZoom(1)" style="background: rgba(0,0,0,0.85); color: #00e5ff; border: 1px solid #00e5ff; border-radius: 8px; padding: 6px 16px; font-weight: 900; cursor: pointer; text-shadow: 0 0 8px #00e5ff; box-shadow: 0 0 15px rgba(0,229,255,0.2);">1x</button>
+                    <button onclick="window.setMicroscopeZoom(4)" style="background: rgba(0,0,0,0.85); color: #ec4899; border: 1px solid #ec4899; border-radius: 8px; padding: 6px 16px; font-weight: 900; cursor: pointer; text-shadow: 0 0 8px #ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.2);">4x</button>
+                    <button onclick="window.setMicroscopeZoom(10)" style="background: rgba(0,0,0,0.85); color: #c084fc; border: 1px solid #c084fc; border-radius: 8px; padding: 6px 16px; font-weight: 900; cursor: pointer; text-shadow: 0 0 8px #c084fc; box-shadow: 0 0 15px rgba(192,132,252,0.2);">10x</button>
+                  </div>
+                </div>
+              </div>
+            <div class="pins-container" id="atlasPinsContainer"></div>
+          </div>
+          
+          <div class="slide-external-link" style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
+            <a id="atlasExternalLink" href="#" target="_blank" class="btn-external-link">
+              <i class="fa-solid fa-up-right-from-square"></i> Abrir Microscopio Virtual en Ventana Nueva
+            </a>
+            <button class="btn-secondary" onclick="abrirEditorPinsAtlas()" style="padding: 6px 14px; font-size: 0.85rem;">
+              <i class="fa-solid fa-crosshairs"></i> Modo Editor Pins
+            </button>
+          </div>
+        </div>
+
+        <div class="slide-details-panel">
+          <div class="panel-section diagnostic-highlight">
+            <h3><i class="fa-solid fa-lightbulb"></i> Claves Diagnósticas del Parcial — Profe Joy</h3>
+            <ul id="atlasClavesList" style="padding-left: 20px; line-height: 1.6; color: var(--text);"></ul>
+          </div>
+
+          <div class="panel-section">
+            <h3><i class="fa-solid fa-crosshairs pin-header-icon"></i> Estructuras SelectView (Pins)</h3>
+            <div class="pins-list" id="atlasPinsList"></div>
+          </div>
+
+          <div class="panel-section exam-accordion-section">
+            <h3><i class="fa-solid fa-graduation-cap"></i> Preguntas Frecuentes de Examen UNLP</h3>
+            <div class="exam-questions-container" id="atlasExamQuestions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODAL EDITOR DE PINS / COORDENADAS ══════════════ -->
+  <div id="atlasEditorDrawer" class="editor-drawer hidden" style="display:none;">
+    <div class="editor-drawer-content">
+      <div class="editor-drawer-header">
+        <h3><i class="fa-solid fa-crosshairs"></i> Modo Editor — Añadir Estructura SelectView</h3>
+        <button onclick="cerrarEditorAtlas()" class="btn-close-editor"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="editor-drawer-body">
+        <p class="editor-help-text">Haz clic sobre la imagen del preparado para fijar las coordenadas:</p>
+        <div class="editor-coords-display" style="margin: 10px 0; font-family: monospace; color: var(--cyan-neon);">
+          <span>Coordenada X: <strong id="editorAtlasX">50.0%</strong></span> | 
+          <span>Coordenada Y: <strong id="editorAtlasY">50.0%</strong></span>
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label style="display:block; margin-bottom:4px; font-weight:600;">Nombre de la Estructura (Pin):</label>
+          <input type="text" id="editorAtlasTitulo" class="input-field" placeholder="Ej. Conducto de Havers Central" style="width:100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label style="display:block; margin-bottom:4px; font-weight:600;">Pregunta / Identificación:</label>
+          <textarea id="editorAtlasPregunta" class="input-field" placeholder="Ej. Identificar el canal vascular central..." style="width:100%; height:60px;"></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="display:block; margin-bottom:4px; font-weight:600;">Clave Profe Joy / Trampa de Cátedra:</label>
+          <input type="text" id="editorAtlasClave" class="input-field" placeholder="Ej. No confundir con conductos de Volkmann..." style="width:100%;">
+        </div>
+        <button onclick="guardarPinAtlas()" class="btn-primary" style="width:100%;">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Pin en el Preparado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODAL FRAGMENTO DEL APUNTE ══════════════ -->
+  <div id="fragmento-modal" class="fragmento-modal" role="dialog" aria-modal="true" aria-labelledby="fragmento-titulo">
+    <div class="fragmento-modal-inner">
+      <div class="fragmento-modal-header">
+        <div>
+          <div class="fragmento-modal-tag">
+            <i class="fa-solid fa-book-open"></i> Fragmento ALUMED
+          </div>
+          <h2 id="fragmento-titulo" class="fragmento-modal-titulo">—</h2>
+        </div>
+        <button class="fragmento-close" onclick="cerrarFragmento()" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="fragmento-cuerpo" class="fragmento-cuerpo"></div>
+      <div class="fragmento-modal-footer">
+        <span id="fragmento-fuente" class="fragmento-fuente-tag"></span>
+        <button class="btn-secondary" onclick="cerrarFragmento()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultados-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-card); padding: 30px; border-radius: 12px; max-width: 850px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: center; border: 1px solid var(--border);">
+      <h2 style="margin-top: 0;">Resultados del Parcial</h2>
+      <div id="resultado-estado" style="font-size: 1.8rem; font-weight: 800; margin: 20px 0;"></div>
+      <p id="resultado-mensaje" style="font-size: 1.1rem; color: var(--muted);"></p>
+      <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn-secondary" onclick="cerrarResultados()">Volver al Inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts al final del body -->
+  <script src="data.js?v=20260728-10" charset="utf-8"></script>
+  <script src="atlas_data.js" charset="utf-8"></script>`r`n  <script src="alumed_atlas_data.js" charset="utf-8"></script>
+  <script src="app.js?v=20260728-10" charset="utf-8"></script>
+  <div id="alumed-toast" class="toast" style="display:none; position:fixed; bottom:20px; right:20px; background:#1e293b; color:#fff; padding:12px 20px; border-radius:8px; border:1px solid #334155; z-index:9999;"></div>
+
+<!-- ZOOM FUNCIONALITY FOR ATLAS ALUMED -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const img = document.getElementById('atlasModalImg');
+    const container = document.getElementById('atlasCanvasBg'); // The container of the image
+    
+    if (!img || !container) return;
+
+    let scale = 1;
+    let panning = false;
+    let pointX = 0;
+    let pointY = 0;
+    let startX = 0;
+    let startY = 0;
+
+    function setTransform() {
+        img.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        img.style.transition = panning ? 'none' : 'transform 0.1s ease';
+        
+        // Hide pins when zoomed so they don't break placement
+        const pins = document.getElementById('atlasPinsContainer');
+        if(pins) {
+             pins.style.opacity = scale > 1 ? '0' : '1';
+             pins.style.pointerEvents = scale > 1 ? 'none' : 'auto';
+        }
+    }
+
+    
+    window.setMicroscopeZoom = function(targetScale) {
+        scale = targetScale;
+        pointX = 0;
+        pointY = 0;
+        setTransform();
+    };
+
+    container.onmousedown = function (e) {
+        if (scale > 1) {
+            e.preventDefault();
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            panning = true;
+            container.style.cursor = 'grabbing';
+        }
+    }
+
+    container.onmouseup = function (e) {
+        panning = false;
+        container.style.cursor = scale > 1 ? 'grab' : 'default';
+    }
+
+    container.onmousemove = function (e) {
+        if (!panning) return;
+        e.preventDefault();
+        pointX = e.clientX - startX;
+        pointY = e.clientY - startY;
+        setTransform();
+    }
+
+    container.onmouseleave = function (e) {
+        panning = false;
+        container.style.cursor = scale > 1 ? 'grab' : 'default';
+    }
+
+    container.onwheel = function (e) {
+        e.preventDefault();
+        const delta = e.wheelDelta ? e.wheelDelta : -e.deltaY;
+        
+        if (delta > 0) {
+            scale *= 1.2; // Zoom in
+        } else {
+            scale /= 1.2; // Zoom out
+        }
+        
+        // Limit min and max zoom
+        if (scale < 1) scale = 1;
+        if (scale > 10) scale = 10;
+        
+        // Reset pan if zoomed all the way out
+        if (scale === 1) {
+            pointX = 0;
+            pointY = 0;
+        }
+        
+        container.style.cursor = scale > 1 ? 'grab' : 'default';
+        setTransform();
+    }
+});
+</script>
+
+</body>
+
+</html>

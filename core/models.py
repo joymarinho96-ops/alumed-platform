@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from alumed.url_utils import normalize_gcs_url
 
@@ -229,6 +230,7 @@ class CarteleraItem(models.Model):
     # ── Dados do aviso ───────────────────────────────────────────
     title        = models.CharField(max_length=500, verbose_name='Título')
     subtitle     = models.CharField(max_length=500, blank=True, verbose_name='Subtítulo')
+    target_year  = models.CharField(max_length=50, blank=True, null=True, help_text="Ej: Primer Año, Segundo Año, Medicina 2026")
     issuer       = models.CharField(max_length=300, blank=True, verbose_name='Organismo emissor')
     date_str     = models.CharField(max_length=30,  blank=True, verbose_name='Data (texto original)')
     date_parsed  = models.DateField(null=True, blank=True, verbose_name='Data (parseada)')
@@ -272,3 +274,195 @@ class CarteleraItem(models.Model):
     def needs_notification(self):
         """True se ainda não foi notificado."""
         return self.notified_at is None
+
+
+# ==========================================
+# MENU ARQUITETA - BACKEND ADMIN MODELS
+# ==========================================
+
+# 1. Conecta Radar 📡 (Monitoramento y Automatización)
+class ConectaRadarSession(models.Model):
+    session_name = models.CharField(max_length=100)
+    auth_cookies = models.JSONField(help_text="Cookies serializadas de la sesión")
+    is_active = models.BooleanField(default=True)
+    last_used = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = '📡 Sesión Radar (Nodo Activo)'
+        verbose_name_plural = '📡 Sesiones Radar'
+
+class RadarSweepLog(models.Model):
+    YEAR_CHOICES = [(0, 'Ingreso'), (1, '1º Año'), (2, '2º Año'), (3, '3º Año')]
+    target_year = models.IntegerField(choices=YEAR_CHOICES)
+    endpoint_scraped = models.URLField()
+    status = models.CharField(max_length=50, choices=[('SUCCESS', 'Éxito'), ('BLOCKED', 'Bloqueado'), ('ERROR', 'Error')])
+    items_found = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = '🧿 Log de Varredura (Sweep)'
+        verbose_name_plural = '🧿 Logs de Varredura'
+
+
+# 2. PrimeiroBiblio 📚 (Ingestión RAG - Profe Joy)
+class PrimeiroBiblioTome(models.Model):
+    STATUS_CHOICES = [('PENDING', 'Pendiente'), ('PROCESSING', 'Procesando'), ('COMPLETED', 'Completado')]
+    file = models.FileField(upload_to='biblioteca_raw/')
+    title = models.CharField(max_length=200)
+    subject = models.CharField(max_length=100, help_text="Ej: Anatomía, Histología")
+    vectorization_status = models.CharField(max_length=20, default='PENDING', choices=STATUS_CHOICES)
+    total_chunks = models.IntegerField(default=0)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = '📚 Tomo de Biblioteca (RAG)'
+        verbose_name_plural = '📚 Tomos de Biblioteca'
+
+
+# 3. Motor Legal ⚖️ (Estatuto & Direitos)
+class EstatutoCodex(models.Model):
+    article_number = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
+    legal_text = models.TextField()
+    keywords = models.CharField(max_length=255, help_text="Ej: recursante, extranjero, correlatividad")
+
+    class Meta:
+        verbose_name = '⚖️ Códice del Estatuto (Regla)'
+        verbose_name_plural = '⚖️ Códices del Estatuto'
+
+class AegisDefenseDraft(models.Model):
+    student_identifier = models.CharField(max_length=100)
+    related_rule = models.ForeignKey(EstatutoCodex, on_delete=models.SET_NULL, null=True)
+    generated_document = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = '🛡️ Escudo Legal (Borrador)'
+        verbose_name_plural = '🛡️ Escudos Legales'
+
+
+# 4. Club AluMed & Pagos 💳 (Gestión de Accesos)
+class ClubAluMedAdept(models.Model):
+    student_email = models.EmailField(unique=True)
+    wix_subscription_id = models.CharField(max_length=100, blank=True)
+    has_atlas_access = models.BooleanField(default=False)
+    has_microscope_access = models.BooleanField(default=False)
+    has_profe_joy_premium = models.BooleanField(default=False)
+    expiration_date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = '💎 Adepto del Club (Acceso)'
+        verbose_name_plural = '💎 Adeptos del Club'
+
+
+# 5. O Escudo / Firewall 🛡️ (Seguridad)
+class FirewallSigil(models.Model):
+    service_name = models.CharField(max_length=100)
+    token_hash = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    rate_limit_requests = models.IntegerField(default=100, help_text="Reqs por minuto")
+    rotated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = '🔥 Sello de Fuego (API Key)'
+        verbose_name_plural = '🔥 Sellos de Fuego'
+
+
+class UserCalendarEvent(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="synced_calendar_events")
+    cartelera_event = models.ForeignKey(CarteleraItem, on_delete=models.CASCADE, related_name="user_syncs")
+    google_event_id = models.CharField(max_length=255)
+    synced_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'cartelera_event')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.cartelera_event.title} ({self.google_event_id})"
+
+
+class Materia(models.Model):
+    nombre = models.CharField(max_length=200, verbose_name='Nombre de la Materia')
+    codigo = models.CharField(max_length=50, unique=True, verbose_name='Código Interno')
+    ano_cursada = models.IntegerField(verbose_name='Año de Cursada', help_text='1, 2, 3...')
+
+    def __str__(self):
+        return self.nombre
+
+class CursoWix(models.Model):
+    titulo = models.CharField(max_length=255, verbose_name='Título del Curso')
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, null=True, blank=True, related_name='cursos_wix')
+    wix_course_url = models.URLField(max_length=500, verbose_name='URL del Curso en Wix')
+    imagen_portada = models.URLField(max_length=500, blank=True, verbose_name='URL de la Imagen')
+    descripcion_corta = models.CharField(max_length=300, blank=True, verbose_name='Descripción corta')
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.titulo
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='core_profile')
+    avatar_url = models.URLField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=30, blank=True, null=True, help_text="Número de WhatsApp en formato E.164, ej: +5492211234567")
+    current_year = models.CharField(max_length=50, blank=True, null=True, help_text="Año académico del alumno")
+    whatsapp_notifications_enabled = models.BooleanField(default=True)
+    bio = models.TextField(blank=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    materias = models.ManyToManyField(Materia, blank=True, related_name='estudiantes')
+    wix_member_id = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Perfil de {self.user.username}"
+
+
+class WhatsAppMessageLog(models.Model):
+    MESSAGE_TYPES = [
+        ('welcome', 'Bienvenida'),
+        ('event_alert', 'Alerta de Evento/Examen'),
+        ('exam_reminder', 'Recordatorio'),
+        ('support', 'Soporte'),
+    ]
+    STATUS_CHOICES = [
+        ('queued', 'En cola'),
+        ('sent', 'Enviado'),
+        ('failed', 'Fallido'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
+    phone_number = models.CharField(max_length=30)
+    message_type = models.CharField(max_length=50, choices=MESSAGE_TYPES)
+    message_body = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='queued')
+    api_response_id = models.CharField(max_length=255, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.message_type} a {self.phone_number} ({self.status})"
+
+
+class LibraryDownloadLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    wix_item_id = models.CharField(max_length=100)
+    item_title = models.CharField(max_length=255)
+    materia = models.ForeignKey(Materia, null=True, blank=True, on_delete=models.SET_NULL)
+    downloaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.item_title}"
+
+
+class LiveClass(models.Model):
+    title = models.CharField(max_length=200, verbose_name='Título de la Clase')
+    stream_url = models.URLField(max_length=500, verbose_name='URL del Streaming (Embed)')
+    target_year = models.CharField(max_length=50, blank=True, null=True, help_text="Ej: Ingreso, Primer Año, Segundo Año")
+    is_active = models.BooleanField(default=False, verbose_name='En Vivo Ahora')
+    scheduled_time = models.DateTimeField(verbose_name='Fecha y Hora Programada')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.target_year} ({'EN VIVO' if self.is_active else 'Programada'})"
+
+    class Meta:
+        verbose_name = '🔴 Clase en Vivo'
+        verbose_name_plural = '🔴 Clases en Vivo'
+        ordering = ['-scheduled_time']

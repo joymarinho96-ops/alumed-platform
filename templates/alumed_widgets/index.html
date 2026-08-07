@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALUMED OS | Widgets Educativos & Banco de Preguntas UNLP</title>
+  <meta name="description" content="Widgets educativos interactivos de ALUMED OS. Banco de Preguntas, Pinches y Examen Oral.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'atlas_histologico/style.css' %}">
+</head>
+<body class="alumed-os-theme">
+
+  <div class="app-layout">
+    <main class="content">
+
+      <!-- TOPBAR NAVBAR -->
+      <header class="top-header-navbar" style="background: linear-gradient(90deg, #1c1106, #2d1804, #12091f); border-bottom: 1px solid rgba(245, 200, 66, 0.25); padding: 12px 24px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; margin-bottom: 24px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); width: 100%;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 900; color: #fff;">
+            ALU<span style="color: #c084fc;">MED</span> OS
+          </span>
+        </div>
+
+        <div style="display: flex; justify-content: center; width: 100%;">
+          <nav style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); padding: 6px 18px; border-radius: 99px; display: flex; align-items: center; gap: 14px; margin: 0 auto;">
+            <a href="/" style="color: #f1f5f9; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Inicio</a>
+            <a href="/conecta/dashboard/" style="color: #f5c842; text-decoration: none; font-weight: 700; font-size: 0.88rem;">⚡ Conecta FCM</a>
+            <a href="/atlas-histologico/" style="color: #ec4899; text-decoration: none; font-weight: 800; font-size: 0.88rem; background: rgba(236,72,153,0.18); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(236,72,153,0.4);">
+              <i class="fa-solid fa-microscope" style="color: #ec4899;"></i> 1. Atlas Histológico
+            </a>
+            <a href="/biblioteca/" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Biblioteca</a>
+            <a href="/simulacros/" style="background: linear-gradient(135deg, #00e5ff, #00a8ff); color: #090d16; font-weight: 800; font-size: 0.82rem; padding: 6px 16px; border-radius: 99px; text-decoration: none;">
+              Banco de Preguntas
+            </a>
+          </nav>
+        </div>
+
+        <div>
+          <span style="color: #00ffff; font-weight: 800; font-size: 0.8rem; background: rgba(0,255,255,0.1); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(0,255,255,0.3);">
+            Estado: {{ status }}
+          </span>
+        </div>
+      </header>
+
+      <!-- HERO SECTION -->
+      <section class="hero-section">
+        <div class="hero-badge" style="background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(168,85,247,0.2)); color: #00ffff;">
+          <i class="fa-solid fa-cubes"></i> MÓDULO DE WIDGETS EDUCATIVOS UNLP
+        </div>
+        <h1 class="hero-title">
+          Banco de Preguntas & <span class="text-gradient">Widgets Educativos</span>
+        </h1>
+        <p class="hero-subtitle">
+          Sistema modular de autoevaluación interactiva, Multiple Choice, Pinches anatómicos y Examen Oral por bolillero para la FCM UNLP.
+        </p>
+      </section>
+
+      <!-- WIDGET CONTAINER ELEMENTOR / ALUMED -->
+      <div id="alumed-widget-container" class="alumed-interactive-wrapper">
+          <div class="widget-header">
+              <h3 style="color: #00ffff; font-family: 'Outfit', sans-serif; margin-bottom: 10px;">Banco de Preguntas - Histología</h3>
+          </div>
+          <div class="widget-body" id="django-widget-interactive-body">
+              <p style="color: #cbd5e1;">Cargando sistema de autoevaluación...</p>
+          </div>
+      </div>
+
+      <style>
+          .alumed-interactive-wrapper {
+              background: rgba(18, 24, 38, 0.95);
+              border: 1px solid rgba(0, 229, 255, 0.3);
+              border-radius: 12px;
+              padding: 24px;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+              margin: 20px 0;
+          }
+          .widget-header h3 {
+              color: #00ffff;
+              font-family: 'Outfit', sans-serif;
+              margin-bottom: 10px;
+          }
+      </style>
+
+      <script src="{% static 'atlas_histologico/data.js' %}"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const body = document.getElementById("django-widget-interactive-body");
+          if (!body) return;
+
+          if (typeof bancoDados !== "undefined" && bancoDados.choices && bancoDados.choices.length > 0) {
+            const q = bancoDados.choices[0];
+            let optionsHtml = q.opcoes.map((opt, i) => `
+              <button class="btn-secondary" style="display:block; width:100%; text-align:left; padding:12px; margin-bottom:8px; border-radius:8px;" onclick="checkDjangoWidgetAnswer(${i}, ${q.correta}, this)">
+                ${opt}
+              </button>
+            `).join("");
+
+            body.innerHTML = `
+              <div style="margin-bottom: 12px;">
+                <span class="badge badge-materia">${q.materia}</span>
+                <span style="font-size:0.8rem; color:#00ffff; margin-left:8px; font-weight:700;">${q.tp}</span>
+              </div>
+              <h4 style="color:#fff; font-size:1.05rem; margin-bottom:15px;">${q.pergunta}</h4>
+              <div id="django-widget-options">${optionsHtml}</div>
+              <div id="django-widget-feedback" style="margin-top:15px; display:none; padding:12px; border-radius:8px; background:rgba(0,229,255,0.1); border:1px solid rgba(0,229,255,0.3); color:#fff; font-size:0.9rem;"></div>
+            `;
+          }
+        });
+
+        function checkDjangoWidgetAnswer(selected, correct, btn) {
+          const fb = document.getElementById("django-widget-feedback");
+          if (!fb) return;
+          fb.style.display = "block";
+          if (selected === correct) {
+            fb.innerHTML = "<strong>✅ ¡Correcto!</strong> Excelente deducción histofisiológica según el criterio del Método Profe Joy.";
+            btn.style.borderColor = "#10b981";
+            btn.style.background = "rgba(16,185,129,0.2)";
+          } else {
+            fb.innerHTML = "<strong>❌ Respuesta Incorrecta.</strong> Revisa el concepto clave en el resumen de la Cátedra.";
+            btn.style.borderColor = "#ef4444";
+            btn.style.background = "rgba(239,68,68,0.2)";
+          }
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

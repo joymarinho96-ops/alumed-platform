@@ -1,1420 +1,177 @@
-{% extends 'dashboard_base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Biblioteca - ALUMED{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-10 pt-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-{% block extra_head %}
-<style>
-    /* ═══════════════════════════════════════════════════════
-       BIBLIOTECA ALUMED — Mobiliário de Madeira Antiga
-       ═══════════════════════════════════════════════════════ */
-
-    :root {
-      --wood-dark:  #1a0b03;
-      --wood-mid:   #4a2c12;
-      --wood-surf:  #5c3012;
-      --wood-grain: #8b5523;
-      --wood-shine: #c8864a;
-      --amber:      #e8a040;
-      --amber2:     #c4762a;
-      --parchment:  #f5e6c8;
-      --ink:        #2b1a0e;
-      --varnish:    rgba(200,134,74,.12);
-    }
-
-    /* ── PAGE ── */
-    .explorer-page {
-        padding: 0;
-        min-height: calc(100vh - 100px);
-        display: flex;
-        flex-direction: column;
-        background:
-            radial-gradient(ellipse 60% 40% at 50% 0%, rgba(90,45,10,.22) 0%, transparent 70%),
-            linear-gradient(160deg, #160a03 0%, #0a0502 60%, #160a03 100%);
-        position: relative;
-    }
-
-    /* ── CAREER TABS — latão envelhecido ── */
-    .career-tab-btn {
-        background: linear-gradient(160deg, #4a2c12 0%, #3a1f0a 100%);
-        border: 1px solid #8b5523;
-        border-bottom: 3px solid var(--wood-dark);
-        color: #c8a06a;
-        padding: 9px 18px;
-        border-radius: 6px 6px 0 0;
-        font-family: 'Cinzel', serif;
-        font-size: 11px; font-weight: 700;
-        cursor: pointer;
-        display: flex; align-items: center; gap: 8px;
-        transition: all .2s; white-space: nowrap;
-        letter-spacing: .06em;
-        box-shadow: inset 0 1px 0 rgba(200,134,74,.2), 0 -2px 8px rgba(0,0,0,.4);
-    }
-    .career-tab-btn:hover {
-        background: linear-gradient(160deg, #5c3a1a 0%, #4a2c12 100%);
-        color: var(--amber); transform: translateY(-2px);
-    }
-    .active-career-tab {
-        background: linear-gradient(160deg, #6b3d1a 0%, #5c3012 100%) !important;
-        border-color: var(--amber) !important;
-        color: var(--amber) !important;
-        box-shadow: 0 0 12px rgba(232,160,64,.25), inset 0 1px 0 rgba(200,134,74,.3) !important;
-    }
-
-    /* ── MAIN CABINET WRAPPER — o móvel de carvalho ── */
-    .explorer-wrapper {
-        width: 100%;
-        display: grid;
-        grid-template-columns: 270px 1fr;
-        min-height: 680px;
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-        /* grain texture via css */
-        background:
-            repeating-linear-gradient(
-                90deg, transparent 0px, transparent 22px,
-                rgba(0,0,0,.05) 22px, rgba(0,0,0,.05) 23px
-            ),
-            linear-gradient(160deg, #3a1e08 0%, #2b1508 50%, #3a1e08 100%);
-        border: 3px solid #1a0b03;
-        border-top: 8px solid #7c4a22;
-        border-radius: 4px;
-        box-shadow:
-            0 0 0 1px rgba(200,134,74,.1),
-            0 4px 0 #1a0b03,
-            6px 10px 50px rgba(0,0,0,.75),
-            inset 0 0 80px rgba(0,0,0,.25);
-    }
-    /* Top plank edge */
-    .explorer-wrapper::before {
-        content: '';
-        position: absolute; top: -14px; left: -4px; right: -4px; height: 14px;
-        background: linear-gradient(to bottom, #b87040 0%, #8b5523 40%, #5c3012 100%);
-        border-radius: 4px 4px 0 0;
-        box-shadow: 0 -2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
-        z-index: 5;
-    }
-    @media (max-width: 968px) {
-        .explorer-wrapper { grid-template-columns: 1fr; }
-    }
-
-    /* ── PLANT + MATE on top — decoração ── */
-    .cabinet-top-deco {
-        display: flex;
-        align-items: flex-end; justify-content: flex-end;
-        gap: 20px; padding: 0 36px;
-        height: 68px; position: relative; z-index: 2;
-        pointer-events: none; margin-bottom: -2px;
-    }
-    /* Mate cup */
-    .deco-mate { display:flex; flex-direction:column; align-items:center; gap:2px; filter:drop-shadow(2px 5px 8px rgba(0,0,0,.65)); }
-    .mate-cup {
-        width:30px; height:36px;
-        background: linear-gradient(160deg, #3d2010 0%, #1e0f04 70%);
-        border-radius: 5px 5px 10px 10px;
-        border: 1.5px solid rgba(200,134,74,.3);
-        position: relative;
-        box-shadow: inset 0 -4px 8px rgba(0,0,0,.4), 2px 4px 10px rgba(0,0,0,.6);
-    }
-    /* yerba surface */
-    .mate-cup::before {
-        content:''; position:absolute; top:5px; left:4px; right:4px; height:7px;
-        background: radial-gradient(ellipse, #5a8a20 0%, #3a6010 60%, #2a4a08 100%);
-        border-radius: 3px; box-shadow:0 0 8px rgba(90,138,32,.4);
-    }
-    /* bombilla */
-    .mate-cup::after {
-        content:''; position:absolute; top:-16px; left:50%; transform:translateX(-50%) rotate(10deg);
-        width:2.5px; height:22px;
-        background: linear-gradient(to top, #8b6a30, #d4a866);
-        border-radius:2px; box-shadow:0 0 4px rgba(0,0,0,.5);
-    }
-    .mate-saucer {
-        width:40px; height:6px;
-        background: linear-gradient(to bottom, #5c3012, #3a1e08);
-        border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,.55);
-    }
-    /* Mini plant */
-    .deco-plant { display:flex; flex-direction:column; align-items:center; filter:drop-shadow(2px 5px 8px rgba(0,0,0,.55)); }
-    .plant-pot {
-        width:34px; height:28px;
-        background: linear-gradient(160deg, #9b4020 0%, #6b2810 60%);
-        border-radius: 3px 3px 7px 7px;
-        border: 1.5px solid rgba(155,64,32,.55);
-        border-top: 2px solid #cc6644;
-        box-shadow: 2px 3px 8px rgba(0,0,0,.55), inset 0 -2px 6px rgba(0,0,0,.3);
-        position: relative;
-    }
-    .plant-pot::before { /* soil */
-        content:''; position:absolute; top:3px; left:3px; right:3px; height:5px;
-        background:radial-gradient(ellipse,#3a2010 0%,#241408 100%);
-        border-radius:2px;
-    }
-    .plant-leaves { position:relative; width:42px; height:40px; margin-bottom:-8px; }
-    .leaf {
-        position:absolute; border-radius:50% 0;
-        background: linear-gradient(135deg, #4a9020 0%, #2d6010 60%, #1e4808 100%);
-        border:1px solid rgba(40,80,10,.5);
-        transform-origin: bottom center;
-        box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    }
-    .leaf-1 { width:18px;height:25px;bottom:0;left:12px;transform:rotate(-28deg); }
-    .leaf-2 { width:16px;height:22px;bottom:0;right:8px;transform:rotate(22deg); }
-    .leaf-3 { width:14px;height:20px;bottom:5px;left:50%;transform:translateX(-50%) rotate(-4deg);background:linear-gradient(135deg,#5aaa28,#38780e); }
-    .leaf-4 { width:12px;height:17px;bottom:8px;left:5px;transform:rotate(-42deg);opacity:.8; }
-    .leaf-5 { width:12px;height:16px;bottom:7px;right:4px;transform:rotate(36deg);opacity:.8; }
-
-    /* ── SIDEBAR — painel lateral de carvalho escuro ── */
-    .explorer-sidebar {
-        background:
-            repeating-linear-gradient(
-                180deg, transparent 0px, transparent 28px,
-                rgba(0,0,0,.07) 28px, rgba(0,0,0,.07) 29px
-            ),
-            linear-gradient(to right, #160a03 0%, #2b1508 70%, #200e04 100%);
-        border-right: 3px solid #1a0b03;
-        box-shadow: inset -4px 0 14px rgba(0,0,0,.45), 2px 0 8px rgba(0,0,0,.35);
-        padding: 24px 16px;
-        display: flex; flex-direction: column; gap: 16px;
-        overflow-y: auto;
-        scrollbar-width: thin; scrollbar-color: var(--wood-grain) transparent;
-    }
-    @media (max-width: 968px) { .explorer-sidebar { display: none; } }
-
-    .sidebar-title {
-        font-family: 'Cinzel', serif;
-        font-size: 11px; font-weight: 700;
-        color: var(--amber);
-        display: flex; align-items: center; gap: 8px;
-        text-transform: uppercase; letter-spacing: .12em;
-        padding-bottom: 12px;
-        border-bottom: 1px solid rgba(200,134,74,.25);
-        text-shadow: 0 0 14px rgba(232,160,64,.5);
-    }
-
-    /* ── TREE NODES ── */
-    .tree-node {
-        display: flex; align-items: center;
-        padding: 9px 12px; border-radius: 3px;
-        cursor: pointer; transition: all .18s; gap: 9px;
-        font-family: 'Playfair Display', serif;
-        font-size: 12.5px; color: #b89060;
-        border: 1px solid transparent; position: relative;
-    }
-    .tree-node:hover {
-        background: rgba(200,134,74,.12);
-        border-color: rgba(200,134,74,.18); color: var(--amber);
-    }
-    .tree-node.active {
-        background: rgba(200,134,74,.18);
-        border-color: rgba(200,134,74,.35); color: var(--amber);
-        border-left: 3px solid var(--amber); font-weight: 700;
-        box-shadow: inset 2px 0 8px rgba(232,160,64,.12);
-    }
-    .tree-toggle { width:14px; color:rgba(200,134,74,.4); font-size:10px; }
-    .tree-icon   { color: var(--amber); font-size:13px; }
-    .tree-children {
-        margin-left: 14px; display: flex; flex-direction: column; gap: 3px;
-        transition: max-height .3s ease-out; overflow: hidden;
-    }
-    .tree-children.collapsed { max-height: 0; }
-
-    /* ── MAIN AREA — interior da estante ── */
-    .explorer-main {
-        display: flex; flex-direction: column; overflow-y: auto;
-        background:
-            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(200,134,74,.07) 0%, transparent 60%),
-            linear-gradient(to bottom, #1e1008 0%, #130a04 100%);
-    }
-
-    /* ── HEADER TOOLBAR — régua superior de madeira ── */
-    .explorer-header {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 15px 22px;
-        background: linear-gradient(to bottom, #2b1508 0%, #1a0d04 100%);
-        border-bottom: 2px solid #1a0b03;
-        box-shadow: 0 2px 14px rgba(0,0,0,.55), inset 0 1px 0 rgba(200,134,74,.08);
-        flex-wrap: wrap; gap: 12px;
-    }
-    .explorer-breadcrumb {
-        font-family: 'Cinzel', serif;
-        font-size: 12px; font-weight: 700; color: rgba(200,134,74,.65);
-        display: flex; align-items: center; gap: 6px; letter-spacing: .06em;
-    }
-    .explorer-breadcrumb .clickable {
-        cursor: pointer; color: var(--amber); transition: color .2s;
-    }
-    .explorer-breadcrumb .clickable:hover {
-        color: #fff; text-shadow: 0 0 10px var(--amber);
-    }
-    .explorer-search { position: relative; width: 260px; }
-    .explorer-search input {
-        width: 100%;
-        background: rgba(0,0,0,.5);
-        border: 1px solid rgba(200,134,74,.22);
-        border-radius: 4px; color: #c8a06a;
-        padding: 8px 12px 8px 34px;
-        font-size: 12.5px; outline: none;
-        transition: border-color .2s;
-        font-family: 'Playfair Display', serif;
-    }
-    .explorer-search input::placeholder { color: rgba(200,134,74,.3); }
-    .explorer-search input:focus {
-        border-color: var(--amber);
-        box-shadow: 0 0 14px rgba(232,160,64,.18);
-    }
-    .explorer-search i {
-        position: absolute; left: 11px; top: 50%;
-        transform: translateY(-50%);
-        color: rgba(200,134,74,.38); font-size: 12px;
-    }
-
-    /* ── GRID — superfície da prateleira ── */
-    .explorer-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 18px; padding: 22px;
-    }
-
-    /* ── GAVETAS DE ARQUIVO (folders / years / subjects) ── */
-    .cabinet-folder {
-        background:
-            repeating-linear-gradient(
-                175deg, transparent 0px, transparent 10px,
-                rgba(0,0,0,.04) 10px, rgba(0,0,0,.04) 11px
-            ),
-            linear-gradient(160deg, #5c3012 0%, #4a2410 50%, #5c3012 100%);
-        border: 2px solid #1a0b03;
-        border-top: 3px solid var(--wood-shine);
-        border-radius: 3px 3px 5px 5px;
-        padding: 20px 52px 16px 18px;  /* right padding for handle */
-        display: flex; flex-direction: column; gap: 10px;
-        cursor: pointer;
-        transition: transform .22s cubic-bezier(.34,1.2,.64,1), box-shadow .22s, border-color .22s;
-        box-shadow:
-            3px 4px 18px rgba(0,0,0,.6),
-            inset 0 1px 0 rgba(200,134,74,.1),
-            inset 0 -2px 8px rgba(0,0,0,.2);
-        position: relative; overflow: hidden;
-    }
-    /* Brass drawer pull */
-    .cabinet-folder::after {
-        content: '';
-        position: absolute; top: 50%; right: 14px;
-        width: 30px; height: 9px; transform: translateY(-50%);
-        background: linear-gradient(to bottom, #d4a060 0%, #8b5523 50%, #6b3d1a 100%);
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.18);
-        border: 1px solid rgba(0,0,0,.3);
-    }
-    /* Wood label strip */
-    .cabinet-folder::before {
-        content: '';
-        position: absolute; top: 0; left: 0; right: 0; height: 4px;
-        background: linear-gradient(to bottom, rgba(200,134,74,.4), transparent);
-    }
-    .cabinet-folder:hover {
-        transform: translateY(-4px) translateX(3px);
-        box-shadow: 5px 8px 28px rgba(0,0,0,.7), inset 0 1px 0 rgba(200,134,74,.18);
-        border-color: rgba(200,134,74,.35);
-    }
-    .explorer-card-title {
-        font-family: 'Playfair Display', serif;
-        font-size: .92rem; font-weight: 700;
-        color: var(--parchment); margin: 0;
-        text-shadow: 0 1px 4px rgba(0,0,0,.55);
-    }
-    .explorer-card-desc {
-        font-family: 'IM Fell English', serif;
-        font-size: .74rem; color: rgba(200,160,100,.65); margin: 0;
-    }
-    .cabinet-handle { display: none; }  /* handled via ::after */
-
-    /* ── PRATELEIRA — plank between book rows ── */
-    .wood-shelf {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-        gap: 14px; width: 100%;
-    }
-    .shelf-decor-container {
-        display: block; grid-column: 1 / -1;
-        height: 16px;
-        background:
-            linear-gradient(to bottom,
-                rgba(200,134,74,.22) 0%,
-                #3a1e08 35%, #2b1508 100%);
-        border-top: 2px solid rgba(200,134,74,.28);
-        border-bottom: 2px solid rgba(0,0,0,.65);
-        margin: 4px 0;
-        box-shadow: 0 5px 10px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-
-    /* ── LIVROS — book spines standing on shelf ── */
-    .book-spine-card {
-        background:
-            repeating-linear-gradient(
-                90deg, transparent 0px, transparent 14px,
-                rgba(0,0,0,.06) 14px, rgba(0,0,0,.06) 15px
-            ),
-            linear-gradient(160deg, #5c3012 0%, #4a2410 40%, #5c3012 100%);
-        border: 1.5px solid rgba(0,0,0,.55);
-        border-top: 2px solid rgba(200,134,74,.28);
-        border-right: 2px solid rgba(0,0,0,.4);
-        border-radius: 2px 6px 6px 2px;
-        padding: 18px 14px 14px;
-        display: flex; flex-direction: column; gap: 8px;
-        cursor: pointer;
-        transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
-        box-shadow: 3px 4px 16px rgba(0,0,0,.65), inset 1px 0 0 rgba(200,134,74,.06);
-        min-height: 170px; position: relative;
-        justify-content: space-between; overflow: hidden;
-    }
-    /* Spine bands */
-    .book-spine-card::before {
-        content: '';
-        position: absolute; left: 0; right: 0; top: 38px; height: 2px;
-        background: rgba(0,0,0,.35);
-        box-shadow: 0 56px 0 rgba(0,0,0,.22), 0 112px 0 rgba(0,0,0,.16);
-    }
-    .book-spine-card:hover {
-        transform: translateY(-10px) rotate(-1.5deg);
-        box-shadow: 4px 16px 30px rgba(0,0,0,.75), 0 0 22px rgba(232,160,64,.1);
-    }
-    .spine-ribs { display: none; }
-    .book-cover-crest {
-        color: var(--amber); opacity: .88; margin: 0; font-size: 26px;
-        text-shadow: 0 0 12px rgba(232,160,64,.55);
-    }
-    .spine-text {
-        font-family: 'Playfair Display', serif;
-        font-size: .84rem; font-weight: 700;
-        color: var(--parchment); display: block; margin-top: 6px;
-        text-shadow: 0 1px 4px rgba(0,0,0,.65); line-height: 1.35;
-    }
-
-    /* ── APUNTES / SCROLLS ── */
-    .scroll-card {
-        background: linear-gradient(160deg, #f5e6c8 0%, #ead4a0 50%, #f0dbb0 100%);
-        border: 1.5px solid #c8a060;
-        border-top: 2px solid #d4b07a;
-        border-radius: 4px;
-        padding: 18px 14px 14px;
-        display: flex; flex-direction: column; gap: 8px;
-        cursor: pointer;
-        transition: transform .22s, box-shadow .22s;
-        box-shadow: 2px 4px 14px rgba(0,0,0,.55);
-        min-height: 160px; position: relative;
-        justify-content: space-between; overflow: hidden;
-    }
-    .scroll-card::before {
-        content: '';
-        position: absolute; top: 0; left: 0; right: 0; height: 3px;
-        background: linear-gradient(to right, #8b5523, #c8a060, #8b5523);
-    }
-    .scroll-card:hover {
-        transform: translateY(-7px) rotate(.6deg);
-        box-shadow: 4px 12px 26px rgba(0,0,0,.65);
-    }
-    .scroll-title {
-        font-family: 'Playfair Display', serif;
-        font-size: .85rem; font-weight: 700;
-        color: #2b1a0e; display: block; margin-top: 6px; line-height: 1.35;
-    }
-
-    /* ── CAREER TABS container ── */
-    .career-selector-container { position: relative; z-index: 10; }
-
-    /* ── BOOK MODAL ── */
-    .book-modal-overlay {
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,.78);
-        backdrop-filter: blur(8px);
-        display: flex; align-items: center; justify-content: center;
-        z-index: 10000;
-    }
-    .vintage-open-book {
-        background: linear-gradient(135deg, #f5e6c8 0%, #ead4a0 50%, #f0dbb0 100%);
-        border: 2px solid #8b5523;
-        border-radius: 6px;
-        width: 90%; max-width: 520px;
-        box-shadow:
-            0 0 0 1px rgba(0,0,0,.35),
-            0 24px 70px rgba(0,0,0,.65),
-            inset 0 1px 0 rgba(255,255,255,.18);
-        overflow: hidden; padding: 28px;
-        animation: slideUp .35s cubic-bezier(.165,.84,.44,1);
-    }
-    .book-spread   { display:flex; flex-direction:column; gap:20px; }
-    .book-page-left{ display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; }
-    .book-page-right{ display:flex; flex-direction:column; justify-content:space-between; gap:14px; }
-    .book-title    { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:800; color:var(--ink); margin:0; }
-    .book-author   { font-family:'Cinzel',serif; font-size:.78rem; color:var(--amber2); font-weight:700; margin:0 0 8px; letter-spacing:.06em; }
-    .book-description { font-family:'IM Fell English',serif; font-size:.9rem; color:#3a2010; line-height:1.55; margin:0; }
-    .vintage-illustration { color:var(--amber2); font-size:52px; }
-    .wax-seal-btn {
-        display:inline-flex; align-items:center; justify-content:center; gap:7px;
-        padding:10px 22px; font-size:13px;
-        font-family:'Cinzel',serif;
-        background: linear-gradient(135deg, #8b5523 0%, #5c3012 100%);
-        color: var(--parchment);
-        border: 1px solid rgba(200,134,74,.35);
-        font-weight:700; border-radius:4px;
-        cursor:pointer; text-decoration:none;
-        transition:all .2s;
-        box-shadow: 0 3px 10px rgba(0,0,0,.45), inset 0 1px 0 rgba(200,134,74,.18);
-        letter-spacing:.05em;
-    }
-    .wax-seal-btn:hover {
-        transform:translateY(-2px);
-        box-shadow:0 6px 20px rgba(0,0,0,.5), 0 0 16px rgba(232,160,64,.2);
-        color:var(--amber);
-    }
-    .wax-seal-btn.disabled {
-        background: #3a2a1a; color:#7a6050; cursor:not-allowed; box-shadow:none;
-    }
-
-    @keyframes slideUp {
-        from { opacity:0; transform:translateY(30px) scale(.96); }
-        to   { opacity:1; transform:translateY(0) scale(1); }
-    }
-    @media (max-width:768px) {
-        .explorer-grid { grid-template-columns:repeat(2,1fr); gap:12px; padding:14px; }
-        .wood-shelf    { grid-template-columns:repeat(2,1fr); }
-        .cabinet-top-deco { display:none; }
-    }
-    @media (max-width:480px) {
-        .explorer-grid, .wood-shelf { grid-template-columns:1fr; }
-    }
-</style>
-{% endblock %}
-
-{% block main_content %}
-<section class="explorer-page">
-    <!-- Careers Premium Selector Tabs -->
-    <div class="career-selector-container" style="max-width: 1200px; margin: 0 auto 20px auto; padding: 0 20px; display: flex; gap: 10px; overflow-x: auto; z-index: 10; position: relative;">
-        <button type="button" onclick="changeLibraryCareer('medicina')" class="career-tab-btn active-career-tab" id="career-tab-medicina">
-            <span class="tab-icon">🏥</span> MEDICINA
-        </button>
-        <button type="button" onclick="changeLibraryCareer('obstetricia')" class="career-tab-btn" id="career-tab-obstetricia">
-            <span class="tab-icon">👶</span> OBSTETRICIA
-        </button>
-        <button type="button" onclick="changeLibraryCareer('odontologia')" class="career-tab-btn" id="career-tab-odontologia">
-            <span class="tab-icon">🦷</span> ODONTOLOGÍA
-        </button>
-        <button type="button" onclick="changeLibraryCareer('enfermeria')" class="career-tab-btn" id="career-tab-enfermeria">
-            <span class="tab-icon">💉</span> ENFERMERÍA
-        </button>
-        <button type="button" onclick="changeLibraryCareer('otras_carreras')" class="career-tab-btn" id="career-tab-otras_carreras">
-            <span class="tab-icon">🧪</span> OTRAS CARRERAS
-        </button>
-    </div>
-
-    <!-- ── Decoração: plantinha + mate em cima do móvel ── -->
-    <div class="cabinet-top-deco" style="max-width:1200px;margin:0 auto;width:100%;">
-      <!-- Mate -->
-      <div class="deco-mate">
-        <div class="mate-cup"></div>
-        <div class="mate-saucer"></div>
-      </div>
-      <!-- Planta -->
-      <div class="deco-plant">
-        <div class="plant-leaves">
-          <div class="leaf leaf-4"></div>
-          <div class="leaf leaf-5"></div>
-          <div class="leaf leaf-1"></div>
-          <div class="leaf leaf-2"></div>
-          <div class="leaf leaf-3"></div>
+        <!-- Banner Promocional / Inception -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold mb-2">Conecta FCM 🤝 Instituto Alumed</h2>
+                <p class="text-indigo-100 text-lg">Tu biblioteca virtual gratuita. Descarga el material y prepárate con el Método Profe Joy.</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="/dashboard/" class="bg-white text-indigo-700 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-indigo-50 transition-colors inline-block">
+                    Ir a mi Campus
+                </a>
+            </div>
         </div>
-        <div class="plant-pot"></div>
-      </div>
-      <div class="cabinet-top-plank"></div>
-    </div>
 
-    <div class="explorer-wrapper">
-        
-        <!-- Left Panel: Folder Tree (Ledger Catalog Index) -->
-        <aside class="explorer-sidebar">
-            <h3 class="sidebar-title">
-                <i class="fas fa-book-reader"></i> Catálogo ALUMED
-            </h3>
-            
-            <div class="explorer-tree" id="explorerTree">
-                <!-- Root: Medicina -->
-                <div class="tree-node root-node active" id="node-root" onclick="selectRootNode(); playDeepThud();">
-                    <span class="tree-toggle"><i class="fas fa-chevron-down"></i></span>
-                    <span class="tree-icon"><i class="fas fa-university" style="color: #dfc393;"></i></span>
-                    <span class="tree-label">🏥 MEDICINA</span>
+        <!-- Buscador -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <form method="GET" action="{% url 'biblioteca_virtual' %}" class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar libros, resúmenes, guías..." class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4">
                 </div>
-                
-                <div class="tree-children" id="root-children">
-                    <!-- Dynamic Ledger Categories list -->
+                <div class="md:w-64">
+                    <select name="materia" class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4">
+                        <option value="">Todas las materias</option>
+                        {% for mat in materias %}
+                        <option value="{{ mat.codigo }}" {% if materia_code == mat.codigo %}selected{% endif %}>{{ mat.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                    Buscar
+                </button>
+            </form>
+        </div>
+
+        <!-- Catálogo Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for item in items %}
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 overflow-hidden group flex flex-col">
+                <div class="h-56 overflow-hidden relative bg-slate-100">
+                    {% if item.thumbnail %}
+                    <img src="{{ item.thumbnail }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-slate-300 text-6xl">
+                        📄
+                    </div>
+                    {% endif %}
+                    <span class="absolute top-3 right-3 text-xs font-bold text-indigo-700 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+                        {{ item.materia|default:"General" }}
+                    </span>
+                </div>
+                <div class="p-5 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 leading-tight">{{ item.title }}</h3>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-3">{{ item.description }}</p>
+                    </div>
+                    
+                    {% if is_guest %}
+                    <button onclick="openAuthModal()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2.5 rounded-xl transition-colors border border-indigo-200">
+                        🔒 Entrar para Descargar
+                    </button>
+                    {% else %}
+                    <button onclick="downloadItem('{{ item.id|escapejs }}', '{{ item.title|escapejs }}', '{{ item.materia_code }}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition-colors flex justify-center items-center gap-2">
+                        ⬇️ Descargar PDF
+                    </button>
+                    {% endif %}
                 </div>
             </div>
-        </aside>
-
-        <!-- Right Panel: Shelves & Study Desk -->
-        <main class="explorer-main">
             
-            <!-- Desk Header -->
-            <div class="explorer-header">
-                <div class="explorer-breadcrumb" id="explorerBreadcrumb">
-                    <span class="clickable" onclick="selectRootNode(); playDeepThud();"><i class="fas fa-university"></i> MEDICINA</span>
+            {% if forloop.counter == 4 %}
+            <!-- Banner Inception -->
+            <div class="col-span-1 sm:col-span-2 lg:col-span-4 bg-indigo-50 border border-indigo-100 rounded-2xl p-6 my-2 flex flex-col md:flex-row items-center gap-6">
+                <div class="text-5xl">🧠</div>
+                <div class="flex-grow">
+                    <h4 class="text-xl font-bold text-indigo-900">¿Cansado de leer PDFs interminables?</h4>
+                    <p class="text-indigo-700 mt-1">Descubre el Método de Colores y Orden Didáctico de Profe Joy. Entiende la Anatomía y la Histología sin frustraciones.</p>
                 </div>
-                
-                <div class="explorer-search">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="explorerSearchInput" placeholder="Buscar en estanterías..." oninput="handleSearch()">
-                </div>
+                {% if is_guest %}
+                <a href="{% url 'account_login' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors whitespace-nowrap">
+                    Comienza Gratis
+                </a>
+                {% else %}
+                <a href="/dashboard/" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors whitespace-nowrap">
+                    Ir a mis Cursos
+                </a>
+                {% endif %}
             </div>
-
-            <!-- The Shelf System / Files grid -->
-            <div id="explorerContainer">
-                <div class="explorer-grid" id="explorerGrid">
-                    <!-- Rendered dynamically (Cabinet Drawers, Wood Shelves, or Scroll tables) -->
-                </div>
-            </div>
+            {% endif %}
             
-        </main>
-    </div>
-</section>
-
-<!-- 3D Vintage Open Book Overlay Modal -->
-<div id="bookModalOverlay" class="book-modal-overlay" onclick="closeBookModal(event)">
-    <div class="vintage-open-book" onclick="event.stopPropagation()">
-        <div class="book-spread">
-            
-            <!-- Left Illustration Page -->
-            <div class="book-page-left">
-                <div class="vintage-illustration">
-                    <i class="fas fa-book-medical" id="modalBookIllustrationIcon"></i>
-                    <img id="modalBookCoverImg" style="display: none;" alt="Cover">
-                </div>
-                <span id="modalBookBadge" style="font-family:'Cinzel', serif; font-size:11px; font-weight:800; color:#5c3821; border: 1px double rgba(92,56,33,0.4); padding: 4px 12px; border-radius:4px; text-transform:uppercase;">Oficial</span>
+            {% empty %}
+            <div class="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-20">
+                <div class="text-6xl mb-4">🕵️‍♂️</div>
+                <h3 class="text-2xl font-bold text-slate-800">No encontramos resultados</h3>
+                <p class="text-slate-500 mt-2">Intenta buscar con otros términos o cambia la materia.</p>
             </div>
-            
-            <!-- Right Description & Action Page -->
-            <div class="book-page-right">
-                <div>
-                    <h3 id="modalBookTitle" class="book-title">Latarjet Anatomía Humana</h3>
-                    <p id="modalBookAuthor" class="book-author">Por Test de Cátedra</p>
-                    <p id="modalBookDesc" class="book-description">Este es un libro clásico de anatomía descriptiva recomendado para alumnos de primer año.</p>
-                </div>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(43,26,14,0.2); padding-top: 20px;">
-                    <button onclick="closeBookModal(); playDeepThud();" style="background:transparent; border:none; color:#5c3821; font-family:'Playfair Display', serif; font-size:13.5px; font-weight:700; cursor:pointer; text-decoration:underline;">Cerrar libro</button>
-                    <a href="#" id="modalBookActionBtn" class="wax-seal-btn" target="_blank">Leer Libro</a>
-                </div>
-            </div>
-
+            {% endfor %}
         </div>
     </div>
 </div>
 
-<!-- Inject DB Catalog Payload directly -->
-{{ library_payload|json_script:"library-catalog-data" }}
+<!-- Modal Auth-Wall -->
+<div id="auth-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                🎁
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">¡Material Exclusivo!</h3>
+            <p class="text-slate-600">Para descargar este apunte y guardarlo en tu perfil, necesitas iniciar sesión (es gratis).</p>
+        </div>
+        
+        <div class="space-y-4">
+            <a href="{% url 'account_login' %}?next=/biblioteca/" class="flex items-center justify-center gap-3 w-full bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl transition-colors">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6" alt="Google">
+                Entrar con Google
+            </a>
+            <button onclick="closeAuthModal()" class="w-full text-slate-500 hover:text-slate-700 font-medium py-2 transition-colors">
+                Seguir explorando
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // Database payload
-    var payload = JSON.parse(document.getElementById("library-catalog-data").textContent);
-    
-    // Path directory state tracking
-    var currentPath = []; 
-    
-    // Spine color arrays for bookshelf randomizer
-    var spineColors = ['burgundy', 'green', 'navy', 'brown', 'gold'];
+    const csrfToken = '{{ csrf_token }}';
 
-    // Career configurations tree mapping (Medicina, Obstetricia, Odontologia, Enfermeria, Otras Carreras)
-    var careerTreeConfigs = {
-        "medicina": {
-            name: "🏥 MEDICINA",
-            type: "root",
-            children: {
-                "1° AÑO": {
-                    type: "year",
-                    label: "1° AÑO",
-                    children: {
-                        "Anatomía": {
-                            type: "subject",
-                            subjectKey: "anato",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "anato", groupId: "apuntes_alumed", mockItems: ["Guía Práctica Locomotor", "Resumen Esplacnología", "Presentación Neuro"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "anato", groupId: "libros", mockItems: ["Gray Anatomía", "Latarjet Tomo 1", "Latarjet Tomo 2", "Netter Atlas 3D", "Rouvière Tomo I", "Rouvière Tomo II"] }
-                            }
-                        },
-                        "Histología": {
-                            type: "subject",
-                            subjectKey: "histo",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "histo", groupId: "apuntes_alumed", mockItems: ["Preparados Tejidos", "Guía Órganos"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "histo", groupId: "libros", mockItems: ["Gartner Histología", "Ross Histología"] }
-                            }
-                        },
-                        "Embriología": {
-                            type: "subject",
-                            subjectKey: "embrio",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "embrio", groupId: "apuntes_alumed", mockItems: ["Anexos Embrionarios"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "embrio", groupId: "libros", mockItems: ["Langman Embriología"] }
-                            }
-                        },
-                        "Biología": {
-                            type: "subject",
-                            subjectKey: "bio",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "bio", groupId: "apuntes_alumed", mockItems: ["Ciclo Celular", "ADN Guías"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "bio", groupId: "libros", mockItems: ["Alberts Biología"] }
-                            }
-                        },
-                        "Bioquímica": {
-                            type: "subject",
-                            subjectKey: "bioquimica",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "bioquimica", groupId: "apuntes_alumed", mockItems: ["Metabolismo Enzimas"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "bioquimica", groupId: "libros", mockItems: ["Harper Bioquímica"] }
-                            }
-                        }
-                    }
-                },
-                "2° AÑO": {
-                    type: "year",
-                    label: "2° AÑO",
-                    children: {
-                        "Fisiología": {
-                            type: "subject",
-                            subjectKey: "fisiologia",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "fisiologia", groupId: "apuntes_alumed", mockItems: [] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "fisiologia", groupId: "libros", mockItems: ["Guyton Fisiología"] }
-                            }
-                        },
-                        "Microbiología": { type: "leaf-empty", label: "Microbiología" },
-                        "Inmunología": { type: "leaf-empty", label: "Inmunología" },
-                        "Patología": { type: "leaf-empty", label: "Patología" }
-                    }
-                },
-                "3° AÑO": { type: "leaf-empty", label: "3° AÑO" },
-                "4° AÑO": { type: "leaf-empty", label: "4° AÑO" },
-                "5° AÑO": { type: "leaf-empty", label: "5° AÑO" },
-                "6° AÑO": { type: "leaf-empty", label: "6° AÑO" }
-            }
-        },
-        "obstetricia": {
-            name: "👶 OBSTETRICIA",
-            type: "root",
-            children: {
-                "1° AÑO": {
-                    type: "year",
-                    label: "1° AÑO",
-                    children: {
-                        "Anatomía Obstétrica": {
-                            type: "subject",
-                            subjectKey: "anato_obs",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "anato_obs", groupId: "apuntes_alumed", mockItems: ["Pelvis Ósea y Blanda", "Canal del Parto"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "anato_obs", groupId: "libros", mockItems: ["Texto de Anatomía Pelviana"] }
-                            }
-                        },
-                        "Embriología y Genética": {
-                            type: "subject",
-                            subjectKey: "embrio",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "embrio", groupId: "apuntes_alumed", mockItems: ["Fecundación y Nidación"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "embrio", groupId: "libros", mockItems: ["Embriología Médica de Langman"] }
-                            }
-                        }
-                    }
-                },
-                "2° AÑO": { type: "leaf-empty", label: "2° AÑO" },
-                "3° AÑO": { type: "leaf-empty", label: "3° AÑO" },
-                "4° AÑO": { type: "leaf-empty", label: "4° AÑO" },
-                "5° AÑO": { type: "leaf-empty", label: "5° AÑO" }
-            }
-        },
-        "odontologia": {
-            name: "🦷 ODONTOLOGÍA",
-            type: "root",
-            children: {
-                "1° AÑO": {
-                    type: "year",
-                    label: "1° AÑO",
-                    children: {
-                        "Anatomía Dentaria": {
-                            type: "subject",
-                            subjectKey: "anato_dent",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "anato_dent", groupId: "apuntes_alumed", mockItems: ["Morfología de Piezas Dentarias", "Oclusión Básica"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "anato_dent", groupId: "libros", mockItems: ["Atlas de Anatomía Dentaria de Diamond"] }
-                            }
-                        },
-                        "Histología y Embriología Bucal": {
-                            type: "subject",
-                            subjectKey: "histo_bucal",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "histo_bucal", groupId: "apuntes_alumed", mockItems: ["Desarrollo del Diente", "Tejidos Periodontales"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "histo_bucal", groupId: "libros", mockItems: ["Histología de Gómez de Ferraris"] }
-                            }
-                        }
-                    }
-                },
-                "2° AÑO": { type: "leaf-empty", label: "2° AÑO" },
-                "3° AÑO": { type: "leaf-empty", label: "3° AÑO" },
-                "4° AÑO": { type: "leaf-empty", label: "4° AÑO" },
-                "5° AÑO": { type: "leaf-empty", label: "5° AÑO" }
-            }
-        },
-        "enfermeria": {
-            name: "💉 ENFERMERÍA",
-            type: "root",
-            children: {
-                "1° AÑO": {
-                    type: "year",
-                    label: "1° AÑO",
-                    children: {
-                        "Fundamentos de Enfermería": {
-                            type: "subject",
-                            subjectKey: "fundamentos_enf",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "fundamentos_enf", groupId: "apuntes_alumed", mockItems: ["Proceso de Atención de Enfermería (PAE)", "Signos Vitales"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "fundamentos_enf", groupId: "libros", mockItems: ["Tratado de Enfermería de Kozier"] }
-                            }
-                        },
-                        "Anatomía y Fisiología": {
-                            type: "subject",
-                            subjectKey: "anato",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "anato", groupId: "apuntes_alumed", mockItems: ["Guía del Aparato Locomotor"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "anato", groupId: "libros", mockItems: ["Anatomía y Fisiología de Thibodeau"] }
-                            }
-                        }
-                    }
-                },
-                "2° AÑO": { type: "leaf-empty", label: "2° AÑO" },
-                "3° AÑO": { type: "leaf-empty", label: "3° AÑO" },
-                "4° AÑO": { type: "leaf-empty", label: "4° AÑO" },
-                "5° AÑO": { type: "leaf-empty", label: "5° AÑO" }
-            }
-        },
-        "otras_carreras": {
-            name: "🧪 OTRAS CARRERAS",
-            type: "root",
-            children: {
-                "1° AÑO": {
-                    type: "year",
-                    label: "1° AÑO",
-                    children: {
-                        "Química General": {
-                            type: "subject",
-                            subjectKey: "quimica_gen",
-                            children: {
-                                "Apuntes": { type: "leaf", leafType: "scroll", subjectKey: "quimica_gen", groupId: "apuntes_alumed", mockItems: ["Tabla Periódica y Enlaces", "Estequiometría"] },
-                                "Libros": { type: "leaf", leafType: "book", subjectKey: "quimica_gen", groupId: "libros", mockItems: ["Química General de Chang"] }
-                            }
-                        }
-                    }
-                },
-                "2° AÑO": { type: "leaf-empty", label: "2° AÑO" },
-                "3° AÑO": { type: "leaf-empty", label: "3° AÑO" }
-            }
-        }
-    };
-
-    var folderTreeConfig = careerTreeConfigs["medicina"];
-
-    function changeLibraryCareer(careerId) {
-        if (!careerTreeConfigs[careerId]) return;
-        
-        folderTreeConfig = careerTreeConfigs[careerId];
-        
-        // Update active classes on career buttons
-        var btns = document.querySelectorAll('.career-tab-btn');
-        btns.forEach(btn => {
-            if (btn.id === 'career-tab-' + careerId) {
-                btn.classList.add('active-career-tab');
-            } else {
-                btn.classList.remove('active-career-tab');
-            }
-        });
-        
-        // Update root node label in sidebar
-        var rootNodeLabel = document.querySelector('#node-root .tree-label');
-        if (rootNodeLabel) {
-            rootNodeLabel.textContent = folderTreeConfig.name;
-        }
-        
-        navigateToPath([]);
-        renderSidebarTree();
-        playDeepThud();
+    function openAuthModal() {
+        document.getElementById('auth-modal').classList.remove('hidden');
     }
 
-    var treeState = {
-        "1° AÑO": true,
-        "2° AÑO": false,
-        "3° AÑO": false,
-        "4° AÑO": false,
-        "5° AÑO": false,
-        "6° AÑO": false
-    };
+    function closeAuthModal() {
+        document.getElementById('auth-modal').classList.add('hidden');
+    }
 
-    var searchQuery = "";
-
-    // Web Audio API Wood Thud Synthesizer (runs completely client-side, zero assets required)
-    function playDeepThud() {
+    function downloadItem(itemId, title, materiaCode) {
+        // Fallback rápido por si la estructura JSON de Wix es compleja
+        // Extraemos solo el ID si lo necesitamos
+        let parsedId = itemId;
         try {
-            var ctx = new (window.AudioContext || window.webkitAudioContext)();
-            var osc = ctx.createOscillator();
-            var gainNode = ctx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            
-            // Triangle wave creates a warm, hollow organic wooden sound
-            osc.type = 'triangle';
-            
-            // Pitch slides down quickly to mimic a heavy wooden thud
-            osc.frequency.setValueAtTime(140, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.16);
-            
-            // Quick decay envelope
-            gainNode.gain.setValueAtTime(0.18, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.16);
-            
-            osc.start();
-            osc.stop(ctx.currentTime + 0.17);
-        } catch(e) {
-            // Audio context blocked or not supported - fail silently
-        }
-    }
-
-    function getDbItems(subjectKey, groupId) {
-        var room = payload.rooms[subjectKey];
-        if (!room) return [];
+           const obj = JSON.parse(decodeURIComponent(itemId));
+           parsedId = obj._id || itemId;
+        } catch(e) {}
         
-        if (groupId === 'apuntes_alumed') {
-            // Merge all apuntes, guides, notes, exams groups together
-            var items = [];
-            var groupsToMerge = ['apuntes_alumed', 'metodo_profe_joy', 'recursos_complementarios', 'simulacros_examenes'];
-            groupsToMerge.forEach(gid => {
-                var g = room.resourceGroups.find(x => x.id === gid);
-                if (g && g.items) {
-                    items = items.concat(g.items);
-                }
-            });
-            return items;
-        } else {
-            // Libros group
-            var group = room.resourceGroups.find(g => g.id === groupId);
-            return group ? group.items : [];
-        }
-    }
-
-    function toggleTreeNodeCollapse(nodePath, event) {
-        if (event) event.stopPropagation();
-        treeState[nodePath] = !treeState[nodePath];
-        renderSidebarTree();
-    }
-
-    function navigateToPath(pathArray) {
-        currentPath = pathArray;
-        renderBreadcrumbs();
-        renderGridContent();
-        highlightTreeSelection();
-    }
-
-    function clickBreadcrumb(idx) {
-        navigateToPath(currentPath.slice(0, idx));
-        playDeepThud();
-    }
-
-    function selectRootNode() {
-        navigateToPath([]);
-    }
-
-    function highlightTreeSelection() {
-        document.querySelectorAll('.tree-node').forEach(node => {
-            node.classList.remove('active');
-        });
-        if (currentPath.length === 0) {
-            document.getElementById('node-root').classList.add('active');
-            return;
-        }
-        var nodeEl = document.getElementById('node-' + currentPath.join('-'));
-        if (nodeEl) nodeEl.classList.add('active');
-    }
-
-    function renderBreadcrumbs() {
-        var container = document.getElementById('explorerBreadcrumb');
-        var html = '<span class="clickable" onclick="selectRootNode(); playDeepThud();"><i class="fas fa-university"></i> MEDICINA</span>';
-        
-        var accum = [];
-        for (var i = 0; i < currentPath.length; i++) {
-            accum.push(currentPath[i]);
-            html += ' <i class="fas fa-chevron-right" style="font-size:10px; color:#6a4f3b;"></i> ';
-            if (i === currentPath.length - 1) {
-                html += '<span>' + currentPath[i] + '</span>';
+        fetch('/api/biblioteca/download/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ 
+                wix_item_id: parsedId, 
+                item_title: title, 
+                materia_code: materiaCode 
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                // Iniciar la descarga abriendo la URL en otra pestaña
+                window.open(data.download_url, '_blank');
+                // Opcional: mostrar un toast de éxito
             } else {
-                html += '<span class="clickable" onclick="clickBreadcrumb(' + (i + 1) + ')">' + currentPath[i] + '</span>';
+                alert('Error al descargar: ' + data.error);
             }
-        }
-        container.innerHTML = html;
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Ocurrió un error en la red.');
+        });
     }
-
-    function renderSidebarTree() {
-        var container = document.getElementById('root-children');
-        
-        function buildTree(nodeConfig, parentPath) {
-            var html = '';
-            for (var name in nodeConfig) {
-                var child = nodeConfig[name];
-                var currentPathArray = parentPath.concat([name]);
-                var nodePathKey = currentPathArray.join('-');
-                var hasChildren = child.children && Object.keys(child.children).length > 0;
-                var collapsed = !treeState[name];
-                
-                var nodeClass = "tree-node";
-                var iconHtml = '<i class="fas fa-folder"></i>';
-                
-                if (child.type === 'leaf' || child.type === 'leaf-empty') {
-                    nodeClass += " leaf-node";
-                }
-                
-                var arrowHtml = hasChildren
-                    ? '<span class="tree-toggle" onclick="toggleTreeNodeCollapse(\'' + name + '\', event)"><i class="fas ' + (collapsed ? 'fa-chevron-right' : 'fa-chevron-down') + '"></i></span>'
-                    : '<span class="tree-toggle"></span>';
-                
-                html += '<div class="' + nodeClass + '" id="node-' + nodePathKey + '" onclick="navigateToPath([\'' + currentPathArray.join("','") + '\']); playDeepThud();" onmouseenter="playDeepThud()">';
-                html += arrowHtml;
-                html += '<span class="tree-icon">' + iconHtml + '</span>';
-                html += '<span class="tree-label">' + name + '</span>';
-                html += '</div>';
-                
-                if (hasChildren) {
-                    html += '<div class="tree-children ' + (collapsed ? 'collapsed' : '') + '" id="children-' + nodePathKey + '">';
-                    html += buildTree(child.children, currentPathArray);
-                    html += '</div>';
-                }
-            }
-            return html;
-        }
-
-        container.innerHTML = buildTree(folderTreeConfig.children, []);
-        highlightTreeSelection();
-    }
-
-    function getSubjectCrestSvg(subjectKey) {
-        if (subjectKey === 'anato') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 48px; height: 48px; fill: none; stroke: currentColor; stroke-width: 3.5; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <path d="M50,15 C20,15 15,35 45,45 M50,15 C80,15 85,35 55,45 M50,30 C20,30 15,50 45,60 M50,30 C80,30 85,50 55,60 M50,45 C20,45 15,65 45,75 M50,45 C80,45 85,65 55,75 M50,10 L50,85" />
-                </svg>
-            `;
-        } else if (subjectKey === 'histo') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 46px; height: 46px; fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <path d="M25,85 L75,85 M35,85 L35,80" />
-                    <path d="M35,80 C35,50 65,55 55,40 L45,30" />
-                    <path d="M30,65 L60,65" />
-                    <path d="M55,30 L65,40 M48,37 L58,47 M54,43 L52,48" />
-                    <path d="M42,27 L48,33 M40,24 L45,29" />
-                </svg>
-            `;
-        } else if (subjectKey === 'bio') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 46px; height: 46px; fill: none; stroke: currentColor; stroke-width: 3.5; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <polygon points="50,20 78,35 78,65 50,80 22,65 22,35" />
-                    <circle cx="78" cy="35" r="4.5" fill="currentColor" />
-                    <path d="M50,20 L50,10 M78,65 L88,70 M50,80 L50,90 M22,65 L12,70 M22,35 L12,30" />
-                </svg>
-            `;
-        } else if (subjectKey === 'bioquimica') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 52px; height: 46px; fill: none; stroke: currentColor; stroke-width: 3.5; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <polygon points="15,45 27,38 39,45 39,59 27,66 15,59" />
-                    <polygon points="39,45 51,38 63,45 63,59 51,66 39,59" />
-                    <polygon points="63,45 75,38 87,45 87,59 75,66 63,59" />
-                    <polygon points="87,45 97,35 97,69 87,59" />
-                </svg>
-            `;
-        } else if (subjectKey === 'fisiologia') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 48px; height: 48px; fill: none; stroke: currentColor; stroke-width: 3.5; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <path d="M5,50 L35,50 L40,40 L45,60 L50,15 L57,85 L64,50 L70,50 L75,44 L80,50 L95,50" />
-                </svg>
-            `;
-        } else if (subjectKey === 'embrio') {
-            return `
-                <svg viewBox="0 0 100 100" style="width: 46px; height: 46px; fill: none; stroke: currentColor; stroke-width: 3.5; filter: drop-shadow(0 0 4px rgba(223,195,147,0.4));">
-                    <path d="M35,25 C30,30 25,45 35,60 C45,75 65,70 65,55 C65,40 55,35 45,45 C38,52 38,65 50,75" />
-                    <circle cx="50" cy="30" r="5.5" fill="currentColor" />
-                </svg>
-            `;
-        }
-        return `<i class="fas fa-feather-alt" style="font-size: 26px;"></i>`;
-    }
-
-    function getSpineColor(idx) {
-        return spineColors[idx % spineColors.length];
-    }
-
-    // Textbooks rich metadata lookup (for cover images and didactic descriptions)
-    var bookMetadataLookup = {
-        "Gray Anatomía": {
-            author: "Susan Standring",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/814L+rcZ6NL.jpg",
-            desc: "El estándar clínico global. Enfocado en la anatomía aplicada a la práctica clínica, asocia directamente las estructuras anatómicas con procedimientos médicos, cirugías y diagnóstico por imágenes, facilitando una visión funcional indispensable para la práctica clínica."
-        },
-        "Latarjet Tomo 1": {
-            author: "Michel Latarjet, Alfredo Ruiz Liard",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/71R24d77oUL.jpg",
-            desc: "La anatomía descriptiva en su máxima expresión. Su enfoque didáctico se basa en la descripción detallada de cada estructura y su relación topográfica, ideal para comprender la morfología del cuerpo de forma sistemática y rigurosa."
-        },
-        "Latarjet Tomo 2": {
-            author: "Michel Latarjet, Alfredo Ruiz Liard",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/71R24d77oUL.jpg",
-            desc: "La anatomía descriptiva en su máxima expresión. Su enfoque didáctico se basa en la descripción detallada de cada estructura y su relación topográfica, ideal para comprender la morfología del cuerpo de forma sistemática y rigurosa."
-        },
-        "Netter Atlas 3D": {
-            author: "Frank H. Netter",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/81fHq+1vKaL.jpg",
-            desc: "La biblia visual del estudiante de medicina. Su valor didáctico reside en sus magistrales ilustraciones hechas a mano que aclaran relaciones espaciales complejas de forma inmediata, siendo el atlas de referencia indiscutido."
-        },
-        "Rouvière Tomo I": {
-            author: "Henri Rouvière, André Delmas",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/718yL4eDdtL.jpg",
-            desc: "Anatomía topográfica exhaustiva. Divide el cuerpo en regiones específicas y detalla la disección por planos, desde la piel hasta la profundidad, permitiendo al estudiante comprender la arquitectura tridimensional del cuerpo humano."
-        },
-        "Rouvière Tomo II": {
-            author: "Henri Rouvière, André Delmas",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/718yL4eDdtL.jpg",
-            desc: "Anatomía topográfica exhaustiva. Divide el cuerpo en regiones específicas y detalla la disección por planos, desde la piel hasta la profundidad, permitiendo al estudiante comprender la arquitectura tridimensional del cuerpo humano."
-        },
-        "Gartner Histología": {
-            author: "Leslie P. Gartner",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/81nC4yA6B6L.jpg",
-            desc: "Un texto ágil e ilustrado. Ideal para un aprendizaje rápido y dinámico, con esquemas explicativos en 3D que simplifican la biología molecular y celular aplicada a los tejidos humanos."
-        },
-        "Ross Histología": {
-            author: "Michael H. Ross",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/81fH-H8QG6L.jpg",
-            desc: "Correlación perfecta entre estructura celular y función. Su didáctica destaca por integrar teoría concisa con un atlas a color de preparados reales, permitiendo diagnosticar tejidos de forma visual e intuitiva."
-        },
-        "Langman Embriología": {
-            author: "Thomas W. Sadler",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/715QWjK2TGL.jpg",
-            desc: "El desarrollo prenatal explicado con claridad. Destaca por sus diagramas secuenciales paso a paso que muestran cómo se forman los órganos y sistemas, facilitando la comprensión de la teratología clínica."
-        },
-        "Alberts Biología": {
-            author: "Bruce Alberts",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/81V1v5m5v1L.jpg",
-            desc: "La célula explicada a nivel molecular. Un libro didácticamente brillante que utiliza esquemas, micrografías y animaciones lógicas para guiar al estudiante a través de la bioquímica celular compleja."
-        },
-        "Harper Bioquímica": {
-            author: "Victor W. Rodwell",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/71a6+L31eIL.jpg",
-            desc: "Bioquímica clínica y metabólica directa. Su enfoque didáctico simplifica las vías enzimáticas complejas asociándolas directamente con enfermedades clínicas humanas de relevancia diaria."
-        },
-        "Guyton Fisiología": {
-            author: "Arthur C. Guyton, John E. Hall",
-            cover: "https://images-na.ssl-images-amazon.com/images/I/81T6l270g0L.jpg",
-            desc: "El funcionamiento integrado del cuerpo. Su didáctica excepcional explica la homeostasis a través de diagramas de bloques y retroalimentaciones sencillas, logrando que la fisiología parezca lógica y fluida."
-        }
-    };
-
-    function openBookDetails(title, author, desc, url, badge, coverImg, isAvailable) {
-        var metadata = bookMetadataLookup[title] || {};
-        var displayTitle = title;
-        var displayAuthor = metadata.author || author;
-        var displayDesc = metadata.desc || desc;
-        var displayCover = metadata.cover || coverImg;
-
-        document.getElementById('modalBookTitle').textContent = displayTitle;
-        document.getElementById('modalBookAuthor').textContent = displayAuthor ? 'Autor/Cátedra: ' + displayAuthor : 'Cátedra ALUMED';
-        document.getElementById('modalBookDesc').textContent = displayDesc || 'Esta obra forma parte del plan de lectura e investigación científica en ALUMED.';
-        document.getElementById('modalBookBadge').textContent = badge || 'Bibliografía';
-        
-        var coverEl = document.getElementById('modalBookCoverImg');
-        var iconEl = document.getElementById('modalBookIllustrationIcon');
-        if (displayCover) {
-            coverEl.src = displayCover;
-            coverEl.style.display = 'block';
-            iconEl.style.display = 'none';
-        } else {
-            coverEl.style.display = 'none';
-            iconEl.style.display = 'block';
-        }
-        
-        var actionBtn = document.getElementById('modalBookActionBtn');
-        if (isAvailable) {
-            actionBtn.href = url || '#';
-            actionBtn.className = 'wax-seal-btn';
-            actionBtn.removeAttribute('disabled');
-            actionBtn.textContent = 'Leer Libro';
-            actionBtn.style.pointerEvents = 'all';
-        } else {
-            actionBtn.className = 'wax-seal-btn disabled';
-            actionBtn.textContent = 'En inventario';
-            actionBtn.style.pointerEvents = 'none';
-        }
-        
-        document.getElementById('bookModalOverlay').style.display = 'flex';
-        playDeepThud();
-    }
-
-    function closeBookModal(event) {
-        document.getElementById('bookModalOverlay').style.display = 'none';
-    }
-
-    function renderGridContent() {
-        var grid = document.getElementById('explorerGrid');
-        grid.innerHTML = '';
-        
-        var currentConfig = folderTreeConfig;
-        for (var i = 0; i < currentPath.length; i++) {
-            if (currentConfig.children && currentConfig.children[currentPath[i]]) {
-                currentConfig = currentConfig.children[currentPath[i]];
-            }
-        }
-        
-        // CASE A: Render Cabinet Folders in Book shape
-        if (currentConfig.children && Object.keys(currentConfig.children).length > 0) {
-            for (var name in currentConfig.children) {
-                var child = currentConfig.children[name];
-                
-                if (searchQuery && !name.toLowerCase().includes(searchQuery)) {
-                    continue;
-                }
-                
-                var card = document.createElement('div');
-                card.className = 'cabinet-folder';
-                card.setAttribute('onmouseenter', 'playDeepThud()');
-                card.onclick = (function(n) {
-                    return function() { navigateToPath(currentPath.concat([n])); playDeepThud(); };
-                })(name);
-                
-                var handle = document.createElement('div');
-                handle.className = 'cabinet-handle';
-                card.appendChild(handle);
-                
-                var title = document.createElement('h4');
-                title.className = 'explorer-card-title';
-                title.textContent = name;
-                card.appendChild(title);
-                
-                var desc = document.createElement('p');
-                desc.className = 'explorer-card-desc';
-                if (child.type === 'subject') {
-                    desc.textContent = 'Sala de estudio';
-                } else {
-                    desc.textContent = 'Sección de archivadores';
-                }
-                card.appendChild(desc);
-                
-                grid.appendChild(card);
-            }
-        }
-        // CASE B: Render Leaf Folders (Apuntes or Libros)
-        else if (currentConfig.type === 'leaf') {
-            var subjectKey = currentConfig.subjectKey;
-            var groupId = currentConfig.groupId;
-            
-            var dbItems = getDbItems(subjectKey, groupId);
-            var mockItems = currentConfig.mockItems || [];
-            
-            // Sub-case 1: RENDER BOOK SHELF
-            if (currentConfig.leafType === 'book') {
-                var shelfDiv = document.createElement('div');
-                shelfDiv.className = 'wood-shelf';
-                shelfDiv.style.gridColumn = '1 / -1';
-                
-                // Add antique shelf top decor (steaming coffee, fallen stethoscope, laptop)
-                var decorContainer = document.createElement('div');
-                decorContainer.className = 'shelf-decor-container';
-                decorContainer.innerHTML = `
-                    <!-- Open Laptop -->
-                    <div class="decor-item laptop-decor" title="Laptop de estudios">
-                        <svg viewBox="0 0 100 80" style="width: 75px; height: 60px; fill: none; stroke: #dfc393; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 8px rgba(223,195,147,0.35));">
-                            <rect x="15" y="10" width="70" height="45" rx="3" fill="rgba(10, 5, 2, 0.85)" />
-                            <polygon points="5,55 95,55 85,67 15,67" fill="rgba(30, 20, 10, 0.95)" />
-                            <path d="M25,32 L40,32 L45,20 L50,42 L55,32 L75,32" stroke="#f5c542" stroke-width="2" />
-                        </svg>
-                    </div>
-
-                    <!-- Fallen Stethoscope -->
-                    <div class="decor-item stethoscope-decor" title="Estetoscopio de reliquia">
-                        <svg viewBox="0 0 100 100" style="width: 65px; height: 65px; fill: none; stroke: #dfc393; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(223,195,147,0.3));">
-                            <path d="M30,22 C30,38 45,43 50,52" />
-                            <path d="M70,22 C70,38 55,43 50,52" />
-                            <circle cx="30" cy="20" r="3" fill="#dfc393" />
-                            <circle cx="70" cy="20" r="3" fill="#dfc393" />
-                            <path d="M50,52 C50,70 25,80 45,86 C65,92 75,72 60,62" />
-                            <circle cx="60" cy="62" r="7.5" fill="rgba(30,20,10,0.5)" stroke="#dfc393" stroke-width="3.5" />
-                            <circle cx="60" cy="62" r="2" fill="#dfc393" />
-                        </svg>
-                    </div>
-
-                    <!-- Steaming Cup of Coffee -->
-                    <div class="decor-item coffee-decor" title="Café calentándose">
-                        <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
-                            <path class="steam-line steam-1" d="M38,30 Q34,18 42,8" fill="none" stroke="rgba(223,195,147,0.6)" stroke-width="2.5" stroke-linecap="round" />
-                            <path class="steam-line steam-2" d="M50,26 Q46,14 54,4" fill="none" stroke="rgba(223,195,147,0.6)" stroke-width="2.5" stroke-linecap="round" />
-                            <path class="steam-line steam-3" d="M62,30 Q58,18 66,8" fill="none" stroke="rgba(223,195,147,0.6)" stroke-width="2.5" stroke-linecap="round" />
-                            <path d="M30,45 L70,45 L65,80 C64,85 58,88 50,88 C42,88 36,85 35,80 Z" fill="rgba(10, 5, 2, 0.4)" stroke="#dfc393" stroke-width="3" />
-                            <path d="M70,52 C80,52 82,68 70,72" fill="none" stroke="#dfc393" stroke-width="3" />
-                            <path d="M20,92 L80,92" stroke="#dfc393" stroke-width="3.5" stroke-linecap="round" />
-                        </svg>
-                    </div>
-                `;
-                shelfDiv.appendChild(decorContainer);
-                
-                var idx = 0;
-                
-                // Render database books on shelf
-                dbItems.forEach(item => {
-                    if (searchQuery && !item.title.toLowerCase().includes(searchQuery)) return;
-                    
-                    var spine = document.createElement('div');
-                    spine.className = 'book-spine-card spine-' + getSpineColor(idx++);
-                    spine.setAttribute('onmouseenter', 'playDeepThud()');
-                    spine.onclick = (function(obj) {
-                        return function() {
-                            openBookDetails(obj.title, obj.author, obj.description, obj.primaryUrl, obj.badge, obj.cover, obj.isAvailable);
-                        };
-                    })(item);
-                    
-                    var ribs = document.createElement('div');
-                    ribs.className = 'spine-ribs';
-                    ribs.innerHTML = '<div class="spine-rib"></div><div class="spine-rib"></div><div class="spine-rib"></div>';
-                    spine.appendChild(ribs);
-                    
-                    var titleSpan = document.createElement('span');
-                    titleSpan.className = 'spine-text';
-                    titleSpan.textContent = item.title;
-                    spine.appendChild(titleSpan);
-                    
-                    shelfDiv.appendChild(spine);
-                });
-                
-                // Render mock classical books on shelf (Gray, Latarjet, Netter, Rouvière)
-                mockItems.forEach(mockTitle => {
-                    if (searchQuery && !mockTitle.toLowerCase().includes(searchQuery)) return;
-                    
-                    var spine = document.createElement('div');
-                    spine.className = 'book-spine-card spine-' + getSpineColor(idx++);
-                    spine.setAttribute('onmouseenter', 'playDeepThud()');
-                    spine.onclick = (function(t) {
-                        return function() {
-                            openBookDetails(t, 'Cátedras Oficiales Medicina', 'Obra de referencia clásica recomendada para tu estudio.', '', 'Inventario', '', false);
-                        };
-                    })(mockTitle);
-                    
-                    var ribs = document.createElement('div');
-                    ribs.className = 'spine-ribs';
-                    ribs.innerHTML = '<div class="spine-rib"></div><div class="spine-rib"></div><div class="spine-rib"></div>';
-                    spine.appendChild(ribs);
-                    
-                    var titleSpan = document.createElement('span');
-                    titleSpan.className = 'spine-text';
-                    titleSpan.textContent = mockTitle;
-                    spine.appendChild(titleSpan);
-                    
-                    shelfDiv.appendChild(spine);
-                });
-                
-                if (shelfDiv.children.length === 0) {
-                    var emptyText = document.createElement('p');
-                    emptyText.style.color = '#6a4f3b';
-                    emptyText.style.fontFamily = 'Playfair Display';
-                    emptyText.style.padding = '30px';
-                    emptyText.textContent = 'Estantería vacía.';
-                    shelfDiv.appendChild(emptyText);
-                }
-                
-                grid.appendChild(shelfDiv);
-            }
-            // Sub-case 2: RENDER VINTAGE CLOSED BOOKS (for Apuntes/Notes - formerly Scrolls)
-            else if (currentConfig.leafType === 'scroll') {
-                var idx = 0;
-                // Render Database items as Books
-                dbItems.forEach(item => {
-                    if (searchQuery && !item.title.toLowerCase().includes(searchQuery)) return;
-                    
-                    var scroll = document.createElement('div');
-                    scroll.className = 'scroll-card book-cover-' + getSpineColor(idx++);
-                    scroll.setAttribute('onmouseenter', 'playDeepThud()');
-                    scroll.onclick = (function(obj) {
-                        return function() {
-                            openBookDetails(obj.title, obj.author, obj.description, obj.primaryUrl, obj.badge, obj.cover, obj.isAvailable);
-                        };
-                    })(item);
-                    
-                    // Add cover crest icon (subject-specific dynamic illustration)
-                    var crest = document.createElement('div');
-                    crest.className = 'book-cover-crest';
-                    crest.innerHTML = getSubjectCrestSvg(subjectKey);
-                    scroll.appendChild(crest);
-                    
-                    var label = document.createElement('span');
-                    label.className = 'scroll-title';
-                    label.textContent = item.title;
-                    scroll.appendChild(label);
-                    
-                    grid.appendChild(scroll);
-                });
-                
-                // Render mock items as Books
-                mockItems.forEach(mockTitle => {
-                    if (searchQuery && !mockTitle.toLowerCase().includes(searchQuery)) return;
-                    
-                    var scroll = document.createElement('div');
-                    scroll.className = 'scroll-card book-cover-' + getSpineColor(idx++);
-                    scroll.setAttribute('onmouseenter', 'playDeepThud()');
-                    scroll.onclick = (function(t) {
-                        return function() {
-                            openBookDetails(t, 'Equipo ALUMED', 'Guías y resúmenes de estudio oficial de la materia.', '', 'Disponible pronto', '', false);
-                        };
-                    })(mockTitle);
-                    
-                    // Add cover crest icon (subject-specific dynamic illustration)
-                    var crest = document.createElement('div');
-                    crest.className = 'book-cover-crest';
-                    crest.innerHTML = getSubjectCrestSvg(subjectKey);
-                    scroll.appendChild(crest);
-                    
-                    var label = document.createElement('span');
-                    label.className = 'scroll-title';
-                    label.textContent = mockTitle;
-                    scroll.appendChild(label);
-                    
-                    grid.appendChild(scroll);
-                });
-            }
-        }
-        // CASE C: Render Placeholder empty node
-        else if (currentConfig.type === 'leaf-empty' || !currentConfig.children) {
-            var emptyDiv = document.createElement('div');
-            emptyDiv.style.gridColumn = '1 / -1';
-            emptyDiv.style.textAlign = 'center';
-            emptyDiv.style.padding = '60px 20px';
-            emptyDiv.style.color = '#cbd5e1';
-            emptyDiv.innerHTML = `
-                <i class="fas fa-book-dead" style="font-size: 54px; color: rgba(255,255,255,0.06); margin-bottom: 15px;"></i>
-                <h4 style="font-family:'Outfit', sans-serif; color:var(--dourado); font-size:16px; margin:0 0 8px 0; font-weight:700;">Sala de Lectura Cerrada</h4>
-                <p style="font-family:'Inter', sans-serif; font-size:14px; max-width:440px; margin:0 auto; line-height:1.5; color:#94a3b8;">
-                    Las estanterías para <strong>${currentPath[currentPath.length - 1]}</strong> están catalogadas, pero las obras se trasladarán en fases académicas posteriores.
-                </p>
-            `;
-            grid.appendChild(emptyDiv);
-        }
-    }
-
-    function handleSearch() {
-        searchQuery = document.getElementById('explorerSearchInput').value.trim().toLowerCase();
-        renderGridContent();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        renderSidebarTree();
-        navigateToPath([]);
-    });
 </script>
 {% endblock %}

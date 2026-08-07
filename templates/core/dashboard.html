@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-10 pt-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header Perfil -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8 flex flex-col md:flex-row items-center gap-6">
+            <div class="relative">
+                {% if profile.avatar_url %}
+                <img src="{{ profile.avatar_url }}" alt="Avatar" class="w-24 h-24 rounded-full shadow-md object-cover">
+                {% else %}
+                <div class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-3xl font-bold shadow-md">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+                {% endif %}
+                <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
+            </div>
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl font-bold text-slate-800">{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="text-slate-500 font-medium">{{ user.email }}</p>
+                <div class="mt-2 inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold">
+                    <span>✨</span> Alumno Activo
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Botón de Soporte WhatsApp -->
+        <div class="mb-8">
+            <a href="{{ whatsapp_support_url }}" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:-translate-y-1">
+                💬 Contactar Tutor por WhatsApp
+            </a>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+                <h3 class="text-indigo-100 text-sm font-medium mb-1">Cursos en Wix</h3>
+                <p class="text-4xl font-bold">{{ mis_cursos_wix.count }}</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
+                <h3 class="text-blue-100 text-sm font-medium mb-1">Materias Cursando</h3>
+                <p class="text-4xl font-bold">{{ materias_alumno.count }}</p>
+            </div>
+            <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-6 text-white shadow-lg">
+                <h3 class="text-emerald-100 text-sm font-medium mb-1">Eventos Agendados</h3>
+                <p class="text-4xl font-bold">{{ eventos_agendados_count }}</p>
+            </div>
+        </div>
+
+        <!-- Botón Aula Virtual en Vivo (Destacado) -->
+        <div class="mb-8 flex justify-center w-full">
+            <a href="{% url 'live_classroom' %}" class="w-full relative bg-gray-900 hover:bg-black text-white font-bold py-5 px-10 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-4 border border-gray-700 overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-600/20 via-red-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="relative flex items-center justify-center w-5 h-5">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+                </div>
+                
+                <span class="relative text-xl tracking-wider uppercase font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+                    Entrar al Aula en Vivo
+                </span>
+                
+                <svg class="w-6 h-6 relative text-red-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Cursos Wix -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                🎓 Mis Cursos en Alumed
+            </h2>
+            {% if mis_cursos_wix %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for curso in mis_cursos_wix %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 overflow-hidden group">
+                    {% if curso.imagen_portada %}
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ curso.imagen_portada }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    {% else %}
+                    <div class="h-48 bg-slate-100 flex items-center justify-center">
+                        <span class="text-slate-400 text-5xl">📚</span>
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">{{ curso.materia.nombre }}</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-3 mb-2">{{ curso.titulo }}</h3>
+                        <p class="text-slate-500 text-sm mb-6">{{ curso.descripcion_corta|truncatechars:100 }}</p>
+                        <a href="{{ curso.wix_course_url }}" target="_blank" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition-colors">
+                            🚀 Ir al Campus
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center">
+                <div class="text-4xl mb-4">🤷‍♂️</div>
+                <h3 class="text-lg font-medium text-slate-800 mb-2">Aún no tienes cursos</h3>
+                <p class="text-slate-500">Inscríbete a tus materias para desbloquear el acceso a la plataforma.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Layout Doble: Cartelera y Gestión de Materias -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Cartelera Personalizada -->
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    📌 Cartelera de mis Materias
+                </h2>
+                
+                <div class="space-y-4">
+                    {% for item in proximos_eventos %}
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{{ item.materia.nombre|default:"General" }}</span>
+                            <h3 class="text-md font-bold text-slate-800 mt-2">{{ item.title }}</h3>
+                            <p class="text-sm text-slate-500 flex items-center gap-1 mt-1">
+                                🕒 {{ item.date_str|default:"Sin fecha específica" }}
+                            </p>
+                        </div>
+                        <div>
+                            {% if item.is_synced %}
+                            <button onclick="unsyncEvent('{{ item.id }}', this)" class="bg-green-100 text-green-700 hover:bg-red-100 hover:text-red-700 font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 whitespace-nowrap group">
+                                <span class="group-hover:hidden">✅ Agendado</span>
+                                <span class="hidden group-hover:inline">❌ Quitar</span>
+                            </button>
+                            {% else %}
+                            <button onclick="syncEvent('{{ item.id }}', this)" class="bg-white border-2 border-slate-200 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 whitespace-nowrap">
+                                🗓️ Agendar en Google
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8 text-slate-500 bg-white rounded-xl border border-slate-200">
+                        No hay novedades recientes para tus materias.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Gestión de Materias -->
+
+            <!-- Configuración de WhatsApp -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    📱 Notificaciones WhatsApp
+                </h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <p class="text-sm text-slate-500 mb-4">Recibe alertas instantáneas sobre parciales, nuevas clases o cambios de horario directo en tu celular.</p>
+                    
+                    <div class="mb-4">
+                        <label for="wa-phone" class="block text-sm font-medium text-slate-700">Número de WhatsApp (Ej: +549...)</label>
+                        <input type="text" id="wa-phone" value="{{ profile.phone_number|default:'' }}" placeholder="+549..." class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
+                    </div>
+                    
+                    <div class="flex items-center mb-4">
+                        <input id="wa-enabled" type="checkbox" {% if profile.whatsapp_notifications_enabled %}checked{% endif %} class="h-4 w-4 text-green-600 focus:ring-green-500 border-slate-300 rounded">
+                        <label for="wa-enabled" class="ml-2 block text-sm text-slate-900">
+                            Recibir avisos de exámenes por WhatsApp
+                        </label>
+                    </div>
+                    
+                    <button onclick="updateWhatsApp()" id="btn-save-wa" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg transition-colors">
+                        Guardar Preferencias
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    📚 Mis Materias
+                </h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <ul class="space-y-3 mb-6" id="lista-materias-alumno">
+                        {% for materia in materias_alumno %}
+                        <li class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <span class="font-medium text-slate-700">{{ materia.nombre }}</span>
+                            <button onclick="updateMateria('{{ materia.id }}', 'remove', this)" class="text-slate-400 hover:text-red-500 transition-colors">
+                                &times;
+                            </button>
+                        </li>
+                        {% empty %}
+                        <li class="text-sm text-slate-500 text-center py-2" id="empty-materias">Aún no sigues ninguna materia.</li>
+                        {% endfor %}
+                    </ul>
+
+                    <hr class="border-slate-200 mb-4">
+                    
+                    <h3 class="text-sm font-bold text-slate-600 mb-3 uppercase tracking-wider">Añadir Materia</h3>
+                    <div class="flex gap-2">
+                        <select id="materia-select" class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="">Seleccionar...</option>
+                            {% for m in materias_disponibles %}
+                            <option value="{{ m.id }}">{{ m.nombre }} (Año {{ m.ano_cursada }})</option>
+                            {% endfor %}
+                        </select>
+                        <button onclick="addMateria()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrfToken = '{{ csrf_token }}';
+
+    function updateMateria(id, action, btnElement) {
+        if(btnElement) btnElement.disabled = true;
+        
+        fetch('/api/profile/materias/update/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ materia_id: id, action: action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                location.reload(); // Recarga simple para refrescar UI
+            } else {
+                alert(data.error);
+                if(btnElement) btnElement.disabled = false;
+            }
+        });
+    }
+
+    function addMateria() {
+        const select = document.getElementById('materia-select');
+        const id = select.value;
+        if(!id) return;
+        updateMateria(id, 'add', null);
+    }
+
+    function syncEvent(itemId, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Procesando...';
+        
+        fetch('/api/calendar/sync/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ item_id: itemId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'queued') {
+                alert(data.message);
+                btn.className = "bg-green-100 text-green-700 font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 whitespace-nowrap";
+                btn.innerHTML = '✅ Agendado';
+                // Idealmente un reload suave o mutar el DOM para el botón unsync
+            } else if (data.error) {
+                alert(data.message || data.error);
+                btn.innerHTML = '🗓️ Agendar en Google';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    function unsyncEvent(itemId, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Borrando...';
+        
+        fetch('/api/calendar/unsync/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ item_id: itemId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'queued') {
+                alert(data.message);
+                btn.className = "bg-white border-2 border-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 whitespace-nowrap";
+                btn.innerHTML = '🗓️ Agendar en Google';
+            } else if (data.error) {
+                alert(data.error);
+                btn.innerHTML = '❌ Quitar';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    function updateWhatsApp() {
+        const phone = document.getElementById('wa-phone').value;
+        const enabled = document.getElementById('wa-enabled').checked;
+        const btn = document.getElementById('btn-save-wa');
+        
+        btn.disabled = true;
+        btn.innerHTML = 'Guardando...';
+        
+        fetch('/api/profile/materias/update/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ phone_number: phone, notifications_enabled: enabled })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert(data.message);
+            } else {
+                alert(data.error);
+            }
+            btn.disabled = false;
+            btn.innerHTML = 'Guardar Preferencias';
+        });
+    }
+
+</script>
+{% endblock %}

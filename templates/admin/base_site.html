@@ -1,10 +1,136 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}{{ title }} | ALUMED Admin{% endblock %}
+{% block title %}{{ title }} | MENU ARQUITETA (ALUMED OS){% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* MENU ARQUITETA - ALQUIMIA VISUAL */
+    
+    /* Base Escura: Azul profundo e grafite */
+    :root {
+        --primary: #7c3aed; /* Violeta elétrico (Conecta Radar) */
+        --secondary: #eab308; /* Amarelo neon (Eletricidade) */
+        --header-color: #0f172a; /* Azul escuro profundo (AluMed Base) */
+        --body-bg: #020617; /* Grafite escuro / Obsidian */
+        --text-color: #e2e8f0;
+        --copper: #d97757; /* Cobre Metálico de Vênus */
+        --link-fg: #d97757;
+        --link-hover-color: #f59e0b;
+        --module-bg: #1e293b;
+    }
+
+    body {
+        background-color: var(--body-bg);
+        color: var(--text-color);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* O Conector Metálico (Cobre) */
+    a:link, a:visited {
+        color: var(--link-fg);
+    }
+    a:hover, a:active {
+        color: var(--link-hover-color);
+    }
+
+    /* Header e Estrutura Saturnina */
+    #header {
+        background-color: var(--header-color);
+        border-bottom: 2px solid var(--copper);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+    
+    #branding h1, #branding h1 a:link, #branding h1 a:visited {
+        color: var(--secondary);
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+    }
+
+    .module caption {
+        background-color: var(--primary);
+        letter-spacing: 0.05em;
+        font-weight: bold;
+        box-shadow: inset 0 -2px 0 var(--copper);
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--header-color);
+        color: var(--copper);
+        border-bottom: 1px solid rgba(217, 119, 87, 0.3);
+    }
+
+    /* Tabelas e Módulos */
+    div.breadcrumbs {
+        background: var(--header-color);
+        color: #94a3b8;
+        border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .content-main {
+        background-color: var(--body-bg);
+    }
+
+    #content {
+        background: var(--body-bg);
+    }
+
+    /* A Eletricidade Ativa (Conecta) */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary);
+        border-radius: 4px;
+        color: #fff;
+        border: 1px solid var(--primary);
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+        transition: all 0.3s ease;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+        background: var(--secondary);
+        color: #000;
+        border-color: var(--secondary);
+        box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
+    }
+
+    /* Forms e Inputs */
+    input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], input[type=tel], textarea, select, .vTextField {
+        background-color: #0f172a;
+        border: 1px solid #334155;
+        color: #f1f5f9;
+        border-radius: 4px;
+    }
+    
+    input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus, .vTextField:focus {
+        border-color: var(--copper);
+        box-shadow: 0 0 5px rgba(217, 119, 87, 0.5);
+    }
+
+    /* Linhas de grade e tabelas */
+    table tbody tr:nth-child(odd) {
+        background: #1e293b;
+    }
+    table tbody tr:nth-child(even) {
+        background: #0f172a;
+    }
+    table thead th {
+        background: var(--header-color);
+        color: #e2e8f0;
+        border-bottom: 1px solid var(--copper);
+    }
+    
+    table tbody tr:hover {
+        background: rgba(124, 58, 237, 0.1);
+    }
+</style>
+{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}" class="branding">ALUMED ADMIN</a></h1>
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}" class="branding">MENU ARQUITETA 🔮</a>
+</h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
