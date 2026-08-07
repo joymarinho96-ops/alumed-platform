@@ -1,11 +1,18 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}Biblioteca Virtual Conecta FCM{% endblock %}
+{% block title %}Biblioteca Virtual & Profe Joy IA — Conecta FCM{% endblock %}
 
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --cx-gold: #f5c842;
+        --cx-dark: #0a0510;
+        --cx-border: rgba(245, 200, 66, 0.2);
+        --cx-muted: rgba(220, 200, 160, 0.65);
+    }
+
     .library-page-wrapper {
         position: relative;
         z-index: 1;
@@ -14,13 +21,29 @@
         gap: 16px;
     }
 
-    .wix-embed-card {
-        width: 100%;
+    .library-split-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 20px;
         height: calc(100vh - 140px);
         min-height: 750px;
+        align-items: stretch;
+    }
+
+    @media (max-width: 1100px) {
+        .library-split-layout {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+    }
+
+    .wix-embed-card {
+        width: 100%;
+        height: 100%;
+        min-height: 600px;
         border-radius: 20px;
         overflow: hidden;
-        border: 1px solid rgba(245, 200, 66, 0.2);
+        border: 1px solid var(--cx-border);
         box-shadow: 0 12px 40px rgba(0,0,0,.6), 0 0 30px rgba(245,200,66,.08);
         background: #0a0510;
         position: relative;
@@ -32,6 +55,185 @@
         border: none;
         display: block;
     }
+
+    /* ── CHAT PANEL PROFE JOY IA ── */
+    .profe-chat-panel {
+        background: rgba(18, 9, 36, 0.9);
+        border: 1px solid var(--cx-border);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        height: 100%;
+    }
+
+    .chat-panel-header {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(45, 16, 96, 0.6));
+        border-bottom: 1px solid var(--cx-border);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .joy-chat-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid var(--cx-gold);
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 0 15px rgba(245,200,66,.3);
+    }
+    .joy-chat-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .joy-chat-status {
+        display: flex;
+        flex-direction: column;
+    }
+    .joy-chat-name {
+        font-family: 'Cinzel', serif;
+        font-weight: 800;
+        font-size: 15px;
+        color: #fff;
+    }
+    .joy-chat-online {
+        font-size: 11px;
+        color: #4ade80;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Outfit', sans-serif;
+    }
+    .chat-online-dot {
+        width: 7px;
+        height: 7px;
+        background: #4ade80;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #4ade80;
+    }
+
+    .chat-messages-container {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .chat-bubble {
+        max-width: 85%;
+        padding: 12px 16px;
+        border-radius: 16px;
+        font-size: 13px;
+        line-height: 1.5;
+        font-family: 'Outfit', sans-serif;
+        word-wrap: break-word;
+    }
+    .chat-bubble.joy {
+        align-self: flex-start;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(245, 200, 66, 0.2);
+        color: #f0e8d0;
+        border-bottom-left-radius: 4px;
+    }
+    .chat-bubble.user {
+        align-self: flex-end;
+        background: linear-gradient(135deg, var(--cx-gold), #d97706);
+        color: #0a0510;
+        font-weight: 600;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-suggestions {
+        padding: 8px 12px;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .suggestion-pill {
+        white-space: nowrap;
+        font-size: 11px;
+        background: rgba(245, 200, 66, 0.1);
+        border: 1px solid rgba(245, 200, 66, 0.25);
+        color: var(--cx-gold);
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .suggestion-pill:hover {
+        background: rgba(245, 200, 66, 0.25);
+        color: #fff;
+    }
+
+    .chat-input-bar {
+        padding: 12px;
+        border-top: 1px solid var(--cx-border);
+        background: rgba(10, 5, 16, 0.6);
+        display: flex;
+        gap: 8px;
+    }
+    .chat-input-bar textarea {
+        flex: 1;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(245,200,66,0.2);
+        border-radius: 12px;
+        color: #fff;
+        padding: 10px 14px;
+        font-size: 13px;
+        resize: none;
+        height: 42px;
+        outline: none;
+        font-family: 'Outfit', sans-serif;
+    }
+    .chat-input-bar textarea:focus {
+        border-color: var(--cx-gold);
+    }
+    .chat-send-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--cx-gold), #d97706);
+        border: none;
+        color: #0a0510;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+    }
+    .chat-send-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .typing-dots {
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+    }
+    .typing-dots span {
+        width: 6px;
+        height: 6px;
+        background: var(--cx-gold);
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out both;
+    }
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+    }
 </style>
 {% endblock %}
 
@@ -40,24 +242,164 @@
     <!-- Header Banner -->
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(245,200,66,.15); padding-bottom: 12px;">
         <div>
-            <span class="cx-label lbl-gold" style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #f5c842; background: rgba(245,200,66,.1); padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(245,200,66,.2);">📚 Portal Oficial</span>
+            <span class="cx-label lbl-gold" style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #f5c842; background: rgba(245,200,66,.1); padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(245,200,66,.2);">📚 Catálogo & IA Médica</span>
             <h1 style="font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3.5vw, 2.2rem); font-weight: 900; margin: 4px 0 0 0; color: #fff;">
-                Biblioteca <span style="background: linear-gradient(135deg, #f5c842, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Virtual</span>
+                Biblioteca <span style="background: linear-gradient(135deg, #f5c842, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Virtual</span> & Profe Joy IA
             </h1>
             <p style="font-family: 'Outfit', sans-serif; font-size: 13px; color: rgba(220,200,160,.6); margin: 2px 0 0 0;">
-                Accedé directamente al catálogo oficial de libros, resúmenes y guías digitales de la Facultad de Ciencias Médicas.
+                Accedé al sitio oficial de libros y consultale cualquier duda en tiempo real a la Profe Joy IA.
             </p>
         </div>
         <div>
             <a href="https://www.conectafcm.com/biblioteca-virtual/aea00840-590b-4e56-b96e-4eae57b081a1" target="_blank" style="padding: 10px 18px; font-size: 12px; font-weight: 700; font-family: 'Outfit', sans-serif; border-radius: 10px; background: rgba(245,200,66,.12); color: #f5c842; border: 1px solid rgba(245,200,66,.3); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all .2s;">
-                <i class="fas fa-external-link-alt"></i> Abrir en ventana externa
+                <i class="fas fa-external-link-alt"></i> Abrir Wix en ventana externa
             </a>
         </div>
     </div>
 
-    <!-- Embedded Wix Site -->
-    <div class="wix-embed-card">
-        <iframe src="https://www.conectafcm.com/biblioteca-virtual/aea00840-590b-4e56-b96e-4eae57b081a1" title="Biblioteca Virtual Conecta FCM" loading="lazy"></iframe>
+    <!-- Main Split Layout -->
+    <div class="library-split-layout">
+        <!-- 1. Embedded Wix Site -->
+        <div class="wix-embed-card">
+            <iframe src="https://www.conectafcm.com/biblioteca-virtual/aea00840-590b-4e56-b96e-4eae57b081a1" title="Biblioteca Virtual Conecta FCM" loading="lazy"></iframe>
+        </div>
+
+        <!-- 2. Integrated Profe Joy IA Chat -->
+        <div class="profe-chat-panel">
+            <div class="chat-panel-header">
+                <div class="joy-chat-avatar">
+                    <img src="{% static 'img/profe_joy.jpg' %}" alt="Profe Joy Portrait">
+                </div>
+                <div class="joy-chat-status">
+                    <span class="joy-chat-name">Profe Joy IA</span>
+                    <span class="joy-chat-online">
+                        <span class="chat-online-dot"></span>
+                        En línea · Tutora RAG Médica
+                    </span>
+                </div>
+            </div>
+
+            <!-- Messages box -->
+            <div class="chat-messages-container" id="chatMessagesContainer">
+                <div class="chat-bubble joy">
+                    ¡Holis, doc! Corazón, qué lindo saludarte. Soy tu Profe Joy virtual. 
+                    <br><br>
+                    Escribime cualquier duda sobre las materias, resúmenes o trámites y te enseño de forma super didáctica. ¡Mete que vas a ser un doc increíble! 🩺✨
+                </div>
+            </div>
+
+            <!-- Quick suggestion pills -->
+            <div class="chat-suggestions">
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Cómo estudio histología?')">Histología</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('Explicame el aparato locomotor')">Locomotor</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Cuándo se rinden los exámenes finales?')">Finales</div>
+                <div class="suggestion-pill" onclick="sendQuickQuestion('¿Qué es la glucólisis?')">Glucólisis</div>
+            </div>
+
+            <!-- Message write bar -->
+            <div class="chat-input-bar">
+                <textarea id="chatInputText" placeholder="Preguntale a la Profe Joy..." onkeydown="handleInputKeydown(event)"></textarea>
+                <button type="button" class="chat-send-btn" onclick="sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    var chatHistory = [];
+
+    function handleInputKeydown(e) {
+        if (e.keyCode === 13 && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function sendQuickQuestion(text) {
+        document.getElementById('chatInputText').value = text;
+        sendChatMessage();
+    }
+
+    function appendChatBubble(role, text) {
+        var container = document.getElementById('chatMessagesContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + (role === 'joy' ? 'joy' : 'user');
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function appendTypingIndicator() {
+        var container = document.getElementById('chatMessagesContainer');
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble joy';
+        bubble.id = 'typingIndicatorBubble';
+        bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div> Profe Joy escribiendo...';
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        var el = document.getElementById('typingIndicatorBubble');
+        if (el) el.remove();
+    }
+
+    function sendChatMessage() {
+        var input = document.getElementById('chatInputText');
+        var question = input.value.trim();
+        if (!question) return;
+
+        appendChatBubble('user', question);
+        input.value = '';
+        appendTypingIndicator();
+
+        var payloadData = {
+            question: question,
+            history: chatHistory
+        };
+
+        fetch('/profe-joy/chat/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payloadData)
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+            removeTypingIndicator();
+            if (data.answer) {
+                appendChatBubble('joy', data.answer);
+                chatHistory.push({role: 'user', content: question});
+                chatHistory.push({role: 'assistant', content: data.answer});
+            } else if (data.error) {
+                appendChatBubble('joy', '❌ Ocurrió un detalle: ' + data.error);
+            }
+        })
+        .catch(function(err) {
+            removeTypingIndicator();
+            appendChatBubble('joy', '¡Holis, doc! Acá estoy. Decime qué duda tenés sobre las materias y lo repasamos juntos.');
+            console.error('Chat error:', err);
+        });
+    }
+
+    function getCsrfToken() {
+        var name = 'csrftoken';
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue || '{{ csrf_token }}';
+    }
+</script>
 {% endblock %}
