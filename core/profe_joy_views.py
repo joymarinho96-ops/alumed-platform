@@ -286,13 +286,24 @@ def profe_joy_chat(request):
                 academic_chunks = [c for c in relevant if c.subject != 'Cartelera']
                 target_chunks = academic_chunks if academic_chunks else relevant
                 
-                parts = ["¡Holis, doc! Mirá lo que te resumí de nuestros apuntes oficiales para tu consulta:\n"]
-                for chunk in target_chunks[:2]:
-                    subj = f" ({chunk.subject})" if chunk.subject else ""
-                    clean_content = chunk.content.replace('\r', '').strip()
-                    parts.append(f"📌 **{chunk.title}{subj}:**\n{clean_content[:380]}...\n")
+                parts = [f"¡Holis, doc! Mirá qué buena pregunta sobre **{question}**. Te ordeno la explicación punto por punto desde los apuntes oficiales:\n"]
                 
-                parts.append("💡 *Tip Didáctico:* Relacioná siempre la estructura con la función biológica para lucirte en el parcial. ¿Querés profundizar en algún concepto, corazón? ¡Metele que vas súper bien! 💪✨")
+                for idx, chunk in enumerate(target_chunks[:2], 1):
+                    subj = f" — {chunk.subject}" if chunk.subject else ""
+                    clean_content = chunk.content.replace('\r', '').strip()
+                    
+                    # Create bullet points from paragraph breaks
+                    lines = [line.strip() for line in clean_content.split('\n') if line.strip() and len(line.strip()) > 15]
+                    bullet_summary = "\n".join([f"• {line[:220]}..." if len(line) > 220 else f"• {line}" for line in lines[:3]])
+                    
+                    parts.append(f"📚 **{chunk.title}{subj}:**\n{bullet_summary}\n")
+                
+                parts.append("""💡 **Tip Didáctico de Profe Joy:**
+1. **¿Qué es?** Definición y función clave.
+2. **¿Dónde está?** Relación anatómica y espacial.
+3. **¿Cómo se toma en el examen?** Fijate si la pregunta es oral o choice de cátedra.
+
+¡Metele que vas súper bien, mi amor! ¿Querés que profundicemos en algún punto específico? 💪✨""")
                 answer = "\n".join(parts)
 
 

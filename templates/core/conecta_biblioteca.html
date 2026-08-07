@@ -122,10 +122,28 @@
     .chat-messages-container {
         flex: 1;
         padding: 16px;
-        overflow-y: auto;
+        overflow-y: scroll;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        scroll-behavior: smooth;
+    }
+
+    /* Gold & Purple Scrollbar */
+    .chat-messages-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .chat-messages-container::-webkit-scrollbar-track {
+        background: rgba(10, 5, 16, 0.6);
+        border-radius: 4px;
+    }
+    .chat-messages-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, var(--cx-gold), #7c3aed);
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+    .chat-messages-container::-webkit-scrollbar-thumb:hover {
+        background: var(--cx-gold);
     }
 
     .chat-bubble {
@@ -152,87 +170,28 @@
         border-bottom-right-radius: 4px;
     }
 
-    .chat-suggestions {
-        padding: 8px 12px;
+    .chat-scroll-controls {
         display: flex;
-        gap: 6px;
-        overflow-x: auto;
-        border-top: 1px solid rgba(255,255,255,.05);
+        gap: 4px;
+        margin-left: auto;
     }
-    .suggestion-pill {
-        white-space: nowrap;
-        font-size: 11px;
-        background: rgba(245, 200, 66, 0.1);
-        border: 1px solid rgba(245, 200, 66, 0.25);
+    .scroll-btn {
+        background: rgba(245,200,66,0.12);
+        border: 1px solid rgba(245,200,66,0.3);
         color: var(--cx-gold);
-        padding: 6px 12px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .suggestion-pill:hover {
-        background: rgba(245, 200, 66, 0.25);
-        color: #fff;
-    }
-
-    .chat-input-bar {
-        padding: 12px;
-        border-top: 1px solid var(--cx-border);
-        background: rgba(10, 5, 16, 0.6);
-        display: flex;
-        gap: 8px;
-    }
-    .chat-input-bar textarea {
-        flex: 1;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(245,200,66,0.2);
-        border-radius: 12px;
-        color: #fff;
-        padding: 10px 14px;
-        font-size: 13px;
-        resize: none;
-        height: 42px;
-        outline: none;
-        font-family: 'Outfit', sans-serif;
-    }
-    .chat-input-bar textarea:focus {
-        border-color: var(--cx-gold);
-    }
-    .chat-send-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--cx-gold), #d97706);
-        border: none;
-        color: #0a0510;
-        font-size: 16px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.2s;
+        font-size: 11px;
+        transition: all 0.2s;
     }
-    .chat-send-btn:hover {
-        transform: scale(1.05);
-    }
-
-    .typing-dots {
-        display: inline-flex;
-        gap: 4px;
-        align-items: center;
-    }
-    .typing-dots span {
-        width: 6px;
-        height: 6px;
-        background: var(--cx-gold);
-        border-radius: 50%;
-        animation: typing 1.4s infinite ease-in-out both;
-    }
-    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes typing {
-        0%, 80%, 100% { transform: scale(0); }
-        40% { transform: scale(1); }
+    .scroll-btn:hover {
+        background: rgba(245,200,66,0.3);
+        color: #fff;
     }
 </style>
 {% endblock %}
@@ -277,6 +236,15 @@
                         En línea · Tutora RAG Médica
                     </span>
                 </div>
+                <!-- Scroll Controls -->
+                <div class="chat-scroll-controls">
+                    <button class="scroll-btn" onclick="scrollChat('up')" title="Subir conversación">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button class="scroll-btn" onclick="scrollChat('down')" title="Bajar conversación">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Messages box -->
@@ -309,6 +277,16 @@
 
 <script>
     var chatHistory = [];
+
+    function scrollChat(direction) {
+        var container = document.getElementById('chatMessagesContainer');
+        if (!container) return;
+        if (direction === 'up') {
+            container.scrollTop -= 250;
+        } else if (direction === 'down') {
+            container.scrollTop += 250;
+        }
+    }
 
     function handleInputKeydown(e) {
         if (e.keyCode === 13 && !e.shiftKey) {
