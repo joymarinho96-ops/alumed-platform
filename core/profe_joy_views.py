@@ -115,19 +115,16 @@ def _embed_query(client_type, client, question: str) -> list[float]:
         except Exception as e:
             logger.warning(f"Gemini embedding fallo: {e}. Usando mock...")
 
-    # Fallback mock (3072-dim para coincidir con gemini-embedding-001)
+    # Fallback mock (3072-dim)
     return [0.1] * 3072
 
 
-
 def _find_relevant_chunks(question_embedding: list[float], question: str = '', top_k: int = TOP_K) -> list[ProfeJoyChunk]:
-    """Busca os chunks mais similares à pergunta. Usa palavra-chave como fallback se for mock."""
+    """Busca los chunks más relevantes según el tipo de consulta (académica vs trámites/cartelera)."""
     lowered_q = question.lower()
     notices_keywords = [
-        'cartelera', 'aviso', 'fecha', 'inscripcion', 'inscripción', 'calendario', 
-        'horario', 'trámite', 'tramite', 'beca', 'novedad', 'novedades', 
-        'noticia', 'noticias', 'anuncio', 'anuncios', 'comisión', 'comisiones',
-        'tp', 'tps', 'parcial', 'final', 'examen', 'exámenes'
+        'cartelera', 'aviso', 'inscripcion', 'inscripción', 'calendario', 
+        'trámite', 'tramite', 'beca', 'novedad', 'noticia', 'sae', 'secretaría'
     ]
     is_notices_query = any(kw in lowered_q for kw in notices_keywords)
 
@@ -135,47 +132,45 @@ def _find_relevant_chunks(question_embedding: list[float], question: str = '', t
     if not all_chunks.exists():
         return []
 
-    # Filter subset based on query type
+    # Separate academic books vs cartelera notices
     if is_notices_query:
-        chunks_subset = all_chunks.filter(title__startswith="Cartelera")
+        chunks_subset = all_chunks.filter(subject__iexact='Cartelera') | all_chunks.filter(title__icontains='Cartelera')
         if not chunks_subset.exists():
             chunks_subset = all_chunks
     else:
-        chunks_subset = all_chunks.filter(title__startswith="Libro")
+        # Academic queries MUST search in non-cartelera books & notes
+        chunks_subset = all_chunks.exclude(subject__iexact='Cartelera').exclude(title__icontains='Cartelera')
         if not chunks_subset.exists():
             chunks_subset = all_chunks
 
-    # Se for mock, faz busca simples por palavra-chave
-    if len(chunks_subset.exclude(embedding=[])) == 0 or question_embedding == [0.1] * 384:
-        scored = []
-        words = [w.lower() for w in question.split() if len(w) > 3]
-        for chunk in chunks_subset:
-            score = 0
-            for word in words:
-                if word in chunk.content.lower():
-                    score += 1
-                if word in chunk.title.lower():
-                    score += 2
-            scored.append((score, chunk))
-        scored.sort(key=lambda x: x[0], reverse=True)
-        
-        results = [chunk for score, chunk in scored[:top_k] if score > 0]
-        if not results:
-            # Fallback a los 2 primeros chunks del subconjunto si no hubo coincidencia por palabra clave
-            results = list(chunks_subset[:2])
-        return results
-
-    # Busca semântica real
+    # Scoring by keywords & cosine similarity
     scored = []
-    for chunk in chunks_subset.exclude(embedding=[]):
-        if not chunk.embedding:
-            continue
-        score = _cosine_similarity(question_embedding, chunk.embedding)
-        scored.append((score, chunk))
+    words = [w.lower() for w in question.split() if len(w) > 2]
+    
+    for chunk in chunks_subset:
+        score = 0.0
+        c_text = (chunk.title + " " + (chunk.subject or "") + " " + chunk.content).lower()
+        for word in words:
+            if word in c_text:
+                score += 1.5
+            if word in chunk.title.lower():
+                score += 3.0
+            if chunk.subject and word in chunk.subject.lower():
+                score += 4.0
+        
+        if question_embedding != [0.1] * 3072 and chunk.embedding:
+            sim = _cosine_similarity(question_embedding, chunk.embedding)
+            score += sim * 10.0
+
+        if score > 0:
+            scored.append((score, chunk))
 
     scored.sort(key=lambda x: x[0], reverse=True)
-    return [chunk for _, chunk in scored[:top_k]]
-
+    results = [chunk for score, chunk in scored[:top_k]]
+    
+    if not results:
+        results = list(chunks_subset[:top_k])
+    return results
 
 
 def _build_context(chunks: list) -> str:
@@ -192,8 +187,8 @@ def _build_context(chunks: list) -> str:
 @require_http_methods(['POST'])
 def profe_joy_chat(request):
     """
-    Endpoint principal do chat.
-    Body JSON: { "question": "...", "history": [...] (opcional) }
+    Endpoint principal del chat de la Profe Joy IA.
+    Body JSON: { "question": "...", "history": [...] }
     """
     try:
         body = json.loads(request.body)
@@ -201,19 +196,15 @@ def profe_joy_chat(request):
         return JsonResponse({'error': 'JSON inválido'}, status=400)
 
     question = (body.get('question') or '').strip()
-    history  = body.get('history', [])  # lista de {role, content}
+    history  = body.get('history', [])
 
     if not question:
-        return JsonResponse({'error': 'Pergunta vazia'}, status=400)
+        return JsonResponse({'error': 'Pregunta vacía'}, status=400)
 
-    # Verifica se temos materiais
     total_chunks = ProfeJoyChunk.objects.count()
     if total_chunks == 0:
         return JsonResponse({
-            'answer': (
-                '📚 Ainda não há materiais cadastrados na base de conhecimento do Profe Joy. '
-                'Solicite ao administrador que faça upload de PDFs!'
-            ),
+            'answer': '📚 Aún no hay apuntes cargados en mi biblioteca. ¡Solicitá al administrador que suba los resúmenes!',
             'sources': [],
             'chunks_used': 0,
         })
@@ -221,31 +212,19 @@ def profe_joy_chat(request):
     try:
         client_type, client = _get_api_client()
 
-        # 1. Embed a pergunta (com fallback de segurança para mock se falhar)
         try:
             q_embedding = _embed_query(client_type, client, question)
         except Exception as embed_exc:
-            logger.warning(f"Erro no embedding ({client_type}), usando fallback mock: {embed_exc}")
+            logger.warning(f"Embedding error: {embed_exc}. Usando fallback...")
             client_type = 'mock'
             client = None
-            q_embedding = [0.1] * 384
+            q_embedding = [0.1] * 3072
 
-        # 2. Buscar chunks relevantes
         relevant = _find_relevant_chunks(q_embedding, question)
 
-        if not relevant:
-
-            return JsonResponse({
-                'answer': '🤔 Não encontrei materiais relevantes para essa pergunta.',
-                'sources': [],
-                'chunks_used': 0,
-            })
-
-        # 3. Construir contexto
         context = _build_context(relevant)
         system  = PROMPT_PROFE_JOY.format(contexto=context, pregunta=question)
 
-        # 4. Chamar LLM correspondente (Gemini, OpenAI ou Mock) com try-except de segurança
         answer = None
         if client_type == 'gemini':
             try:
@@ -253,7 +232,6 @@ def profe_joy_chat(request):
                     model_name="gemini-2.0-flash",
                     system_instruction=system
                 )
-                
                 contents = []
                 for msg in history[-6:]:
                     role = 'user' if msg.get('role') == 'user' else 'model'
@@ -266,54 +244,47 @@ def profe_joy_chat(request):
                 )
                 answer = response.text
             except Exception as gemini_exc:
-                logger.error(f"Erro na API Gemini: {gemini_exc}")
-                client_type = 'mock'
-
-        if client_type == 'openai' and answer is None:
-            try:
-                messages = [{'role': 'system', 'content': system}]
-                for msg in history[-6:]:
-                    if msg.get('role') in ('user', 'assistant') and msg.get('content'):
-                        messages.append({'role': msg['role'], 'content': msg['content']})
-                messages.append({'role': 'user', 'content': question})
-
-                response = client.chat.completions.create(
-                    model='gpt-4o-mini',
-                    messages=messages,
-                    temperature=0.3,
-                    max_tokens=1000,
-                )
-                answer = response.choices[0].message.content
-            except Exception as openai_exc:
-                logger.error(f"Erro na API OpenAI: {openai_exc}")
+                logger.error(f"Error en API Gemini: {gemini_exc}")
                 client_type = 'mock'
 
         if client_type == 'mock' or answer is None:
-            # Conversational offline mock for Profe Joy
             import re
             clean_q = re.sub(r'[¿?¡!,.]', '', question.lower().strip())
             
-            # GREETINGS & INTROS
+            # GREETINGS
             if any(greet in clean_q for greet in ('hola', 'holis', 'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches')):
-                answer = "¡Holis, corazón! Qué lindo saludarte. ¿Cómo andás? Contame qué materia estás estudiando hoy (Anatomía, Histo, Embrio, Biología...) y le metemos juntos. ¡Estoy eh! 😘"
-            elif any(q in clean_q for q in ('como estas', 'como andas', 'como andas', 'todo bien', 'que tal', 'cómo estás', 'cómo andás')):
-                answer = "¡Hola, doc! Yo estoy de diez, re contenta de poder darte una mano con el estudio. ¿Y vos cómo venís llevando la cursada? ¿Te sentís con pilas? ¡Vamos que vos podés, mis amores! ¿Pudiste? 💪"
-            elif any(q in clean_q for q in ('quien sos', 'quién sos', 'quien eres', 'quién eres', 'tu nombre', 'como te llamas')):
-                answer = "¡Holis! Soy la Profe Joy, tu profesora compañera para ayudarte a sacarte todas las dudas de Histología, Anatomía, Embriología y Biología. Estoy acá para bancarte en este camino de medicina. ¡Allright! 😉"
-            elif any(q in clean_q for q in ('gracias', 'muchas gracias', 'genia', 'crack', 'gloria')):
-                answer = "¡De nada, corazón! Es un placer enorme ayudarte. A seguir metiéndole garra que vas a ser un doc increíble. ¡Cualquier duda me chiflás, estoy eh! 🥰"
+                answer = "¡Holis, corazón! Qué lindo saludarte. ¿Cómo andás? Contame qué materia estás estudiando hoy (Anatomía, Histología, Embrio, Biología...) y le metemos juntos. ¡Estoy acá eh! 😘"
+            elif any(q in clean_q for q in ('como estas', 'como andas', 'todo bien', 'que tal', 'cómo estás')):
+                answer = "¡Hola, doc! Yo estoy de diez, re contenta de darte una mano con el estudio. ¿Cómo venís llevando la cursada? ¡Vamos que vas a ser un doc increíble! 💪✨"
+            elif any(q in clean_q for q in ('quien sos', 'quién sos', 'quien eres', 'tu nombre', 'como te llamas')):
+                answer = "¡Holis! Soy la Profe Joy IA, tu tutora médica para sacarte todas las dudas de Histología, Anatomía, Embriología y Biología Celular. ¡Allright! 😉"
+            elif 'estudio histologia' in clean_q or 'estudiar histologia' in clean_q:
+                answer = """¡Holis, doc! Para estudiar **Histología** en la UNLP con éxito, te recomiendo seguir este orden Didáctico:
+
+1. **Comprensión Tejido por Tejido:** Primero dominá los 4 tejidos básicos (Epitelial, Conectivo, Muscular y Nervioso).
+2. **Microscopio Virtual ALUMED:** No te quedes solo con el libro. Entrá a nuestra sección de **Microscopio Virtual** para reconocer preparados reales (H&E, PAS) igual que en los parciales de cátedra.
+3. **Organología (Sistemas):** Relacioná la estructura de la pared (túnicas) con la función del órgano (ej. Aparato Digestivo, Renal, Respiratorio).
+
+💡 *Tip cazabobos:* En los exámenes orales siempre te preguntan la tinción y la ultraestructura celular. ¡Cualquier duda de algún preparado decime y lo repasamos! 🔬✨"""
+            elif 'locomotor' in clean_q or 'aparato locomotor' in clean_q:
+                answer = """¡Holis, mi amor! El **Aparato Locomotor** se estudia integrando tres pilares:
+
+- **Osteología:** Huesos, accidentes óseos, inserciones musculares principales.
+- **Artrología:** Clasificación de articulaciones (Diartrosis, Anfiartrosis, Sinartrosis), medios de unión y superficies articulares.
+- **Miología:** Músculos, inervación e irrigación del compartimento.
+
+🦴 *Recomendación ALUMED:* Usá nuestro **Atlas 3D** en el dashboard para rotar la columna y los miembros. ¡Verlo en 3D te ahorra el doble de tiempo de memorización! 💪"""
             else:
-                # Academic or other queries - wrap the retrieved chunk in a warm Profe Joy message
-                parts = []
-                parts.append("¡Hola, doc! Con respecto a tu consulta, mirá lo que encontré en los apuntes oficiales para vos:\n")
+                # Academic synthesis response
+                academic_chunks = [c for c in relevant if c.subject != 'Cartelera']
+                target_chunks = academic_chunks if academic_chunks else relevant
                 
-                for idx, chunk in enumerate(relevant[:2], 1):
-                    source_info = chunk.title
-                    if chunk.subject:
-                        source_info += f" ({chunk.subject})"
-                    parts.append(f"📌 **De la fuente: {source_info}**\n{chunk.content}\n")
+                parts = ["¡Holis, doc! Mirá lo que preparé de los apuntes oficiales de nuestra biblioteca para vos:\n"]
+                for chunk in target_chunks[:2]:
+                    subj = f" ({chunk.subject})" if chunk.subject else ""
+                    parts.append(f"📖 **{chunk.title}{subj}**\n{chunk.content[:450]}...\n")
                 
-                parts.append("¿Quedó claro, sí o no? ¡Metele que vas súper bien, mi amor! ¡Estoy acá eh! 💪✨")
+                parts.append("💡 *Tip de Profe Joy:* Relacioná siempre la estructura con la función para romperla en los parciales. ¿Querés que profundicemos en algún punto específico, corazón? ¡Metele que vas súper bien! 💪✨")
                 answer = "\n".join(parts)
 
 
