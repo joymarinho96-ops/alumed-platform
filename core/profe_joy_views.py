@@ -251,13 +251,20 @@ def profe_joy_chat(request):
             import re
             clean_q = re.sub(r'[¿?¡!,.]', '', question.lower().strip())
             
-            # GREETINGS
-            if any(greet in clean_q for greet in ('hola', 'holis', 'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches')):
-                answer = "¡Holis, corazón! Qué lindo saludarte. ¿Cómo andás? Contame qué materia estás estudiando hoy (Anatomía, Histología, Embrio, Biología...) y le metemos juntos. ¡Estoy acá eh! 😘"
-            elif any(q in clean_q for q in ('como estas', 'como andas', 'todo bien', 'que tal', 'cómo estás')):
+            # GREETINGS (Spanish & Portuguese)
+            greetings = (
+                'hola', 'holis', 'oi', 'olá', 'ola', 'oi tudo bem', 'tudo bem', 
+                'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches', 
+                'bom dia', 'boa tarde', 'boa noite', 'que tal', 'cómo estás', 
+                'como estas', 'como andas', 'quien sos', 'quién sos'
+            )
+            
+            if clean_q in ('oi', 'oi tudo bem', 'hola', 'holis', 'ola', 'olá'):
+                answer = "¡Holis, corazón! Oi tudo bem! Qué lindo saludarte. Contame qué materia estás estudiando hoy (Anatomía, Histología, Embrio, Biología...) y le metemos juntos. ¡Estoy acá para lo que necesites! 😘✨"
+            elif any(greet in clean_q for greet in ('como estas', 'como andas', 'tudo bem', 'que tal', 'cómo estás')):
                 answer = "¡Hola, doc! Yo estoy de diez, re contenta de darte una mano con el estudio. ¿Cómo venís llevando la cursada? ¡Vamos que vas a ser un doc increíble! 💪✨"
             elif any(q in clean_q for q in ('quien sos', 'quién sos', 'quien eres', 'tu nombre', 'como te llamas')):
-                answer = "¡Holis! Soy la Profe Joy IA, tu tutora médica para sacarte todas las dudas de Histología, Anatomía, Embriología y Biología Celular. ¡Allright! 😉"
+                answer = "¡Holis! Soy la Profe Joy IA, tu tutora médica oficial para sacarte todas las dudas de Histología, Anatomía, Embriología y Biología Celular. ¡Allright! 😉"
             elif 'estudio histologia' in clean_q or 'estudiar histologia' in clean_q:
                 answer = """¡Holis, doc! Para estudiar **Histología** en la UNLP con éxito, te recomiendo seguir este orden Didáctico:
 
@@ -275,16 +282,17 @@ def profe_joy_chat(request):
 
 🦴 *Recomendación ALUMED:* Usá nuestro **Atlas 3D** en el dashboard para rotar la columna y los miembros. ¡Verlo en 3D te ahorra el doble de tiempo de memorización! 💪"""
             else:
-                # Academic synthesis response
+                # Academic synthesis response from retrieved RAG chunks
                 academic_chunks = [c for c in relevant if c.subject != 'Cartelera']
                 target_chunks = academic_chunks if academic_chunks else relevant
                 
-                parts = ["¡Holis, doc! Mirá lo que preparé de los apuntes oficiales de nuestra biblioteca para vos:\n"]
+                parts = ["¡Holis, doc! Mirá lo que te resumí de nuestros apuntes oficiales para tu consulta:\n"]
                 for chunk in target_chunks[:2]:
                     subj = f" ({chunk.subject})" if chunk.subject else ""
-                    parts.append(f"📖 **{chunk.title}{subj}**\n{chunk.content[:450]}...\n")
+                    clean_content = chunk.content.replace('\r', '').strip()
+                    parts.append(f"📌 **{chunk.title}{subj}:**\n{clean_content[:380]}...\n")
                 
-                parts.append("💡 *Tip de Profe Joy:* Relacioná siempre la estructura con la función para romperla en los parciales. ¿Querés que profundicemos en algún punto específico, corazón? ¡Metele que vas súper bien! 💪✨")
+                parts.append("💡 *Tip Didáctico:* Relacioná siempre la estructura con la función biológica para lucirte en el parcial. ¿Querés profundizar en algún concepto, corazón? ¡Metele que vas súper bien! 💪✨")
                 answer = "\n".join(parts)
 
 
