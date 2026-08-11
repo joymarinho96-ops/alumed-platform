@@ -81,3 +81,4 @@ netlify_build/**/*.html
 !cors.json
 
 .vercel
+*.pdf

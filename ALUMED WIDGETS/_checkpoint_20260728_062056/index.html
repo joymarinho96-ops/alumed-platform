@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALUMED OS | Simulador Médico UNLP - Facultad de Ciencias Médicas</title>
+  <meta name="description" content="Simulador médico de alto rendimiento para estudiantes de 1° año de la Facultad de Ciencias Médicas UNLP. Multiple Choice, Pinches, Oral y Método Profe Joy.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="alumed-os-theme">
+
+  <div class="app-layout">
+
+    <!-- ══════════════ SIDEBAR ══════════════ -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-box">
+          <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <div>
+          <h1>ALUMED <span class="os-tag">OS</span></h1>
+          <p>Medicina UNLP — 1° Año</p>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label for="materia-select">
+          <i class="fa-solid fa-filter"></i> CÁTEDRA / MATERIA:
+        </label>
+        <select id="materia-select" class="custom-select" onchange="cambiarMateria(this.value)">
+          <option value="TODAS">🎓 Todas las Cátedras UNLP</option>
+          <optgroup label="Anatomía Humana">
+            <option value="Anatomía Cátedra A">🦴 Anatomía — Cátedra A</option>
+            <option value="Anatomía Cátedra B">🫀 Anatomía — Cátedra B</option>
+            <option value="Anatomía Cátedra C">🧠 Anatomía — Cátedra C</option>
+          </optgroup>
+          <optgroup label="Histología y Biología">
+            <option value="Histología y Embriología">🧫 Histología, Embriología y Genética</option>
+            <option value="Biología Celular">🔬 Biología Celular y Molecular</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-btn active" id="btn-choices" onclick="switchTab('choices')">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Multiple Choice</span>
+        </button>
+        <button class="nav-btn" id="btn-pinches" onclick="switchTab('pinches')">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>Pinches (Práctico)</span>
+        </button>
+        <button class="nav-btn" id="btn-oral" onclick="switchTab('oral')">
+          <i class="fa-solid fa-comments"></i>
+          <span>Examen Oral / Bolillas</span>
+        </button>
+        <button class="nav-btn" id="btn-calendario" onclick="switchTab('calendario'); initCalendario();">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Calendario de Parciales</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="unlp-badge-mini">
+          <i class="fa-solid fa-building-columns"></i> FCM — UNLP
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══════════════ CONTENIDO PRINCIPAL ══════════════ -->
+    <main class="content">
+
+      <!-- HERO SECTION -->
+      <section class="hero-section">
+        <div class="hero-badge">
+          <i class="fa-solid fa-certificate"></i> PLATAFORMA EXCLUSIVA UNLP — MEDICINA LA PLATA
+        </div>
+        <h1 class="hero-title">
+          Dominá el 1er Año en la UNLP con <span class="text-gradient">ALUMED OS</span>
+        </h1>
+        <p class="hero-subtitle">
+          Tu simulador médico de alto rendimiento adaptado a las cátedras de La Plata.
+          Parciales, pinches de anatomía y orales con corrección didáctica — Método Profe Joy.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <span class="stat-num text-cyan" id="stat-total-q">2.000+</span>
+            <span class="stat-desc">Preguntas Reales UNLP</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-magenta">Joy</span>
+            <span class="stat-desc">Método Profe Joy</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-violet">3</span>
+            <span class="stat-desc">Cátedras de Anatomía</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 1: MULTIPLE CHOICE ═══ -->
+      <section id="tab-choices" class="tab-content active">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-list-check"></i> Módulo Multiple Choice</h2>
+          <span class="counter-badge" id="mc-counter">Pregunta 1 de —</span>
+        </div>
+
+        <div class="card card-glow">
+          <!-- Meta: solo materia y tema — SIN nombre de archivo/fuente interna -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="mc-materia">Materia UNLP</span>
+            <span class="badge badge-tema" id="mc-tema"></span>
+          </div>
+
+          <h3 id="mc-pergunta" class="question-text">Cargando pregunta...</h3>
+
+          <div class="options-group" id="mc-opcoes"></div>
+
+          <!-- Panel de corrección Profe Joy -->
+          <div id="mc-feedback" class="feedback"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" id="btn-prev" onclick="prevChoice()">
+              <i class="fa-solid fa-arrow-left"></i> Anterior
+            </button>
+            <button class="btn-primary" onclick="validarChoice()" id="btn-validar">
+              <i class="fa-solid fa-check-double"></i> Confirmar Respuesta
+            </button>
+            <button class="btn-secondary" id="btn-next" onclick="nextChoice()">
+              Siguiente <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 2: PINCHES ═══ -->
+      <section id="tab-pinches" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-crosshairs"></i> Módulo Pinches — Anatomía Práctica</h2>
+        </div>
+
+        <div class="card card-glow">
+          <!-- Solo materia — sin fuente de archivo -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="pinch-materia">Anatomía UNLP</span>
+          </div>
+
+          <div class="img-container" id="pinch-img-wrapper">
+            <img id="pinch-img" src="" alt="Muestra Anatómica UNLP">
+          </div>
+
+          <p id="pinch-pergunta" class="question-text">Identifique la estructura señalada:</p>
+
+          <div class="input-action-group">
+            <input type="text" id="pinch-input" class="input-field"
+              placeholder="Escriba aquí la estructura (ej: Arteria Subclavia)..."
+              autocomplete="off">
+            <button class="btn-primary" onclick="validarPinche()">
+              <i class="fa-solid fa-crosshairs"></i> Validar Pinche
+            </button>
+          </div>
+
+          <div id="pinch-feedback" class="feedback" style="display:none;"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" onclick="nextPinche()">
+              Siguiente Muestra <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 3: ORAL / BOLILLAS ═══ -->
+      <section id="tab-oral" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-comments"></i> Simulador de Examen Oral — Bolillas UNLP</h2>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary btn-large btn-dopamine" onclick="sortearOral()">
+            <i class="fa-solid fa-dice"></i> Sortear Bolilla / Caso Clínico
+          </button>
+        </div>
+
+        <div class="card card-glow" id="oral-card" style="display:none;">
+          <!-- Solo materia — sin fuente de archivo -->
+          <div class="card-meta">
+            <span class="badge badge-materia" id="oral-materia">Materia UNLP</span>
+          </div>
+          <h3 id="oral-bolilla" class="question-text"></h3>
+          <div class="case-box">
+            <strong><i class="fa-solid fa-notes-medical"></i> Caso Clínico / Introducción:</strong>
+            <p id="oral-caso"></p>
+          </div>
+          <h4 class="checklist-heading">
+            <i class="fa-solid fa-list-check"></i> Tópicos Obligatorios a Desarrollar:
+          </h4>
+          <div class="checklist" id="oral-checklist"></div>
+        </div>
+      </section>
+
+      <!-- ═══ MÓDULO 4: CALENDARIO DE PARCIALES ═══ -->
+      <section id="tab-calendario" class="tab-content">
+        <div class="header-banner">
+          <h2><i class="fa-solid fa-calendar-days"></i> Calendario de Parciales — 1er Año</h2>
+        </div>
+
+        <!-- Leyenda de colores -->
+        <div class="cal-leyenda">
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-bio"></span> Biología</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatoa"></span> Anatomía A</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatob"></span> Anatomía B</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-anatoc"></span> Anatomía C</div>
+          <div class="cal-leyenda-item"><span class="cal-dot cal-color-hye"></span> Histología y Embriología</div>
+        </div>
+
+        <!-- Switcher de vista -->
+        <div class="cal-vista-switcher">
+          <button class="cal-vista-btn active" id="cal-vista-btn-cronologica"
+            onclick="switchVistaCalendario('cronologica')">
+            <i class="fa-solid fa-list"></i> Vista Cronológica
+          </button>
+          <button class="cal-vista-btn" id="cal-vista-btn-calendario"
+            onclick="switchVistaCalendario('calendario')">
+            <i class="fa-solid fa-calendar"></i> Vista Mensual
+          </button>
+        </div>
+
+        <!-- VISTA CRONOLÓGICA -->
+        <div id="cal-vista-cronologica">
+          <div id="cal-cronologica-container"></div>
+        </div>
+
+        <!-- VISTA MENSUAL -->
+        <div id="cal-vista-calendario" style="display:none">
+          <div class="cal-mes-nav">
+            <button class="btn-secondary cal-nav-btn" onclick="navCalendario(-1)">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h3 id="cal-mes-titulo" class="cal-mes-titulo">Mayo 2026</h3>
+            <button class="btn-secondary cal-nav-btn" onclick="navCalendario(1)">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          <div id="cal-mes-grid" class="cal-mes-grid"></div>
+          <div class="cal-mes-hint">
+            <i class="fa-solid fa-circle-info"></i>
+            Las barras de color indican eventos o períodos activos en ese día.
+            Los períodos estimados aparecen con borde punteado.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ══════════════ MODAL FRAGMENTO DEL APUNTE ══════════════ -->
+  <!-- Muestra solo el contenido académico — nunca nombre de archivo ni página -->
+  <div id="fragmento-modal" class="fragmento-modal" role="dialog" aria-modal="true" aria-labelledby="fragmento-titulo">
+    <div class="fragmento-modal-inner">
+      <div class="fragmento-modal-header">
+        <div>
+          <div class="fragmento-modal-tag">
+            <i class="fa-solid fa-book-open"></i> Fragmento ALUMED
+          </div>
+          <h2 id="fragmento-titulo" class="fragmento-modal-titulo">—</h2>
+        </div>
+        <button class="fragmento-close" onclick="cerrarFragmento()" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="fragmento-cuerpo" class="fragmento-cuerpo"></div>
+      <div class="fragmento-modal-footer">
+        <span id="fragmento-fuente" class="fragmento-fuente-tag"></span>
+        <button class="btn-secondary" onclick="cerrarFragmento()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: primero los datos, luego la lógica -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

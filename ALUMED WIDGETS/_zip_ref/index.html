@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simulador ALUMED OS con corrección didáctica Método Profe Joy.">
+  <title>Simulador ALUMED OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <span class="eyebrow">ALUMED OS</span>
+      <h1>Simulador de examen</h1>
+    </div>
+    <button id="theme-toggle" class="icon-button" type="button" aria-label="Cambiar tema">◐</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="exam-toolbar" aria-label="Estado del simulador">
+      <div>
+        <span id="materia-badge" class="subject-badge"></span>
+        <p id="tema-label" class="topic-label"></p>
+      </div>
+      <div class="progress-copy"><strong id="question-number">1</strong>/<span id="question-total">1</span></div>
+    </section>
+
+    <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+
+    <section class="question-card">
+      <h2 id="question-text"></h2>
+      <div id="options" class="options" role="radiogroup" aria-label="Opciones de respuesta"></div>
+
+      <div class="question-actions">
+        <button id="btn-validar" class="btn btn-primary" type="button" disabled>Corregir respuesta</button>
+        <button id="btn-siguiente" class="btn btn-secondary" type="button" hidden>Siguiente pregunta</button>
+      </div>
+    </section>
+
+    <section id="feedback" aria-live="polite"></section>
+  </main>
+
+  <div id="fragmento-modal" class="fragmento-modal" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" type="button" data-close-modal aria-label="Cerrar">×</button>
+      <span class="eyebrow">ALUMED OS</span>
+      <h2 id="modal-title">Fragmento ALUMED</h2>
+      <blockquote id="modal-fragment"></blockquote>
+    </article>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

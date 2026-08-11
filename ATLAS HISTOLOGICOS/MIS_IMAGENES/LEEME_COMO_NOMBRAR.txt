@@ -1,0 +1,62 @@
+========================================================================
+ALUMED | ATLAS HISTOLÓGICO Y EMBRIOLÓGICO — PROFE JOYCE MARINHO
+GUÍA DE NOMBRES PARA GUARDAR TUS FOTOS EN ESTA CARPETA (MIS_IMAGENES)
+========================================================================
+
+Guarda tus fotos aquí con alguno de estos nombres (en formato .jpg o .png):
+
+TEJIDO EPITELIAL:
+- mesotelio.jpg         -> Epitelio Plano Simple (Mesotelio)
+- chapa_estriada.jpg    -> Epitelio Cilíndrico Simple con Chapa Estriada
+- traquea.jpg           -> Epitelio Seudoestratificado Cilíndrico Ciliado
+- esofago.jpg           -> Epitelio Plano Estratificado No Queratinizado
+- urotelio.jpg          -> Epitelio de Transición (Vejiga)
+- pancreas.jpg          -> Epitelio Glandular Exocrino (Acinos Pancreáticos)
+
+TEJIDO CONECTIVO Y ADIPOSO:
+- conectivo_laxo.jpg    -> Tejido Conectivo Laxo Areolar
+- dermis.jpg            -> Tejido Conectivo Denso No Modelado
+- tendon.jpg            -> Tejido Conectivo Denso Modelado
+- plasmocito.jpg        -> Células Plasmáticas
+- mastocito.jpg         -> Mastocitos (Células Cebadas)
+- adiposo.jpg           -> Tejido Adiposo Unilocular (Grasa Blanca)
+
+CARTÍLAGO Y HUESO:
+- cartilago_hialino.jpg -> Cartílago Hialino
+- osificacion.jpg       -> Osificación Endocondral
+- cartilago_elastico.jpg -> Cartílago Elástico
+- fibrocartilago.jpg    -> Fibrocartílago
+- hueso.jpg             -> Hueso Compacto (Osteona)
+
+TEJIDO NERVIOSO:
+- medula_espinal.jpg    -> Médula Espinal
+- cerebelo.jpg          -> Corteza Cerebelosa (Células de Purkinje)
+- nervio.jpg            -> Nervio Periférico
+- ganglio.jpg           -> Ganglio Espinal / Raquídeo
+- meissner.jpg          -> Plexo Submucoso de Meissner
+- auerbach.jpg          -> Plexo Mientérico de Auerbach
+
+TEJIDO MUSCULAR:
+- musculo_esqueletico.jpg -> Músculo Esquelético
+- musculo_cardiaco.jpg   -> Músculo Cardíaco
+- musculo_liso.jpg       -> Músculo Liso
+- ileon.jpg              -> Capas Musculares de Íleon
+
+SISTEMA LINFOIDE:
+- timo.jpg               -> Timo
+- ganglio_linfatico.jpg  -> Ganglio Linfático
+- bazo.jpg               -> Bazo
+
+CARDIOVASCULAR Y SANGRE:
+- aorta.jpg              -> Arteria Elástica (Aorta)
+- vena_cava.jpg          -> Vena Cava / Mediana
+- vasculonervioso.jpg    -> Paquete Vasculonervioso
+- sangre.jpg             -> Frotis de Sangre Periférica
+- medula_osea.jpg        -> Médula Ósea Roja
+
+EMBRIOLOGÍA:
+- placenta.jpg           -> Circulación Placentaria en Placenta a Término
+
+========================================================================
+¡La IA detectará automáticamente cualquier foto que guardes aquí!
+========================================================================

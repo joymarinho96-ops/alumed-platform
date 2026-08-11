@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALUMED OS | Simulador Médico UNLP - Facultad de Ciencias Médicas</title>
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="alumed-os-theme">
+
+  <div class="app-layout">
+    <!-- SIDEBAR / MENÚ LATERAL UNLP -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-box">
+          <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <div>
+          <h1>ALUMED <span class="os-tag">OS</span></h1>
+          <p>Medicina UNLP - 1° Año</p>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label for="materia-select"><i class="fa-solid fa-filter"></i> FILTRAR CÁTEDRA / MATERIA:</label>
+        <select id="materia-select" class="custom-select" onchange="cambiarMateria(this.value)">
+          <option value="TODAS">🎓 Todas las Cátedras UNLP</option>
+          <optgroup label="Anatomía Humana">
+            <option value="Anatomía Cátedra A">🦴 Anatomía Cátedra A (UNLP)</option>
+            <option value="Anatomía Cátedra B">🫀 Anatomía Cátedra B (UNLP)</option>
+            <option value="Anatomía Cátedra C">🧠 Anatomía Cátedra C (UNLP)</option>
+          </optgroup>
+          <optgroup label="Histología & Biología">
+            <option value="Histología y Embriología">🧫 Histología, Embriología y Genética</option>
+            <option value="Biología Celular">🔬 Introducción a la Biología Celular y Molecular</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-btn active" id="btn-choices" onclick="switchTab('choices')">
+          <i class="fa-solid fa-list-check"></i> <span>Multiple Choice</span>
+        </button>
+        <button class="nav-btn" id="btn-pinches" onclick="switchTab('pinches')">
+          <i class="fa-solid fa-crosshairs"></i> <span>Pinches (Práctico)</span>
+        </button>
+        <button class="nav-btn" id="btn-oral" onclick="switchTab('oral')">
+          <i class="fa-solid fa-comments"></i> <span>Examen Oral / Bolillas</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="unlp-badge-mini">
+          <i class="fa-solid fa-building-columns"></i> FCM - UNLP
+        </div>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL DE CONTENIDO -->
+    <main class="content">
+
+      <!-- HERO SECTION DOPAMINÉRGICO UNLP -->
+      <section class="hero-section">
+        <div class="hero-badge">
+          <i class="fa-solid fa-certificate"></i> PLATAFORMA EXCLUSIVA UNLP - MEDICINA LA PLATA
+        </div>
+        <h1 class="hero-title">
+          Domina el 1er Año en la UNLP con <span class="text-gradient">ALUMED OS</span>
+        </h1>
+        <p class="hero-subtitle">
+          Tu simulador médico de alto rendimiento adaptado a las cátedras de La Plata. Parciales, pinches de anatomía y orales con feedback dopaminérgico inmediato.
+        </p>
+
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <span class="stat-num text-cyan" id="stat-total-q">2.000+</span>
+            <span class="stat-desc">Preguntas Reales UNLP</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-magenta" id="stat-accuracy">100%</span>
+            <span class="stat-desc">Feedback Inmediato</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="stat-num text-violet" id="stat-catedras">3</span>
+            <span class="stat-desc">Cátedras de Anatomía</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- MÓDULO 1: MULTIPLE CHOICE -->
+      <section id="tab-choices" class="tab-content active">
+        <div class="header-banner">
+          <h2>📝 Módulo Multiple Choice</h2>
+          <span class="counter-badge" id="mc-counter">Pregunta 1 de --</span>
+        </div>
+
+        <div class="card card-glow">
+          <div class="card-meta">
+            <span class="badge badge-materia" id="mc-materia">Materia UNLP</span>
+            <span class="badge badge-fuente" id="mc-fuente"><i class="fa-solid fa-scroll"></i> Parcial Unificado UNLP</span>
+          </div>
+          
+          <h3 id="mc-pergunta" class="question-text">Cargando pregunta...</h3>
+          
+          <div class="options-group" id="mc-opcoes"></div>
+
+          <div id="mc-feedback" class="feedback"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" onclick="prevChoice()">
+              <i class="fa-solid fa-arrow-left"></i> Anterior
+            </button>
+            <button class="btn-primary" onclick="validarChoice()" id="btn-validar">
+              <i class="fa-solid fa-check-double"></i> Confirmar Respuesta
+            </button>
+            <button class="btn-secondary" onclick="nextChoice()">
+              Siguiente <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2: PINCHES / ANATOMÍA PRÁCTICA -->
+      <section id="tab-pinches" class="tab-content">
+        <div class="header-banner">
+          <h2>📍 Módulo Pinches / Anatomía Práctica - UNLP</h2>
+        </div>
+
+        <div class="card card-glow">
+          <div class="card-meta">
+            <span class="badge badge-materia" id="pinch-materia">Anatomía Cátedra A UNLP</span>
+            <span class="badge badge-fuente" id="pinch-fuente"><i class="fa-solid fa-microscope"></i> Preparado de Osteoteca / Muestra Práctica</span>
+          </div>
+          
+          <div class="img-container" id="pinch-img-wrapper">
+            <img id="pinch-img" src="" alt="Muestra Anatómica UNLP">
+          </div>
+
+          <p id="pinch-pergunta" class="question-text">Identifique la estructura señalada:</p>
+          
+          <div class="input-action-group">
+            <input type="text" id="pinch-input" class="input-field" placeholder="Escriba aquí la estructura (ej: Arteria Subclavia)..." autocomplete="off">
+            <button class="btn-primary" onclick="validarPinche()">
+              <i class="fa-solid fa-crosshairs"></i> Validar Pinche
+            </button>
+          </div>
+          
+          <div id="pinch-feedback" class="feedback"></div>
+
+          <div class="card-footer">
+            <button class="btn-secondary" onclick="nextPinche()">
+              Siguiente Muestra <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MÓDULO 3: EXAMEN ORAL / BOLILLAS -->
+      <section id="tab-oral" class="tab-content">
+        <div class="header-banner">
+          <h2>🗣️ Simulador de Examen Oral / Bolillas UNLP</h2>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary btn-large btn-dopamine" onclick="sortearOral()">
+            <i class="fa-solid fa-dice"></i> Sortear Bolilla / Caso Clínico UNLP
+          </button>
+        </div>
+
+        <div class="card card-glow" id="oral-card" style="display: none;">
+          <div class="card-meta">
+            <span class="badge badge-materia" id="oral-materia">Histología y Embriología UNLP</span>
+            <span class="badge badge-fuente" id="oral-fuente"><i class="fa-solid fa-graduation-cap"></i> Bolillero Oficial de Cátedra</span>
+          </div>
+          <h3 id="oral-bolilla" class="question-text"></h3>
+          <div class="case-box">
+            <strong><i class="fa-solid fa-notes-medical"></i> Caso Clínico / Introducción:</strong>
+            <p id="oral-caso"></p>
+          </div>
+
+          <h4 class="checklist-heading"><i class="fa-solid fa-list-check"></i> Checklist de Tópicos Obligatorios a Desarrollar:</h4>
+          <div class="checklist" id="oral-checklist"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+</body>
+</html>

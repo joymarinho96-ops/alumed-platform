@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALUMED OS — Header, Biblioteca & Widget Banco de Preguntas</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --border-glow: rgba(0, 229, 255, 0.2);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --cyan-neon: #00e5ff;
+      --purple-neon: #a855f7;
+      --pink-neon: #ec4899;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.05) 0%, transparent 40%);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       1. HEADER & MENÚ PRINCIPAL
+    ════════════════════════════════════════════════════════ */
+    .alumed-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0 2rem;
+    }
+
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--cyan-neon), var(--purple-neon));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #090d16;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+    }
+
+    .brand-text h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text h2 span {
+      background: linear-gradient(135deg, var(--cyan-neon), var(--purple-neon));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav {
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+
+    .nav-item a:hover,
+    .nav-item a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+    }
+
+    .nav-item a i {
+      font-size: 1rem;
+      color: var(--cyan-neon);
+    }
+
+    .btn-banco-cta {
+      background: linear-gradient(135deg, var(--cyan-neon), #00a8ff) !important;
+      color: #090d16 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-banco-cta i {
+      color: #090d16 !important;
+    }
+
+    .btn-banco-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.5) !important;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       2. SECCIÓN: BIBLIOTECA
+    ════════════════════════════════════════════════════════ */
+    .section-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      color: var(--cyan-neon);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    /* Filtros por Asignatura */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .filter-btn {
+      background: rgba(18, 24, 38, 0.8);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(168, 85, 247, 0.15));
+      border-color: var(--cyan-neon);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    }
+
+    /* Grid de Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    .resource-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan-neon), var(--purple-neon));
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .resource-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 229, 255, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.15);
+    }
+
+    .resource-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .subject-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .subject-histo { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+    .subject-embrio { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .subject-anato { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .subject-bio { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .format-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .card-description {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Enlaces Integrados */
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .action-btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: var(--transition);
+    }
+
+    .action-btn-primary:hover {
+      background: rgba(0, 229, 255, 0.1);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+    }
+
+    .integrations-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn-sub {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .action-btn-sub.atlas:hover {
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      border-color: rgba(236, 72, 153, 0.3);
+    }
+
+    .action-btn-sub.banco:hover {
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--cyan-neon);
+      border-color: rgba(0, 229, 255, 0.3);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       3. SECCIÓN: WIDGET BANCO DE PREGUNTAS
+    ════════════════════════════════════════════════════════ */
+    .banco-widget-box {
+      margin-top: 5rem;
+      background: linear-gradient(135deg, rgba(18, 24, 38, 0.9), rgba(10, 15, 26, 0.95));
+      border: 1px solid var(--border-glow);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 0 50px rgba(0, 229, 255, 0.08);
+      position: relative;
+    }
+
+    .widget-placeholder {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px dashed rgba(0, 229, 255, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 40px 20px;
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .widget-placeholder i {
+      font-size: 2.5rem;
+      color: var(--cyan-neon);
+      margin-bottom: 12px;
+    }
+
+    .shortcode-badge {
+      display: inline-block;
+      background: #000;
+      color: var(--cyan-neon);
+      font-family: monospace;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════
+     1. MENÚ PRINCIPAL (HEADER)
+  ════════════════════════════════════════════════════════ -->
+  <header class="alumed-header">
+    <div class="header-container">
+      <a href="#" class="brand-logo">
+        <div class="brand-icon"><i class="fa-solid fa-stethoscope"></i></div>
+        <div class="brand-text">
+          <h2>ALUMED <span>OS</span></h2>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li class="nav-item"><a href="#" class="active"><i class="fa-solid fa-house"></i> Inicio</a></li>
+          <li class="nav-item"><a href="http://localhost:8000/conecta/dashboard/" target="_blank"><i class="fa-solid fa-graduation-cap"></i> Conecta FCM</a></li>
+          <li class="nav-item"><a href="#cursos"><i class="fa-solid fa-laptop-code"></i> Cursos Alumed</a></li>
+          <li class="nav-item"><a href="#atlas"><i class="fa-solid fa-microscope"></i> Atlas Histológico</a></li>
+          <li class="nav-item"><a href="#biblioteca"><i class="fa-solid fa-book-open"></i> Biblioteca</a></li>
+          <li class="nav-item"><a href="#estatuto"><i class="fa-solid fa-scale-balanced"></i> Estatuto</a></li>
+          <li class="nav-item"><a href="#banco-preguntas" class="btn-banco-cta"><i class="fa-solid fa-list-check"></i> Banco de Preguntas</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════
+     2. SECCIÓN: BIBLIOTECA
+  ════════════════════════════════════════════════════════ -->
+  <main class="section-container" id="biblioteca">
+    <div class="section-header">
+      <div class="badge-tag"><i class="fa-solid fa-layer-group"></i> Recursos Académicos Integrados</div>
+      <h1 class="section-title">Biblioteca Alumed OS</h1>
+      <p class="section-desc">Accede a bibliografía oficial, resúmenes del Método Profe Joy y guías teóricas conectadas directamente con el Atlas y el Banco de Preguntas.</p>
+    </div>
+
+    <!-- Filtros por Asignatura -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterCategory('all')"><i class="fa-solid fa-border-all"></i> Todas</button>
+      <button class="filter-btn" onclick="filterCategory('histo')"><i class="fa-solid fa-microscope"></i> Histología</button>
+      <button class="filter-btn" onclick="filterCategory('embrio')"><i class="fa-solid fa-baby"></i> Embriología</button>
+      <button class="filter-btn" onclick="filterCategory('anato')"><i class="fa-solid fa-bone"></i> Anatomía</button>
+      <button class="filter-btn" onclick="filterCategory('bio')"><i class="fa-solid fa-dna"></i> Biología Celular</button>
+    </div>
+
+    <!-- Grid de Cards de Recursos -->
+    <div class="cards-grid">
+
+      <!-- Card 1: Histología -->
+      <div class="resource-card" data-category="histo">
+        <div>
+          <div class="card-top">
+            <span class="subject-pill subject-histo">Histología</span>
+            <span class="format-tag"><i class="fa-solid fa-file-pdf"></i> Resumen Joy</span>
+          </div>
+          <h3 class="card-title">Tejido Epitelial y Conectivo</h3>
+          <p class="card-description">Guía completa de clasificación epitelial, matriz extracelular y variedades de tejido conectivo con esquemas clave para el 1er parcial.</p>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="action-btn-primary"><i class="fa-solid fa-download"></i> Ver / Descargar Resumen</a>
+          <div class="integrations-row">
+            <a href="#atlas" class="action-btn-sub atlas"><i class="fa-solid fa-microscope"></i> Ver lámina</a>
+            <a href="#banco-preguntas" class="action-btn-sub banco"><i class="fa-solid fa-vial"></i> Trivia Tema</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Embriología -->
+      <div class="resource-card" data-category="embrio">
+        <div>
+          <div class="card-top">
+            <span class="subject-pill subject-embrio">Embriología</span>
+            <span class="format-tag"><i class="fa-solid fa-book"></i> Libro / Guía</span>
+          </div>
+          <h3 class="card-title">Segunda y Tercera Semana de Desarrollo</h3>
+          <p class="card-description">Implantación, disco germinativo bilaminar y trilaminar, gastrulación y neurulación detallada paso a paso.</p>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="action-btn-primary"><i class="fa-solid fa-download"></i> Ver Guía Teórica</a>
+          <div class="integrations-row">
+            <a href="#atlas" class="action-btn-sub atlas"><i class="fa-solid fa-microscope"></i> Ver esquemas</a>
+            <a href="#banco-preguntas" class="action-btn-sub banco"><i class="fa-solid fa-vial"></i> Trivia Tema</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Anatomía -->
+      <div class="resource-card" data-category="anato">
+        <div>
+          <div class="card-top">
+            <span class="subject-pill subject-anato">Anatomía</span>
+            <span class="format-tag"><i class="fa-solid fa-image"></i> Papiro Anatómico</span>
+          </div>
+          <h3 class="card-title">Aparato Locomotor & Osteoteca</h3>
+          <p class="card-description">Papiro exclusivo con inserciones musculares, miología de miembro superior e inferior y puntos clave de examen oral.</p>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="action-btn-primary"><i class="fa-solid fa-download"></i> Ver Papiro Anatómico</a>
+          <div class="integrations-row">
+            <a href="#atlas" class="action-btn-sub atlas"><i class="fa-solid fa-cube"></i> Ver 3D / Pinches</a>
+            <a href="#banco-preguntas" class="action-btn-sub banco"><i class="fa-solid fa-vial"></i> Trivia Tema</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Biología -->
+      <div class="resource-card" data-category="bio">
+        <div>
+          <div class="card-top">
+            <span class="subject-pill subject-bio">Biología</span>
+            <span class="format-tag"><i class="fa-solid fa-diagram-project"></i> Esquema Práctico</span>
+          </div>
+          <h3 class="card-title">Biomoléculas y Membrana Plasmática</h3>
+          <p class="card-description">Mecanismos de transporte, señalización celular y estructura lipídica/proteica simplificada para rápido repaso.</p>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="action-btn-primary"><i class="fa-solid fa-download"></i> Ver Esquema</a>
+          <div class="integrations-row">
+            <a href="#atlas" class="action-btn-sub atlas"><i class="fa-solid fa-microscope"></i> Ver Célula</a>
+            <a href="#banco-preguntas" class="action-btn-sub banco"><i class="fa-solid fa-vial"></i> Trivia Tema</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════
+       3. SECCIÓN: WIDGET DEL BANCO DE PREGUNTAS
+    ════════════════════════════════════════════════════════ -->
+    <div class="banco-widget-box" id="banco-preguntas">
+      <div class="section-header" style="margin-bottom: 1.5rem;">
+        <div class="badge-tag" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3); color: var(--purple-neon);">
+          <i class="fa-solid fa-bolt"></i> Módulo Interactivo Elementor
+        </div>
+        <h2 class="section-title" style="font-size: 2rem;">Widget del Banco de Preguntas</h2>
+        <p class="section-desc">Módulo de autoevaluación interactiva cargado mediante Shortcode / Iframe en Elementor.</p>
+      </div>
+
+      <!-- Contenedor Interactivo de Elementor -->
+      <div id="alumed-widget-container" class="alumed-interactive-wrapper">
+          <div class="widget-header">
+              <h3 style="color: #00ffff; font-family: 'Outfit', sans-serif; margin-bottom: 10px; font-size: 1.3rem;">
+                <i class="fa-solid fa-list-check" style="color: #a855f7;"></i> Banco de Preguntas - Histología y Embriología
+              </h3>
+          </div>
+          <div class="widget-body" id="widget-interactive-body">
+              <p style="color: #cbd5e1;">Cargando sistema de autoevaluación del Método Profe Joy...</p>
+          </div>
+      </div>
+
+      <style>
+          .alumed-interactive-wrapper {
+              background: rgba(18, 24, 38, 0.95);
+              border: 1px solid rgba(0, 229, 255, 0.3);
+              border-radius: 16px;
+              padding: 25px;
+              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+              margin: 20px 0;
+          }
+      </style>
+    </div>
+
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+    // Filtro interactivo de categorías
+    function filterCategory(category) {
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
+
+      const cards = document.querySelectorAll('.resource-card');
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Automontaje del Widget de Autoevaluación
+    document.addEventListener("DOMContentLoaded", function() {
+      const body = document.getElementById("widget-interactive-body");
+      if (!body) return;
+
+      if (typeof bancoDados !== "undefined" && bancoDados.choices && bancoDados.choices.length > 0) {
+        const firstQ = bancoDados.choices[0];
+        let optionsHtml = firstQ.opcoes.map((opt, i) => `
+          <button class="action-btn-primary" style="text-align:left; justify-content:flex-start; margin-bottom:8px;" onclick="checkWidgetAnswer(${i}, ${firstQ.correta}, this)">
+            ${opt}
+          </button>
+        `).join("");
+
+        body.innerHTML = `
+          <div style="margin-bottom: 15px;">
+            <span class="subject-pill subject-histo" style="font-size:0.75rem;">${firstQ.materia}</span>
+            <span style="font-size:0.8rem; color:#00ffff; margin-left:8px; font-weight:700;">${firstQ.tp}</span>
+          </div>
+          <h4 style="color:#fff; font-size:1.05rem; margin-bottom:15px;">${firstQ.pergunta}</h4>
+          <div id="widget-options">${optionsHtml}</div>
+          <div id="widget-feedback" style="margin-top:15px; display:none; padding:12px; border-radius:8px; background:rgba(0,229,255,0.1); border:1px solid rgba(0,229,255,0.3); color:#fff; font-size:0.9rem;"></div>
+        `;
+      }
+    });
+
+    function checkWidgetAnswer(selected, correct, btn) {
+      const fb = document.getElementById("widget-feedback");
+      if (!fb) return;
+      fb.style.display = "block";
+      if (selected === correct) {
+        fb.innerHTML = "<strong>✅ ¡Correcto!</strong> Excelente deducción histofisiológica según el criterio del Método Profe Joy.";
+        btn.style.borderColor = "#10b981";
+        btn.style.background = "rgba(16,185,129,0.2)";
+      } else {
+        fb.innerHTML = "<strong>❌ Respuesta Incorrecta.</strong> Revisa el concepto clave en el resumen de la Cátedra.";
+        btn.style.borderColor = "#ef4444";
+        btn.style.background = "rgba(239,68,68,0.2)";
+      }
+    }
+  </script>
+</body>
+</html>
