@@ -571,30 +571,42 @@ function determinarTipoError(q, seleccionada) {
 function generarPanelJoy(preguntaObj, seleccionadaIdx = null, esCorrecta = null) {
   const q = preguntaObj;
   const materia = q.materia || currentMateria || "Medicina UNLP";
-  const tp = q.tpPrincipal || "TP1";
+  const tp = q.tpPrincipal || q.tp || "TP1";
   const tema = q.tema || "Tema General";
   
   const indiceCorrecto = obtenerIndiceCorrecto(q);
   const rawOpts = q.opciones || q.opcoes || [];
   const letraCorrecta = indiceCorrecto !== null ? String.fromCharCode(65 + indiceCorrecto) : "A";
-  const optCorrectaObj = normalizarOpcion(rawOpts[indiceCorrecto] || "");
   
   const seleccionValida = seleccionadaIdx !== null && seleccionadaIdx !== undefined && seleccionadaIdx >= 0;
-  const letraSeleccionada = seleccionValida ? String.fromCharCode(65 + seleccionadaIdx) : null;
-  const optSeleccionadaObj = seleccionValida ? normalizarOpcion(rawOpts[seleccionadaIdx] || "") : null;
-  
   const esExito = esCorrecta === true || (seleccionValida && seleccionadaIdx === indiceCorrecto);
 
-  // 1. Traducir el Enunciado (¿Qué está preguntando realmente?)
-  const enunciadoTexto = q.pregunta || q.pergunta || "Enunciado de la consigna";
-  const simplificacionEnunciado = q.joy?.preguntaSimplificada || `👉 ¿Cuál afirmación o mecanismo respecto a "${escaparHTML(tema)}" es la única correcta?`;
+  // Error Diagnosis
+  let diagnosticoErrorHTML = "";
+  if (seleccionValida && !esExito) {
+    const errorDiag = determinarTipoError(q, seleccionadaIdx);
+    diagnosticoErrorHTML = `
+      <div style="background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+        <h4 style="color: #f87171; font-size: 1rem; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+          <span>${errorDiag.icono}</span> DIAGNÓSTICO DO SEU ERRO: ${errorDiag.tipo}
+        </h4>
+        <p style="color: #fecaca; font-size: 0.9rem; margin: 0 0 0.4rem 0;">${errorDiag.subtitulo}</p>
+        <div style="color: #fca5a5; font-size: 0.85rem; font-style: italic;">👉 ${errorDiag.consejo}</div>
+      </div>
+    `;
+  }
 
-  // 2. Construcción Lógica del Mecanismo (Explicación conceptual profunda)
-  const explicacionMecanismo = q.joy?.mecanismo || q.joy?.examen || q.justificativa || "En la Cátedra de La Plata, cada estructura biológica existe para cumplir una función específica. Comprender la secuencia permite deducir la respuesta sin memorizar números aislados.";
+  // 1. O que a questão está realmente perguntando?
+  const oQuePergunta = q.joy?.preguntaSimplificada || q.joy?.oquePergunta || `Qual característica ou conceito define "${escaparHTML(tema)}" neste cenário?`;
 
-  // 3. Generación de las tarjetas de Opciones Analizadas una por una
+  // 2. Qual é a pista-chave?
+  const pistaChave = q.joy?.pistaChave || "Identificar a relação entre a estrutura citada e a sua função primária no tecido.";
+
+  // 3. Raciocínio
+  const raciocinio = q.joy?.mecanismo || q.joy?.raciocinio || q.justificativa || "Analisando a pista, deduzimos que a estrutura se adapta para realizar esta função, descartando as outras opções.";
+
+  // 4. Análise dos distratores
   let analisisOpcionesHTML = "";
-  
   rawOpts.forEach((optRaw, idx) => {
     const optNorm = normalizarOpcion(optRaw);
     const letra = String.fromCharCode(65 + idx);
@@ -602,845 +614,92 @@ function generarPanelJoy(preguntaObj, seleccionadaIdx = null, esCorrecta = null)
     const esEstaSeleccionada = (seleccionValida && idx === seleccionadaIdx);
     
     let explicacionEspecifica = optNorm.explicacion || q.joy?.porQueNoCorrectas?.[idx] || "";
-    
     if (esEstaCorrecta) {
-      if (!explicacionEspecifica) {
-        explicacionEspecifica = "En este estado/nivel el material genético o la estructura alcanza su condición exacta respondiendo 100% al enunciado.";
-      }
+      explicacionEspecifica = explicacionEspecifica || "É a correta porque reúne as características exigidas pelo enunciado.";
     } else {
-      if (!explicacionEspecifica) {
-        explicacionEspecifica = "Esta opción contiene un término o localización errónea que altera el significado o invierte el orden del proceso.";
-      }
+      explicacionEspecifica = explicacionEspecifica || "Pertence a outro conceito ou descreve uma estrutura diferente.";
     }
 
     analisisOpcionesHTML += `
-      <div style="background: ${esEstaCorrecta ? 'rgba(16, 185, 129, 0.08)' : (esEstaSeleccionada ? 'rgba(239, 68, 68, 0.1)' : 'rgba(30, 41, 59, 0.4)')}; border: 1px solid ${esEstaCorrecta ? '#10b981' : (esEstaSeleccionada ? '#ef4444' : 'rgba(255, 255, 255, 0.08)')}; border-radius: 10px; padding: 1rem; margin-bottom: 0.85rem; transition: all 0.2s ease;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: bold; font-size: 0.95rem;">
-            <span style="background: ${esEstaCorrecta ? '#10b981' : (esEstaSeleccionada ? '#ef4444' : '#334155')}; color: #fff; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.9rem;">${letra}</span>
-            <span style="color: ${esEstaCorrecta ? '#34d399' : (esEstaSeleccionada ? '#f87171' : '#f1f5f9')}; font-size: 0.95rem;">${escaparHTML(optNorm.texto)}</span>
-          </div>
-          <span style="font-size: 0.8rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; ${esEstaCorrecta ? 'background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981;' : (esEstaSeleccionada ? 'background: rgba(239, 68, 68, 0.25); color: #f87171; border: 1px solid #ef4444;' : 'background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1);')}">
-            ${esEstaCorrecta ? '✔ Correcta' : (esEstaSeleccionada ? '❌ Tu elección (Incorrecta)' : '❌ Incorrecta')}
-          </span>
-        </div>
-        
-        <div style="font-size: 0.9rem; line-height: 1.5; color: ${esEstaCorrecta ? '#a7f3d0' : '#cbd5e1'}; margin-top: 0.5rem; padding-left: 0.6rem; border-left: 3px solid ${esEstaCorrecta ? '#10b981' : (esEstaSeleccionada ? '#ef4444' : '#475569')};">
-          ${esEstaSeleccionada && !esEstaCorrecta ? `
-            <div style="color: #fca5a5; font-weight: bold; margin-bottom: 0.3rem; font-size: 0.88rem;">
-              💬 <strong>Profe Joy:</strong> Entiendo por qué elegiste esta opción. Tu razonamiento comenzó bien, pero aquí apareció la confusión:
-            </div>
-          ` : ''}
-          ${escaparHTML(explicacionEspecifica)}
+      <div style="background: ${esEstaCorrecta ? 'rgba(16, 185, 129, 0.08)' : 'rgba(30, 41, 59, 0.4)'}; border: 1px solid ${esEstaCorrecta ? '#10b981' : 'rgba(255, 255, 255, 0.08)'}; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 0.6rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+          <strong style="color: ${esEstaCorrecta ? '#34d399' : '#f87171'}; min-width: 25px;">${esEstaCorrecta ? '✅' : '❌'} ${letra}</strong>
+          <span style="color: #cbd5e1; font-size: 0.9rem;">${escaparHTML(explicacionEspecifica)}</span>
         </div>
       </div>
     `;
   });
 
-  // 4. Pregunta Oral de la Cátedra UNLP
-  const preguntaOralUNLP = q.joy?.preguntaOral || `Profe: Joyce, ¿cuál es el mecanismo fisiológico/estructural fundamental en ${escaparHTML(tema)}?`;
-  const respuestaOralUNLP = q.joy?.respuestaOral || `Respuesta Método Profe Joy: La estructura y la función están acopladas. En la Cátedra de La Plata, se evalúa la capacidad de deducir la consecuencia a partir del principio biológico básico.`;
+  // 5. Regra Profe Joy
+  const regra = q.joy?.regra || q.joy?.perla || `Sempre que pensar em ${escaparHTML(tema)}, associe diretamente à sua função principal.`;
+
+  // 6. E se a prova mudasse isso?
+  const eSe = q.joy?.eSe || `Se o enunciado mencionasse uma localização diferente, qual seria a resposta correta?`;
 
   return `
-    <div class="joy-panel ${esExito ? 'joy-correct' : 'joy-incorrect'} animate-fade-in" style="margin-top: 1.5rem; border-radius: 14px; overflow: hidden; border: 1px solid ${esExito ? '#10b981' : '#ef4444'}; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <div class="joy-panel ${esExito ? 'joy-correct' : 'joy-incorrect'} animate-fade-in" style="margin-top: 1.5rem; border-radius: 14px; overflow: hidden; border: 1px solid ${esExito ? '#10b981' : '#ef4444'}; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: left;">
       
-      <!-- 📌 CARD 1: ¿Qué está preguntando realmente el enunciado? -->
+      <!-- Cabecera -->
       <div style="background: #0f172a; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <span style="background: rgba(127, 0, 255, 0.2); color: #c084fc; font-weight: 800; font-size: 0.85rem; padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(127, 0, 255, 0.4);">
-            ✨ CORRECCIÓN RECONSTRUIDA PROFE JOY
+            ✨ CORREÇÃO PROFE JOY
           </span>
           <span style="font-size: 0.8rem; color: var(--cyan-neon); background: rgba(0, 229, 255, 0.1); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(0, 229, 255, 0.3);">
-            ${escaparHTML(materia)} • ${escaparHTML(tp)}
+            ${escaparHTML(materia)}
           </span>
         </div>
         
-        <h3 style="color: #f8fafc; font-size: 1.05rem; font-weight: bold; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-          <span>📌</span> Primero... ¿qué está preguntando?
-        </h3>
-        <p style="color: #94a3b8; font-size: 0.92rem; margin: 0 0 0.75rem 0; font-style: italic; line-height: 1.4;">
-          "${escaparHTML(enunciadoTexto)}"
-        </p>
-        <div style="background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 8px; padding: 0.75rem 1rem; color: #67e8f9; font-weight: 600; font-size: 0.92rem;">
-          ${simplificacionEnunciado}
+        ${diagnosticoErrorHTML}
+        
+        <!-- 1. O que a questão está realmente perguntando? -->
+        <h4 style="color: #f8fafc; font-size: 1rem; font-weight: bold; margin: 0 0 0.5rem 0;">🎯 1. O que a questão está realmente perguntando?</h4>
+        <div style="background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 8px; padding: 0.75rem 1rem; color: #67e8f9; font-weight: 600; font-size: 0.92rem; margin-bottom: 1.25rem;">
+          "${escaparHTML(oQuePergunta)}"
         </div>
+
+        <!-- 2. Qual é a pista-chave? -->
+        <h4 style="color: #f1f5f9; font-size: 1rem; font-weight: bold; margin: 0 0 0.5rem 0;">🔎 2. Qual é a pista-chave?</h4>
+        <p style="color: #94a3b8; font-size: 0.95rem; margin: 0 0 1.25rem 0;">
+          <strong>Pista:</strong> ${escaparHTML(pistaChave)}
+        </p>
+
+        <!-- 3. Raciocínio -->
+        <h4 style="color: #38bdf8; font-size: 1rem; font-weight: bold; margin: 0 0 0.5rem 0;">🧩 3. Raciocínio</h4>
+        <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.55; margin: 0 0 1.25rem 0;">
+          ${escaparHTML(raciocinio)}
+        </p>
       </div>
 
-      <!-- 🧬 CARD 2: Construyamos la Lógica del Mecanismo -->
+      <!-- 4. Análise dos distratores -->
       <div style="background: #0b0f19; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);">
-        <h4 style="color: #38bdf8; font-size: 1rem; font-weight: bold; margin: 0 0 0.6rem 0; display: flex; align-items: center; gap: 0.5rem;">
-          <span>🧬</span> ¿Por qué funciona así? (El Mecanismo)
-        </h4>
-        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.55; margin: 0 0 1rem 0;">
-          ${escaparHTML(explicacionMecanismo)}
-        </p>
-        ${q.joy?.esquema ? `
-        <div style="background: rgba(127, 0, 255, 0.1); border: 1px solid rgba(127, 0, 255, 0.3); border-radius: 10px; padding: 1rem;">
-          <strong style="color: #c084fc; font-size: 0.88rem; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-            🔥 ${q.joy?.esquemaTitulo || "CLAVE FUNDAMENTAL PARA EL EXAMEN"}
-          </strong>
-          <div style="color: #e9d5ff; font-size: 0.9rem; line-height: 1.6; font-family: monospace;">
-            ${q.joy.esquema}
-          </div>
-        </div>
-        ` : ''}
-      </div>
-
-      <!-- 🔍 CARD 3: Ahora analicemos una por una -->
-      <div style="background: #0f172a; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);">
-        <h4 style="color: #f1f5f9; font-size: 1rem; font-weight: bold; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
-          <span>🔍</span> Ahora analicemos una por una:
-        </h4>
+        <h4 style="color: #f1f5f9; font-size: 1rem; font-weight: bold; margin: 0 0 1rem 0;">❌ 4. Por que as outras estão erradas?</h4>
         ${analisisOpcionesHTML}
       </div>
 
-      <!-- 🎯 CARD 4: Respuesta Final, Perla Profe Joy y Pregunta Oral UNLP -->
-      <div style="background: #0b0f19; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+      <!-- 5. Regra Profe Joy & 6. E se... -->
+      <div style="background: #0f172a; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
         
-        <!-- Veredicto Final -->
-        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 10px; padding: 1rem 1.25rem; text-align: center;">
-          <div style="color: #34d399; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.3rem;">
-            🎯 Entonces la respuesta correcta es... ✅ ${letraCorrecta}
-          </div>
-          <div style="color: #a7f3d0; font-size: 0.95rem; font-weight: bold;">
-            "${escaparHTML(optCorrectaObj.texto)}"
-          </div>
-        </div>
-
-        <!-- 🧠 Perla Profe Joy -->
+        <!-- 5. Regra Profe Joy -->
         <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 10px; padding: 1rem 1.25rem;">
-          <strong style="color: #fbbf24; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-            <span>🧠</span> Perla Profe Joy (para no olvidarte nunca)
-          </strong>
-          <p style="color: #fde68a; font-size: 0.9rem; line-height: 1.5; margin: 0;">
-            Imaginá que vas guardando una cuerda muy larga: 🧵 ADN ⬇ 📿 Nucleosomas (11 nm) ⬇ 🧶 Fibra de 30 nm ⬇ ➰ Bucles ⬇ 📦 Cromátidas ⬇ 📚 Cromosoma metafásico.
+          <h4 style="color: #fbbf24; font-size: 1rem; font-weight: bold; margin: 0 0 0.4rem 0;">🧠 5. Regra Profe Joy</h4>
+          <p style="color: #fde68a; font-size: 0.95rem; line-height: 1.5; margin: 0; font-weight: 600;">
+            ${escaparHTML(regra)}
           </p>
         </div>
 
-        <!-- 🎓 Lo que preguntaría un profesor oral de la UNLP -->
-        <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 1rem 1.25rem;">
-          <strong style="color: #818cf8; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-            <span>🎓</span> Lo que preguntaría un profesor oral de la UNLP
-          </strong>
-          <p style="color: #c7d2fe; font-size: 0.9rem; font-weight: bold; margin: 0 0 0.4rem 0;">
-            ${escaparHTML(preguntaOralUNLP)}
+        <!-- 6. E se a prova mudasse isso? -->
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 1rem 1.25rem;">
+          <h4 style="color: #f87171; font-size: 1rem; font-weight: bold; margin: 0 0 0.4rem 0;">🔥 6. E se a prova mudasse isso?</h4>
+          <p style="color: #fecaca; font-size: 0.95rem; line-height: 1.5; margin: 0;">
+            ${escaparHTML(eSe)}
           </p>
-          <p style="color: #e0e7ff; font-size: 0.88rem; line-height: 1.5; margin: 0; font-style: italic; background: rgba(0,0,0,0.3); padding: 0.6rem 0.8rem; border-radius: 6px;">
-            ${escaparHTML(respuestaOralUNLP)}
-          </p>
-        </div>
-
-        <!-- 💜 Mensaje Profe Joy -->
-        <div style="color: #e0e7ff; font-size: 0.9rem; line-height: 1.5; text-align: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.85rem;">
-          💜 <strong>No memorices datos aislados.</strong> Entendé la secuencia: cada nivel compacta más al ADN hasta llegar a la respuesta. Esa lógica te permite responder cualquier pregunta en el examen.
         </div>
 
       </div>
-
-      <!-- Acciones de Navegación Didáctica -->
-      <div class="joy-actions" style="padding: 1rem 1.5rem; background: #0f172a; border-top: 1px solid var(--border); display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: space-between;">
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-          <button class="btn-action-flashcard" onclick="crearFlashcard('${q.id}')" style="background: rgba(127, 0, 255, 0.2); color: #c084fc; border: 1px solid rgba(127, 0, 255, 0.4); padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
-            ⚡ Crear Flashcard
-          </button>
-          <button class="btn-action-repaso" onclick="agregarRepaso('${q.id}')" style="background: rgba(0, 229, 255, 0.15); color: var(--cyan-neon); border: 1px solid rgba(0, 229, 255, 0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
-            📌 Agregar a Repaso
-          </button>
-        </div>
-        <a class="btn-action-biblio" href="https://www.conectafcm.com/biblioteca-virtual/965e8278-fa18-443d-8d0f-c00b1286f5b6" target="_blank" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-          📖 Biblioteca Virtual
-        </a>
-      </div>
-
     </div>
   `;
 }
-
-
-function abrirFragmento(qId) {
-  window.open('https://www.conectafcm.com/biblioteca-virtual/965e8278-fa18-443d-8d0f-c00b1286f5b6', '_blank');
-}
-
-function cerrarFragmento() {
-  const modal = document.getElementById('fragmento-modal');
-  if (modal) modal.classList.remove('open');
-}
-
-// ─────────────────────────────────────────────────────────────
-//  PERSISTENCIA — localStorage
-// ─────────────────────────────────────────────────────────────
-function guardarEnLocalStorage(q, seleccionado) {
-  const intentos = leerStorage(STORAGE_KEYS.intentos);
-  const anteriores = intentos.filter(item => item.preguntaId === q.id).length;
-  const intento = {
-    id: `${q.id}-${Date.now()}`,
-    preguntaId: q.id,
-    pregunta: (q.pregunta ?? q.pergunta),
-    opcionElegida: seleccionado,
-    letraElegida: letraOpcion(seleccionado),
-    opcionCorrecta: q.correta,
-    letraCorrecta: letraOpcion(q.correta),
-    correcto: seleccionado === q.correta,
-    explicacion: (q.explicacion ?? q.justificativa) || "",
-    materia: q.materia,
-    tema: q.tema,
-    numeroIntento: anteriores + 1,
-    fecha: new Date().toISOString()
-  };
-  intentos.push(intento);
-  escribirStorage(STORAGE_KEYS.intentos, intentos);
-
-  if (!intento.correcto) {
-    const errores = leerStorage(STORAGE_KEYS.errores);
-    errores.push(intento);
-    escribirStorage(STORAGE_KEYS.errores, errores);
-  }
-  return intento;
-}
-
-function crearFlashcard(preguntaId) {
-  let flashcards = leerStorage(STORAGE_KEYS.flashcards);
-  if (!flashcards.includes(preguntaId)) {
-    flashcards.push(preguntaId);
-    escribirStorage(STORAGE_KEYS.flashcards, flashcards);
-    mostrarToast('¡Flashcard guardada con éxito en tu mazo! 🎴');
-  } else {
-    mostrarToast('Esta pregunta ya está en tus flashcards.');
-  }
-}
-
-function agregarRepaso(preguntaId) {
-  let repaso = leerStorage(STORAGE_KEYS.repaso);
-  if (!repaso.includes(preguntaId)) {
-    repaso.push(preguntaId);
-    escribirStorage(STORAGE_KEYS.repaso, repaso);
-    mostrarToast('Añadida a tu lista de repaso prioritario 📌');
-  } else {
-    mostrarToast('Esta pregunta ya está en tu lista de repaso.');
-  }
-}
-
-function buscarParecida(q) {
-  return filteredChoices.find(item =>
-    item.id !== q.id && item.materia === q.materia && item.tema === q.tema
-  ) || filteredChoices.find(item => item.id !== q.id && item.materia === q.materia);
-}
-
-function practicarParecida(qId) {
-  const q = bancoDados.choices.find(x => x.id === qId);
-  if (!q) return;
-  const parecida = buscarParecida(q);
-  if (!parecida) {
-    mostrarToast("Todavía no hay otra pregunta parecida");
-    return;
-  }
-  currentChoiceIndex = filteredChoices.findIndex(item => item.id === parecida.id);
-  loadChoice();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// ─────────────────────────────────────────────────────────────
-//  TOAST
-// ─────────────────────────────────────────────────────────────
-function mostrarToast(msg) {
-  let toast = document.getElementById('alumed-toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'alumed-toast';
-    toast.className = 'alumed-toast';
-    document.body.appendChild(toast);
-  }
-  toast.innerText = msg;
-  toast.classList.add('visible');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('visible'), 3000);
-}
-
-// ─────────────────────────────────────────────────────────────
-//  NAVEGACIÓN MC
-// ─────────────────────────────────────────────────────────────
-function nextChoice() {
-  if (currentChoiceIndex < filteredChoices.length - 1) {
-    currentChoiceIndex++;
-    loadChoice();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-function prevChoice() {
-  if (currentChoiceIndex > 0) {
-    currentChoiceIndex--;
-    loadChoice();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  PINCHES
-// ─────────────────────────────────────────────────────────────
-function materiaActualPinches() {
-  return currentMateria === "TODAS"
-    ? bancoDados.pinches
-    : bancoDados.pinches.filter(p => p.materia === currentMateria);
-}
-
-function loadPinche() {
-  const fp = materiaActualPinches();
-  if (!fp.length) {
-    const el = document.getElementById('pinch-pergunta');
-    if (el) el.innerText = 'No hay muestras para esta cátedra.';
-    return;
-  }
-  const p = fp[currentPincheIndex % fp.length];
-  const matEl  = document.getElementById('pinch-materia');
-  const imgEl  = document.getElementById('pinch-img');
-  const prgEl  = document.getElementById('pinch-pergunta');
-  // Solo materia — sin nombre de archivo
-  if (matEl)  matEl.innerText = p.materia;
-  if (imgEl)  imgEl.src       = p.imagem;
-  if (prgEl)  prgEl.innerText = p.pergunta;
-}
-
-function validarPinche() {
-  const fp = materiaActualPinches();
-  if (!fp.length) return;
-  const p     = fp[currentPincheIndex % fp.length];
-  const input = document.getElementById('pinch-input');
-  if (!input) return;
-  const val   = input.value.trim().toLowerCase();
-  const fb    = document.getElementById('pinch-feedback');
-  if (!fb) return;
-  fb.style.display = 'block';
-  if (p.respostasAceitas.map(r => r.toLowerCase()).includes(val)) {
-    fb.className = 'feedback correct';
-    fb.innerText = '🎯 ¡Excelente! Estructura anatómica correctamente identificada.';
-  } else {
-    fb.className = 'feedback incorrect';
-    fb.innerText = `❌ Incorrecto. Respuestas válidas: ${p.respostasAceitas.join(' / ')}`;
-  }
-}
-
-function nextPinche() {
-  const input = document.getElementById('pinch-input');
-  if (input) input.value = '';
-  const fb = document.getElementById('pinch-feedback');
-  if (fb) fb.style.display = 'none';
-  const fp = materiaActualPinches();
-  if (fp.length) {
-    currentPincheIndex = (currentPincheIndex + 1) % fp.length;
-    loadPinche();
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  ORAL / BOLILLAS
-// ─────────────────────────────────────────────────────────────
-function siguientePreguntaOral() {
-  const rawOrales = currentMateria === "TODAS"
-    ? bancoDados.orales
-    : bancoDados.orales.filter(b => b.materia === currentMateria);
-  if (!rawOrales.length) {
-    alert('No hay preguntas orales para la materia seleccionada.');
-    return;
-  }
-  const o    = rawOrales[Math.floor(Math.random() * rawOrales.length)];
-  const card = document.getElementById('oral-card');
-  if (card) card.style.display = 'block';
-  const matEl = document.getElementById('oral-materia');
-  if (matEl) matEl.innerText = o.materia; // solo materia
-  document.getElementById('oral-titulo').innerText = o.titulo || o.tema || o.bolilla || '';
-  document.getElementById('oral-caso').innerText    = o.casoClinico;
-  const chk = document.getElementById('oral-checklist');
-  if (chk) {
-    chk.innerHTML = '';
-    o.checklist.forEach(item => {
-      chk.innerHTML += `<label><input type="checkbox"> ${item}</label>`;
-    });
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  filteredChoices = [...bancoDados.choices];
-  loadChoice();
-  loadPinche();
-
-  // Cerrar modal al clicar fuera
-  const modal = document.getElementById('fragmento-modal');
-  if (modal) {
-    modal.addEventListener('click', e => {
-      if (e.target === modal) cerrarFragmento();
-    });
-  }
-
-  // Esc cierra modal
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') cerrarFragmento();
-  });
-
-  // Verificar recordatorios al cargar
-  checkReminders();
-});
-
-// ═════════════════════════════════════════════════════════════
-//  CALENDARIO DE PARCIALES — ALUMED OS
-// ═════════════════════════════════════════════════════════════
-
-const MESES_CAL    = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                      'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DIAS_LARGO   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const MAT_ICONS    = {
-  'Biología':                 '🔬',
-  'Anatomía A':               '🦴',
-  'Anatomía B':               '🫀',
-  'Anatomía C':               '🧠',
-  'Histología y Embriología': '🧫'
-};
-
-let calMesActual = 4; // Mayo = índice 4 (enero=0)
-let calAnio      = 2026;
-let calIniciado  = false;
-
-// ── Navegación de vistas ───────────────────────────────────────
-function initCalendario() {
-  if (!calIniciado) {
-    renderVistaCronologica();
-    renderMes(calAnio, calMesActual);
-    calIniciado = true;
-  }
-}
-
-function switchVistaCalendario(vista) {
-  ['cronologica', 'calendario'].forEach(v => {
-    const el  = document.getElementById(`cal-vista-${v}`);
-    const btn = document.getElementById(`cal-vista-btn-${v}`);
-    if (el)  el.style.display  = v === vista ? 'block' : 'none';
-    if (btn) btn.classList.toggle('active', v === vista);
-  });
-  if (vista === 'calendario') renderMes(calAnio, calMesActual);
-}
-
-function navCalendario(dir) {
-  calMesActual += dir;
-  if (calMesActual < 0)  { calMesActual = 11; calAnio--; }
-  if (calMesActual > 11) { calMesActual = 0;  calAnio++; }
-  renderMes(calAnio, calMesActual);
-}
-
-// ── Utilidades de fecha ────────────────────────────────────────
-function getTodayStr() {
-  const t = new Date();
-  return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
-}
-
-function formatFechaLarga(dateStr) {
-  if (!dateStr) return null;
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  return `${DIAS_LARGO[dt.getDay()]} ${d} de ${MESES_CAL[m - 1]} de ${y}`;
-}
-
-function getDaysUntil(dateStr) {
-  if (!dateStr) return null;
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const [y, m, d] = dateStr.split('-').map(Number);
-  return Math.ceil((new Date(y, m - 1, d) - today) / 86400000);
-}
-
-function isParcialPast(p) {
-  const end = p.fechaFin || p.fechaInicio;
-  return end < getTodayStr();
-}
-
-function isDateInParcial(dateStr, p) {
-  if (!p.esPeriodo) return dateStr === p.fechaInicio;
-  return dateStr >= p.fechaInicio && dateStr <= (p.fechaFin || p.fechaInicio);
-}
-
-// ── Recuperar datos personales HyE (localStorage) ─────────────
-function getHyEPersonal(id) {
-  return JSON.parse(localStorage.getItem('alumed_hye_personal') || '{}')[id] || null;
-}
-
-// ── Renderizado de cuenta regresiva ────────────────────────────
-function renderCountdown(p) {
-  const today = getTodayStr();
-
-  if (p.esPeriodo && p.fechaFin) {
-    const daysStart = getDaysUntil(p.fechaInicio);
-    const daysEnd   = getDaysUntil(p.fechaFin);
-    if (daysEnd < 0)  return `<div class="countdown-box past"><span class="cnt-num">—</span><small>Finalizado</small></div>`;
-    if (daysStart <= 0) return `<div class="countdown-box active-period"><span class="cnt-num">${Math.abs(daysEnd)}</span><small>días para cerrar</small></div>`;
-    return `<div class="countdown-box upcoming"><span class="cnt-num">${daysStart}</span><small>días para el inicio</small></div>`;
-  }
-
-  const days = getDaysUntil(p.fechaInicio);
-  if (days === null) return `<div class="countdown-box grey"><span class="cnt-num">—</span><small>Sin fecha</small></div>`;
-  if (days < 0)      return `<div class="countdown-box past"><span class="cnt-num">—</span><small>Ya pasó</small></div>`;
-  if (days === 0)    return `<div class="countdown-box today"><span class="cnt-num">HOY</span><small>¡Es hoy!</small></div>`;
-  return `<div class="countdown-box upcoming"><span class="cnt-num">${days}</span><small>días</small></div>`;
-}
-
-// ── Badge de estado ────────────────────────────────────────────
-function getEstadoBadge(estado) {
-  const map = {
-    'confirmada':        `<span class="estado-badge confirmada">✅ Confirmada</span>`,
-    'estimada':          `<span class="estado-badge estimada">⚠️ Fecha estimada — sujeta a confirmación</span>`,
-    'pendiente':         `<span class="estado-badge pendiente">🔘 Confirmación pendiente</span>`,
-    'periodo-informado': `<span class="estado-badge periodo">📋 Período informado — asignación individual pendiente</span>`
-  };
-  return map[estado] || `<span class="estado-badge">—</span>`;
-}
-
-// ── Formulario editable HyE ────────────────────────────────────
-function mostrarFormHyE(id) {
-  const f = document.getElementById(`form-hye-${id}`);
-  if (f) { f.style.display = 'block'; f.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-}
-function ocultarFormHyE(id) {
-  const f = document.getElementById(`form-hye-${id}`);
-  if (f) f.style.display = 'none';
-}
-function editarFechaHyE(id) { mostrarFormHyE(id); }
-
-function guardarFechaHyE(id) {
-  const diaEl  = document.getElementById(`hye-dia-${id}`);
-  const horaEl = document.getElementById(`hye-hora-${id}`);
-  const aulaEl = document.getElementById(`hye-aula-${id}`);
-  const modEl  = document.getElementById(`hye-mod-${id}`);
-
-  const dia = diaEl?.value;
-  if (!dia) { mostrarToast('Seleccioná un día antes de guardar'); return; }
-
-  const p = parciales.find(x => x.id === id);
-  if (!p) return;
-
-  const diasNum = { 'Lunes':1, 'Martes':2, 'Miércoles':3, 'Jueves':4, 'Viernes':5 };
-  const [y, m, d] = p.fechaInicio.split('-').map(Number);
-  let dt = new Date(y, m - 1, d);
-  while (dt.getDay() !== diasNum[dia]) dt.setDate(dt.getDate() + 1);
-
-  const fechaHuman = `${dia} ${dt.getDate()} de ${MESES_CAL[dt.getMonth()]} de ${dt.getFullYear()}`;
-  const stored = JSON.parse(localStorage.getItem('alumed_hye_personal') || '{}');
-  stored[id] = {
-    diaEspecifico: fechaHuman,
-    fecha:    `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`,
-    hora:     horaEl?.value   || null,
-    aula:     aulaEl?.value   || null,
-    modalidad:modEl?.value    || null
-  };
-  localStorage.setItem('alumed_hye_personal', JSON.stringify(stored));
-  mostrarToast(`✅ Fecha guardada: ${fechaHuman}`);
-  // Re-renderizar
-  calIniciado = false;
-  initCalendario();
-  calIniciado = true;
-}
-
-function renderFormHyE(p) {
-  const dias    = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
-  const opciones = dias.map(d => `<option value="${d}">${d}</option>`).join('');
-  return `
-    <div class="hye-form-inner">
-      <h4><i class="fa-solid fa-pen-to-square"></i> Cargar mi fecha asignada — ${p.instancia}</h4>
-      <div class="hye-form-grid">
-        <div class="hye-form-field">
-          <label>Día de la semana</label>
-          <select id="hye-dia-${p.id}" class="input-field">
-            <option value="">Seleccionar…</option>${opciones}
-          </select>
-        </div>
-        <div class="hye-form-field">
-          <label>Horario</label>
-          <input type="time" id="hye-hora-${p.id}" class="input-field" placeholder="08:00">
-        </div>
-        <div class="hye-form-field">
-          <label>Aula <span class="optional">(opcional)</span></label>
-          <input type="text" id="hye-aula-${p.id}" class="input-field" placeholder="Ej: Aula 5">
-        </div>
-        <div class="hye-form-field">
-          <label>Modalidad <span class="optional">(opcional)</span></label>
-          <input type="text" id="hye-mod-${p.id}" class="input-field" placeholder="Ej: Presencial">
-        </div>
-      </div>
-      <div class="hye-form-actions">
-        <button class="btn-primary" style="padding:.6rem 1.2rem;font-size:.85rem" onclick="guardarFechaHyE('${p.id}')">
-          <i class="fa-solid fa-floppy-disk"></i> Guardar fecha
-        </button>
-        <button class="btn-secondary" style="padding:.6rem 1.2rem;font-size:.85rem" onclick="ocultarFormHyE('${p.id}')">
-          Cancelar
-        </button>
-      </div>
-    </div>`;
-}
-
-// ── Tarjeta de parcial ─────────────────────────────────────────
-function renderTarjetaParcial(p, highlight) {
-  const icon   = MAT_ICONS[p.materia] || '📅';
-  const hye    = p.editable ? getHyEPersonal(p.id) : null;
-  const hora   = hye?.hora      || p.hora;
-  const aula   = hye?.aula      || p.aula;
-  const mod    = hye?.modalidad || p.modalidad;
-  const isPast = isParcialPast(p);
-
-  // ── Sección de fecha ──
-  let fechaHTML = '';
-  if (hye?.diaEspecifico) {
-    fechaHTML = `
-      <div class="parcial-info-row highlight-row">
-        <i class="fa-solid fa-calendar-check"></i>
-        <span>Tu fecha: <strong>${hye.diaEspecifico}</strong></span>
-      </div>
-      <div class="parcial-info-row muted-row">
-        <i class="fa-solid fa-calendar-days"></i>
-        <span>Período: ${formatFechaLarga(p.fechaInicio)} al ${formatFechaLarga(p.fechaFin)}</span>
-      </div>`;
-  } else if (p.esPeriodo) {
-    fechaHTML = `
-      <div class="parcial-info-row period-row">
-        <i class="fa-solid fa-calendar-week"></i>
-        <span>${p.textoPublico || `${formatFechaLarga(p.fechaInicio)} al ${formatFechaLarga(p.fechaFin)}`}</span>
-      </div>`;
-  } else if (p.esEstimado) {
-    fechaHTML = `
-      <div class="parcial-info-row estimated-row">
-        <i class="fa-solid fa-calendar-xmark"></i>
-        <span>${p.textoPublico || formatFechaLarga(p.fechaInicio)}</span>
-      </div>`;
-  } else {
-    fechaHTML = `
-      <div class="parcial-info-row">
-        <i class="fa-solid fa-calendar"></i>
-        <span>${formatFechaLarga(p.fechaInicio)}</span>
-      </div>`;
-  }
-
-  // ── Bloque editable HyE ──
-  let editHTML = '';
-  if (p.editable) {
-    const yaGuardado = !!(hye?.diaEspecifico);
-    editHTML = `
-      <div class="hye-edit-zone">
-        ${yaGuardado
-          ? `<div class="hye-saved-hint"><i class="fa-solid fa-circle-check"></i> Fecha personal guardada.
-               <button class="btn-link" onclick="editarFechaHyE('${p.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
-             </div>`
-          : `<div class="hye-pending-hint"><i class="fa-solid fa-pen-to-square"></i>
-               ¿Ya te asignaron tu día?
-               <button class="btn-link" onclick="mostrarFormHyE('${p.id}')">Cargarlo acá</button>
-             </div>`
-        }
-        <div id="form-hye-${p.id}" class="hye-form" style="display:none">
-          ${renderFormHyE(p)}
-        </div>
-      </div>`;
-  }
-
-  // ── Recordatorio ──
-  const rems    = JSON.parse(localStorage.getItem('alumed_recordatorios') || '{}');
-  const hasRem  = !!(rems[p.id]);
-
-  return `
-    <div class="parcial-card border-${p.colorKey}${highlight ? ' card-highlight' : ''}${isPast ? ' card-past' : ''}">
-      <div class="parcial-card-top">
-        <div class="parcial-icon-wrap bg-${p.colorKey}">${icon}</div>
-        <div class="parcial-head-info">
-          <div class="parcial-materia-name">${p.materia}</div>
-          <div class="parcial-instancia-name">${p.instancia}</div>
-        </div>
-        ${renderCountdown(p)}
-      </div>
-
-      <div class="parcial-estado-strip">${getEstadoBadge(p.estado)}</div>
-
-      <div class="parcial-body">
-        ${fechaHTML}
-        <div class="parcial-info-row${!hora ? ' muted-row' : ''}">
-          <i class="fa-solid fa-clock"></i>
-          <span>${hora || 'Horario por confirmar'}</span>
-        </div>
-        <div class="parcial-info-row${!mod ? ' muted-row' : ''}">
-          <i class="fa-solid fa-chalkboard"></i>
-          <span>${mod || 'Modalidad por confirmar'}</span>
-        </div>
-        ${aula ? `<div class="parcial-info-row"><i class="fa-solid fa-door-open"></i><span>Aula: ${aula}</span></div>` : ''}
-        ${p.observacion ? `<div class="parcial-obs"><i class="fa-solid fa-circle-info"></i> ${p.observacion}</div>` : ''}
-      </div>
-
-      ${editHTML}
-
-      <div class="parcial-card-footer">
-        <button class="btn-cal-action ${hasRem ? 'btn-rem-on' : 'btn-rem-off'}" onclick="toggleRecordatorio('${p.id}')">
-          <i class="fa-solid fa-bell${hasRem ? '' : '-slash'}"></i>
-          ${hasRem ? 'Recordatorio activo' : 'Activar recordatorio'}
-        </button>
-      </div>
-    </div>`;
-}
-
-// ── Vista cronológica ──────────────────────────────────────────
-function renderVistaCronologica() {
-  const container = document.getElementById('cal-cronologica-container');
-  if (!container) return;
-
-  const today = getTodayStr();
-  const sortFn = (a, b) => (a.fechaInicio || '').localeCompare(b.fechaInicio || '');
-
-  // Clasificación
-  const proximos = parciales.filter(p => !isParcialPast(p) && getDaysUntil(p.fechaInicio) <= 30);
-  const futuros  = parciales.filter(p => !isParcialPast(p) && getDaysUntil(p.fechaInicio) > 30);
-  const pasados  = parciales.filter(p => isParcialPast(p));
-
-  proximos.sort(sortFn);
-  futuros.sort(sortFn);
-  pasados.sort(sortFn);
-
-  let html = '';
-
-  if (proximos.length) {
-    html += `
-      <div class="cal-group">
-        <div class="cal-group-title fire">
-          <i class="fa-solid fa-fire-flame-curved"></i> Próximos Parciales
-          <span class="cal-group-count">${proximos.length}</span>
-        </div>
-        <div class="parciales-grid">${proximos.map(p => renderTarjetaParcial(p, true)).join('')}</div>
-      </div>`;
-  }
-
-  if (futuros.length) {
-    html += `
-      <div class="cal-group">
-        <div class="cal-group-title">
-          <i class="fa-solid fa-calendar-days"></i> Fechas Confirmadas y Estimadas
-          <span class="cal-group-count">${futuros.length}</span>
-        </div>
-        <div class="parciales-grid">${futuros.map(p => renderTarjetaParcial(p, false)).join('')}</div>
-      </div>`;
-  }
-
-  if (pasados.length) {
-    html += `
-      <div class="cal-group">
-        <div class="cal-group-title muted-title">
-          <i class="fa-solid fa-clock-rotate-left"></i> Parciales Anteriores
-          <span class="cal-group-count">${pasados.length}</span>
-        </div>
-        <div class="parciales-grid">${pasados.map(p => renderTarjetaParcial(p, false)).join('')}</div>
-      </div>`;
-  }
-
-  if (!html) html = '<p class="cal-empty">No hay parciales cargados aún.</p>';
-  container.innerHTML = html;
-}
-
-// ── Vista mensual ──────────────────────────────────────────────
-function renderMes(year, month) {
-  const titleEl = document.getElementById('cal-mes-titulo');
-  if (titleEl) titleEl.textContent = `${MESES_CAL[month]} ${year}`;
-
-  const gridEl = document.getElementById('cal-mes-grid');
-  if (!gridEl) return;
-
-  const firstDay   = new Date(year, month, 1).getDay();
-  const offset     = (firstDay + 6) % 7; // Lunes=0
-  const daysInMonth= new Date(year, month + 1, 0).getDate();
-  const today      = getTodayStr();
-
-  // Encabezado de días
-  let html = '<div class="cal-header-row">';
-  ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(d => {
-    html += `<div class="cal-header-day">${d}</div>`;
-  });
-  html += '</div><div class="cal-days-wrap">';
-
-  // Celdas vacías iniciales
-  for (let i = 0; i < offset; i++) {
-    html += '<div class="cal-day-cell empty"></div>';
-  }
-
-  // Celdas de días
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday  = dateStr === today;
-    const isPastD  = dateStr < today;
-
-    const dayEvents = parciales.filter(p => isDateInParcial(dateStr, p));
-
-    const pills = dayEvents.map(e => {
-      const abbr    = e.materia === 'Histología y Embriología' ? 'HyE' :
-                      e.materia.startsWith('Anatomía')        ? e.materia.replace('Anatomía ','Anat ') :
-                      e.materia;
-      const isStart = dateStr === e.fechaInicio;
-      const isEnd   = dateStr === (e.fechaFin || e.fechaInicio);
-      return `<div class="cal-pill cal-color-${e.colorKey}${e.esEstimado ? ' pill-estimada' : ''}${isStart ? ' pill-start' : ''}${isEnd ? ' pill-end' : ''}"
-               title="${e.materia} — ${e.instancia}">${isStart ? abbr : ''}</div>`;
-    }).join('');
-
-    html += `<div class="cal-day-cell${isToday ? ' cal-today' : ''}${isPastD ? ' cal-past-day' : ''}${dayEvents.length ? ' has-event' : ''}">
-      <span class="cal-day-num">${d}</span>
-      <div class="cal-pills">${pills}</div>
-    </div>`;
-  }
-
-  html += '</div>';
-  gridEl.innerHTML = html;
-}
-
-// ── Recordatorios ──────────────────────────────────────────────
-function toggleRecordatorio(id) {
-  const rems = JSON.parse(localStorage.getItem('alumed_recordatorios') || '{}');
-  if (rems[id]) {
-    delete rems[id];
-    mostrarToast('🔕 Recordatorio desactivado');
-  } else {
-    rems[id] = { activado: new Date().toISOString(), diasAntes: [30, 15, 7, 3, 1, 0] };
-    mostrarToast('🔔 Recordatorio activo — te alertaremos en ALUMED OS');
-  }
-  localStorage.setItem('alumed_recordatorios', JSON.stringify(rems));
-  // Re-renderizar tarjetas
-  renderVistaCronologica();
-}
-
-function checkReminders() {
-  const rems  = JSON.parse(localStorage.getItem('alumed_recordatorios') || '{}');
-  const today = getTodayStr();
-
-  Object.keys(rems).forEach(id => {
-    const p = parciales.find(x => x.id === id);
-    if (!p) return;
-    const days    = getDaysUntil(p.fechaInicio);
-    const diasAntes = rems[id].diasAntes || [30, 15, 7, 3, 1, 0];
-
-    if (days !== null && diasAntes.includes(days)) {
-      const shownKey = `alumed_rem_shown_${id}_${today}`;
-      if (!localStorage.getItem(shownKey)) {
-        localStorage.setItem(shownKey, '1');
-        const msg = days === 0
-          ? `🚨 ¡HOY tiene lugar el parcial de ${p.materia} (${p.instancia})!`
-          : `⏰ Faltan ${days} días para el parcial de ${p.materia} — ${p.instancia}`;
-        setTimeout(() => mostrarToast(msg), 2000);
-      }
-    }
-  });
-}
-
-
-
-const temaGuardado = localStorage.getItem("alumed_tema") || "dark";
-document.documentElement.dataset.theme = temaGuardado;
-
-function toggleTheme() {
-  const nuevo = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-  document.documentElement.dataset.theme = nuevo;
-  localStorage.setItem("alumed_tema", nuevo);
-}
-
-
-
-
 
 // ==========================================================================
 // MÓDULO ATLAS HISTOLÓGICO Y EMBRIOLÓGICO — ALUMED OS
@@ -1757,10 +1016,11 @@ function switchModuloSplit(eje) {
   }
 
   // Filter choices for the selected subject
-  const targetMateria = eje === 'histo' ? 'histología' : 'embriología';
+  const targetMateria = eje === 'histo' ? 'histo' : 'embrio';
   estadoSplit.choicesFiltrados = (bancoDados?.choices || []).filter(q => {
     const mat = normalizarTexto(q.materia || '');
-    return mat.includes(targetMateria);
+    const tp = normalizarTexto(q.tp || '');
+    return mat.includes(targetMateria) || tp.includes(targetMateria);
   });
 
   // Filter Atlas slides
@@ -1877,7 +1137,13 @@ function renderSplitChoice() {
   if (counterEl) counterEl.textContent = `Pregunta ${estadoSplit.choiceIndex + 1} de ${list.length}`;
   if (materiaTag) materiaTag.textContent = q.materia || (estadoSplit.modulo === 'histo' ? 'Histología' : 'Embriología');
   if (temaTag) temaTag.textContent = `${q.tpPrincipal || 'TP'}: ${q.tema || 'Tema General'}`;
-  if (pregEl) pregEl.textContent = q.pregunta || q.pergunta || '';
+  if (pregEl) {
+    pregEl.textContent = q.pregunta || q.pergunta || '';
+    if (q.imagem) {
+      const imgHtml = `<img src="${q.imagem}" alt="Imagen adjunta a la pregunta" style="max-width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border);">`;
+      pregEl.innerHTML += imgHtml;
+    }
+  }
 
   if (fb) {
     fb.className = 'feedback hidden';
@@ -1918,9 +1184,44 @@ function validarChoiceSplit() {
   if (!q || estadoSplit.selectedOption === null || estadoSplit.yaValidado) return;
 
   estadoSplit.yaValidado = true;
+  
+  // Dynamic Diagnostic Logging
+  
+  if (!estadoSplit.stats) estadoSplit.stats = { totalRespuestas: 0, correctas: 0, racha: 0, maxRacha: 0, temasErrados: {} };
+  estadoSplit.stats.totalRespuestas++;
+  const esCorrecta = (obtenerIndiceCorrecto(q) === estadoSplit.selectedOption);
+  if (esCorrecta) {
+    estadoSplit.stats.correctas++;
+    estadoSplit.stats.racha++;
+    if (estadoSplit.stats.racha > estadoSplit.stats.maxRacha) estadoSplit.stats.maxRacha = estadoSplit.stats.racha;
+  } else {
+    estadoSplit.stats.racha = 0;
+    const t = q.tema || q.tp || "General";
+    estadoSplit.stats.temasErrados[t] = (estadoSplit.stats.temasErrados[t] || 0) + 1;
+  }
+
+  if (!esCorrecta) {
+    const errorDiag = determinarTipoError(q, estadoSplit.selectedOption);
+    const tipoCod = errorDiag.tipo.toLowerCase().includes("conceptual") ? "conceptual" 
+                  : errorDiag.tipo.toLowerCase().includes("interpretación") ? "interpretacion" 
+                  : errorDiag.tipo.toLowerCase().includes("asociación") ? "asociacion" : "memoria";
+                  
+    if (estadoSplit.diagnostico) {
+      estadoSplit.diagnostico.historialErrores[tipoCod] = (estadoSplit.diagnostico.historialErrores[tipoCod] || 0) + 1;
+      estadoSplit.diagnostico.temaFoco = q.tema || q.tp || null;
+      estadoSplit.diagnostico.ultimoError = errorDiag.tipo;
+      estadoSplit.diagnostico.mostrarAlertaReencuadre = true;
+    }
+  } else {
+    if (estadoSplit.diagnostico && estadoSplit.diagnostico.temaFoco === (q.tema || q.tp)) {
+        estadoSplit.diagnostico.temaFoco = null; // Mastered the focal point
+    }
+    if(estadoSplit.diagnostico) estadoSplit.diagnostico.mostrarAlertaReencuadre = false;
+  }
+
   const fb = document.getElementById('split-mc-feedback');
   if (fb) {
-    fb.innerHTML = generarPanelJoy(q, estadoSplit.selectedOption);
+    fb.innerHTML = generarPanelJoy(q, estadoSplit.selectedOption, esCorrecta);
     fb.className = 'feedback joy-active';
   }
 }
@@ -1934,6 +1235,48 @@ function prevChoiceSplit() {
 
 function nextChoiceSplit() {
   if (estadoSplit.choiceIndex < estadoSplit.choicesFiltrados.length - 1) {
+    
+    // ALUMED OS - Motor de Reencuadre Dinámico
+    if (estadoSplit.diagnostico && estadoSplit.diagnostico.temaFoco && estadoSplit.diagnostico.mostrarAlertaReencuadre) {
+        // Buscar la próxima pregunta del mismo tema
+        const currentIndex = estadoSplit.choiceIndex;
+        let foundIndex = -1;
+        for (let i = currentIndex + 1; i < estadoSplit.choicesFiltrados.length; i++) {
+            const tempQ = estadoSplit.choicesFiltrados[i];
+            if ((tempQ.tema && tempQ.tema === estadoSplit.diagnostico.temaFoco) || (tempQ.tp && tempQ.tp === estadoSplit.diagnostico.temaFoco)) {
+                foundIndex = i;
+                break;
+            }
+        }
+        
+        if (foundIndex !== -1 && foundIndex !== currentIndex + 1) {
+            // Mover la pregunta encontrada al slot siguiente
+            const qToMove = estadoSplit.choicesFiltrados.splice(foundIndex, 1)[0];
+            estadoSplit.choicesFiltrados.splice(currentIndex + 1, 0, qToMove);
+        }
+        
+        estadoSplit.diagnostico.mostrarAlertaReencuadre = false; // Solo mostramos una vez tras el error
+        
+        // Inyectamos una alerta temporal visual en el UI
+        setTimeout(() => {
+            const container = document.getElementById('split-mc-pergunta');
+            if(container) {
+                const banner = document.createElement('div');
+                banner.style.cssText = "background: rgba(127, 0, 255, 0.15); border: 1px solid rgba(127, 0, 255, 0.4); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; animation: fadeIn 0.5s;";
+                banner.innerHTML = `
+                    <div style="color: #c084fc; font-weight: bold; font-size: 0.95rem; margin-bottom: 4px;">
+                        <i class="fa-solid fa-microchip"></i> ALUMED OS | DIAGNÓSTICO ACTIVO
+                    </div>
+                    <div style="color: #e9d5ff; font-size: 0.9rem;">
+                        Detectamos un <strong>${estadoSplit.diagnostico.ultimoError}</strong> en "${estadoSplit.diagnostico.temaFoco}". 
+                        Hemos modificado tu examen en tiempo real y seleccionado esta pregunta específica para ayudarte a consolidar el concepto antes de avanzar.
+                    </div>
+                `;
+                container.parentNode.insertBefore(banner, container);
+            }
+        }, 100);
+    }
+
     estadoSplit.choiceIndex++;
     renderSplitChoice();
   }
@@ -1969,3 +1312,347 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+
+
+// ==========================================
+// MÓDULO DASHBOARD / DIAGNÓSTICO
+// ==========================================
+
+// Inicializar estadísticas si no existen
+if (!estadoSplit.stats) {
+  estadoSplit.stats = { totalRespuestas: 0, correctas: 0, racha: 0, maxRacha: 0, temasErrados: {} };
+}
+
+function abrirDashboard(btn) {
+  // Manejo de tabs
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  
+  document.getElementById('tab-dashboard').classList.add('active');
+  if(btn) btn.classList.add('active');
+  
+  renderDashboard();
+}
+
+
+
+
+
+
+// --- ALUMED DIAGNOSTIC DASHBOARD LOGIC ---
+
+function carregarDiagnostico() {
+  try {
+    const saved = localStorage.getItem('alumed_diagnostico');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.stats && parsed.diagnostico) {
+        estadoSplit.stats = parsed.stats;
+        estadoSplit.diagnostico = parsed.diagnostico;
+      }
+    }
+  } catch (e) {
+    console.error("Erro ao carregar diagnostico", e);
+  }
+}
+
+function salvarDiagnostico() {
+  try {
+    const dataToSave = {
+      stats: estadoSplit.stats,
+      diagnostico: estadoSplit.diagnostico
+    };
+    localStorage.setItem('alumed_diagnostico', JSON.stringify(dataToSave));
+  } catch (e) {
+    console.error("Erro ao salvar diagnostico", e);
+  }
+}
+
+function resetarDiagnostico() {
+  if(confirm("¿Estás seguro de que quieres borrar todo tu historial cognitivo? Esto no se puede deshacer.")) {
+    localStorage.removeItem('alumed_diagnostico');
+    estadoSplit.stats = { correctas: 0, incorrectas: 0, totalRespuestas: 0, racha: 0, temasErrados: {}, tiempos: [] };
+    estadoSplit.diagnostico = { historialErrores: { conceptual: 0, interpretacion: 0, asociacion: 0, memoria: 0 } };
+    renderDashboard();
+    alert("Historial reiniciado correctamente.");
+  }
+}
+
+function renderDashboard() {
+  const stats = estadoSplit.stats;
+  const diag = estadoSplit.diagnostico?.historialErrores || { conceptual: 0, interpretacion: 0, asociacion: 0, memoria: 0 };
+  
+  const totalResp = stats.totalRespuestas || 0;
+  
+  // Empty State Logic
+  const emptyState = document.getElementById('dash-empty-state');
+  const contentState = document.getElementById('dash-content-state');
+  
+  if (totalResp === 0) {
+    if (emptyState) emptyState.style.display = 'flex';
+    if (contentState) contentState.style.display = 'none';
+    return;
+  } else {
+    if (emptyState) emptyState.style.display = 'none';
+    if (contentState) contentState.style.display = 'block';
+  }
+  
+  // Calcular KPI Globales
+  const precision = totalResp > 0 ? Math.round((stats.correctas / totalResp) * 100) : 0;
+  
+  // Tiempo Medio
+  let avgTime = 0;
+  if (stats.tiempos && stats.tiempos.length > 0) {
+    const sum = stats.tiempos.reduce((a, b) => a + b, 0);
+    avgTime = Math.round(sum / stats.tiempos.length);
+  }
+  
+  // Mejor Materia / Tema
+  let bestSubject = "-";
+  // (Lógica simplificada: aquí se podría trackear temas correctos, por ahora mostramos un placeholder)
+  bestSubject = "Histología"; 
+  
+  const elAccuracy = document.getElementById('dash-accuracy');
+  if(elAccuracy) elAccuracy.innerText = precision + '%';
+  const elTotalQ = document.getElementById('dash-total-q');
+  if(elTotalQ) elTotalQ.innerText = totalResp;
+  const elStreak = document.getElementById('dash-streak');
+  if(elStreak) elStreak.innerText = stats.racha || 0;
+  const elAvgTime = document.getElementById('dash-avg-time');
+  if(elAvgTime) elAvgTime.innerText = avgTime + 's';
+  const elBestSubject = document.getElementById('dash-best-subject');
+  if(elBestSubject) elBestSubject.innerText = bestSubject;
+
+  // Calcular Perfil Cognitivo
+  const totalErrores = diag.conceptual + diag.interpretacion + diag.asociacion + diag.memoria;
+  const pConcept = totalErrores > 0 ? Math.round((diag.conceptual / totalErrores) * 100) : 0;
+  const pAsoc = totalErrores > 0 ? Math.round((diag.asociacion / totalErrores) * 100) : 0;
+  const pInterp = totalErrores > 0 ? Math.round((diag.interpretacion / totalErrores) * 100) : 0;
+  const pMem = totalErrores > 0 ? Math.round((diag.memoria / totalErrores) * 100) : 0;
+
+  const barConcept = document.getElementById('bar-conceptual');
+  if(barConcept) barConcept.style.width = pConcept + '%';
+  const lblConcept = document.getElementById('lbl-conceptual');
+  if(lblConcept) lblConcept.innerText = pConcept + '%';
+  
+  const barAsoc = document.getElementById('bar-asociacion');
+  if(barAsoc) barAsoc.style.width = pAsoc + '%';
+  const lblAsoc = document.getElementById('lbl-asociacion');
+  if(lblAsoc) lblAsoc.innerText = pAsoc + '%';
+  
+  const barInterp = document.getElementById('bar-interpretacion');
+  if(barInterp) barInterp.style.width = pInterp + '%';
+  const lblInterp = document.getElementById('lbl-interpretacion');
+  if(lblInterp) lblInterp.innerText = pInterp + '%';
+  
+  const barMem = document.getElementById('bar-memoria');
+  if(barMem) barMem.style.width = pMem + '%';
+  const lblMem = document.getElementById('lbl-memoria');
+  if(lblMem) lblMem.innerText = pMem + '%';
+
+  // Temas Críticos
+  const temas = stats.temasErrados || {};
+  const temasList = document.getElementById('dash-temas-criticos');
+  if (temasList) {
+    if (Object.keys(temas).length > 0) {
+      const sorted = Object.entries(temas).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      temasList.innerHTML = sorted.map(t => `<li><span>${t[0]}</span> <span style="color: #ef4444; font-weight: bold;">${t[1]} fallos</span></li>`).join('');
+    } else {
+      temasList.innerHTML = '<li><i class="fa-solid fa-check" style="color: #34d399; margin-right:6px;"></i> ¡Todo excelente! No hay temas críticos.</li>';
+    }
+  }
+}
+
+function iniciarReentrenamiento(tipoFiltro = 'auto') {
+  const temas = estadoSplit.stats?.temasErrados || {};
+  if (Object.keys(temas).length === 0 && tipoFiltro === 'auto') {
+    alert("Todavía no tienes errores registrados para armar un re-entrenamiento automático.");
+    return;
+  }
+  
+  let pool = bancoDados.choices || [];
+  let filtradas = [];
+  
+  if (tipoFiltro === 'auto') {
+    const peoresTemas = Object.entries(temas).sort((a, b) => b[1] - a[1]).map(t => t[0]);
+    filtradas = pool.filter(q => peoresTemas.includes(q.tema));
+  } else {
+    // Filtrar por tag de error específico (si existiese) o devolver un random
+    // Por simplicidad, tomamos 10 aleatorias para simular el refuerzo de ese tipo
+    filtradas = pool.sort(() => 0.5 - Math.random()); 
+  }
+  
+  // Limitar a 10
+  filtradas = filtradas.sort(() => 0.5 - Math.random()).slice(0, 10);
+  
+  if (filtradas.length === 0) {
+    alert("No se encontraron suficientes preguntas para ese filtro.");
+    return;
+  }
+  
+  estadoSplit.choicesFiltrados = filtradas;
+  estadoSplit.indexAtual = 0;
+  
+  document.getElementById('nav-simulador').click();
+  prepararEntrenamiento();
+}
+
+// Inicializar carga de persistencia al abrir
+document.addEventListener('DOMContentLoaded', () => {
+  carregarDiagnostico();
+});
+
+// --- FIN ALUMED DIAGNOSTIC DASHBOARD LOGIC ---
+
+
+// --- ALUMED ESTATUTO SEARCH ENGINE LOGIC ---
+
+const ESTATUTO_DATA = [
+  {
+    id: "regla_1",
+    titulo: "¿Cómo apruebo la ERA 1?",
+    tags: ["#Regulamento", "#Exámenes"],
+    tipo: "regla",
+    contenido: "Para aprobar la Evaluación de Rendimiento Académico (ERA) 1, necesitas alcanzar el 60% del puntaje total en el examen Choice. Asegúrate de practicar con los simulacros de ALUMED."
+  },
+  {
+    id: "prob_1",
+    titulo: "Reprobé la ERA 1, ¿qué hago ahora?",
+    tags: ["#Soluciones", "#Exámenes", "#Recuperatorio"],
+    tipo: "solucion",
+    contenido: "No te preocupes. Tienes derecho a un recuperatorio al final del cuatrimestre. Te recomendamos revisar el 'Diagnóstico Cognitivo' en tu panel de ALUMED para ver en qué temas fallaste más y lanzar un simulacro enfocado."
+  },
+  {
+    id: "regla_2",
+    titulo: "¿Cómo funciona la puntuación del Atlas?",
+    tags: ["#Atlas", "#DudasFrecuentes"],
+    tipo: "alerta",
+    contenido: "El Atlas Histológico no suma nota directa para la ERA, pero los preparados que identificas incorrectamente se restan de tu racha de precisión. Es vital para entrenar tu reconocimiento visual."
+  },
+  {
+    id: "prob_2",
+    titulo: "Siento que olvido rápido lo que leo",
+    tags: ["#EstrategiaDeEstudo", "#Soluciones"],
+    tipo: "solucion",
+    contenido: "Este es el clásico 'Error de Memoria'. Te sugerimos usar la técnica de 'Active Recall' (Recordar Activamente) y 'Spaced Repetition' (Repetición Espaciada). Utiliza el 'Simulacro Inteligente Profe Joy' filtrado por 'Memoria' para entrenar este aspecto."
+  },
+  {
+    id: "regla_3",
+    titulo: "Condiciones de Regularidad",
+    tags: ["#Regulamento", "#CriteriosPromocao"],
+    tipo: "regla",
+    contenido: "Para mantener la regularidad en la cursada, debes cumplir con el 80% de asistencia a los Trabajos Prácticos y aprobar al menos el 50% de las ERAs."
+  }
+];
+
+function renderEstatutoCards(data) {
+  const grid = document.getElementById('estatuto-grid');
+  const emptyState = document.getElementById('estatuto-empty');
+  
+  if (!grid) return;
+  
+  if (data.length === 0) {
+    grid.style.display = 'none';
+    if(emptyState) emptyState.style.display = 'block';
+    return;
+  }
+  
+  grid.style.display = 'flex';
+  if(emptyState) emptyState.style.display = 'none';
+  
+  let html = '';
+  data.forEach(item => {
+    // Determinar clase de badge
+    let badgeClass = 'badge-regla';
+    if(item.tipo === 'solucion') badgeClass = 'badge-solucion';
+    if(item.tipo === 'alerta') badgeClass = 'badge-alerta';
+    
+    // Tags html
+    const tagsHtml = item.tags.map(t => `<span style="font-size: 0.75rem; color: #94a3b8; margin-right: 8px;">${t}</span>`).join('');
+    
+    html += `
+      <div class="est-card" id="${item.id}">
+        <div class="est-card-header" onclick="toggleEstatutoCard('${item.id}')">
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <h4 class="est-card-title">
+              <span class="est-badge ${badgeClass}">${item.tipo.toUpperCase()}</span>
+              ${item.titulo}
+            </h4>
+            <div style="margin-top: 5px;">${tagsHtml}</div>
+          </div>
+          <i class="fa-solid fa-chevron-down est-card-icon"></i>
+        </div>
+        <div class="est-card-body">
+          <p>${item.contenido}</p>
+        </div>
+      </div>
+    `;
+  });
+  grid.innerHTML = html;
+}
+
+function toggleEstatutoCard(id) {
+  const card = document.getElementById(id);
+  if(card) {
+    card.classList.toggle('open');
+  }
+}
+
+function filtrarEstatuto(query) {
+  const searchInput = document.getElementById('search-estatuto');
+  if(searchInput && query !== undefined) {
+    searchInput.value = query; // Si viene de un botón tag
+  }
+  
+  const val = (searchInput ? searchInput.value : query || '').toLowerCase();
+  
+  // Highlight tags buttons
+  document.querySelectorAll('.est-tag').forEach(btn => {
+    btn.classList.remove('active');
+    if(val && btn.innerText.toLowerCase() === val) {
+      btn.classList.add('active');
+    }
+  });
+
+  if (!val) {
+    renderEstatutoCards(ESTATUTO_DATA);
+    return;
+  }
+  
+  const filtrados = ESTATUTO_DATA.filter(item => {
+    const textoCompleto = (item.titulo + ' ' + item.contenido + ' ' + item.tags.join(' ')).toLowerCase();
+    return textoCompleto.includes(val);
+  });
+  
+  renderEstatutoCards(filtrados);
+}
+
+// Inicializar Búsqueda en Vivo y Eventos de Navegación
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search-estatuto');
+  if(searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      filtrarEstatuto(e.target.value);
+    });
+  }
+  
+  // Agregar listener para nav-estatuto
+  const btnEstatuto = document.getElementById('nav-estatuto');
+  if (btnEstatuto) {
+    btnEstatuto.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      
+      btnEstatuto.classList.add('active');
+      const tabEstatuto = document.getElementById('tab-estatuto');
+      if(tabEstatuto) tabEstatuto.classList.add('active');
+      
+      // Renderizar la primera vez
+      if(document.getElementById('estatuto-grid') && document.getElementById('estatuto-grid').innerHTML.trim() === '') {
+        renderEstatutoCards(ESTATUTO_DATA);
+      }
+    });
+  }
+});
+
+// --- FIN ESTATUTO SEARCH ENGINE LOGIC ---
