@@ -8,10 +8,81 @@ __pycache__/
 .idea/
 .vscode/
 media/
-scraped_library.html
-conecta-biblioteca-source.html
+scratch/
+docs/
+netlify_build/
+biblioteca_alumed/
+ALUMED WIDGETS/
+ATLAS HISTOLOGICOS/
+
+# Archivos grandes - PDFs, videos, imágenes
+*.pdf
+*.mp4
 *.png
 *.jpg
-tmp-*
-scratch/
+*.jpeg
+*.gif
+*.svg
+
+# Bases de datos locales
+*.sqlite3
 db.sqlite3
+
+# Logs y temporales
+*.log
+*.err
+tmp-*
+tmp_*
+
+# Datos pesados
+chunks_backup.json
+gcs_credentials*.json
+token.json
+credentials.json
+scraped_library.html
+conecta-biblioteca-source.html
+biblioteca_links_scraped.json
+links_biblioteca.json
+apuntes_alumed.json
+
+# Archivos de texto extraído de PDFs
+*_text.txt
+anato_b_text.txt
+bio_text.txt
+extra_text.txt
+histo_text.txt
+histo_new_text.txt
+
+# Scripts de utilidade (não necessários em produção)
+append_models.py
+apply_cors.py
+bot_cartelera.py
+check_books.py
+check_rag_status.py
+check_sites.py
+clean_questions.py
+clean_questions_final.py
+descargar_biblioteca.py
+embed_biblioteca.py
+extract_atlas.py
+extrair.py
+extrair_biblioteca.py
+fix_club_hero.py
+fix_encoding.py
+fix_syntax.py
+import_csv_questions.py
+import_questions_django.py
+migrar_chunks_railway.py
+populate_anato_c.py
+populate_simulacros_links.py
+recarregar_creditos.py
+register_cron.py
+revetorizar_gemini.py
+run_vetorizador.py
+scrape_biblioteca.py
+search_biblioteca.py
+vetorizador_alumed.py
+vetorizar_biblioteca_faiss.py
+vetorizar_biblioteca_hf.py
+app_profe_joy.py
+debug_libros_folder.png
