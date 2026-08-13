@@ -15,7 +15,6 @@ urlpatterns = [
     path('pagamento/', include('payments.urls', namespace='payments')),
     path('foro/', include('forum.urls', namespace='forum')),
     path('', include('flashcards.urls', namespace='flashcards')),
-    path('medlatin/', include('medlatin.urls', namespace='medlatin')),
 
     path('', home, name='home'),
     path('atlas-histologico/', atlas_histologico_view, name='atlas_histologico'),

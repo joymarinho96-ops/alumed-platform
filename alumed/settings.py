@@ -81,7 +81,6 @@ INSTALLED_APPS = [
     'forum',
     'payments',
     'flashcards',
-    'medlatin',
     'simulator',
     'rest_framework',
 
