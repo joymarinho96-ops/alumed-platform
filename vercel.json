@@ -2,19 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "alumed/wsgi.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "250mb", "runtime": "python3.12" }
+      "config": {
+        "maxLambdaSize": "250mb",
+        "runtime": "python3.12"
+      }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/static/(.*)",
-      "destination": "/staticfiles/$1"
+      "src": "/static/(.*)",
+      "dest": "/staticfiles/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/alumed/wsgi.py"
+      "src": "/(.*)",
+      "dest": "/api/index.py"
     }
   ]
 }
