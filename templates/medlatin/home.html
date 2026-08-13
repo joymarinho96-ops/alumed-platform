@@ -605,19 +605,18 @@
             la anatomía, la patología y la clínica — y entiende la medicina de verdad.
         </p>
 
-        <form class="hero-search" method="get" action="{% url 'medlatin:dictionary' %}">
-            <span class="hero-search-icon">🔍</span>
+        
             <input id="hero-search-input" type="text" name="q"
                    placeholder="gastrocnemius, myocardium, -itis, osteoblast...">
             <button type="submit">Buscar</button>
         </form>
 
         <div class="hero-terms">
-            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=biceps">biceps</a>
-            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=sternocleidomastoideus">sternocleidomastoideus</a>
-            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=myocardium">myocardium</a>
-            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=adenocarcinoma">adenocarcinoma</a>
-            <a class="hero-term-chip" href="{% url 'medlatin:dictionary' %}?q=osteoblast">osteoblast</a>
+            
+            
+            
+            
+            
         </div>
     </div>
 
@@ -659,43 +658,37 @@
     </div>
 
     <div class="feature-grid">
-        <a class="feature-card" href="{% url 'medlatin:dictionary' %}">
-            <span class="feature-icon">📖</span>
+        
             <h3>Diccionario</h3>
             <p>Busca cualquier término médico y accede a su etimología, traducción en 3 idiomas, raíces y ejemplos clínicos.</p>
             <span class="feature-arrow">Explorar diccionario →</span>
         </a>
 
-        <a class="feature-card" href="{% url 'medlatin:analyzer' %}">
-            <span class="feature-icon">🔬</span>
+        
             <h3>Analizador</h3>
             <p>Ingresa cualquier término y descompónlo automáticamente en sus raíces, prefijos y sufijos con su significado.</p>
             <span class="feature-arrow">Analizar término →</span>
         </a>
 
-        <a class="feature-card" href="{% url 'medlatin:roots' %}">
-            <span class="feature-icon">🌿</span>
+        
             <h3>Explorador de Raíces</h3>
             <p>Navega las raíces griegas y latinas que construyen el vocabulario médico completo.</p>
             <span class="feature-arrow">Explorar raíces →</span>
         </a>
 
-        <a class="feature-card" href="{% url 'medlatin:quizzes' %}">
-            <span class="feature-icon">📝</span>
+        
             <h3>Simulacros</h3>
             <p>Pon a prueba tu memoria con cuestionarios de terminología diseñados para el examen parcial.</p>
             <span class="feature-arrow">Empezar simulacro →</span>
         </a>
 
-        <a class="feature-card" href="{% url 'medlatin:flashcards' %}">
-            <span class="feature-icon">🃏</span>
+        
             <h3>Tarjetas de Memoria</h3>
             <p>Estudia con repetición espaciada y consolida los términos que necesitas repasar.</p>
             <span class="feature-arrow">Ver tarjetas →</span>
         </a>
 
-        <a class="feature-card" href="{% url 'medlatin:dictionary' %}?subject=Anatomy">
-            <span class="feature-icon">🦴</span>
+        
             <h3>Anatomía Completa</h3>
             <p>Todos los términos anatómicos organizados por sistema y región corporal para un estudio profundo.</p>
             <span class="feature-arrow">Ver anatomía →</span>
@@ -727,9 +720,7 @@
                 <span class="tod-badge">{{ medlatin_term_of_day.origin_language }}</span>
             {% endif %}
         </div>
-        <a class="tod-link" href="{% url 'medlatin:term-detail' slug=medlatin_term_of_day.slug %}">
-            Leer entrada completa →
-        </a>
+        
     </div>
 </section>
 {% endif %}
@@ -748,7 +739,7 @@
             <p>Comienza por la asignatura que estás estudiando.</p>
             <div class="tag-cloud">
                 {% for item in featured_subjects %}
-                    <a class="tag-chip" href="{% url 'medlatin:dictionary' %}?subject={{ item }}">{{ item }}</a>
+                    
                 {% endfor %}
             </div>
         </div>
@@ -758,7 +749,7 @@
             <p>Entende cómo forma, posición, función o patología construyen la palabra.</p>
             <div class="tag-cloud">
                 {% for item in naming_logic_categories %}
-                    <a class="tag-chip" href="{% url 'medlatin:dictionary' %}?naming_category={{ item }}">{{ item }}</a>
+                    
                 {% endfor %}
             </div>
         </div>
@@ -775,8 +766,7 @@
 
     <div class="roots-grid">
         {% for root in medlatin_popular_roots %}
-            <a class="root-brick" href="{% url 'medlatin:root-detail' root_id=root.id %}">
-                <div class="root-form">{{ root.form }}</div>
+            
                 <div class="root-meaning">{{ root.core_meaning }}</div>
                 <div class="root-meta">{{ root.origin_language }} · {{ root.get_root_type_display }}</div>
             </a>
@@ -799,8 +789,7 @@
 
     <div class="recents-list">
         {% for term in recent_terms %}
-            <a class="recent-row" href="{% url 'medlatin:term-detail' slug=term.slug %}">
-                <div class="recent-latin">{{ term.latin_name }}</div>
+            
                 <div class="recent-def">
                     <strong style="color:var(--ml-gold);">{{ term.literal_translation }}</strong><br>
                     {{ term.medical_definition|truncatechars:120 }}
@@ -812,3 +801,4 @@
 {% endif %}
 
 {% endblock %}
+

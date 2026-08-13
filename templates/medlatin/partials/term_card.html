@@ -1,14 +1,11 @@
 <article class="ml-term-card">
     <div class="ml-actions">
         <div>
-            <h3><a href="{% url 'medlatin:term-detail' slug=term.slug %}">{{ term.latin_name }}</a></h3>
+            <h3></h3>
             <div class="ml-literal">{{ term.literal_translation }}</div>
         </div>
         {% if user.is_authenticated %}
-            <form class="ml-inline-form" method="post" action="{% url 'medlatin:toggle-favorite' slug=term.slug %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                <button type="submit" class="ml-fav-btn">Favorite</button>
+            
             </form>
         {% endif %}
     </div>
@@ -32,3 +29,4 @@
         {% if term.difficulty %}<span>Difficulty {{ term.difficulty }}</span>{% endif %}
     </div>
 </article>
+

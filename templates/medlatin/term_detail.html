@@ -19,10 +19,7 @@
         </div>
         {% if user.is_authenticated %}
             <div class="ml-tags">
-                <form class="ml-inline-form" method="post" action="{% url 'medlatin:toggle-favorite' slug=term.slug %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button class="ml-fav-btn" type="submit">{% if is_favorited %}Quitar favorito{% else %}Añadir favorito{% endif %}</button>
+                
                 </form>
                 {% if progress %}<span class="ml-tag">Estado de estudio: {{ progress.get_status_display }}</span>{% endif %}
             </div>
@@ -94,9 +91,7 @@
         <div class="ml-card-list" style="margin-top:14px;">
             {% for relationship_type, items in relationships_by_type.items %}
                 {% for relation in items %}
-                    <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=relation.target_term.slug %}">
-                        <h3 style="font-size:1.4rem;">{{ relation.target_term.latin_name }}</h3>
-                        <div class="ml-literal">{{ relationship_type }}</div>
+                    
                         <div class="ml-excerpt">{{ relation.description|default:relation.target_term.literal_translation }}</div>
                     </a>
                 {% endfor %}
@@ -126,3 +121,4 @@
 </section>
 {% endif %}
 {% endblock %}
+

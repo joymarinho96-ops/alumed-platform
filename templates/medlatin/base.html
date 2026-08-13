@@ -420,19 +420,18 @@
 <body>
     <div class="ml-nav">
         <div class="ml-nav-inner">
-            <a href="{% url 'medlatin:home' %}" class="ml-brand">
-                <div class="ml-brand-mark">ML</div>
+            
                 <div class="ml-brand-copy">
                     <strong>MedLatín</strong>
                     <span>Entiende el idioma detrás de la medicina.</span>
                 </div>
             </a>
             <div class="ml-nav-links">
-                <a class="ml-pill" href="{% url 'medlatin:dictionary' %}">Diccionario</a>
-                <a class="ml-pill" href="{% url 'medlatin:analyzer' %}">Analizador</a>
-                <a class="ml-pill" href="{% url 'medlatin:roots' %}">Raíces</a>
-                <a class="ml-pill" href="{% url 'medlatin:quizzes' %}">Simulacros</a>
-                <a class="ml-pill" href="{% url 'medlatin:flashcards' %}">Tarjetas</a>
+                
+                
+                
+                
+                
                 {% include 'components/language_selector.html' %}
                 <a class="ml-btn ml-btn-primary" href="{% url 'home' %}">← ALUMED</a>
             </div>
@@ -451,3 +450,4 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+

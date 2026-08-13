@@ -14,9 +14,7 @@
 
 <section class="ml-grid ml-grid-3" style="margin-top:24px;">
     {% for root in roots %}
-        <a class="ml-term-card" href="{% url 'medlatin:root-detail' root_id=root.id %}">
-            <h3>{{ root.form }}</h3>
-            <div class="ml-literal">{{ root.core_meaning }}</div>
+        
             <div class="ml-excerpt">{{ root.origin_language }} · {{ root.get_root_type_display }}{% if root.term_total %} · {{ root.term_total }} término{{ root.term_total|pluralize:"s" }} enlazado{{ root.term_total|pluralize:"s" }}{% endif %}</div>
         </a>
     {% empty %}
@@ -24,3 +22,4 @@
     {% endfor %}
 </section>
 {% endblock %}
+

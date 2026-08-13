@@ -10,9 +10,7 @@
 
 <section class="ml-grid ml-grid-3" style="margin-top:24px;">
     {% for quiz in quizzes %}
-        <a class="ml-term-card" href="{% url 'medlatin:quiz-detail' quiz_id=quiz.id %}">
-            <h3>{{ quiz.title }}</h3>
-            <div class="ml-literal">{{ quiz.subject }} · Dificultad {{ quiz.difficulty }}</div>
+        
             <div class="ml-excerpt">{{ quiz.description|default:"Practica la lógica detrás de los términos en este conjunto." }}</div>
             <div class="ml-meta">
                 <span>{{ quiz.question_total }} pregunta{{ quiz.question_total|pluralize:"s" }}</span>
@@ -23,3 +21,4 @@
     {% endfor %}
 </section>
 {% endblock %}
+

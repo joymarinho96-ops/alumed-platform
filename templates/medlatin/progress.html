@@ -15,9 +15,7 @@
         <h3>Recent study activity</h3>
         <div class="ml-card-list" style="margin-top:14px;">
             {% for item in recent_progress %}
-                <a class="ml-term-card" href="{% url 'medlatin:term-detail' slug=item.term.slug %}">
-                    <h3 style="font-size:1.5rem;">{{ item.term.latin_name }}</h3>
-                    <div class="ml-literal">{{ item.get_status_display }}</div>
+                
                     <div class="ml-excerpt">Mastery {{ item.mastery_score }} · Views {{ item.study_count }}</div>
                 </a>
             {% empty %}
@@ -58,3 +56,4 @@
     </div>
 </section>
 {% endblock %}
+
