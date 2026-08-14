@@ -7,7 +7,13 @@ from core.telegram_views import telegram_webhook, setup_webhook
 from core.library_views import conecta_biblioteca_view, conecta_biblioteca_lector_view
 from core.profe_joy_views import profe_joy_chat, profe_joy_page, profe_joy_stats
 
+from django.http import HttpResponse
+
+def health_check(request):
+    return HttpResponse("OK", status=200)
+
 urlpatterns = [
+    path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('accounts.urls')),
