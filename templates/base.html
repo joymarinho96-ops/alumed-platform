@@ -8772,15 +8772,17 @@ body { background: var(--bg) !important; overflow-x: hidden; -webkit-font-smooth
     <button onclick="dismissJoyTooltip()" class="ml-2 text-purple-300 hover:text-white pointer-events-auto">&times;</button>
 </div>
 
-<button id="joy-floating-btn" onclick="toggleJoyModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-tr from-purple-700 to-indigo-600 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl z-[9999] hover:scale-105 transition-transform duration-300 border-2 border-purple-400/50">
-    👩‍⚕️
+<button id="joy-floating-btn" onclick="toggleJoyModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-tr from-purple-700 to-indigo-600 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl z-[9999] hover:scale-105 transition-transform duration-300 border-2 border-yellow-500/50 p-0.5 overflow-hidden">
+    <img src="{% static 'img/profe_joy_m_responde.png' %}" alt="Profe Joy" class="w-full h-full object-cover rounded-full" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'">
 </button>
 
 <div id="joy-chat-modal" class="fixed bottom-24 right-6 w-96 max-w-[90vw] h-[520px] bg-slate-900/95 backdrop-blur-md text-slate-100 rounded-2xl shadow-2xl border border-purple-500/20 z-[9999] hidden flex-col overflow-hidden transition-all">
     
     <div class="bg-gradient-to-r from-purple-900 to-indigo-900 px-4 py-3 flex items-center justify-between border-b border-purple-500/20">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-purple-500/30 flex items-center justify-center text-lg">👩‍⚕️</div>
+            <div class="w-9 h-9 rounded-full bg-purple-500/30 p-0.5 border border-yellow-500/40 overflow-hidden">
+                <img src="{% static 'img/profe_joy_m_responde.png' %}" alt="Profe Joy" class="w-full h-full object-cover rounded-full" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'">
+            </div>
             <div>
                 <h4 class="font-bold text-sm leading-tight text-purple-100">Profe Joy IA</h4>
                 <p class="text-[10px] text-purple-300">Tutora Médica • ESTATUTO</p>
