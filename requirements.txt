@@ -22,3 +22,5 @@ croniter>=3.0.0
 playwright>=1.44.0
 # Supabase (banco vetorial + créditos IA)
 supabase>=2.4.0
+# Leitura de PDFs (pipeline RAG)
+pypdf>=4.2.0

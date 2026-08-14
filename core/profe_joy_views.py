@@ -18,6 +18,20 @@ from accounts.models import ProfeJoyChunk
 
 logger = logging.getLogger(__name__)
 
+
+def _get_supabase_client():
+    """Retorna cliente Supabase ou None se não estiver configurado."""
+    url = os.environ.get("SUPABASE_URL") or getattr(settings, "SUPABASE_URL", "")
+    key = os.environ.get("SUPABASE_SERVICE_KEY") or getattr(settings, "SUPABASE_SERVICE_KEY", "")
+    if url and key:
+        try:
+            from supabase import create_client
+            return create_client(url, key)
+        except Exception as e:
+            logger.warning(f"Supabase client error: {e}")
+    return None
+
+
 PROMPT_PROFE_JOY = """
 ROL E IDENTIDAD PRINCIPAL:
 Eres la Profe Joy IA, la tutora inteligente, empática e interactiva integrada en el ecosistema ALUMED OS y Conecta FCM.
@@ -190,6 +204,44 @@ def _find_relevant_chunks(question_embedding: list[float], question: str = '', t
     return [chunk for score, chunk in scored[:top_k]]
 
 
+def _find_relevant_chunks_supabase(question_embedding: list[float], top_k: int = TOP_K, materia: str = None) -> list[dict]:
+    """
+    Busca semântica via Supabase pgvector (função RPC match_documentos).
+    Retorna lista de dicts compatíveis com _build_context_supabase.
+    Usado como camada extra de contexto além do ProfeJoyChunk local.
+    """
+    client = _get_supabase_client()
+    if not client:
+        return []
+    try:
+        params = {
+            "query_embedding": question_embedding,
+            "match_threshold": 0.70,
+            "match_count": top_k,
+            "filtro_materia": materia,
+        }
+        res = client.rpc("match_documentos", params).execute()
+        return res.data or []
+    except Exception as e:
+        logger.warning(f"Supabase RPC match_documentos error: {e}")
+        return []
+
+
+def _build_context_supabase(chunks: list[dict]) -> str:
+    """Monta o contexto a partir dos chunks retornados pelo Supabase RPC."""
+    parts = []
+    for i, chunk in enumerate(chunks, 1):
+        source = chunk.get("titulo", "Biblioteca ALUMED")
+        materia = chunk.get("materia", "")
+        url = chunk.get("url_origem", "")
+        conteudo = chunk.get("conteudo_chunk", "")
+        sim = chunk.get("similarity", 0)
+        label = f"{source} — {materia}" if materia else source
+        link = f" ([📎 Acessar]({url}))" if url else ""
+        parts.append(f"[{i}] **{label}**{link} *(relevância: {sim:.0%})*\n{conteudo}")
+    return "\n\n---\n\n".join(parts)
+
+
 def _generate_profe_joy_medical_explanation(question: str) -> str:
     """Genera una explicación médica didáctica estructurada para temas no presentes en los PDFs locales."""
     t_lower = question.lower()
@@ -314,8 +366,20 @@ def profe_joy_chat(request):
 
         relevant = _find_relevant_chunks(q_embedding, question)
 
-        context = _build_context(relevant) if relevant else "No se encontraron fragmentos locales exactos. Usa tu conocimiento médico general para explicar el concepto con el Método Didáctico Profe Joy."
-        
+        # ── Camada extra: busca vetorial no Supabase pgvector ──────────────
+        supa_chunks = _find_relevant_chunks_supabase(q_embedding, top_k=3)
+        supa_context = _build_context_supabase(supa_chunks) if supa_chunks else ""
+
+        local_context = _build_context(relevant) if relevant else ""
+        if local_context and supa_context:
+            context = local_context + "\n\n--- **Biblioteca Digital (RAG Supabase)** ---\n\n" + supa_context
+        elif supa_context:
+            context = supa_context
+        elif local_context:
+            context = local_context
+        else:
+            context = "No se encontraron fragmentos locales exactos. Usa tu conocimiento médico general para explicar el concepto con el Método Didáctico Profe Joy."
+
         system_base = PROMPT_PROFE_JOY
         if mode == 'lamina' or image_b64:
             system_base += "\n\n[MODO HISTÓLOGA ACTIVADO] El usuario ha enviado una lámina/preparado microscópico. Actúa como experta en Histología y Patología. Identifica estructuras, tinciones y da claves diagnósticas."
