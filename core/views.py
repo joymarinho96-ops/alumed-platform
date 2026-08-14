@@ -1025,8 +1025,28 @@ from .models import LiveClass, Materia, CursoWix, UserProfile
 
 @login_required
 def dashboard_conecta_view(request):
-    # Aqui você pode buscar dados do Supabase como saldo de créditos e presença
-    return render(request, 'dashboard_conecta.html')
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    creditos_ia = 100
+    status_acesso = "ativo"
+    
+    try:
+        from .profe_joy_views import _get_supabase_client
+        supabase = _get_supabase_client()
+        if supabase:
+            res = supabase.table('creditos_ia').select('*').eq('email', request.user.email).execute()
+            if res.data and len(res.data) > 0:
+                creditos_ia = res.data[0].get('creditos', 100)
+                status_acesso = res.data[0].get('status_acesso', 'ativo')
+    except Exception:
+        pass
+        
+    context = {
+        'profile': profile,
+        'creditos_ia': creditos_ia,
+        'status_acesso': status_acesso,
+    }
+    return render(request, 'dashboard_conecta.html', context)
 
 @login_required
 def student_dashboard(request):
