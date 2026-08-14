@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumed | Microscópio AI</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Remove a seleção azul padrão ao clicar no canvas */
+        .openseadragon-canvas:focus { outline: none; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden bg-gray-900 text-white flex">
+
+    <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col z-10 shadow-xl">
+        
+        <div class="p-6 border-b border-gray-700 bg-gray-800">
+            <h1 class="text-2xl font-bold text-teal-400 tracking-tight">Alumed AI</h1>
+            <p class="text-xs text-gray-400 mt-1">Microscopia Digital Inteligente</p>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-gray-500 font-semibold mb-2">Lâmina Atual</h2>
+                <div class="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                    <h3 class="font-semibold text-white">Corte Histológico: Duodeno</h3>
+                    <p class="text-sm text-gray-300 mt-1">Coloração: HE</p>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-gray-500 font-semibold mb-3">Estruturas Identificadas</h2>
+                <div class="space-y-2">
+                    <button onclick="focarEstrutura(0.5, 0.5, 5)" 
+                        class="w-full text-left p-3 rounded bg-gray-700 hover:bg-teal-600 hover:text-white transition-all duration-200 border border-gray-600 group">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Vilosidades Intestinais</span>
+                            <span class="text-xs bg-gray-900 px-2 py-1 rounded text-gray-400 group-hover:text-white">4x</span>
+                        </div>
+                    </button>
+
+                    <button onclick="focarEstrutura(0.2, 0.4, 20)" 
+                        class="w-full text-left p-3 rounded bg-gray-700 hover:bg-teal-600 hover:text-white transition-all duration-200 border border-gray-600 group">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Criptas de Lieberkühn</span>
+                            <span class="text-xs bg-gray-900 px-2 py-1 rounded text-gray-400 group-hover:text-white">20x</span>
+                        </div>
+                    </button>
+                    
+                    <button class="w-full mt-4 p-3 rounded border border-teal-500 text-teal-400 flex items-center justify-center gap-2 hover:bg-teal-500/10 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span class="text-sm font-semibold">Analisar com AI (Profe Joy)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-gray-700 text-xs text-center text-gray-500">
+            v1.0.0 Alpha • Desenvolvido por Matheus L.
+        </div>
+    </aside>
+
+    <main class="flex-1 relative bg-black">
+        
+        <div id="openseadragon-viewer" class="w-full h-full"></div>
+
+        <div class="absolute top-4 right-4 flex flex-col gap-2 bg-gray-900/80 backdrop-blur p-2 rounded-lg border border-gray-700 shadow-2xl">
+            <button id="zoom-in" class="p-2 hover:bg-teal-500 rounded text-white transition" title="Zoom In">+</button>
+            <button id="home" class="p-2 hover:bg-teal-500 rounded text-white transition" title="Resetar Visualização">⟲</button>
+            <button id="zoom-out" class="p-2 hover:bg-teal-500 rounded text-white transition" title="Zoom Out">-</button>
+        </div>
+
+    </main>
+
+    <script type="text/javascript">
+        
+        // Inicialização do OpenSeadragon
+        var viewer = OpenSeadragon({
+            id: "openseadragon-viewer",
+            prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/", // Ícones padrão
+            
+            // Aqui é onde a mágica acontece. 
+            // Estou usando uma imagem de exemplo de Alta Resolução da biblioteca deles para testarmos.
+            // No futuro, aqui entrará o caminho do seu servidor Django (ex: /media/laminas/estomago.dzi)
+            tileSources:   {
+                type: 'image',
+                url:  'https://openseadragon.github.io/example-images/grand-canyon-landscape-overlooking.jpg',
+                buildPyramid: false 
+                // Nota: Usei uma imagem JPG simples para teste rápido. 
+                // Quando usarmos arquivos .DZI reais, o zoom será infinito e muito mais nítido.
+            },
+
+            // Configurações de UX (Experiência do Usuário)
+            animationTime: 0.5, // Suavidade do movimento
+            blendTime: 0.1,     // Suavidade do carregamento
+            constrainDuringPan: true,
+            visibilityRatio: 1.0,
+            minZoomLevel: 0.8,
+            defaultZoomLevel: 1,
+            
+            // Conectando os botões customizados
+            zoomInButton:   "zoom-in",
+            zoomOutButton:  "zoom-out",
+            homeButton:     "home",
+        });
+
+        // Função para simular a navegação guiada (o que a Profe Joy faria)
+        function focarEstrutura(x, y, zoom) {
+            // Converte coordenadas relativas para ponto do viewport
+            var point = new OpenSeadragon.Point(x, y);
+            
+            // Movimenta o microscópio suavemente
+            viewer.viewport.panTo(point);
+            viewer.viewport.zoomTo(zoom);
+        }
+
+    </script>
+</body>
+</html>

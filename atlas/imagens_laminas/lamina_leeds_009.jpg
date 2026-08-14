@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if IE 9]><html class="no-js ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8">        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="Steve Paxton">
+
+        <title>404:Page not found</title>
+        <!-- Include JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+        <!-- Include Favicon -->
+        <link rel="icon" type="image/png" href="https://www.fbs.leeds.ac.uk/jadu/dist/img/favicon.ico" />
+
+        <!-- Google font if needed -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+        <!-- Typekit cache in local storage-->
+        <script type="text/javascript">
+        !function(e,t,n,a,c,l,m,o,d,f,h,i){c[l]&&(d=e.createElement(t),d[n]=c[l],e[a]("head")[0].appendChild(d),e.documentElement.className+=" wf-cached"),function s(){for(d=e[a](t),f="",h=0;h<d.length;h++)i=d[h][n],i.match(m)&&(f+=i);f&&(c[l]="/**/"+f),setTimeout(s,o+=o)}()}(document,"style","innerHTML","getElementsByTagName",localStorage,"tk",/^@font|^\.tk-/,100);
+        </script>
+
+        <!-- Typekit (advanced) embed code -->
+        <script>
+        (function(d) {
+            var config = {
+            kitId: 'els3rqq',
+            scriptTimeout: 3000,
+            async: true
+            },
+            h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+        })(document);
+        </script>
+
+        <link href="//cdn.materialdesignicons.com/1.7.22/css/materialdesignicons.min.css" rel="stylesheet">
+        
+        <!-- Include CSS -->
+        <link id="bootstrapCSS" href="https://www.fbs.leeds.ac.uk/jadu/dist/theme-default/bootstrap.css" rel="stylesheet" type='text/css' media="screen">
+        <link id="toolkitCSS" href="https://www.fbs.leeds.ac.uk/jadu/dist/theme-default/toolkit.css" rel="stylesheet" type='text/css' media="screen">
+        <link href="https://www.fbs.leeds.ac.uk/jadu/dist/theme-default/print.css" rel="stylesheet" type="text/css"  media="print">
+
+        <!-- Courses only -->
+        <link id="toolkitCSS" href="https://www.fbs.leeds.ac.uk/jadu/dist/theme-default/courses.css" rel="stylesheet" type='text/css' media="screen">
+
+        <!-- CSS just for docs-->
+        <link href="https://www.fbs.leeds.ac.uk/jadu/dist/theme-default/docs.css" rel="stylesheet" type='text/css' media="screen">
+
+		<!-- Also load the css to toggle collapsed menus on mobile -->
+        <link href="https://www.fbs.leeds.ac.uk/jadu/css/toolkit-wordpress.css" rel="stylesheet" type='text/css' media="screen">
+
+        <!-- font awesome icons -->
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe" crossorigin="anonymous"></script>
+
+        <!-- requested plugin css files -->
+               
+
+        <!-- requested css and js -->
+        <link href="https://www.fbs.leeds.ac.uk/jadu/css/fbs.css" rel="stylesheet">
+    
+        <!-- requested plugin js files -->  
+                
+        <!-- is there a sidebar? if so, load the sidebar.js to handle highlighting -->
+        <script src='https://www.fbs.leeds.ac.uk/jadu//dist/toolkit-wordpress.js'></script>
+
+		<script>
+        // handle the clicking of the areas with class .editable for FBS CMS pages
+        $(document).on("click", ".editable", function(e) {
+            var url = $(this).attr("rel");
+            if (url == '' || typeof(url) == "undefined") {
+                url = $(this).data("link");
+            }
+            if (url != '' && typeof(url) != "undefined") {
+                document.location = url;
+            }
+    
+            e.preventDefault(); // the link may be on an object between <a></a> tags
+        });
+        </script>
+    </head>
+
+    <body>
+		    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-9440306-2', 'leeds.ac.uk');
+
+            ga('set', 'dimension1', 'xqEH1bYFX3xvvCIoNEhDZw==');
+        
+    ga('send', 'pageview');
+
+
+	/**
+	* Function that tracks a click on an outbound link in Analytics.
+	* This function takes a valid URL string as an argument, and uses that URL string
+	* as the event label. Setting the transport method to 'beacon' lets the hit be sent
+	* using 'navigator.sendBeacon' in browser that support it.
+	*/
+	var trackOutboundLink = function(url) {
+	   ga('send', 'event', 'outbound', 'click', url, {
+		   'transport': 'beacon',
+		   'hitCallback': function(){document.location = url;}
+	   });
+	}
+    </script>
+	    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WJPZM2T" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+	
+    	<style>
+		/* markup to highlight 'click to edit' link for FBS CMS pages */
+		span.editable, a.editable {
+			text-decoration: none;
+			height: 12px;
+			padding: 0 2px 0 2px;
+			border: 1px solid #c5191f;
+			background-color: #ffc6c8;
+		}
+		</style>
+
+
+        <div class="site-container-md">
+            <!-- QUICKLINKS, MASTHEAD, LOCAL HEADER, SITE SEARCH -->
+            
+
+            <!-- $MASTHEAD-->
+            <header id="masthead" class="masthead" role="banner">
+                <div class="@@wrapper">
+                    <div class="masthead-links"> 
+                    </div>
+
+                    <div class="navicon">
+                        <button class="btn-icon" data-state="body-state" data-class="state-navicon-active">Menu</button>
+                    </div>
+
+                    <div class="site-logo">
+                        <a href="#"><img class="js-png-svg" src="https://www.fbs.leeds.ac.uk/jadu/dist/img/uol-logo.png" alt="University of Leeds" title="www.leeds.ac.uk"></a>
+                    </div>                    
+                </div>
+            </header>
+            <!-- /$MASTHEAD-->
+
+            <!-- $LOCALHEADER-->
+            <div class="local-header">
+                <div class="@@wrapper wrapper-pd-xs">
+                    <div class="local-header-inner">
+                        <div class="local-header-title">                
+                            <a href="#">404:Page not found</a>
+                        </div>
+                        <div class="local-header-search">                          
+                                                
+                        </div>
+                    </div>
+                </div>
+            </div>                    
+            <!-- /$LOCALHEADER-->
+                            
+            <nav class="tk-nav tk-nav-priority" role="navigation">   
+            <div class="wrapper-relative">
+                <div class="tk-nav-header">
+                    <button class="btn-icon" data-state="body-state" data-class="state-navicon-active">Close</button>
+                </div>
+                <div class="tk-nav-inner">
+                    <ul class="tk-nav-list tk-nav-list-primary">
+
+                        <li class='menu-item'><a href='https://biologicalsciences.leeds.ac.uk/'>home</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+            
+
+        <main id="main" class="main">
+                            <div class="wrapper-lg wrapper-pd">
+                            
+                
+                
+                
+        
+<h2 class="heading-underline">Page not found</h2>
+<p>For one reason or another (mis-typed URL, faulty referral from another site, out-of-date search engine listing or we simply deleted a file) the page you were after is not here.</p>
+
+<p>We apologise for any inconvenience caused.</p>
+
+</div>
+</main>
+<!-- <a class="back-to-top" href="#">Back to top</a> -->
+
+<footer class="site-footer" role="contentinfo">    
+    <div class="site-footer-lower">
+    <div class=" wrapper-pd">
+        <ul class="nav">
+            <li>&copy; 2026 University of Leeds, Leeds, LS2 9JT</li>
+            <li><a href="privacy.php">Privacy &amp; Cookies</a></li>
+                    </ul>
+    </div>
+</div>
+</footer>
+
+</div>
+<!-- /$SITE-CONTAINER-->
+
+<!-- FOOTER ASSETS --> 
+<script src="https://www.fbs.leeds.ac.uk/jadu/dist/script.js"></script>
+<!-- Courses only -->
+<script src="https://www.fbs.leeds.ac.uk/jadu/dist/courses.js"></script>
+<!-- Bootstrap docs only -->
+<script src="https://www.fbs.leeds.ac.uk/jadu/dist/docs.js"></script>
+<!-- /FOOTER ASSETS -->
+
+
+  <script>
+	function setup_table_accordions() {
+		var counter = 0;
+		$("table.accordion").each(function() {
+			var td = $(this).find("tr:eq(0) td");
+			//td.addClass("panel-heading");
+			var content = td.text(); // don't use td.html() use text() which ignores <p> tags
+			td.html('<h4 class="panel-title"><a class="acclink" style="display: block;" data-toggle="collapse" href="#collapse'+counter+'" aria-expanded="true" aria-controls="collapse'+counter+'">' + content + '<i class="fas fa-angle-down" style="float: right;"></i></a></h4>');
+	
+			counter++;
+		});
+
+		counter = 0;
+		$("table.accordion").each(function() {
+			tr = $(this).find("tr:eq(1)");
+			tr.attr("id", "collapse"+counter).addClass("panel-collapse").addClass("collapse");
+	
+			td = tr.find("td");
+			td.addClass("panel-body");
+	
+			counter++;
+		});
+		$("table.accordion").removeClass("accordion").addClass("table").wrap("<div class='panel panel-default'></div>");
+	}
+
+	// setup any tables which need to be presented as accordions
+	setup_table_accordions();
+  </script>
+  <script>
+  $(function(){
+    // Toggle accordion icon for open/close
+    $("a.acclink").on('click', function() {
+        $(this).find('[data-fa-i2svg]').toggleClass('fa-angle-down').toggleClass('fa-angle-up');
+    });
+  });
+  </script>
+
+</body>
+</html>   

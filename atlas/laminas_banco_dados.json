@@ -1,0 +1,90 @@
+[
+    {
+        "titulo": "MICROSCOPE SLIDE",
+        "url": "https://histologyguide.com/slideview/MH-111a-cardioesophageal-junction/14-slide-2.html",
+        "descricao": "The wall of the stomach is composed of the four layers characteristic of the gastrointestinal tract:",
+        "total_estruturas": 11,
+        "estruturas": [
+            {
+                "nome": "stomach",
+                "x": 28273,
+                "y": 10367,
+                "zoom": 3.6
+            },
+            {
+                "nome": "Mucosa",
+                "x": 28256,
+                "y": 4065,
+                "zoom": 12.4
+            },
+            {
+                "nome": "Gastric Pits",
+                "x": 26940,
+                "y": 3189,
+                "zoom": 72.0
+            },
+            {
+                "nome": "Gastric Glands",
+                "x": 27098,
+                "y": 4848,
+                "zoom": 18.0
+            },
+            {
+                "nome": "Muscularis Mucosae",
+                "x": 27300,
+                "y": 6609,
+                "zoom": 48.0
+            },
+            {
+                "nome": "Submucosa",
+                "x": 28241,
+                "y": 7044,
+                "zoom": 30.0
+            },
+            {
+                "nome": "Muscularis Externa",
+                "x": 34534,
+                "y": 9477,
+                "zoom": 8.7
+            },
+            {
+                "nome": "Inner Oblique Layer",
+                "x": 35081,
+                "y": 7157,
+                "zoom": 20.48
+            },
+            {
+                "nome": "Middle Circular Layer",
+                "x": 30680,
+                "y": 9050,
+                "zoom": 17.0
+            },
+            {
+                "nome": "Outer Longitudinal Layer",
+                "x": 31518,
+                "y": 12124,
+                "zoom": 36.4
+            },
+            {
+                "nome": "Adventitia",
+                "x": 29557,
+                "y": 16270,
+                "zoom": 8.6
+            }
+        ]
+    },
+    {
+        "titulo": "Oops!",
+        "url": "https://histologyguide.com/slideview/MH-111-stomach-fundus/8-slide-2.html",
+        "descricao": "",
+        "total_estruturas": 0,
+        "estruturas": []
+    },
+    {
+        "titulo": "Oops!",
+        "url": "https://histologyguide.com/slideview/MH-112-stomach-pylorus/8-slide-2.html",
+        "descricao": "",
+        "total_estruturas": 0,
+        "estruturas": []
+    }
+]

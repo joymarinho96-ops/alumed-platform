@@ -1,0 +1,112 @@
+{
+  "projectName": "Alumed Pro - Visualizador Histológico",
+  "version": "2.0",
+  "description": "Visualizador de imagens histológicas em alta resolução com análise IA inteligente",
+  "author": "Matheus L.",
+  "date": "2026-01-07",
+  
+  "mainFile": "visualizador_pro.html",
+  "files": [
+    "visualizador_pro.html",
+    "index.html"
+  ],
+  
+  "dependencies": {
+    "openseadragon": "4.1.0",
+    "tailwindcss": "latest",
+    "google-fonts": "Inter"
+  },
+  
+  "features": [
+    "Zoom infinito em imagens 4K",
+    "Painel lateral com 7 estruturas anotadas",
+    "Análise IA com Profe Joy",
+    "Controles de zoom intuitivos",
+    "Design responsivo e moderno",
+    "Navegação fluida"
+  ],
+  
+  "technical": {
+    "framework": "Vanilla JavaScript + HTML5",
+    "styling": "Tailwind CSS",
+    "imageViewer": "OpenSeadragon",
+    "imageSource": "Wikimedia Commons (CC0)",
+    "minBrowserVersion": {
+      "chrome": "60+",
+      "firefox": "55+",
+      "safari": "12+",
+      "edge": "79+"
+    }
+  },
+  
+  "deployment": {
+    "local": "http://localhost:5500/visualizador_pro.html",
+    "platforms": [
+      "GitHub Pages",
+      "Netlify",
+      "Vercel",
+      "WebSketch",
+      "Google Sites"
+    ]
+  },
+  
+  "structures": [
+    {
+      "id": 1,
+      "name": "Parede do Estômago",
+      "description": "Visão geral completa",
+      "zoom": "4x",
+      "coordinates": [28273, 10367, 3.6]
+    },
+    {
+      "id": 2,
+      "name": "Mucosa",
+      "description": "Epitélio e glândulas",
+      "zoom": "12x",
+      "coordinates": [28256, 4065, 12.4]
+    },
+    {
+      "id": 3,
+      "name": "Fossetas Gástricas",
+      "description": "Invaginações do epitélio",
+      "zoom": "72x",
+      "coordinates": [26940, 3189, 72]
+    },
+    {
+      "id": 4,
+      "name": "Glândulas Gástricas",
+      "description": "Glândulas tubulares",
+      "zoom": "18x",
+      "coordinates": [27098, 4848, 18]
+    },
+    {
+      "id": 5,
+      "name": "Muscularis Mucosae",
+      "description": "Camada de músculo liso",
+      "zoom": "48x",
+      "coordinates": [27300, 6609, 48]
+    },
+    {
+      "id": 6,
+      "name": "Submucosa",
+      "description": "Tecido conjuntivo",
+      "zoom": "30x",
+      "coordinates": [28241, 7044, 30]
+    },
+    {
+      "id": 7,
+      "name": "Muscularis Externa",
+      "description": "3 camadas de músculo",
+      "zoom": "9x",
+      "coordinates": [34534, 9477, 8.7]
+    }
+  ],
+  
+  "howToUse": {
+    "step1": "Abra visualizador_pro.html em um navegador",
+    "step2": "Use os botões do painel lateral para navegar",
+    "step3": "Clique em 'Análise IA' para dicas automáticas",
+    "step4": "Use mouse wheel ou botões para zoom",
+    "step5": "Aproveita! 🔬"
+  }
+}

@@ -1,0 +1,73 @@
+{
+    "titulo": "MICROSCOPE SLIDE",
+    "url_origem": "https://histologyguide.com/slideview/MH-111a-cardioesophageal-junction/14-slide-2.html",
+    "descricao": "The wall of the stomach is composed of the four layers characteristic of the gastrointestinal tract:",
+    "estruturas_identificadas": [
+        {
+            "nome": "stomach",
+            "x_original": 28273,
+            "y_original": 10367,
+            "zoom": 3.6
+        },
+        {
+            "nome": "Mucosa",
+            "x_original": 28256,
+            "y_original": 4065,
+            "zoom": 12.4
+        },
+        {
+            "nome": "Gastric Pits",
+            "x_original": 26940,
+            "y_original": 3189,
+            "zoom": 72.0
+        },
+        {
+            "nome": "Gastric Glands",
+            "x_original": 27098,
+            "y_original": 4848,
+            "zoom": 18.0
+        },
+        {
+            "nome": "Muscularis Mucosae",
+            "x_original": 27300,
+            "y_original": 6609,
+            "zoom": 48.0
+        },
+        {
+            "nome": "Submucosa",
+            "x_original": 28241,
+            "y_original": 7044,
+            "zoom": 30.0
+        },
+        {
+            "nome": "Muscularis Externa",
+            "x_original": 34534,
+            "y_original": 9477,
+            "zoom": 8.7
+        },
+        {
+            "nome": "Inner Oblique Layer",
+            "x_original": 35081,
+            "y_original": 7157,
+            "zoom": 20.48
+        },
+        {
+            "nome": "Middle Circular Layer",
+            "x_original": 30680,
+            "y_original": 9050,
+            "zoom": 17.0
+        },
+        {
+            "nome": "Outer Longitudinal Layer",
+            "x_original": 31518,
+            "y_original": 12124,
+            "zoom": 36.4
+        },
+        {
+            "nome": "Adventitia",
+            "x_original": 29557,
+            "y_original": 16270,
+            "zoom": 8.6
+        }
+    ]
+}

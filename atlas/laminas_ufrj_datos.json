@@ -1,0 +1,114 @@
+{
+  "Embriología": [
+    {
+      "id": "lamina02",
+      "nombre": "Cordón Umbilical (Humano)",
+      "descripcion": "Dos arterias y una vena. Gelatina de Wharton visible.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2002_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2002_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_02/nivel_0_0.jpg"
+    }
+  ],
+  "Reproductor Masculino": [
+    {
+      "id": "lamina03",
+      "nombre": "Testículo (Adulto)",
+      "descripcion": "Túbulos seminíferos, células de Sertoli y Leydig.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2003_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2003_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_03/nivel_0_0.jpg"
+    },
+    {
+      "id": "lamina19",
+      "nombre": "Testículo y Epidídimo",
+      "descripcion": "Conductos eferentes y epidídimo con estereocilios.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2019_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2019_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_19/nivel_0_0.jpg"
+    }
+  ],
+  "Digestivo": [
+    {
+      "id": "lamina06",
+      "nombre": "Intestino Delgado (Yeyuno/Íleon)",
+      "descripcion": "Vellosidades intestinales, capas mucosa y submucosa.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2006_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2006_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_06/nivel_0_0.jpg"
+    },
+    {
+      "id": "lamina09",
+      "nombre": "Lengua (Conejo)",
+      "descripcion": "Músculo estriado esquelético en tres planos.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2009_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2009_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_09/nivel_0_0.jpg"
+    },
+    {
+      "id": "lamina17",
+      "nombre": "Esófago",
+      "descripcion": "Epitelio estratificado plano no queratinizado.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2017_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2017_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_17/nivel_0_0.jpg"
+    }
+  ],
+  "Nervioso": [
+    {
+      "id": "lamina08",
+      "nombre": "Médula Espinal (Mono)",
+      "descripcion": "Sustancia gris en H, sustancia blanca y meninges.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2008_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2008_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_08/nivel_0_0.jpg"
+    },
+    {
+      "id": "lamina16",
+      "nombre": "Médula Espinal (Plata)",
+      "descripcion": "Impregnación argéntica mostrando neuronas multipolares.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2016_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2016_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_16/nivel_0_0.jpg"
+    }
+  ],
+  "Urinario": [
+    {
+      "id": "lamina13",
+      "nombre": "Riñón (Perro)",
+      "descripcion": "Corteza y médula renal. Glomérulos y túbulos.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2013_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2013_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_13/nivel_0_0.jpg"
+    }
+  ],
+  "Esquelético": [
+    {
+      "id": "lamina14",
+      "nombre": "Hueso Compacto y Esponjoso",
+      "descripcion": "Sistemas de Havers (osteonas) y trabéculas óseas.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2014_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2014_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_14/nivel_0_0.jpg"
+    }
+  ],
+  "Respiratorio": [
+    {
+      "id": "lamina15",
+      "nombre": "Tráquea y Esófago",
+      "descripcion": "Cartílago hialino en C, epitelio respiratorio y glándulas.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2015_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2015_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_15/nivel_0_0.jpg"
+    }
+  ],
+  "Linfático": [
+    {
+      "id": "lamina20",
+      "nombre": "Bazo (Perro)",
+      "descripcion": "Pulpa blanca (nódulos) y pulpa roja.",
+      "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2020_files/",
+      "url": "http://www.histo.ufrj.br/LIB/Lamina%2020_files/0/0_0.jpg",
+      "url_local": "/imagens_laminas/lamina_20/nivel_0_0.jpg"
+    }
+  ]
+}

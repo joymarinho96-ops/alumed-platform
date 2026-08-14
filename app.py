@@ -377,7 +377,8 @@ with st.sidebar:
     nav = st.radio("nav",[
         "🏠  Inicio","📢  Cartelera","📚  Biblioteca","📅  Exámenes",
         "🎓  Plan de Estudios","🏛️  Carreras","🔗  Links Oficiales",
-        "👥  Autoridades","🤖  Asistente IA","📊  Calculadora","🗺️  Mapa FCM"
+        "👥  Autoridades","🤖  Asistente IA","📊  Calculadora","🗺️  Mapa FCM",
+        "📜  Papiro de Joyce", "🔬  Atlas Histológico", "🗄️  Banco de Datos"
     ], label_visibility="collapsed")
 
     st.markdown(f"""
@@ -620,3 +621,49 @@ elif nav == "🗺️  Mapa FCM":
             act=u["n"]==sel
             st.markdown(f'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:{"rgba(21,101,192,0.15)" if act else "transparent"};border-bottom:1px solid rgba(255,255,255,0.05);border-left:{"3px solid #90caf9" if act else "3px solid transparent"};"><span style="font-size:1.2rem;">{u["i"]}</span><div><div style="font-size:0.83rem;font-weight:{"700" if act else "500"};color:{"#90caf9" if act else "#cbd5e1"};">{u["n"]}</div><div style="font-size:0.68rem;color:rgba(179,229,252,0.4);">{u["p"]}</div></div>{"<span style=\'margin-left:auto;color:#90caf9;font-weight:800;\'>●</span>" if act else ""}</div>',unsafe_allow_html=True)
         st.markdown("</div>",unsafe_allow_html=True)
+
+elif nav == "📜  Papiro de Joyce":
+    st.markdown('<div class="sec"><div class="ey">📜 Recursos</div><h2>Papiro de Joyce</h2><p>Mnemotecnias y apuntes visuales</p></div>', unsafe_allow_html=True)
+    import os
+    papiro_dir = "papiro"
+    if os.path.exists(papiro_dir):
+        images = [f for f in os.listdir(papiro_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        if images:
+            cols = st.columns(2)
+            for i, img in enumerate(images):
+                with cols[i % 2]:
+                    st.image(os.path.join(papiro_dir, img), caption=img, use_container_width=True)
+        else:
+            st.info("No hay imágenes en el papiro.")
+    else:
+        st.error("Carpeta de papiro no encontrada.")
+
+elif nav == "🔬  Atlas Histológico":
+    st.markdown('<div class="sec"><div class="ey">🔬 Práctica</div><h2>Atlas Histológico (Microscopio Virtual)</h2><p>Explora láminas en alta resolución</p></div>', unsafe_allow_html=True)
+    import os
+    import streamlit.components.v1 as components
+    html_file = "atlas/microscopio_virtual.html"
+    if not os.path.exists(html_file):
+        html_file = "atlas/index.html"
+    if os.path.exists(html_file):
+        with open(html_file, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        components.html(html_content, height=800, scrolling=True)
+    else:
+        st.error("Archivo HTML del microscopio no encontrado.")
+
+elif nav == "🗄️  Banco de Datos":
+    st.markdown('<div class="sec"><div class="ey">🗄️ Database</div><h2>Banco de Datos de Láminas</h2><p>Registros histológicos y colecciones</p></div>', unsafe_allow_html=True)
+    import os, json
+    import pandas as pd
+    json_file = "atlas/laminas_banco_dados.json"
+    if os.path.exists(json_file):
+        try:
+            with open(json_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            df = pd.DataFrame(data)
+            st.dataframe(df, use_container_width=True)
+        except Exception as e:
+            st.error(f"Error al cargar la base de datos: {e}")
+    else:
+        st.info("No se encontró laminas_banco_dados.json.")

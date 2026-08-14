@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumed Pro | Visualizador Histológico</title>
+    
+    <!-- Favicon de Alumed (Microscopio) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2314b8a6'>🔬</text></svg>">
+    <meta name="theme-color" content="#14b8a6">
+    <meta name="description" content="Alumed Pro - Visualizador Histológico Inteligente con Análisis IA">
+    <meta name="keywords" content="histología, microscopio digital, educación médica, IA">
+    <meta property="og:title" content="Alumed Pro | Visualizador Histológico">
+    <meta property="og:description" content="Visualizador profesional de imágenes histológicas en alta resolución con análisis inteligente">
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect fill='%23111827' width='200' height='200'/><text x='100' y='140' font-size='120' text-anchor='middle' fill='%2314b8a6'>🔬</text></svg>">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { margin: 0; padding: 0; overflow: hidden; }
+        .openseadragon-canvas { outline: none !important; }
+        
+        .sidebar-scroll {
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        
+        .structure-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .structure-btn:hover {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            transform: translateX(4px);
+        }
+        
+        .structure-btn.active {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            border-left: 4px solid #06b6d4;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .info-item {
+            padding: 8px;
+            background: rgba(75, 85, 99, 0.3);
+            border-radius: 6px;
+            border-left: 3px solid #14b8a6;
+        }
+        
+        .info-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: #f3f4f6;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 12px;
+        }
+        
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4b5563;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background: #14b8a6;
+            width: 24px;
+            border-radius: 4px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            border-bottom: 2px solid #14b8a6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .zoom-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            border: 1px solid #4b5563;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            border-color: #14b8a6;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+        }
+        
+        .level-indicator {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            text-align: center;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        
+        .description-box {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(6, 182, 212, 0.1));
+            border-left: 4px solid #14b8a6;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100">
+    
+    <!-- HEADER -->
+    <header class="h-16 flex items-center justify-between px-6">
+        <div class="flex items-center gap-4">
+            <h1 class="text-2xl font-bold">
+                <span class="text-teal-400">Alumed</span>
+                <span class="text-cyan-400 text-lg">Pro</span>
+            </h1>
+            <p class="text-xs text-gray-400">Visualizador Histológico Inteligente</p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <button class="px-4 py-2 text-sm rounded bg-teal-500/20 border border-teal-500 text-teal-300 hover:bg-teal-500/30 transition">
+                📁 Cargar Lámina
+            </button>
+            <button class="px-4 py-2 text-sm rounded bg-cyan-500/20 border border-cyan-500 text-cyan-300 hover:bg-cyan-500/30 transition">
+                🤖 Análisis IA
+            </button>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-64px)]">
+        
+        <!-- SIDEBAR ESQUERDO -->
+        <aside class="w-96 bg-gray-900 border-r border-gray-800 flex flex-col">
+            
+            <!-- Info de la Lámina -->
+            <div class="p-6 border-b border-gray-800 bg-gradient-to-br from-gray-800 to-gray-900">
+                <h2 class="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-4">Lámina Actual</h2>
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-white mb-1">Junção Cardioesofágica</h3>
+                    <p class="text-xs text-gray-400">Estômago - Parede Gástrica</p>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Tecido</div>
+                        <div class="info-value">Estômago</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Coloração</div>
+                        <div class="info-value">H&E</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Ampliação</div>
+                        <div class="info-value">40x</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Resolução</div>
+                        <div class="info-value">79,920 px</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Content -->
+            <div class="sidebar-scroll">
+                
+                <!-- Descrição -->
+                <div class="px-6 pt-6">
+                    <h2 class="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-3">Descrição</h2>
+                    <div class="description-box">
+                        A parede gástrica é composta por quatro camadas características do trato gastrointestinal: mucosa, submucosa, muscularis externa e adventícia. A mucosa contém fossetas gástricas e glândulas gástricas especializadas.
+                    </div>
+                </div>
+
+                <!-- Estructuras Identificadas -->
+                <div class="px-6 py-6">
+                    <h2 class="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-3 flex items-center gap-2">
+                        <span>🔬</span> Estructuras
+                    </h2>
+                    <div class="space-y-2">
+                        
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(28273, 10367, 3.6)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Parede do Estômago</div>
+                                    <div class="text-xs text-gray-500 mt-1">Visão geral completa</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">4x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(28256, 4065, 12.4)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Mucosa</div>
+                                    <div class="text-xs text-gray-500 mt-1">Epitélio e glândulas</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">12x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(26940, 3189, 72)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Fossetas Gástricas</div>
+                                    <div class="text-xs text-gray-500 mt-1">Invaginações do epitélio</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">72x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(27098, 4848, 18)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Glândulas Gástricas</div>
+                                    <div class="text-xs text-gray-500 mt-1">Glândulas tubulares</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">18x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(27300, 6609, 48)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Muscularis Mucosae</div>
+                                    <div class="text-xs text-gray-500 mt-1">Camada de músculo liso</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">48x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(28241, 7044, 30)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Submucosa</div>
+                                    <div class="text-xs text-gray-500 mt-1">Tecido conjuntivo</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">30x</span>
+                            </div>
+                        </button>
+
+                        <button class="structure-btn w-full text-left p-3 rounded bg-gray-800 border border-gray-700 hover:border-teal-500 group"
+                            onclick="focusStructure(34534, 9477, 8.7)">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-teal-300">Muscularis Externa</div>
+                                    <div class="text-xs text-gray-500 mt-1">3 camadas de músculo</div>
+                                </div>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">9x</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-gray-800 text-xs text-center text-gray-500 bg-gray-900/50">
+                <p>Alumed Pro v2.0 • Histología Digital</p>
+                <p class="mt-1">© 2025 by Matheus L.</p>
+            </div>
+        </aside>
+
+        <!-- VISUALIZADOR PRINCIPAL -->
+        <main class="flex-1 relative bg-black">
+            
+            <!-- OpenSeadragon Viewer -->
+            <div id="openseadragon-viewer" class="w-full h-full"></div>
+
+            <!-- Controles de Zoom -->
+            <div class="absolute bottom-6 right-6 bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg p-3 shadow-2xl">
+                <div class="zoom-controls">
+                    <button class="control-btn" title="Aumentar Zoom" onclick="viewer.viewport.zoomBy(1.5)">
+                        +
+                    </button>
+                    <div class="level-indicator" id="zoom-level">1x</div>
+                    <button class="control-btn" title="Disminuir Zoom" onclick="viewer.viewport.zoomBy(0.667)">
+                        −
+                    </button>
+                    <button class="control-btn mt-2" title="Reset" onclick="viewer.viewport.fitBounds(viewer.world.getHomeBounds())">
+                        ⟲
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info Flutuante -->
+            <div class="absolute top-6 right-6 bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg p-4 shadow-2xl max-w-xs">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-2xl">🔬</span>
+                    <div>
+                        <p class="text-xs text-gray-400">Magnificação</p>
+                        <p class="text-lg font-bold text-teal-400" id="mag-display">40x</p>
+                    </div>
+                </div>
+                <hr class="border-gray-700 my-2">
+                <p class="text-xs text-gray-400">Haz clic en las estructuras para enfocar</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let viewer;
+        
+        // Inicializar OpenSeadragon
+        function initViewer() {
+            viewer = OpenSeadragon({
+                id: "openseadragon-viewer",
+                prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
+                tileSources: {
+                    type: 'image',
+                    // Usando a imagem 4K da Wikimedia direto para garantir o show
+                    url: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Gastric_mucosa_low_mag.jpg',
+                    buildPyramid: false
+                },
+                minZoomLevel: 0.5,
+                maxZoomLevel: 200,
+                zoomPerClick: 2,
+                animationTime: 0.8
+            });
+
+            // Atualizar display de zoom
+            viewer.addViewerInputHook({
+                tracker: 'viewer',
+                handler: 'scroll',
+                hookHandler: function(event) {
+                    updateZoomDisplay();
+                }
+            });
+        }
+
+        // Focar em uma estrutura
+        function focusStructure(x, y, zoom) {
+            // Normalizar coordenadas
+            const point = new OpenSeadragon.Point(x, y);
+            viewer.viewport.panTo(point, true);
+            viewer.viewport.zoomTo(zoom, null, true);
+            updateZoomDisplay();
+        }
+
+        // Atualizar display do zoom
+        function updateZoomDisplay() {
+            const zoomLevel = viewer.viewport.getZoom();
+            const displayZoom = Math.round(zoomLevel * 10) / 10;
+            document.getElementById('zoom-level').textContent = displayZoom.toFixed(1) + 'x';
+            document.getElementById('mag-display').textContent = Math.round(displayZoom) + 'x';
+        }
+
+        // Inicializar ao carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            initViewer();
+            updateZoomDisplay();
+        });
+
+        // Conectar ao botão de análise IA
+        window.addEventListener('DOMContentLoaded', () => {
+            const btnAnalise = document.querySelector('button:has(+ button)') || 
+                             document.evaluate("//button[contains(text(), 'Análise')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            
+            if(btnAnalise) {
+                btnAnalise.onclick = executarAnaliseJoy;
+            }
+        });
+
+        function executarAnaliseJoy() {
+            // Pega onde o aluno está olhando agora (Coordenadas do Viewport)
+            var centro = viewer.viewport.getCenter();
+            var zoom = viewer.viewport.getZoom();
+
+            // Efeito visual de "Escanear"
+            var btnAnalise = document.querySelector('button:nth-child(2)');
+            if(btnAnalise) {
+                btnAnalise.innerHTML = "🔄 Processando...";
+                btnAnalise.disabled = true;
+            }
+
+            // Cria um overlay de "Escaneando" na tela
+            var scanner = document.createElement('div');
+            scanner.className = 'absolute inset-0 border-4 border-teal-500 opacity-50 pointer-events-none z-40';
+            scanner.style.animation = "pulse 1.5s infinite";
+            document.getElementById('openseadragon-viewer').appendChild(scanner);
+
+            // Simula o tempo de resposta do servidor (1.5 segundos)
+            setTimeout(() => {
+                scanner.remove();
+                if(btnAnalise) {
+                    btnAnalise.innerHTML = "🤖 Análise IA";
+                    btnAnalise.disabled = false;
+                }
+
+                // A Lógica da "Profe Joy" (IA)
+                let diagnostico = "";
+                
+                // Se o zoom for baixo (Visão Panorâmica)
+                if (zoom < 2) {
+                    diagnostico = `
+                        <div class="p-4 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded shadow-xl border-l-4 border-teal-500">
+                            <strong class="text-teal-400 flex items-center gap-2">
+                                <span>🤖</span> Profe Joy diz:
+                            </strong>
+                            <p class="mt-2 text-sm">Você está tendo uma <strong>visão panorâmica</strong> da Mucosa Gástrica.</p>
+                            <ul class="mt-2 text-xs text-gray-300 list-disc list-inside space-y-1">
+                                <li>Observe as dobras da mucosa.</li>
+                                <li>Tente dar mais zoom para ver as glândulas.</li>
+                                <li>Veja como a parede é multicamadas.</li>
+                            </ul>
+                        </div>
+                    `;
+                } 
+                // Se o zoom for alto (Visão Celular)
+                else {
+                    diagnostico = `
+                        <div class="p-4 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded shadow-xl border-l-4 border-purple-500">
+                            <strong class="text-purple-400 flex items-center gap-2">
+                                <span>🤖</span> Profe Joy (Modo Celular):
+                            </strong>
+                            <p class="mt-2 text-sm">Detectei alta magnificação! Você está em detalhes celulares.</p>
+                            <div class="mt-2 text-xs bg-gray-900 p-3 rounded border border-purple-500/30">
+                                <p class="font-bold text-purple-300">🧬 Estruturas prováveis aqui:</p>
+                                <p>• Células Parietais (produtoras de ácido HCl)</p>
+                                <p>• Células Principais (pepsinogênio)</p>
+                                <p>• Células Mucosas (muco protetor)</p>
+                            </div>
+                            <p class="mt-2 text-xs text-yellow-400">⚠️ Nota: Procure por citoplasma eosinofílico (rosa/vermelho)!</p>
+                        </div>
+                    `;
+                }
+
+                // Mostra o resultado na tela
+                mostrarPopup(diagnostico);
+
+            }, 1500);
+        }
+
+        function mostrarPopup(htmlContent) {
+            // Cria um popup flutuante
+            let popup = document.createElement('div');
+            popup.innerHTML = htmlContent;
+            popup.className = 'absolute bottom-10 right-10 z-50 max-w-sm';
+            popup.style.animation = "slideUp 0.5s ease-out";
+            
+            document.body.appendChild(popup);
+
+            // Remove depois de 8 segundos
+            setTimeout(() => popup.remove(), 8000);
+        }
+
+        // Adiciona animação CSS dinâmica
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slideUp { 
+                from { transform: translateY(20px); opacity: 0; } 
+                to { transform: translateY(0); opacity: 1; } 
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 0.5; }
+                50% { opacity: 0.8; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+[
+  {
+    "id": 1,
+    "titulo": "Diagram of the stomach",
+    "topico": "Estômago",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/stomach_diag.gif",
+    "arquivo_local": "lamina_leeds_001.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 2,
+    "titulo": "gastric gland and pit diagram",
+    "topico": "Estômago",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/gastric_pit_diag.gif",
+    "arquivo_local": "lamina_leeds_002.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 3,
+    "titulo": "diagram of plicae circulares",
+    "topico": "Intestino Delgado",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/plial_fold.gif",
+    "arquivo_local": "lamina_leeds_003.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 4,
+    "titulo": "diagram of villi",
+    "topico": "Intestino Delgado",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/villi_diag.gif",
+    "arquivo_local": "lamina_leeds_004.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 5,
+    "titulo": "TEM of an enterocyte",
+    "topico": "Intestino Delgado",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/microvilli_TEM_E4_.jpg",
+    "arquivo_local": "lamina_leeds_005.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 6,
+    "titulo": "photo of epithelium small intestine",
+    "topico": "Intestino Delgado",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/AE1_Jejunum_VilliGobCel_x63.jpg",
+    "arquivo_local": "lamina_leeds_006.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 7,
+    "titulo": "diagram of blood and bile flow",
+    "topico": "Hepatócitos",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/diag.gif",
+    "arquivo_local": "lamina_leeds_007.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 8,
+    "titulo": "diagram of space of disse",
+    "topico": "Hepatócitos",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/liver_diag.gif",
+    "arquivo_local": "lamina_leeds_008.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 9,
+    "titulo": "gall bladder",
+    "topico": "Vesícula Biliar",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/GallBladder_54_2-5xC.jpg",
+    "arquivo_local": "lamina_leeds_009.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 10,
+    "titulo": "photo of appendix",
+    "topico": "Apêndice",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/Appendix_51_1-6x_.jpg",
+    "arquivo_local": "lamina_leeds_010.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 11,
+    "titulo": "platelets photo",
+    "topico": "Plaquetas",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/Platelets_.jpg",
+    "arquivo_local": "lamina_leeds_011.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 12,
+    "titulo": "Sem descrição",
+    "topico": "Cabelo",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/hair_diag.gif",
+    "arquivo_local": "lamina_leeds_012.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 13,
+    "titulo": "This shows a diagram of an arteriole",
+    "topico": "Artérias",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/arteriole.gif",
+    "arquivo_local": "lamina_leeds_013.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 14,
+    "titulo": "TEM of arteriole",
+    "topico": "Artérias",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/Arteriole_TEM.jpg",
+    "arquivo_local": "lamina_leeds_014.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 15,
+    "titulo": "arteriole, capillaries, venule & vein",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/cap_vein.gif",
+    "arquivo_local": "lamina_leeds_015.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 16,
+    "titulo": "diagram of capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/capillary.jpg",
+    "arquivo_local": "lamina_leeds_016.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 17,
+    "titulo": "photo EM of capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/CapillaryEndothelium.gif",
+    "arquivo_local": "lamina_leeds_017.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 18,
+    "titulo": "photo of capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/capillary2.jpg",
+    "arquivo_local": "lamina_leeds_018.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 19,
+    "titulo": "photo of glomerulus",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/glomerulusK3.gif",
+    "arquivo_local": "lamina_leeds_019.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 20,
+    "titulo": "photo (EM) of fenestrated capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/capillary_fen.gif",
+    "arquivo_local": "lamina_leeds_020.png",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 21,
+    "titulo": "EM fenestrated capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/capillary_fen2.jpg",
+    "arquivo_local": "lamina_leeds_021.jpg",
+    "tamanho_bytes": 10897
+  },
+  {
+    "id": 22,
+    "titulo": "EM of discontinuous capillary",
+    "topico": "Capilares",
+    "url_original": "https://www.histology.leeds.ac.uk/assets/discontin.gif",
+    "arquivo_local": "lamina_leeds_022.png",
+    "tamanho_bytes": 10897
+  }
+]

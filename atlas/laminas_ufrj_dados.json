@@ -1,0 +1,98 @@
+[
+  {
+    "id": "lamina02",
+    "nombre": "Cordón Umbilical (Humano)",
+    "sistema": "Embriología",
+    "descripcion": "Dos arterias y una vena. Gelatina de Wharton visible.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2002_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2002_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina03",
+    "nombre": "Testículo (Adulto)",
+    "sistema": "Reproductor Masculino",
+    "descripcion": "Túbulos seminíferos, células de Sertoli y Leydig.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2003_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2003_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina06",
+    "nombre": "Intestino Delgado (Yeyuno/Íleon)",
+    "sistema": "Digestivo",
+    "descripcion": "Vellosidades intestinales, capas mucosa y submucosa.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2006_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2006_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina08",
+    "nombre": "Médula Espinal (Mono)",
+    "sistema": "Nervioso",
+    "descripcion": "Sustancia gris en H, sustancia blanca y meninges.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2008_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2008_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina09",
+    "nombre": "Lengua (Conejo)",
+    "sistema": "Digestivo",
+    "descripcion": "Músculo estriado esquelético en tres planos.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2009_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2009_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina13",
+    "nombre": "Riñón (Perro)",
+    "sistema": "Urinario",
+    "descripcion": "Corteza y médula renal. Glomérulos y túbulos.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2013_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2013_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina14",
+    "nombre": "Hueso Compacto/Esponjoso",
+    "sistema": "Esquelético",
+    "descripcion": "Sistemas de Havers, lagunas óseas y osteocitos.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2014_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2014_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina15",
+    "nombre": "Tráquea y Esófago",
+    "sistema": "Respiratorio",
+    "descripcion": "Anillo cartilaginoso, epitelio respiratorio.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2015_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2015_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina16",
+    "nombre": "Médula Espinal (Plata)",
+    "sistema": "Nervioso",
+    "descripcion": "Tinciones especiales para sustancia blanca.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2016_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2016_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina17",
+    "nombre": "Esófago",
+    "sistema": "Digestivo",
+    "descripcion": "Epitelio escamoso estratificado, mucosa.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2017_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2017_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina18",
+    "nombre": "Testículo y Epidídimo",
+    "sistema": "Reproductor Masculino",
+    "descripcion": "Espermiogénesis y conducto epididimario.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2018_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2018_files/0/0_0.jpg"
+  },
+  {
+    "id": "lamina19",
+    "nombre": "Bazo",
+    "sistema": "Linfático",
+    "descripcion": "Pulpa roja y blanca, folículos linfoides.",
+    "url_base": "http://www.histo.ufrj.br/LIB/Lamina%2019_files/",
+    "url": "http://www.histo.ufrj.br/LIB/Lamina%2019_files/0/0_0.jpg"
+  }
+]
