@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950 text-slate-100 p-6">
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Voltar ao Dashboard -->
+        <a href="{% url 'dashboard_conecta' %}" class="inline-flex items-center gap-2 text-xs text-purple-400 hover:text-purple-300 transition-colors">
+            ← Voltar ao painel de controle
+        </a>
+
+        <!-- Header -->
+        <div class="border-b border-purple-950/40 pb-6">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">
+                Central de Simulados Inteligentes 🧠
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Treine com questões baseadas em provas reais e tenha correção assistida pela Profe Joy.</p>
+        </div>
+
+        <!-- Seletor de Configuração do Simulado -->
+        <div class="bg-slate-900/40 border border-purple-500/20 rounded-xl p-6 backdrop-blur-md space-y-6">
+            <h2 class="text-lg font-bold text-slate-200">Configure seu teste:</h2>
+            
+            <form action="#" method="POST" id="simulado-setup-form" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Seleção de Matéria -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-3">Selecione a Disciplina:</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="materia-selector">
+                        {% for materia in materias %}
+                        <label class="relative flex flex-col items-center justify-center p-4 bg-slate-950 border border-slate-800 rounded-lg cursor-pointer hover:border-purple-500/40 transition-all text-center">
+                            <input type="radio" name="materia" value="{{ materia }}" class="sr-only peer" required>
+                            <span class="text-sm font-medium peer-checked:text-purple-400">{{ materia }}</span>
+                            <!-- Indicador visual ativo -->
+                            <div class="absolute inset-0 border-2 border-transparent peer-checked:border-purple-500 rounded-lg pointer-events-none transition-all"></div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Configurações Rápidas (Quantidade e Tipo) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Quantidade de Questões:</label>
+                        <select name="quantidade" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 focus:border-purple-500 focus:outline-none">
+                            <option value="10">10 Perguntas (Rápido)</option>
+                            <option value="20" selected>20 Perguntas (Padrão)</option>
+                            <option value="30">30 Perguntas (Simulado Real)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">Modo de Avaliação:</label>
+                        <select name="modo" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 focus:border-purple-500 focus:outline-none">
+                            <option value="choice">Múltipla Escolha (Modo Choice)</option>
+                            <option value="desarrollo">Perguntas de Desenvolvimento (Oral)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botão de Início -->
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 text-center block">
+                    Iniciar Simulação de Prova
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts de proteção do DOM para evitar erros de renderização -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("simulado-setup-form");
+        if (form) {
+            form.addEventListener("submit", (e) => {
+                const selectedMateria = document.querySelector('input[name="materia"]:checked');
+                if (!selectedMateria) {
+                    e.preventDefault();
+                    alert("Por favor, selecione uma matéria para iniciar!");
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

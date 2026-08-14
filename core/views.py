@@ -1049,6 +1049,16 @@ def dashboard_conecta_view(request):
     return render(request, 'dashboard_conecta.html', context)
 
 @login_required
+def central_simulados_view(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    materias_nombres = [m.nombre for m in profile.materias.all()] if profile.materias.exists() else ['Anatomía', 'Histología', 'Embriología', 'Biología Celular']
+    context = {
+        'creditos_ia': 150,
+        'materias': materias_nombres
+    }
+    return render(request, 'simulados.html', context)
+
+@login_required
 def student_dashboard(request):
     """Vista principal del Dashboard del Estudiante."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
