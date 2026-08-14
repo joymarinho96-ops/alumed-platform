@@ -78,12 +78,16 @@ TOP_K = 5  # número de chunks mais relevantes a buscar
 
 
 def _get_api_client():
-    """Retorna o tipo de cliente ativo e sua instância (openai, gemini, ou fastembed)."""
-    # Sempre usamos o fastembed para o embedding grátis Open Source
-    # e usamos OpenAI/Gemini apenas para gerar o texto da resposta LLM.
-    
+    """Retorna o tipo de cliente ativo e sua instância (openai, gemini, ou mock)."""
     openai_key = os.environ.get('OPENAI_API_KEY') or getattr(settings, 'OPENAI_API_KEY', '')
     gemini_key = os.environ.get('GEMINI_API_KEY') or getattr(settings, 'GEMINI_API_KEY', '')
+
+    if openai_key:
+        try:
+            from openai import OpenAI
+            return 'openai', OpenAI(api_key=openai_key)
+        except ImportError:
+            logger.warning("openai package not found. Falling back to Gemini...")
 
     if gemini_key:
         try:
@@ -92,13 +96,6 @@ def _get_api_client():
             return 'gemini', genai
         except ImportError:
             logger.warning("google.generativeai package not found. Falling back to DB.")
-
-    if openai_key:
-        try:
-            from openai import OpenAI
-            return 'openai', OpenAI(api_key=openai_key)
-        except ImportError:
-            logger.warning("openai package not found. Falling back to DB.")
 
     return 'mock', None
 
@@ -369,7 +366,35 @@ def profe_joy_chat(request):
         system  = system_base.format(contexto=context, pregunta=question)
 
         answer = None
-        if client_type == 'gemini':
+        if client_type == 'openai':
+            try:
+                messages = [{"role": "system", "content": system}]
+                for msg in history[-6:]:
+                    role = "user" if msg.get("role") == "user" else "assistant"
+                    messages.append({"role": role, "content": msg.get("content", "")})
+
+                if image_b64:
+                    img_url = image_b64 if image_b64.startswith("data:") else f"data:image/jpeg;base64,{image_b64}"
+                    user_content = [
+                        {"type": "text", "text": question or "Analiza esta lámina histológica o imagen médica."},
+                        {"type": "image_url", "image_url": {"url": img_url}}
+                    ]
+                else:
+                    user_content = question or "Explicá el tema."
+
+                messages.append({"role": "user", "content": user_content})
+
+                completion = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=messages,
+                    temperature=0.3
+                )
+                answer = completion.choices[0].message.content
+            except Exception as openai_exc:
+                logger.error(f"Error en API OpenAI (gpt-4o-mini): {openai_exc}")
+                client_type = 'mock'
+
+        elif client_type == 'gemini':
             try:
                 model = client.GenerativeModel(
                     model_name="gemini-2.0-flash",
