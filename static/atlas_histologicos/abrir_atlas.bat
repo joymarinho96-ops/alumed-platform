@@ -1,0 +1,4 @@
+@echo off
+title ALUMED | ATLAS HISTOLOGICO - PROFE JOYCE MARINHO
+echo Abriendo ALUMED | ATLAS HISTOLOGICO - PROFE JOYCE MARINHO...
+start "" "%~dp0index.html"
