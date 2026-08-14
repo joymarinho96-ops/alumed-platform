@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path("conecta/dashboard/", views.dashboard_conecta_view, name="dashboard_conecta"),
     path("dashboard/simulados/", views.central_simulados_view, name="central_simulados"),
+    path("dashboard/simulados/iniciar/", views.iniciar_simulado_view, name="iniciar_simulado"),
     path("en-vivo/", views.live_classroom_view, name="live_classroom"),
     path("dashboard/", views.student_dashboard, name="student_dashboard"),
     path("api/profile/materias/update/", views.update_materias, name="update_materias"),

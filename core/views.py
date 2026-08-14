@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import random
 from django.views.decorators.http import require_http_methods
 from courses.models import Course
 from .library_catalog import build_library_payload
@@ -1057,6 +1059,80 @@ def central_simulados_view(request):
         'materias': materias_nombres
     }
     return render(request, 'simulados.html', context)
+
+@login_required
+def iniciar_simulado_view(request):
+    """
+    Processa a configuração escolhida pelo aluno, busca as questões no Supabase,
+    seleciona perguntas aleatórias e renderiza a arena de prova ativa.
+    """
+    if request.method != "POST":
+        return redirect("central_simulados")
+
+    materia = request.POST.get("materia", "Anatomía")
+    try:
+        quantidade = int(request.POST.get("quantidade", 20))
+    except ValueError:
+        quantidade = 20
+    modo = request.POST.get("modo", "choice")
+
+    try:
+        from .profe_joy_views import _get_supabase_client
+        supabase_client = _get_supabase_client()
+        todas_questoes = []
+
+        if supabase_client and materia:
+            try:
+                response = supabase_client.table("questoes").select("*").eq("materia", materia).execute()
+                if response.data:
+                    todas_questoes = response.data
+            except Exception as e:
+                print(f"[-] Erro de consulta ao Supabase questoes: {e}")
+
+        # Se não houver questões no Supabase ainda, fornecemos amostragem defensiva
+        if not todas_questoes:
+            todas_questoes = [
+                {
+                    "id": "q1",
+                    "enunciado": f"¿Cuál es una característica fundamental de la materia {materia} en la UNLP?",
+                    "alternativas": {
+                        "A": "Estudio integrador morfológico y funcional",
+                        "B": "Solo análisis macroscópico sin microscopía",
+                        "C": "Exclusivo de ciclo clínico sin materias básicas",
+                        "D": "Sin aplicación práctica ni correlación clínica"
+                    },
+                    "respuesta_correta": "A"
+                },
+                {
+                    "id": "q2",
+                    "enunciado": f"Durante el desarrollo y estudio de {materia}, ¿qué concepto es clave para las parciales?",
+                    "alternativas": {
+                        "A": "Método Joy y raciocinio clínico de 5 pasos",
+                        "B": "Memorización seca sin entender la función",
+                        "C": "Ignorar la correlación topográfica",
+                        "D": "No revisar los estatutos normativos"
+                    },
+                    "respuesta_correta": "A"
+                }
+            ]
+
+        qtd_selecionar = min(len(todas_questoes), quantidade)
+        questoes_selecionadas = random.sample(todas_questoes, qtd_selecionar)
+
+        context = {
+            'materia': materia,
+            'quantidade': qtd_selecionar,
+            'modo': modo,
+            'questoes': questoes_selecionadas,
+            'creditos_ia': 150
+        }
+
+        return render(request, 'simulado_run.html', context)
+
+    except Exception as e:
+        print(f"[-] Erro crítico ao gerar simulado: {e}")
+        messages.error(request, "Erro interno de comunicação com a base de dados. Tente novamente.")
+        return redirect("central_simulados")
 
 @login_required
 def student_dashboard(request):
