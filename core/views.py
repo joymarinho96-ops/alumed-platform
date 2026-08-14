@@ -1024,6 +1024,11 @@ def unsync_calendar_event(request):
 from .models import LiveClass, Materia, CursoWix, UserProfile
 
 @login_required
+def dashboard_conecta_view(request):
+    # Aqui você pode buscar dados do Supabase como saldo de créditos e presença
+    return render(request, 'dashboard_conecta.html')
+
+@login_required
 def student_dashboard(request):
     """Vista principal del Dashboard del Estudiante."""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
